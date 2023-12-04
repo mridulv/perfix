@@ -23,6 +23,7 @@ class MySQLStore(dataWithDescription: DataWithDescription) extends DataStore {
     }
     import connectionParams._
 
+    Class.forName("com.mysql.jdbc.Driver").newInstance
     connection = DriverManager.getConnection(url, username, password)
     val statement = connection.createStatement()
 
@@ -32,19 +33,28 @@ class MySQLStore(dataWithDescription: DataWithDescription) extends DataStore {
     }
     import connectionParams._
 
-    val sql = createTableStatement(tableParams.tableName, dataWithDescription.dataDescription.columns)
+    val sql = createTableStatement(tableParams.dbName + "." + tableParams.tableName, dataWithDescription.dataDescription.columns)
     statement.executeUpdate(sql)
     statement.close()
   }
 
-  override def putData(data: Seq[Map[String, Any]], rate: Int): Unit = {
+  override def putData(rate: Int): Unit = {
+    val data = dataWithDescription.data
     val delay = 1000 / rate
     data.foreach { row =>
-      // Assuming row is a map of column name to value
-      val insertSql = "INSERT INTO my_table (...) VALUES (...);" // Construct SQL based on `row`
-      val statement = connection.createStatement()
-      statement.executeUpdate(insertSql)
-      statement.close()
+      val tableParams = mySQLParams.mySQLTableParams match {
+        case Some(tableParams) => tableParams
+        case None => throw InvalidStateException("Table Params should have been defined")
+      }
+
+      val columnNames = row.keys.mkString(", ")
+      val valuePlaceholders = row.keys.map(_ => "?").mkString(", ")
+
+      val sql = s"INSERT INTO ${tableParams.tableName} ($columnNames) VALUES ($valuePlaceholders);"
+      val preparedStatement = connection.prepareStatement(sql)
+      preparedStatement.executeUpdate()
+      preparedStatement.close()
+
       Thread.sleep(delay)
     }
   }

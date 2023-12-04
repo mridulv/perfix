@@ -1,9 +1,9 @@
 package io.perfix.generator
 
-import io.perfix.model.DataDescription
+import io.perfix.model.{DataDescription, DataWithDescription}
 
 trait DataGenerator {
 
-  def generateData(dataDescription: DataDescription): Seq[Map[String, Any]]
+  def generateData(dataDescription: DataDescription): DataWithDescription
 
 }
