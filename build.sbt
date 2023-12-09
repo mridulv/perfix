@@ -10,7 +10,7 @@ lazy val root = (project in file("."))
       name := "perfix",
       libraryDependencies += munit % Test,
       libraryDependencies += "com.github.javafaker" % "javafaker" % "1.0.2",
-      libraryDependencies += "mysql" % "mysql-connector-java" % "5.1.44",
+      libraryDependencies += "mysql" % "mysql-connector-java" % "8.0.33",
       libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.9" % Test
 )
 

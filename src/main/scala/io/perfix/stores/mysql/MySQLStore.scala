@@ -23,7 +23,7 @@ class MySQLStore(dataWithDescription: DataWithDescription) extends DataStore {
     }
     import connectionParams._
 
-    Class.forName("com.mysql.jdbc.Driver").newInstance
+    Class.forName("com.mysql.cj.jdbc.Driver").newInstance
     connection = DriverManager.getConnection(url, username, password)
     val statement = connection.createStatement()
 
@@ -46,15 +46,18 @@ class MySQLStore(dataWithDescription: DataWithDescription) extends DataStore {
         case Some(tableParams) => tableParams
         case None => throw InvalidStateException("Table Params should have been defined")
       }
-
+      
+      val allKeys = row.keys.toSeq
       val columnNames = row.keys.mkString(", ")
-      val valuePlaceholders = row.keys.map(_ => "?").mkString(", ")
+      val valuePlaceholders = allKeys.map(_ => "?").mkString(", ")
 
       val sql = s"INSERT INTO ${tableParams.tableName} ($columnNames) VALUES ($valuePlaceholders);"
       val preparedStatement = connection.prepareStatement(sql)
+      for(i <- 1 to allKeys.length) {
+        preparedStatement.setObject(i, row(s"${allKeys(i - 1)}"))
+      }
       preparedStatement.executeUpdate()
       preparedStatement.close()
-
       Thread.sleep(delay)
     }
   }
