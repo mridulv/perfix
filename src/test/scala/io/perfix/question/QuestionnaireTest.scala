@@ -1,11 +1,10 @@
 package io.perfix.question
 
-import io.perfix.stores.question.{Question, Questionnaire, StoreQuestionParams}
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
 class QuestionnaireTest extends AnyFlatSpec with Matchers {
-  case class TestStoreQuestionParams(question: String) extends StoreQuestionParams
+  case class TestStoreQuestionParams(question: String) extends QuestionParams
 
   case class TestQuestion(question: String) extends Question {
     def shouldAsk(): Boolean = true

@@ -1,9 +1,9 @@
 package io.perfix.stores.mysql
 
 import io.perfix.model.DataDescription
-import io.perfix.stores.question.StoreQuestionParams
+import io.perfix.question.QuestionParams
 
-case class MySQLParams(dataDescription: DataDescription) extends StoreQuestionParams {
+case class MySQLParams(dataDescription: DataDescription) extends QuestionParams {
 
   var mySQLConnectionParams: Option[MySQLConnectionParams] = None
   var mySQLTableParams: Option[MySQLTableParams] = None

@@ -1,4 +1,4 @@
-package io.perfix.stores.question
+package io.perfix.question
 
 trait Questionnaire {
 

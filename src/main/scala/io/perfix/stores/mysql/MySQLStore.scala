@@ -3,6 +3,7 @@ package io.perfix.stores.mysql
 import io.perfix.exceptions.InvalidStateException
 import io.perfix.model.{ColumnDescription, DataDescription, DataWithDescription}
 import io.perfix.model.URLType.toSqlType
+import io.perfix.query.PerfixQuery
 import io.perfix.stores.DataStore
 
 import java.sql.{Connection, DriverManager}
@@ -38,9 +39,8 @@ class MySQLStore(dataWithDescription: DataWithDescription) extends DataStore {
     statement.close()
   }
 
-  override def putData(rate: Int): Unit = {
+  override def putData(): Unit = {
     val data = dataWithDescription.data
-    val delay = 1000 / rate
     data.foreach { row =>
       val tableParams = mySQLParams.mySQLTableParams match {
         case Some(tableParams) => tableParams
@@ -58,7 +58,6 @@ class MySQLStore(dataWithDescription: DataWithDescription) extends DataStore {
       }
       preparedStatement.executeUpdate()
       preparedStatement.close()
-      Thread.sleep(delay)
     }
   }
 
@@ -73,5 +72,9 @@ class MySQLStore(dataWithDescription: DataWithDescription) extends DataStore {
   private def createTableStatement(tableName: String, columns: Seq[ColumnDescription]): String = {
     val columnDefs = columns.map(col => s"${col.columnName} ${toSqlType(col.columnType)}").mkString(", ")
     s"CREATE TABLE $tableName ($columnDefs);"
+  }
+
+  override def convertQuery(perfixQuery: PerfixQuery): String = {
+    PerfixQueryConverter.convert(mySQLParams.mySQLTableParams.get, perfixQuery)
   }
 }

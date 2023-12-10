@@ -1,9 +1,9 @@
-package io.perfix.stores.mysql.questions
+package io.perfix.question.mysql
 
 import io.perfix.StringType
 import io.perfix.exceptions.ParamsAlreadyDefinedException
+import io.perfix.question.Question
 import io.perfix.stores.mysql.{MySQLParams, MySQLTableParams}
-import io.perfix.stores.question.Question
 
 class TableParamsQuestions(override val storeQuestionParams: MySQLParams) extends Question {
 

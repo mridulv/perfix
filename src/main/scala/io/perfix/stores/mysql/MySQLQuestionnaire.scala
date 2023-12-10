@@ -1,7 +1,7 @@
 package io.perfix.stores.mysql
 
-import io.perfix.stores.mysql.questions.{ConnectionParamsQuestion, TableParamsQuestions}
-import io.perfix.stores.question.{Question, Questionnaire}
+import io.perfix.question.mysql.{ConnectionParamsQuestion, TableParamsQuestions}
+import io.perfix.question.{Question, Questionnaire}
 
 case class MySQLQuestionnaire(mySQLParams: MySQLParams) extends Questionnaire {
   

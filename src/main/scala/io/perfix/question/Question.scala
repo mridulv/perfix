@@ -1,4 +1,4 @@
-package io.perfix.stores.question
+package io.perfix.question
 
 import io.perfix._
 
@@ -6,7 +6,7 @@ trait Question {
 
   type QuestionLabel = String
 
-  val storeQuestionParams: StoreQuestionParams
+  val storeQuestionParams: QuestionParams
 
   def shouldAsk(): Boolean
 
