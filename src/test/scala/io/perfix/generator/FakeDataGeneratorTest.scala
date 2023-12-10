@@ -16,8 +16,8 @@ class FakeDataGeneratorTest extends AnyFlatSpec with Matchers {
     val generator = new FakeDataGenerator()
     val data = generator.generateData(dataDescription)
 
-    data should have length 10
-    data.foreach { row =>
+    data.data.length should be(10)
+    data.data.foreach { row =>
       row should contain key "name"
       row("name") shouldBe a [String]
 
