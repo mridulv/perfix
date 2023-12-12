@@ -1,8 +1,7 @@
 package io.perfix.question.experiment
 
-import io.perfix.DoubleType
 import io.perfix.exceptions.ParamsAlreadyDefinedException
-import io.perfix.model.{ColumnDescription, ExperimentParams, TextType}
+import io.perfix.model.{ColumnDescription, DoubleType, ExperimentParams, TextType}
 import io.perfix.question.{Question, QuestionParams}
 
 class ExperimentParamsQuestion(experimentParams: ExperimentParams) extends Question {

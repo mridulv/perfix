@@ -1,6 +1,7 @@
 package io.perfix.question
 
 import io.perfix._
+import io.perfix.model.{BooleanType, DataType, DoubleType, NumericType, StringType}
 
 trait Question {
 

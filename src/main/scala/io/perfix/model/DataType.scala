@@ -1,4 +1,4 @@
-package io.perfix
+package io.perfix.model
 
 trait DataType
 

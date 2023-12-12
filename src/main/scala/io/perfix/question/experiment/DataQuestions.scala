@@ -1,8 +1,7 @@
 package io.perfix.question.experiment
 
-import io.perfix.{DoubleType, StringType}
 import io.perfix.exceptions.ParamsAlreadyDefinedException
-import io.perfix.model.{ColumnDescription, DataDescription, TextType}
+import io.perfix.model.{ColumnDescription, DataDescription, DoubleType, StringType, TextType}
 import io.perfix.question.{Question, QuestionParams}
 
 class DataQuestions(dataDescription: DataDescription) extends Question {
