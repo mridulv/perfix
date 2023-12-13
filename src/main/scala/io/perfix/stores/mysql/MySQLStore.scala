@@ -1,23 +1,25 @@
 package io.perfix.stores.mysql
 
 import io.perfix.exceptions.InvalidStateException
-import io.perfix.model.{ColumnDescription, DataDescription, DataWithDescription}
+import io.perfix.model.{ColumnDescription, DataWithDescription}
 import io.perfix.model.URLType.toSqlType
 import io.perfix.query.PerfixQuery
 import io.perfix.stores.DataStore
 
 import java.sql.{Connection, DriverManager}
 
-class MySQLStore(dataWithDescription: DataWithDescription) extends DataStore {
+class MySQLStore extends DataStore {
   private var connection: Connection = _
-  private val mySQLParams = MySQLParams(dataWithDescription.dataDescription)
-  private val mySQLQuestionnaire = MySQLQuestionnaire(mySQLParams)
+  private var dataWithDescription: DataWithDescription = _
+  private var mySQLParams: MySQLParams = _
 
-  def questions(): MySQLQuestionnaire = {
-    mySQLQuestionnaire
+  override def storeInputs(dataWithDescription: DataWithDescription): MySQLQuestionnaire = {
+    this.dataWithDescription = dataWithDescription
+    mySQLParams = MySQLParams(dataWithDescription.dataDescription)
+    MySQLQuestionnaire(mySQLParams)
   }
 
-  def initialize(): Unit = {
+  def connectAndInitialize(): Unit = {
     val connectionParams = mySQLParams.mySQLConnectionParams match {
       case Some(con) => con
       case None => throw InvalidStateException("Connection should have been defined")
@@ -34,7 +36,7 @@ class MySQLStore(dataWithDescription: DataWithDescription) extends DataStore {
     }
     import connectionParams._
 
-    val sql = createTableStatement(tableParams.dbName + "." + tableParams.tableName, dataWithDescription.dataDescription.columns)
+    val sql = createTableStatement(tableParams.dbName + "." + tableParams.tableName, mySQLParams.dataDescription.columns)
     statement.executeUpdate(sql)
     statement.close()
   }

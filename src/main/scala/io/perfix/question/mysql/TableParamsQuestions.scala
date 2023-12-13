@@ -14,7 +14,7 @@ class TableParamsQuestions(override val storeQuestionParams: MySQLParams) extend
     storeQuestionParams.mySQLTableParams.isEmpty
   }
 
-  override def evaluateQuestions(): Unit = {
+  override def evaluateQuestion(): Unit = {
     import storeQuestionParams._
     mySQLTableParams match {
       case Some(_) => throw ParamsAlreadyDefinedException("mySQLTableParams")

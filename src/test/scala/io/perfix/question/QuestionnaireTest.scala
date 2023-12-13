@@ -11,7 +11,7 @@ class QuestionnaireTest extends AnyFlatSpec with Matchers {
 
     override val storeQuestionParams: TestStoreQuestionParams = TestStoreQuestionParams(question)
 
-    override def evaluateQuestions(): Unit = ???
+    override def evaluateQuestion(): Unit = ???
   }
 
   class TestQuestionnaire extends Questionnaire {

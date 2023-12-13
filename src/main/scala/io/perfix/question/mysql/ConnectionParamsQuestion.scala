@@ -16,7 +16,7 @@ class ConnectionParamsQuestion(override val storeQuestionParams: MySQLParams) ex
     mySQLConnectionParams.isEmpty
   }
 
-  override def evaluateQuestions(): Unit = {
+  override def evaluateQuestion(): Unit = {
     import storeQuestionParams._
     mySQLConnectionParams match {
       case Some(_) => throw ParamsAlreadyDefinedException("mySQLConnectionParams")

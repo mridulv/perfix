@@ -1,8 +1,6 @@
 package io.perfix.model
 
-import io.perfix.question.QuestionParams
-
-case class DataDescription() extends QuestionParams {
+case class DataDescription() {
 
   var rowsOpt: Option[Int] = None
   var columnsOpt: Option[Seq[ColumnDescription]] = None

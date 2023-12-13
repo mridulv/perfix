@@ -13,16 +13,16 @@ class ExperimentParamsQuestion(experimentParams: ExperimentParams) extends Quest
     experimentParams.concurrentQueriesOpt.isEmpty
   }
 
-  override def evaluateQuestions(): Unit = {
+  override def evaluateQuestion(): Unit = {
     import experimentParams._
-    experimentParams.concurrentQueriesOpt match {
+    concurrentQueriesOpt match {
       case Some(_) => throw ParamsAlreadyDefinedException("DataDescription")
       case None =>
         val questionMapping = Map(
           CONCURRENT_QUERIES -> DoubleType
         )
         val answers = askQuestions(questionMapping)
-        experimentParams.concurrentQueriesOpt = Some(answers(CONCURRENT_QUERIES).toString.toInt)
+        concurrentQueriesOpt = Some(answers(CONCURRENT_QUERIES).toString.toInt)
     }
   }
 

@@ -1,7 +1,7 @@
 package io.perfix.question
 
 import io.perfix._
-import io.perfix.model.{BooleanType, DataType, DoubleType, NumericType, StringType}
+import io.perfix.model.{BooleanType, DataType, DoubleType, IntType, NumericType, StringType}
 
 trait Question {
 
@@ -17,13 +17,13 @@ trait Question {
       val answer = dataType match {
         case StringType => scala.io.StdIn.readLine()
         case BooleanType => scala.io.StdIn.readBoolean()
-        case NumericType => scala.io.StdIn.readLong()
+        case IntType => scala.io.StdIn.readLong()
         case DoubleType => scala.io.StdIn.readDouble()
       }
       (question -> answer)
     }
   }
 
-  def evaluateQuestions(): Unit
+  def evaluateQuestion(): Unit
 
 }
