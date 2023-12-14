@@ -12,7 +12,10 @@ class FakeDataGeneratorTest extends AnyFlatSpec with Matchers {
       ColumnDescription("age", NumericType(Some(NumericRangeConstraint(18, 30))))
       // Add more columns as needed
     )
-    val dataDescription = DataDescription(10, columns)
+    val dataDescription = new DataDescription()
+    dataDescription.rowsOpt = Some(10)
+    dataDescription.columnsOpt = Some(columns)
+    
     val generator = new FakeDataGenerator()
     val data = generator.generateData(dataDescription)
 

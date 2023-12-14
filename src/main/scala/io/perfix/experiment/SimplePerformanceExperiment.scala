@@ -17,7 +17,7 @@ class SimplePerformanceExperiment(dataStore: DataStore) {
         Iterator(
           new DataQuestions(dataDescription),
           new ExperimentParamsQuestion(experimentParams)
-        ) ++ dataStore.questions().questions
+        ) ++ dataStore.questions().getQuestions
       }
     }
   }
@@ -30,11 +30,10 @@ class SimplePerformanceExperiment(dataStore: DataStore) {
     }
   }
 
-
   def run(): Unit = {
     val query = dataStore.convertQuery(PerfixQuery())
     // Using experimentParams.concurrentQueriesOpt run experiment those many number of times using query
   }
-
-
 }
+
+
