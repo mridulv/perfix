@@ -4,13 +4,11 @@ import io.perfix.context.QuestionExecutionContext
 import io.perfix.exceptions.ParamsAlreadyDefinedException
 import io.perfix.model.StringType
 import io.perfix.question.Question
+import io.perfix.question.mysql.TableParamsQuestions._
 import io.perfix.stores.mysql.{MySQLParams, MySQLTableParams}
 
 class TableParamsQuestions(override val storeQuestionParams: MySQLParams,
                            override val questionExecutionContext: QuestionExecutionContext) extends Question {
-
-  private val DBNAME = "dbName"
-  private val TABLENAME = "tableName"
 
   override def shouldAsk(): Boolean = {
     storeQuestionParams.mySQLTableParams.isEmpty
@@ -33,6 +31,9 @@ class TableParamsQuestions(override val storeQuestionParams: MySQLParams,
 }
 
 object TableParamsQuestions {
+  private val DBNAME = "dbName"
+  private val TABLENAME = "tableName"
+
   def apply(mySQLParams: MySQLParams,
             questionExecutionContext: QuestionExecutionContext): TableParamsQuestions = {
     new TableParamsQuestions(mySQLParams, questionExecutionContext)

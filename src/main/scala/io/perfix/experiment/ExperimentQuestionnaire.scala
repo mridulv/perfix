@@ -1,7 +1,8 @@
-package io.perfix.question.experiment
+package io.perfix.experiment
 
 import io.perfix.context.QuestionExecutionContext
 import io.perfix.model.ExperimentParams
+import io.perfix.question.experiment.{DataQuestions, ExperimentParamsQuestion}
 import io.perfix.question.{Question, Questionnaire}
 import io.perfix.stores.DataStore
 

@@ -3,7 +3,6 @@ package io.perfix.experiment
 import io.perfix.context.QuestionExecutionContext
 import io.perfix.model.ExperimentParams
 import io.perfix.query.PerfixQuery
-import io.perfix.question.experiment.ExperimentQuestionnaire
 import io.perfix.question.Questionnaire
 import io.perfix.stores.DataStore
 

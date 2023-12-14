@@ -7,8 +7,12 @@ import io.perfix.stores.mysql.MySQLStore
 object MySQLExample {
 
   def main(args: Array[String]): Unit = {
-    val questionExecutionContext = new MappedQuestionExecutionContext(Map.empty)
+    val mappedVariables: Map[String, Any] = Map[String, Any]().empty
+    val questionExecutionContext = new MappedQuestionExecutionContext(mappedVariables)
     val mySQLStore = new MySQLStore(questionExecutionContext)
+
     val simplePerformanceExperiment = new SimplePerformanceExperiment(mySQLStore, questionExecutionContext)
+    simplePerformanceExperiment.init()
+    simplePerformanceExperiment.run()
   }
 }

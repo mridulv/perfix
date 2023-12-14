@@ -3,12 +3,11 @@ package io.perfix.question.experiment
 import io.perfix.context.QuestionExecutionContext
 import io.perfix.exceptions.ParamsAlreadyDefinedException
 import io.perfix.model.{ColumnDescription, DataDescription, DoubleType, ExperimentParams, StringType, TextType}
+import io.perfix.question.experiment.DataQuestions._
 import io.perfix.question.{Question, QuestionParams}
 
 class DataQuestions(experimentParams: ExperimentParams,
                     override val questionExecutionContext: QuestionExecutionContext) extends Question {
-  private val ROWS = "rows"
-  private val COLUMNS = "columns"
 
   override val storeQuestionParams: QuestionParams = experimentParams
 
@@ -35,4 +34,9 @@ class DataQuestions(experimentParams: ExperimentParams,
       case (_, _) => throw ParamsAlreadyDefinedException("DataDescription")
     }
   }
+}
+
+object DataQuestions {
+  private val ROWS = "rows"
+  private val COLUMNS = "columns"
 }
