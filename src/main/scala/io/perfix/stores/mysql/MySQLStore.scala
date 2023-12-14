@@ -1,5 +1,6 @@
 package io.perfix.stores.mysql
 
+import io.perfix.context.QuestionExecutionContext
 import io.perfix.exceptions.InvalidStateException
 import io.perfix.model.{ColumnDescription, DataWithDescription}
 import io.perfix.model.URLType.toSqlType
@@ -8,7 +9,7 @@ import io.perfix.stores.DataStore
 
 import java.sql.{Connection, DriverManager}
 
-class MySQLStore extends DataStore {
+class MySQLStore(questionExecutionContext: QuestionExecutionContext) extends DataStore {
   private var connection: Connection = _
   private var dataWithDescription: DataWithDescription = _
   private var mySQLParams: MySQLParams = _
@@ -16,7 +17,7 @@ class MySQLStore extends DataStore {
   override def storeInputs(dataWithDescription: DataWithDescription): MySQLQuestionnaire = {
     this.dataWithDescription = dataWithDescription
     mySQLParams = MySQLParams(dataWithDescription.dataDescription)
-    MySQLQuestionnaire(mySQLParams)
+    MySQLQuestionnaire(mySQLParams, questionExecutionContext)
   }
 
   def connectAndInitialize(): Unit = {

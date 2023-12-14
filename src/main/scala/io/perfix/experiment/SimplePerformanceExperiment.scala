@@ -1,17 +1,19 @@
 package io.perfix.experiment
 
+import io.perfix.context.QuestionExecutionContext
 import io.perfix.model.ExperimentParams
 import io.perfix.query.PerfixQuery
 import io.perfix.question.experiment.ExperimentQuestionnaire
 import io.perfix.question.Questionnaire
 import io.perfix.stores.DataStore
 
-class SimplePerformanceExperiment(dataStore: DataStore) {
+class SimplePerformanceExperiment(dataStore: DataStore,
+                                  questionExecutionContext: QuestionExecutionContext) {
 
   private val experimentParams = new ExperimentParams
 
   def questions(): Questionnaire = {
-    val questionnaire = new ExperimentQuestionnaire(experimentParams, dataStore)
+    val questionnaire = new ExperimentQuestionnaire(experimentParams, dataStore, questionExecutionContext)
     questionnaire
   }
 

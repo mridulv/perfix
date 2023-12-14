@@ -1,10 +1,12 @@
 package io.perfix.question.experiment
 
+import io.perfix.context.QuestionExecutionContext
 import io.perfix.exceptions.ParamsAlreadyDefinedException
 import io.perfix.model.{ColumnDescription, DataDescription, DoubleType, ExperimentParams, StringType, TextType}
 import io.perfix.question.{Question, QuestionParams}
 
-class DataQuestions(experimentParams: ExperimentParams) extends Question {
+class DataQuestions(experimentParams: ExperimentParams,
+                    override val questionExecutionContext: QuestionExecutionContext) extends Question {
   private val ROWS = "rows"
   private val COLUMNS = "columns"
 

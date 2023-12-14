@@ -1,10 +1,12 @@
 package io.perfix.question.experiment
 
+import io.perfix.context.QuestionExecutionContext
 import io.perfix.exceptions.ParamsAlreadyDefinedException
 import io.perfix.model.{ColumnDescription, DoubleType, ExperimentParams, TextType}
 import io.perfix.question.{Question, QuestionParams}
 
-class ExperimentParamsQuestion(experimentParams: ExperimentParams) extends Question {
+class ExperimentParamsQuestion(experimentParams: ExperimentParams,
+                               override val questionExecutionContext: QuestionExecutionContext) extends Question {
   private val CONCURRENT_QUERIES = "num_queries"
 
   override val storeQuestionParams: QuestionParams = experimentParams

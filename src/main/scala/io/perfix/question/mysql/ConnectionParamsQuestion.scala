@@ -1,11 +1,13 @@
 package io.perfix.question.mysql
 
+import io.perfix.context.QuestionExecutionContext
 import io.perfix.exceptions.ParamsAlreadyDefinedException
 import io.perfix.model.StringType
 import io.perfix.question.Question
 import io.perfix.stores.mysql.{MySQLConnectionParams, MySQLParams}
 
-class ConnectionParamsQuestion(override val storeQuestionParams: MySQLParams) extends Question {
+class ConnectionParamsQuestion(override val storeQuestionParams: MySQLParams,
+                               override val questionExecutionContext: QuestionExecutionContext) extends Question {
 
   private val URL = "url"
   private val USERNAME = "username"
@@ -33,7 +35,8 @@ class ConnectionParamsQuestion(override val storeQuestionParams: MySQLParams) ex
 }
 
 object ConnectionParamsQuestion {
-  def apply(mySQLParams: MySQLParams): ConnectionParamsQuestion = {
-    new ConnectionParamsQuestion(mySQLParams)
+  def apply(mySQLParams: MySQLParams,
+            questionExecutionContext: QuestionExecutionContext): ConnectionParamsQuestion = {
+    new ConnectionParamsQuestion(mySQLParams, questionExecutionContext)
   }
 }
