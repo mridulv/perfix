@@ -16,9 +16,9 @@ object BenchmarkUtil {
         override def call(): List[Long] = {
           val executionTimes = ListBuffer[Long]()
           while (System.currentTimeMillis() - startTime < benchmarkTimeSeconds * 1000) {
-            val start = System.nanoTime()
+            val start = System.currentTimeMillis()
             runTask()
-            val end = System.nanoTime()
+            val end = System.currentTimeMillis()
             executionTimes += (end - start)
           }
           executionTimes.toList
@@ -38,7 +38,7 @@ object BenchmarkUtil {
     // Collect and process results
     val allExecutionTimes = futures.flatMap(_.get()).sorted
     val totalCalls = allExecutionTimes.length
-    println(s"Total function calls: $totalCalls")
+    println(s"Total tasks executed: $totalCalls")
     printPercentiles(allExecutionTimes.toSeq)
   }
 
@@ -46,7 +46,7 @@ object BenchmarkUtil {
     val percentiles = List(5, 10, 25, 50, 75, 90, 95, 99)
     percentiles.foreach { p =>
       val index = (p / 100.0 * executionTimes.length).toInt
-      println(s"$p% percentile execution time: ${executionTimes(index)} nanoseconds")
+      println(s"$p% percentile execution time: ${executionTimes(index)} milliseconds")
     }
   }
 

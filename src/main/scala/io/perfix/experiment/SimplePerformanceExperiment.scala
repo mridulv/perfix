@@ -3,13 +3,9 @@ package io.perfix.experiment
 import io.perfix.BenchmarkUtil
 import io.perfix.context.QuestionExecutionContext
 import io.perfix.model.ExperimentParams
-import io.perfix.query.PerfixQuery
+import io.perfix.query.{PerfixQuery, PerfixQueryFilter}
 import io.perfix.question.Questionnaire
 import io.perfix.stores.DataStore
-
-import java.util.concurrent.{Callable, Executors, Future, TimeUnit}
-import scala.collection.mutable.ListBuffer
-import scala.concurrent.duration.DurationInt
 
 class SimplePerformanceExperiment(dataStore: DataStore,
                                   questionExecutionContext: QuestionExecutionContext) {
@@ -30,14 +26,21 @@ class SimplePerformanceExperiment(dataStore: DataStore,
   }
 
   def run(): Unit = {
+    val perfixQuery = PerfixQuery(
+      filtersOpt = Some(List(PerfixQueryFilter("name", "John"))),
+      projectedFieldsOpt = Some(List("name")),
+      limitOpt = Some(10)
+    )
+    val query = dataStore.convertQuery(perfixQuery)
+    dataStore.putData()
     BenchmarkUtil.runBenchmark(
       concurrentThreads = experimentParams.concurrentQueries,
-      benchmarkTimeSeconds = 60000,
-      runTask = () => {
-        val query = dataStore.convertQuery(PerfixQuery())
-        dataStore.putData()
-        // Using experimentParams.concurrentQueriesOpt run experiment those many number of times using query
-      }
+      benchmarkTimeSeconds = 15,
+      runTask = () => dataStore.readData(query)
     )
+  }
+
+  def cleanup(): Unit = {
+    dataStore.cleanup()
   }
 }

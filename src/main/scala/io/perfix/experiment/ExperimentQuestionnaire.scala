@@ -16,7 +16,7 @@ class ExperimentQuestionnaire(experimentParams: ExperimentParams,
       new ExperimentParamsQuestion(experimentParams, questionExecutionContext)
     )
 
-    val nextSet = dataStore.storeInputs(experimentParams.fakeData).questions
+    val nextSet = dataStore.storeInputs(experimentParams.dataDescription).questions
 
     initialQuestions ++ nextSet
   }

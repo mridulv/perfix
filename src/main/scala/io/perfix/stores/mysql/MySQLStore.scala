@@ -2,21 +2,21 @@ package io.perfix.stores.mysql
 
 import io.perfix.context.QuestionExecutionContext
 import io.perfix.exceptions.InvalidStateException
-import io.perfix.model.{ColumnDescription, DataWithDescription}
+import io.perfix.model.{ColumnDescription, DataDescription, DataWithDescription}
 import io.perfix.model.URLType.toSqlType
 import io.perfix.query.PerfixQuery
 import io.perfix.stores.DataStore
 
-import java.sql.{Connection, DriverManager}
+import java.sql.{Connection, DriverManager, ResultSet}
 
 class MySQLStore(questionExecutionContext: QuestionExecutionContext) extends DataStore {
   private var connection: Connection = _
-  private var dataWithDescription: DataWithDescription = _
+  private var dataDescription: DataDescription = _
   private var mySQLParams: MySQLParams = _
 
-  override def storeInputs(dataWithDescription: DataWithDescription): MySQLQuestionnaire = {
-    this.dataWithDescription = dataWithDescription
-    mySQLParams = MySQLParams(dataWithDescription.dataDescription)
+  override def storeInputs(dataDescription: DataDescription): MySQLQuestionnaire = {
+    this.dataDescription = dataDescription
+    mySQLParams = MySQLParams(dataDescription)
     MySQLQuestionnaire(mySQLParams, questionExecutionContext)
   }
 
@@ -43,7 +43,7 @@ class MySQLStore(questionExecutionContext: QuestionExecutionContext) extends Dat
   }
 
   override def putData(): Unit = {
-    val data = dataWithDescription.data
+    val data = dataDescription.data
     data.foreach { row =>
       val tableParams = mySQLParams.mySQLTableParams match {
         case Some(tableParams) => tableParams
@@ -66,8 +66,7 @@ class MySQLStore(questionExecutionContext: QuestionExecutionContext) extends Dat
 
   override def readData(query: String): Seq[Map[String, Any]] = {
     val statement = connection.createStatement()
-    val resultSet = statement.executeQuery(query)
-    val result = Seq.empty[Map[String, Any]] // Implement conversion
+    val result = resultSetToSeqMap(statement.executeQuery(query))
     statement.close()
     result
   }
@@ -79,5 +78,31 @@ class MySQLStore(questionExecutionContext: QuestionExecutionContext) extends Dat
 
   override def convertQuery(perfixQuery: PerfixQuery): String = {
     PerfixQueryConverter.convert(mySQLParams.mySQLTableParams.get, perfixQuery)
+  }
+
+  override def cleanup(): Unit = {
+    val tableParams = mySQLParams.mySQLTableParams match {
+      case Some(tableParams) => tableParams
+      case None => throw InvalidStateException("Table Params should have been defined")
+    }
+    val statement = s"DROP TABLE ${tableParams.tableName}"
+    val preparedStatement = connection.prepareStatement(statement)
+    preparedStatement.execute()
+    connection.close()
+  }
+
+  private def resultSetToSeqMap(resultSet: ResultSet): Seq[Map[String, Any]] = {
+    val metaData = resultSet.getMetaData
+    val columnCount = metaData.getColumnCount
+    val buffer = scala.collection.mutable.Buffer[Map[String, Any]]()
+
+    while (resultSet.next()) {
+      val row = (1 to columnCount).map { i =>
+        metaData.getColumnName(i) -> resultSet.getObject(i)
+      }.toMap
+      buffer += row
+    }
+
+    buffer.toSeq
   }
 }

@@ -31,5 +31,5 @@ class ExperimentParamsQuestion(experimentParams: ExperimentParams,
 }
 
 object ExperimentParamsQuestion {
-  private val CONCURRENT_QUERIES = "num_queries"
+  val CONCURRENT_QUERIES = "num_queries"
 }

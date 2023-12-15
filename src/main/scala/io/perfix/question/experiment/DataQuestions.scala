@@ -28,15 +28,16 @@ class DataQuestions(experimentParams: ExperimentParams,
         dataDescription.rowsOpt = Some(answers(ROWS).toString.toInt)
         dataDescription.columnsOpt = Some(
           answers(COLUMNS).toString.split(",").map { e =>
-            ColumnDescription(e.split(":").head, TextType)
+            ColumnDescription(e, TextType)
           }
         )
+        dataDescription.setData()
       case (_, _) => throw ParamsAlreadyDefinedException("DataDescription")
     }
   }
 }
 
 object DataQuestions {
-  private val ROWS = "rows"
-  private val COLUMNS = "columns"
+  val ROWS = "rows"
+  val COLUMNS = "columns"
 }

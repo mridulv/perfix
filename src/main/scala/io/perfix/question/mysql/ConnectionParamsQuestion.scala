@@ -26,15 +26,15 @@ class ConnectionParamsQuestion(override val storeQuestionParams: MySQLParams,
           PASSWORD -> StringType
         )
         val answers = askQuestions(questionMapping)
-        MySQLConnectionParams(answers(URL).toString, answers(USERNAME).toString, answers(PASSWORD).toString)
+        mySQLConnectionParams = Some(MySQLConnectionParams(answers(URL).toString, answers(USERNAME).toString, answers(PASSWORD).toString))
     }
   }
 }
 
 object ConnectionParamsQuestion {
-  private val URL = "url"
-  private val USERNAME = "username"
-  private val PASSWORD = "password"
+  val URL = "url"
+  val USERNAME = "username"
+  val PASSWORD = "password"
 
   def apply(mySQLParams: MySQLParams,
             questionExecutionContext: QuestionExecutionContext): ConnectionParamsQuestion = {

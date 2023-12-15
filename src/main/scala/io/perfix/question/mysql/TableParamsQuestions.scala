@@ -24,15 +24,15 @@ class TableParamsQuestions(override val storeQuestionParams: MySQLParams,
           TABLENAME -> StringType
         )
         val answers = askQuestions(questionMapping)
-        MySQLTableParams(answers(DBNAME).toString, answers(TABLENAME).toString)
+        mySQLTableParams = Some(MySQLTableParams(answers(DBNAME).toString, answers(TABLENAME).toString))
     }
   }
 
 }
 
 object TableParamsQuestions {
-  private val DBNAME = "dbName"
-  private val TABLENAME = "tableName"
+  val DBNAME = "dbName"
+  val TABLENAME = "tableName"
 
   def apply(mySQLParams: MySQLParams,
             questionExecutionContext: QuestionExecutionContext): TableParamsQuestions = {
