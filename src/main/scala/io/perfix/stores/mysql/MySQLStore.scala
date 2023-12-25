@@ -64,7 +64,8 @@ class MySQLStore(questionExecutionContext: QuestionExecutionContext) extends Dat
     }
   }
 
-  override def readData(query: String): Seq[Map[String, Any]] = {
+  override def readData(perfixQuery: PerfixQuery): Seq[Map[String, Any]] = {
+    val query = PerfixQueryConverter.convert(mySQLParams.mySQLTableParams.get, perfixQuery)
     val statement = connection.createStatement()
     val result = resultSetToSeqMap(statement.executeQuery(query))
     statement.close()
@@ -74,10 +75,6 @@ class MySQLStore(questionExecutionContext: QuestionExecutionContext) extends Dat
   private def createTableStatement(tableName: String, columns: Seq[ColumnDescription]): String = {
     val columnDefs = columns.map(col => s"${col.columnName} ${toSqlType(col.columnType)}").mkString(", ")
     s"CREATE TABLE $tableName ($columnDefs);"
-  }
-
-  override def convertQuery(perfixQuery: PerfixQuery): String = {
-    PerfixQueryConverter.convert(mySQLParams.mySQLTableParams.get, perfixQuery)
   }
 
   override def cleanup(): Unit = {

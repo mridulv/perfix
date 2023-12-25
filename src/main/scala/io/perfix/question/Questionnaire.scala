@@ -2,7 +2,7 @@ package io.perfix.question
 
 trait Questionnaire {
 
-  protected val questions: Iterator[Question]
+  val questions: Iterator[Question]
 
   def getQuestions: Iterator[Question] = {
     new Iterator[Question] {

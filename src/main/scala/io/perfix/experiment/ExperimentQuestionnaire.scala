@@ -10,7 +10,7 @@ class ExperimentQuestionnaire(experimentParams: ExperimentParams,
                               dataStore: DataStore,
                               questionExecutionContext: QuestionExecutionContext) extends Questionnaire {
 
-  override protected val questions: Iterator[Question] = {
+  override val questions: Iterator[Question] = {
     val initialQuestions = Iterator(
       new DataQuestions(experimentParams, questionExecutionContext),
       new ExperimentParamsQuestion(experimentParams, questionExecutionContext)

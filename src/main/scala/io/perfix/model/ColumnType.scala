@@ -1,5 +1,6 @@
 package io.perfix.model
 
+import com.amazonaws.services.dynamodbv2.model.ScalarAttributeType
 import com.github.javafaker.Faker
 
 trait ColumnType {
@@ -16,6 +17,18 @@ trait ColumnType {
     case URLType => "VARCHAR(255)"
     case TextType => "TEXT"        // TEXT for larger string data
     case BooleanValueType => "BOOLEAN"
+  }
+
+  def toDynamoDBType(columnType: ColumnType): String = columnType match {
+    case _: NumericType => ScalarAttributeType.S.toString
+    case _: EpochType => ScalarAttributeType.N.toString
+    case NameType => ScalarAttributeType.S.toString
+    case AddressType => ScalarAttributeType.S.toString
+    case EmailType => ScalarAttributeType.S.toString
+    case PhoneNumberType => ScalarAttributeType.S.toString
+    case URLType => ScalarAttributeType.S.toString
+    case TextType => ScalarAttributeType.S.toString
+    case BooleanValueType => ScalarAttributeType.B.toString
   }
 }
 

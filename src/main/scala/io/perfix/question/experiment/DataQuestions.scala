@@ -2,7 +2,7 @@ package io.perfix.question.experiment
 
 import io.perfix.context.QuestionExecutionContext
 import io.perfix.exceptions.ParamsAlreadyDefinedException
-import io.perfix.model.{ColumnDescription, DataDescription, DoubleType, ExperimentParams, StringType, TextType}
+import io.perfix.model.{ColumnDescription, DoubleType, ExperimentParams, StringType, TextType}
 import io.perfix.question.experiment.DataQuestions._
 import io.perfix.question.{Question, QuestionParams}
 

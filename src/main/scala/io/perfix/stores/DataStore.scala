@@ -2,13 +2,12 @@ package io.perfix.stores
 
 import io.perfix.model.DataDescription
 import io.perfix.query.PerfixQuery
-import io.perfix.stores.mysql.MySQLQuestionnaire
+import io.perfix.question.Questionnaire
 
 trait DataStore {
-  def storeInputs(dataDescription: DataDescription): MySQLQuestionnaire
+  def storeInputs(dataDescription: DataDescription): Questionnaire
   def connectAndInitialize(): Unit
   def putData(): Unit
-  def convertQuery(perfixQuery: PerfixQuery): String
-  def readData(query: String): Seq[Map[String, Any]]
+  def readData(perfixQuery: PerfixQuery): Seq[Map[String, Any]]
   def cleanup(): Unit
 }

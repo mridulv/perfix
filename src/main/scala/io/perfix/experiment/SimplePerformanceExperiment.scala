@@ -27,16 +27,15 @@ class SimplePerformanceExperiment(dataStore: DataStore,
 
   def run(): Unit = {
     val perfixQuery = PerfixQuery(
-      filtersOpt = Some(List(PerfixQueryFilter("name", "John"))),
-      projectedFieldsOpt = Some(List("name")),
+      filtersOpt = Some(List(PerfixQueryFilter("name2", "John"))),
+      projectedFieldsOpt = Some(List("name2")),
       limitOpt = Some(10)
     )
-    val query = dataStore.convertQuery(perfixQuery)
     dataStore.putData()
     BenchmarkUtil.runBenchmark(
       concurrentThreads = experimentParams.concurrentQueries,
       benchmarkTimeSeconds = 15,
-      runTask = () => dataStore.readData(query)
+      runTask = () => dataStore.readData(perfixQuery)
     )
   }
 
