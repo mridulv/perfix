@@ -3,11 +3,12 @@ package io.perfix.experiment
 import io.perfix.BenchmarkUtil
 import io.perfix.context.QuestionExecutionContext
 import io.perfix.model.ExperimentParams
-import io.perfix.query.{PerfixQuery, PerfixQueryFilter}
+import io.perfix.query.PerfixQuery
 import io.perfix.question.Questionnaire
 import io.perfix.stores.DataStore
 
 class SimplePerformanceExperiment(dataStore: DataStore,
+                                  perfixQuery: PerfixQuery,
                                   questionExecutionContext: QuestionExecutionContext) {
 
   private val experimentParams = new ExperimentParams
@@ -26,11 +27,6 @@ class SimplePerformanceExperiment(dataStore: DataStore,
   }
 
   def run(): Unit = {
-    val perfixQuery = PerfixQuery(
-      filtersOpt = Some(List(PerfixQueryFilter("name2", "John"))),
-      projectedFieldsOpt = Some(List("name2")),
-      limitOpt = Some(10)
-    )
     dataStore.putData()
     BenchmarkUtil.runBenchmark(
       concurrentThreads = experimentParams.concurrentQueries,
