@@ -1,0 +1,38 @@
+package io.perfix.question.experiment
+
+import ExperimentParamsQuestion.CONCURRENT_QUERIES
+import io.perfix.context.QuestionExecutionContext
+import io.perfix.exceptions.ParamsAlreadyDefinedException
+import io.perfix.model.{ColumnDescription, DataType, DoubleType, ExperimentParams, TextType}
+import io.perfix.question.Question.QuestionLabel
+import io.perfix.question.dynamodb.DynamoDBConnectionParametersQuestions.{ACCESS_ID, ACCESS_SECRET, CONNECTION_URL}
+import io.perfix.question.{Question, QuestionParams}
+
+class ExperimentParamsQuestion(experimentParams: ExperimentParams,
+                               override val questionExecutionContext: QuestionExecutionContext) extends Question {
+
+  override val mapping: Map[QuestionLabel, DataType] = Map(
+    CONCURRENT_QUERIES -> DoubleType
+  )
+
+  override val storeQuestionParams: QuestionParams = experimentParams
+
+  override def shouldAsk(): Boolean = {
+    experimentParams.concurrentQueriesOpt.isEmpty
+  }
+
+  override def evaluateQuestion(): Unit = {
+    import experimentParams._
+    concurrentQueriesOpt match {
+      case Some(_) => throw ParamsAlreadyDefinedException("DataDescription")
+      case None =>
+        val answers = askQuestions
+        concurrentQueriesOpt = Some(answers(CONCURRENT_QUERIES).toString.toInt)
+    }
+  }
+
+}
+
+object ExperimentParamsQuestion {
+  val CONCURRENT_QUERIES = "num_queries"
+}
