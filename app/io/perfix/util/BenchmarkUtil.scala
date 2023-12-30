@@ -1,4 +1,4 @@
-package io.perfix
+package io.perfix.util
 
 import java.util.concurrent.{Callable, Executors, Future, TimeUnit}
 import scala.collection.mutable.ListBuffer

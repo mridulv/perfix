@@ -1,12 +1,12 @@
-package io.perfix.controller
+package io.perfix
 
 import controllers.AssetsFinder
+import io.perfix.model.PerfixQuestion._
+import io.perfix.model.PerfixQuestionAnswers
 import play.api.libs.json.Json
 import play.api.mvc._
 
 import javax.inject._
-import io.perfix.model.PerfixQuestion._
-import io.perfix.model.{PerfixQuestionAnswer, PerfixQuestionAnswers}
 
 @Singleton
 class PerfixController @Inject()(cc: ControllerComponents,

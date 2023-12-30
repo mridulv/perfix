@@ -1,11 +1,11 @@
 package io.perfix.experiment
 
-import io.perfix.BenchmarkUtil
 import io.perfix.context.QuestionExecutionContext
 import io.perfix.model.ExperimentParams
 import io.perfix.query.PerfixQuery
 import io.perfix.question.Questionnaire
 import io.perfix.stores.DataStore
+import io.perfix.util.BenchmarkUtil
 
 class SimplePerformanceExperiment(dataStore: DataStore,
                                   perfixQuery: PerfixQuery,
