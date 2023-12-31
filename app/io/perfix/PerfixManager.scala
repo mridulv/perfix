@@ -84,8 +84,8 @@ class PerfixManager {
     }
   }
 
-}
+  case class PerfixQuestionAnswerMapping(storeName: String,
+                                         questions: Iterator[Map[QuestionLabel, DataType]],
+                                         answers: mutable.ListBuffer[PerfixQuestionAnswers])
 
-case class PerfixQuestionAnswerMapping(storeName: String,
-                                       questions: Iterator[Map[QuestionLabel, DataType]],
-                                       answers: mutable.ListBuffer[PerfixQuestionAnswers])
+}
