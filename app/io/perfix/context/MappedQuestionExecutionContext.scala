@@ -4,7 +4,7 @@ import io.perfix.model.{DataType, _}
 import io.perfix.question.Question.QuestionLabel
 
 class MappedQuestionExecutionContext(mappedValues: Map[String, Any]) extends QuestionExecutionContext {
-  override def findAnswer(questionLabel: QuestionLabel, dataType: DataType): Any = {
-    mappedValues(questionLabel)
+  override def findAnswer(questionLabel: QuestionLabel, dataType: DataType): Option[Any] = {
+    mappedValues.get(questionLabel)
   }
 }

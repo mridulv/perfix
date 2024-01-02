@@ -31,7 +31,7 @@ class DynamoDBConnectionParametersQuestions(override val storeQuestionParams: Dy
         val answers = askQuestions
         storeQuestionParams.dynamoDBConnectionParams = Some(
           DynamoDBConnectionParams(
-            answers(CONNECTION_URL).toString,
+            answers.get(CONNECTION_URL).map(_.toString),
             answers(ACCESS_ID).toString,
             answers(ACCESS_SECRET).toString
           )

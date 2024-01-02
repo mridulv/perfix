@@ -6,6 +6,6 @@ import io.perfix.question.Question.QuestionLabel
 trait QuestionExecutionContext {
 
   def findAnswer(questionLabel: QuestionLabel,
-                 dataType: DataType): Any
+                 dataType: DataType): Option[Any]
 
 }

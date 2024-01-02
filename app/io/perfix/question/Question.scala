@@ -16,8 +16,11 @@ trait Question {
   def shouldAsk(): Boolean
 
   def askQuestions: Map[QuestionLabel, Any] = {
-    mapping.map { case (question, dataType) =>
-      (question -> questionExecutionContext.findAnswer(question, dataType))
+    mapping.flatMap { case (question, dataType) =>
+      questionExecutionContext.findAnswer(question, dataType) match {
+        case Some(v) => Some(question -> v)
+        case None => None
+      }
     }
   }
 

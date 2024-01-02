@@ -33,16 +33,24 @@ class DynamoDBStore(questionExecutionContext: QuestionExecutionContext) extends 
     val keySchemaElements = getKeySchemaElements(dynamoDBParams.dataDescription.columns)
     val attributeDefinitions = getAttributeDefinitions(dynamoDBParams.dataDescription.columns)
 
-    client = AmazonDynamoDBClientBuilder
-      .standard()
-      .withEndpointConfiguration(
-        new AwsClientBuilder.EndpointConfiguration(connectionParams.url, "us-west-2")
-      ).withCredentials(new AWSStaticCredentialsProvider(new AWSCredentials {
-      override def getAWSAccessKeyId: String = connectionParams.accessKey
+    client = connectionParams.urlOpt match {
+      case Some(url) => AmazonDynamoDBClientBuilder
+        .standard()
+        .withEndpointConfiguration(
+          new AwsClientBuilder.EndpointConfiguration(url, "us-west-2")
+        ).withCredentials(new AWSStaticCredentialsProvider(new AWSCredentials {
+        override def getAWSAccessKeyId: String = connectionParams.accessKey
+        override def getAWSSecretKey: String = connectionParams.accessSecret
+      }  )).build()
+      case None => AmazonDynamoDBClientBuilder
+        .standard()
+        .withRegion("us-west-2")
+        .withCredentials(new AWSStaticCredentialsProvider(new AWSCredentials {
+        override def getAWSAccessKeyId: String = connectionParams.accessKey
+        override def getAWSSecretKey: String = connectionParams.accessSecret
+      }  )).build()
+    }
 
-      override def getAWSSecretKey: String = connectionParams.accessSecret
-    }  ))
-      .build()
     val createTableRequest = new CreateTableRequest()
       .withTableName(tableParams.tableName)
       .withKeySchema(keySchemaElements.asJava)
@@ -50,6 +58,8 @@ class DynamoDBStore(questionExecutionContext: QuestionExecutionContext) extends 
       .withProvisionedThroughput(new ProvisionedThroughput(5L, 5L)) // Example provisioned throughput
 
     client.createTable(createTableRequest)
+    // This is needed for DynamoDB Table Creation Step
+    Thread.sleep(10000)
   }
 
   override def putData(): Unit = {
