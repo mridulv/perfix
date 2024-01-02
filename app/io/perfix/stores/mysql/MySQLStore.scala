@@ -44,23 +44,31 @@ class MySQLStore(questionExecutionContext: QuestionExecutionContext) extends Dat
 
   override def putData(): Unit = {
     val data = dataDescription.data
-    data.foreach { row =>
+    val batchSize = 10
+    data.grouped(batchSize).foreach { batchRows =>
       val tableParams = mySQLParams.mySQLTableParams match {
         case Some(tableParams) => tableParams
         case None => throw InvalidStateException("Table Params should have been defined")
       }
-      
-      val allKeys = row.keys.toSeq
-      val columnNames = row.keys.mkString(", ")
+
+      val allKeys = batchRows.head.keys.toSeq // Assuming all rows have the same columns
+      val columnNames = allKeys.mkString(", ")
       val valuePlaceholders = allKeys.map(_ => "?").mkString(", ")
 
       val sql = s"INSERT INTO ${tableParams.tableName} ($columnNames) VALUES ($valuePlaceholders);"
       val preparedStatement = connection.prepareStatement(sql)
-      for(i <- 1 to allKeys.length) {
-        preparedStatement.setObject(i, row(s"${allKeys(i - 1)}"))
+
+      try {
+        for (row <- batchRows) {
+          for (i <- 1 to allKeys.length) {
+            preparedStatement.setObject(i, row(s"${allKeys(i - 1)}"))
+          }
+          preparedStatement.addBatch() // Add the current row to the batch
+        }
+        preparedStatement.executeBatch() // Execute the batch insert
+      } finally {
+        preparedStatement.close()
       }
-      preparedStatement.executeUpdate()
-      preparedStatement.close()
     }
   }
 
