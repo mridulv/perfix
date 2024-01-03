@@ -20,6 +20,7 @@ lazy val root = (project in file("."))
         libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.9" % Test,
         libraryDependencies += "com.amazonaws" % "aws-java-sdk-dynamodb" % "1.12.618",
         libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "5.0.0" % Test,
-        libraryDependencies += "ai.x" %% "play-json-extensions" % "0.42.0"
+        libraryDependencies += "ai.x" %% "play-json-extensions" % "0.42.0",
+        libraryDependencies += "redis.clients" % "jedis" % "5.2.0-alpha2"
   )
 
