@@ -25,7 +25,7 @@ class RedisTableParamsQuestion(override val storeQuestionParams: RedisParams,
       case Some(_) => throw ParamsAlreadyDefinedException("Redis URL Already Defined")
       case None =>
         val answers = askQuestions
-        storeQuestionParams.keyColumn = answers(KEY_COLUMN).toString
+        storeQuestionParams.keyColumn = Some(answers(KEY_COLUMN).toString)
     }
   }
 }

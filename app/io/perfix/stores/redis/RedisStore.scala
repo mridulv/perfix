@@ -8,7 +8,7 @@ import io.perfix.stores.DataStore
 import redis.clients.jedis.{Jedis, JedisPool}
 
 class RedisStore(questionExecutionContext: QuestionExecutionContext) extends DataStore {
-  private var jedis: Jedis = _
+  private var jedisPool: JedisPool = _
   private var dataDescription: DataDescription = _
   private var redisParams: RedisParams = _
 
@@ -21,14 +21,15 @@ class RedisStore(questionExecutionContext: QuestionExecutionContext) extends Dat
   def connectAndInitialize(): Unit = {
     (redisParams.url, redisParams.port) match {
       case (Some(url), Some(port)) =>
-        val pool = new JedisPool(url, port)
-        jedis = pool.getResource
+        jedisPool = new JedisPool(url, port)
+        jedisPool.setMinIdle(100)
       case (_, _) => throw InvalidStateException("URL / Port Must be defined")
     }
   }
 
   override def putData(): Unit = {
     val data = dataDescription.data
+    val jedis = jedisPool.getResource
     val keyColumn = redisParams.keyColumn.getOrElse(throw InvalidStateException("Key Column Must be defined"))
     data.map { row =>
       val key = row(keyColumn).toString
@@ -40,22 +41,29 @@ class RedisStore(questionExecutionContext: QuestionExecutionContext) extends Dat
   }
 
   override def readData(perfixQuery: PerfixQuery): Seq[Map[String, Any]] = {
+    val jedis = jedisPool.getResource
     val matchedValues = perfixQuery.filtersOpt.flatMap(_.headOption) match {
-      case Some(filter) => jedis.get(s"${filter.field}:${filter.fieldValue}").split(",").flatMap { e =>
-        val k = e.split(":").head
-        val v = e.split(":").reverse.head
-        if (perfixQuery.projectedFieldsOpt.getOrElse(List.empty).contains(k)) {
-          Some((k -> v))
-        } else {
-          None
+      case Some(filter) =>
+        Option(jedis.get(filter.fieldValue.toString)).flatMap { v =>
+          val value = v.split(",").flatMap { e =>
+            val k = e.split(":").head
+            val v = e.split(":").reverse.head
+            if (perfixQuery.projectedFieldsOpt.getOrElse(List.empty).contains(k)) {
+              Some(k -> v)
+            } else {
+              None
+            }
+          }.toMap
+          Some(value)
         }
-      }.toMap
       case None => throw PerfixQueryException("For RedisStore, filter should be present")
     }
-    Seq(matchedValues)
+    jedisPool.returnResource(jedis)
+    Seq(matchedValues).flatten
   }
 
   override def cleanup(): Unit = {
-    jedis.flushAll()
+    jedisPool.getResource.flushAll()
+    jedisPool.close()
   }
 }
