@@ -20,7 +20,7 @@ object RedisExample {
     val experimentExecutor = new PerfixExperimentExecutor("redis")
     while (experimentExecutor.getQuestionnaireExecutor.hasNext) {
       val question = experimentExecutor.getQuestionnaireExecutor.next()
-      val answerMapping = question.map { case (k, v) =>
+      val answerMapping = question.map { case (k, _) =>
         k -> mappedVariables(k)
       }
       experimentExecutor.getQuestionnaireExecutor.submit(answerMapping)
