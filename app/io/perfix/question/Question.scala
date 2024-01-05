@@ -1,9 +1,7 @@
 package io.perfix.question
 
-import io.perfix._
 import Question.QuestionLabel
-import io.perfix.context.QuestionExecutionContext
-import io.perfix.model.{BooleanType, DataType, DoubleType, IntType, NumericType, StringType}
+import io.perfix.model.DataType
 
 trait Question {
 
@@ -11,20 +9,9 @@ trait Question {
 
   val storeQuestionParams: QuestionParams
 
-  val questionExecutionContext: QuestionExecutionContext
-
   def shouldAsk(): Boolean
 
-  def askQuestions: Map[QuestionLabel, Any] = {
-    mapping.flatMap { case (question, dataType) =>
-      questionExecutionContext.findAnswer(question, dataType) match {
-        case Some(v) => Some(question -> v)
-        case None => None
-      }
-    }
-  }
-
-  def evaluateQuestion(): Unit
+  def setAnswers(answers: Map[QuestionLabel, Any]): Unit
 
 }
 

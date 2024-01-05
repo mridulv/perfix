@@ -1,13 +1,10 @@
 package io.perfix.examples
 
-import io.perfix.context.MappedQuestionExecutionContext
-import io.perfix.experiment.SimplePerformanceExperiment
-import io.perfix.query.{PerfixQuery, PerfixQueryFilter}
-import io.perfix.question.dynamodb.DynamoDBConnectionParametersQuestions.{ACCESS_ID, ACCESS_SECRET, CONNECTION_URL}
+import io.perfix.common.PerfixExperimentExecutor
+import io.perfix.question.dynamodb.DynamoDBConnectionParametersQuestions.{ACCESS_ID, ACCESS_SECRET}
 import io.perfix.question.dynamodb.DynamoDBTableParamsQuestions._
 import io.perfix.question.experiment.DataQuestions._
 import io.perfix.question.experiment.ExperimentParamsQuestion.CONCURRENT_QUERIES
-import io.perfix.stores.dynamodb.DynamoDBStore
 
 object DynamoDBExample {
 
@@ -23,26 +20,16 @@ object DynamoDBExample {
       ACCESS_ID -> "**********",
       ACCESS_SECRET -> "**********"
     )
-    val questionExecutionContext = new MappedQuestionExecutionContext(mappedVariables)
-    val dynamoDBStore = new DynamoDBStore(questionExecutionContext)
-    val perfixQuery = PerfixQuery(
-      filtersOpt = Some(List(PerfixQueryFilter("student_name", "John"))),
-      projectedFieldsOpt = Some(List("student_name")),
-      limitOpt = Some(10)
-    )
-
-    val simplePerformanceExperiment = new SimplePerformanceExperiment(
-      dynamoDBStore,
-      perfixQuery,
-      questionExecutionContext
-    )
-    val iter = simplePerformanceExperiment.questions().getQuestions
-    while (iter.hasNext) {
-      val question = iter.next()
-      question.evaluateQuestion()
+    val experimentExecutor = new PerfixExperimentExecutor("dynamodb")
+    while (experimentExecutor.getQuestionnaireExecutor.hasNext) {
+      val question = experimentExecutor.getQuestionnaireExecutor.next()
+      val answerMapping = question.map { case (k, v) =>
+        k -> mappedVariables(k)
+      }
+      experimentExecutor.getQuestionnaireExecutor.submit(answerMapping)
     }
-    simplePerformanceExperiment.init()
-    simplePerformanceExperiment.run()
-    simplePerformanceExperiment.cleanup()
+
+    experimentExecutor.runExperiment()
+    experimentExecutor.cleanUp()
   }
 }

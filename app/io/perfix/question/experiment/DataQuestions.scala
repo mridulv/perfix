@@ -7,8 +7,7 @@ import io.perfix.model.{ColumnDescription, DataType, DoubleType, ExperimentParam
 import io.perfix.question.Question.QuestionLabel
 import io.perfix.question.{Question, QuestionParams}
 
-class DataQuestions(experimentParams: ExperimentParams,
-                    override val questionExecutionContext: QuestionExecutionContext) extends Question {
+class DataQuestions(experimentParams: ExperimentParams) extends Question {
 
   override val mapping: Map[QuestionLabel, DataType] = Map(
     ROWS -> DoubleType,
@@ -22,11 +21,10 @@ class DataQuestions(experimentParams: ExperimentParams,
     dataDescription.rowsOpt.isEmpty || dataDescription.columnsOpt.isEmpty
   }
 
-  override def evaluateQuestion(): Unit = {
+  override def setAnswers(answers: Map[QuestionLabel, Any]): Unit = {
     import experimentParams._
     (dataDescription.rowsOpt, dataDescription.columnsOpt) match {
       case (None, None) =>
-        val answers = askQuestions
         dataDescription.rowsOpt = Some(answers(ROWS).toString.toInt)
         dataDescription.columnsOpt = Some(
           answers(COLUMNS).toString.split(",").map { e =>

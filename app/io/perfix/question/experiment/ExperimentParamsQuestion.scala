@@ -8,8 +8,7 @@ import io.perfix.question.Question.QuestionLabel
 import io.perfix.question.dynamodb.DynamoDBConnectionParametersQuestions.{ACCESS_ID, ACCESS_SECRET, CONNECTION_URL}
 import io.perfix.question.{Question, QuestionParams}
 
-class ExperimentParamsQuestion(experimentParams: ExperimentParams,
-                               override val questionExecutionContext: QuestionExecutionContext) extends Question {
+class ExperimentParamsQuestion(experimentParams: ExperimentParams) extends Question {
 
   override val mapping: Map[QuestionLabel, DataType] = Map(
     CONCURRENT_QUERIES -> DoubleType
@@ -21,13 +20,11 @@ class ExperimentParamsQuestion(experimentParams: ExperimentParams,
     experimentParams.concurrentQueriesOpt.isEmpty
   }
 
-  override def evaluateQuestion(): Unit = {
+  override def setAnswers(answers: Map[QuestionLabel, Any]): Unit = {
     import experimentParams._
     concurrentQueriesOpt match {
       case Some(_) => throw ParamsAlreadyDefinedException("DataDescription")
-      case None =>
-        val answers = askQuestions
-        concurrentQueriesOpt = Some(answers(CONCURRENT_QUERIES).toString.toInt)
+      case None => concurrentQueriesOpt = Some(answers(CONCURRENT_QUERIES).toString.toInt)
     }
   }
 

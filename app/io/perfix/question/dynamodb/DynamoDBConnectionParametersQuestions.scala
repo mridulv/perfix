@@ -9,8 +9,7 @@ import io.perfix.question.Question.QuestionLabel
 import io.perfix.question.experiment.DataQuestions.{COLUMNS, ROWS}
 import io.perfix.stores.dynamodb.{DynamoDBConnectionParams, DynamoDBParams}
 
-class DynamoDBConnectionParametersQuestions(override val storeQuestionParams: DynamoDBParams,
-                                            override val questionExecutionContext: QuestionExecutionContext) extends Question {
+class DynamoDBConnectionParametersQuestions(override val storeQuestionParams: DynamoDBParams) extends Question {
 
   override val mapping: Map[QuestionLabel, DataType] = Map(
     CONNECTION_URL -> StringType,
@@ -23,12 +22,11 @@ class DynamoDBConnectionParametersQuestions(override val storeQuestionParams: Dy
     dynamoDBConnectionParams.isEmpty
   }
 
-  override def evaluateQuestion(): Unit = {
+  override def setAnswers(answers: Map[QuestionLabel, Any]): Unit = {
     import storeQuestionParams._
     dynamoDBConnectionParams match {
       case Some(_) => throw ParamsAlreadyDefinedException("mySQLConnectionParams")
       case None =>
-        val answers = askQuestions
         storeQuestionParams.dynamoDBConnectionParams = Some(
           DynamoDBConnectionParams(
             answers.get(CONNECTION_URL).map(_.toString),
@@ -45,9 +43,8 @@ object DynamoDBConnectionParametersQuestions {
   val ACCESS_ID = "access_id"
   val ACCESS_SECRET = "access_secret"
 
-  def apply(dynamoDBParams: DynamoDBParams,
-            questionExecutionContext: QuestionExecutionContext): DynamoDBConnectionParametersQuestions = {
-    new DynamoDBConnectionParametersQuestions(dynamoDBParams, questionExecutionContext)
+  def apply(dynamoDBParams: DynamoDBParams): DynamoDBConnectionParametersQuestions = {
+    new DynamoDBConnectionParametersQuestions(dynamoDBParams)
   }
 }
 

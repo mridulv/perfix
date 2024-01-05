@@ -8,8 +8,7 @@ import io.perfix.question.Question.QuestionLabel
 import io.perfix.question.redis.RedisTableParamsQuestion.KEY_COLUMN
 import io.perfix.stores.redis.RedisParams
 
-class RedisTableParamsQuestion(override val storeQuestionParams: RedisParams,
-                               override val questionExecutionContext: QuestionExecutionContext)
+class RedisTableParamsQuestion(override val storeQuestionParams: RedisParams)
   extends Question {
 
   override val mapping: Map[QuestionLabel, DataType] = Map(
@@ -20,12 +19,10 @@ class RedisTableParamsQuestion(override val storeQuestionParams: RedisParams,
     storeQuestionParams.keyColumn.isEmpty
   }
 
-  override def evaluateQuestion(): Unit = {
+  override def setAnswers(answers: Map[QuestionLabel, Any]): Unit = {
     storeQuestionParams.keyColumn match {
       case Some(_) => throw ParamsAlreadyDefinedException("Redis URL Already Defined")
-      case None =>
-        val answers = askQuestions
-        storeQuestionParams.keyColumn = Some(answers(KEY_COLUMN).toString)
+      case None => storeQuestionParams.keyColumn = Some(answers(KEY_COLUMN).toString)
     }
   }
 }
@@ -33,8 +30,7 @@ class RedisTableParamsQuestion(override val storeQuestionParams: RedisParams,
 object RedisTableParamsQuestion {
   val KEY_COLUMN = "key_column"
 
-  def apply(redisParams: RedisParams,
-            questionExecutionContext: QuestionExecutionContext): RedisTableParamsQuestion = {
-    new RedisTableParamsQuestion(redisParams, questionExecutionContext)
+  def apply(redisParams: RedisParams): RedisTableParamsQuestion = {
+    new RedisTableParamsQuestion(redisParams)
   }
 }

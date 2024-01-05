@@ -8,8 +8,7 @@ import io.perfix.question.Question.QuestionLabel
 import io.perfix.question.redis.RedisConnectionParametersQuestion.{PORT, URL}
 import io.perfix.stores.redis.RedisParams
 
-class RedisConnectionParametersQuestion(override val storeQuestionParams: RedisParams,
-                                        override val questionExecutionContext: QuestionExecutionContext) extends Question {
+class RedisConnectionParametersQuestion(override val storeQuestionParams: RedisParams) extends Question {
   override val mapping: Map[QuestionLabel, DataType] = Map(
     URL -> StringType,
     PORT -> IntType
@@ -19,11 +18,10 @@ class RedisConnectionParametersQuestion(override val storeQuestionParams: RedisP
     storeQuestionParams.url.isEmpty || storeQuestionParams.port.isEmpty
   }
 
-  override def evaluateQuestion(): Unit = {
+  override def setAnswers(answers: Map[QuestionLabel, Any]): Unit = {
     storeQuestionParams.url match {
       case Some(_) => throw ParamsAlreadyDefinedException("Redis URL Already Defined")
       case None =>
-        val answers = askQuestions
         storeQuestionParams.url = Some(answers(URL).toString)
         storeQuestionParams.port = Some(answers(PORT).toString.toInt)
     }
@@ -34,8 +32,7 @@ object RedisConnectionParametersQuestion {
   val URL = "URL"
   val PORT = "PORT"
 
-  def apply(redisParams: RedisParams,
-            questionExecutionContext: QuestionExecutionContext): RedisConnectionParametersQuestion = {
-    new RedisConnectionParametersQuestion(redisParams, questionExecutionContext)
+  def apply(redisParams: RedisParams): RedisConnectionParametersQuestion = {
+    new RedisConnectionParametersQuestion(redisParams)
   }
 }

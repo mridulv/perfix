@@ -1,13 +1,10 @@
 package io.perfix.examples
 
-import io.perfix.context.MappedQuestionExecutionContext
-import io.perfix.experiment.SimplePerformanceExperiment
-import io.perfix.query.{PerfixQuery, PerfixQueryFilter}
+import io.perfix.common.PerfixExperimentExecutor
 import io.perfix.question.experiment.DataQuestions._
 import io.perfix.question.experiment.ExperimentParamsQuestion.CONCURRENT_QUERIES
 import io.perfix.question.mysql.ConnectionParamsQuestion._
 import io.perfix.question.mysql.TableParamsQuestions.{DBNAME, TABLENAME}
-import io.perfix.stores.mysql.MySQLStore
 
 object MySQLExample {
 
@@ -22,26 +19,16 @@ object MySQLExample {
       DBNAME -> "perfix",
       TABLENAME -> "test"
     )
-    val questionExecutionContext = new MappedQuestionExecutionContext(mappedVariables)
-    val mySQLStore = new MySQLStore(questionExecutionContext)
-    val perfixQuery = PerfixQuery(
-      filtersOpt = Some(List(PerfixQueryFilter("name", "John"))),
-      projectedFieldsOpt = Some(List("name")),
-      limitOpt = Some(10)
-    )
-
-    val simplePerformanceExperiment = new SimplePerformanceExperiment(
-      mySQLStore,
-      perfixQuery,
-      questionExecutionContext
-    )
-    val iter = simplePerformanceExperiment.questions().getQuestions
-    while (iter.hasNext) {
-      val question = iter.next()
-      question.evaluateQuestion()
+    val experimentExecutor = new PerfixExperimentExecutor("mysql")
+    while (experimentExecutor.getQuestionnaireExecutor.hasNext) {
+      val question = experimentExecutor.getQuestionnaireExecutor.next()
+      val answerMapping = question.map { case (k, v) =>
+        k -> mappedVariables(k)
+      }
+      experimentExecutor.getQuestionnaireExecutor.submit(answerMapping)
     }
-    simplePerformanceExperiment.init()
-    simplePerformanceExperiment.run()
-    simplePerformanceExperiment.cleanup()
+
+    experimentExecutor.runExperiment()
+    experimentExecutor.cleanUp()
   }
 }

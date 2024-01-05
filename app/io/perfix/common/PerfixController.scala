@@ -1,4 +1,4 @@
-package io.perfix
+package io.perfix.common
 
 import controllers.AssetsFinder
 import io.perfix.model.PerfixQuestion._

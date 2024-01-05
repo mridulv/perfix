@@ -1,6 +1,5 @@
 package io.perfix.question
 
-import io.perfix.context.{MappedQuestionExecutionContext, QuestionExecutionContext}
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
@@ -9,8 +8,6 @@ class QuestionnaireTest extends AnyFlatSpec with Matchers {
 
   case class TestQuestion(question: String) extends Question {
     def shouldAsk(): Boolean = true
-
-    override val questionExecutionContext: QuestionExecutionContext = new MappedQuestionExecutionContext(Map.empty)
 
     override val storeQuestionParams: TestStoreQuestionParams = TestStoreQuestionParams(question)
 

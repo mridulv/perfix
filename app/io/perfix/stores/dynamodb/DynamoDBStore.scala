@@ -13,7 +13,7 @@ import io.perfix.query.PerfixQuery
 
 import scala.collection.JavaConverters._
 
-class DynamoDBStore(questionExecutionContext: QuestionExecutionContext) extends DataStore {
+class DynamoDBStore extends DataStore {
   private var client: AmazonDynamoDB = _
   private var dataDescription: DataDescription = _
   private var dynamoDBParams: DynamoDBParams = _
@@ -23,7 +23,7 @@ class DynamoDBStore(questionExecutionContext: QuestionExecutionContext) extends 
   override def storeInputs(dataDescription: DataDescription): DynamoDBQuestionnaire = {
     this.dataDescription = dataDescription
     dynamoDBParams = DynamoDBParams(dataDescription)
-    DynamoDBQuestionnaire(dynamoDBParams, questionExecutionContext)
+    DynamoDBQuestionnaire(dynamoDBParams)
   }
 
   def connectAndInitialize(): Unit = {

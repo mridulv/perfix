@@ -9,7 +9,7 @@ import io.perfix.query.PerfixQuery
 
 import java.sql.{Connection, DriverManager, ResultSet}
 
-class MySQLStore(questionExecutionContext: QuestionExecutionContext) extends DataStore {
+class MySQLStore extends DataStore {
   private var connection: Connection = _
   private var dataDescription: DataDescription = _
   private var mySQLParams: MySQLParams = _
@@ -17,7 +17,7 @@ class MySQLStore(questionExecutionContext: QuestionExecutionContext) extends Dat
   override def storeInputs(dataDescription: DataDescription): MySQLQuestionnaire = {
     this.dataDescription = dataDescription
     mySQLParams = MySQLParams(dataDescription)
-    MySQLQuestionnaire(mySQLParams, questionExecutionContext)
+    MySQLQuestionnaire(mySQLParams)
   }
 
   def connectAndInitialize(): Unit = {

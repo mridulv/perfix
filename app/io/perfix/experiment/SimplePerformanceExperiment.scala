@@ -1,6 +1,5 @@
 package io.perfix.experiment
 
-import io.perfix.context.QuestionExecutionContext
 import io.perfix.model.ExperimentParams
 import io.perfix.query.PerfixQuery
 import io.perfix.question.Questionnaire
@@ -8,13 +7,12 @@ import io.perfix.stores.DataStore
 import io.perfix.util.BenchmarkUtil
 
 class SimplePerformanceExperiment(dataStore: DataStore,
-                                  perfixQuery: PerfixQuery,
-                                  questionExecutionContext: QuestionExecutionContext) {
+                                  perfixQuery: PerfixQuery) {
 
   private val experimentParams = new ExperimentParams
 
   def questions(): Questionnaire = {
-    val questionnaire = new ExperimentQuestionnaire(experimentParams, dataStore, questionExecutionContext)
+    val questionnaire = new ExperimentQuestionnaire(experimentParams, dataStore)
     questionnaire
   }
 

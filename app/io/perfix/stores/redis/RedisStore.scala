@@ -1,13 +1,12 @@
 package io.perfix.stores.redis
 
-import io.perfix.context.QuestionExecutionContext
 import io.perfix.exceptions.{InvalidStateException, PerfixQueryException}
 import io.perfix.model.DataDescription
 import io.perfix.query.PerfixQuery
 import io.perfix.stores.DataStore
 import redis.clients.jedis.{Jedis, JedisPool}
 
-class RedisStore(questionExecutionContext: QuestionExecutionContext) extends DataStore {
+class RedisStore extends DataStore {
   private var jedisPool: JedisPool = _
   private var dataDescription: DataDescription = _
   private var redisParams: RedisParams = _
@@ -15,7 +14,7 @@ class RedisStore(questionExecutionContext: QuestionExecutionContext) extends Dat
   override def storeInputs(dataDescription: DataDescription): RedisQuestionnaire = {
     this.dataDescription = dataDescription
     redisParams = RedisParams(dataDescription)
-    new RedisQuestionnaire(redisParams, questionExecutionContext)
+    new RedisQuestionnaire(redisParams)
   }
 
   def connectAndInitialize(): Unit = {
