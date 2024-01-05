@@ -1,7 +1,6 @@
 package io.perfix.question.experiment
 
 import DataQuestions._
-import io.perfix.context.QuestionExecutionContext
 import io.perfix.exceptions.ParamsAlreadyDefinedException
 import io.perfix.model.{ColumnDescription, DataType, DoubleType, ExperimentParams, StringType, TextType}
 import io.perfix.question.Question.QuestionLabel

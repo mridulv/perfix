@@ -4,7 +4,6 @@ import com.amazonaws.auth.{AWSCredentials, AWSStaticCredentialsProvider}
 import com.amazonaws.client.builder.AwsClientBuilder
 import com.amazonaws.services.dynamodbv2.{AmazonDynamoDB, AmazonDynamoDBClientBuilder}
 import com.amazonaws.services.dynamodbv2.model._
-import io.perfix.context.QuestionExecutionContext
 import io.perfix.exceptions.InvalidStateException
 import io.perfix.model.{ColumnDescription, DataDescription}
 import io.perfix.stores.DataStore

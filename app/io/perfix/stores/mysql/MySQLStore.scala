@@ -1,6 +1,5 @@
 package io.perfix.stores.mysql
 
-import io.perfix.context.QuestionExecutionContext
 import io.perfix.exceptions.InvalidStateException
 import io.perfix.model.{ColumnDescription, DataDescription, DataWithDescription}
 import io.perfix.stores.DataStore

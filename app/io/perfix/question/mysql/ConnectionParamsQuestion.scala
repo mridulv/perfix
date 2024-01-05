@@ -1,12 +1,10 @@
 package io.perfix.question.mysql
 
 import ConnectionParamsQuestion._
-import io.perfix.context.QuestionExecutionContext
 import io.perfix.exceptions.ParamsAlreadyDefinedException
 import io.perfix.model.{DataType, StringType}
 import io.perfix.question.Question
 import io.perfix.question.Question.QuestionLabel
-import io.perfix.question.dynamodb.DynamoDBConnectionParametersQuestions.{ACCESS_ID, ACCESS_SECRET, CONNECTION_URL}
 import io.perfix.stores.mysql.{MySQLConnectionParams, MySQLParams}
 
 class ConnectionParamsQuestion(override val storeQuestionParams: MySQLParams) extends Question {

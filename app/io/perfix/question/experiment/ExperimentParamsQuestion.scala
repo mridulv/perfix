@@ -1,11 +1,9 @@
 package io.perfix.question.experiment
 
 import ExperimentParamsQuestion.CONCURRENT_QUERIES
-import io.perfix.context.QuestionExecutionContext
 import io.perfix.exceptions.ParamsAlreadyDefinedException
 import io.perfix.model.{ColumnDescription, DataType, DoubleType, ExperimentParams, TextType}
 import io.perfix.question.Question.QuestionLabel
-import io.perfix.question.dynamodb.DynamoDBConnectionParametersQuestions.{ACCESS_ID, ACCESS_SECRET, CONNECTION_URL}
 import io.perfix.question.{Question, QuestionParams}
 
 class ExperimentParamsQuestion(experimentParams: ExperimentParams) extends Question {

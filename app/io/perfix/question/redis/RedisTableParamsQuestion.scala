@@ -1,6 +1,5 @@
 package io.perfix.question.redis
 
-import io.perfix.context.QuestionExecutionContext
 import io.perfix.exceptions.ParamsAlreadyDefinedException
 import io.perfix.model.{DataType, StringType}
 import io.perfix.question.Question

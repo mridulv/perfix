@@ -1,12 +1,10 @@
 package io.perfix.question.dynamodb
 
 import DynamoDBConnectionParametersQuestions._
-import io.perfix.context.QuestionExecutionContext
 import io.perfix.exceptions.ParamsAlreadyDefinedException
 import io.perfix.model.{DataType, StringType}
 import io.perfix.question.Question
 import io.perfix.question.Question.QuestionLabel
-import io.perfix.question.experiment.DataQuestions.{COLUMNS, ROWS}
 import io.perfix.stores.dynamodb.{DynamoDBConnectionParams, DynamoDBParams}
 
 class DynamoDBConnectionParametersQuestions(override val storeQuestionParams: DynamoDBParams) extends Question {

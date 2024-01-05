@@ -1,12 +1,10 @@
 package io.perfix.question.dynamodb
 
 import DynamoDBTableParamsQuestions.{PARTITION_KEY, SORT_KEY, TABLE_NAME}
-import io.perfix.context.QuestionExecutionContext
 import io.perfix.exceptions.ParamsAlreadyDefinedException
 import io.perfix.model.{StringType, _}
 import io.perfix.question.Question
 import io.perfix.question.Question.QuestionLabel
-import io.perfix.question.dynamodb.DynamoDBConnectionParametersQuestions.{ACCESS_ID, ACCESS_SECRET, CONNECTION_URL}
 import io.perfix.stores.dynamodb.{DynamoDBParams, DynamoDBTableParams}
 
 class DynamoDBTableParamsQuestions(override val storeQuestionParams: DynamoDBParams) extends Question {
