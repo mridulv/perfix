@@ -4,7 +4,7 @@ import io.perfix.exceptions.{InvalidStateException, PerfixQueryException}
 import io.perfix.model.DataDescription
 import io.perfix.query.PerfixQuery
 import io.perfix.stores.DataStore
-import redis.clients.jedis.{Jedis, JedisPool}
+import redis.clients.jedis.JedisPool
 
 class RedisStore extends DataStore {
   private var jedisPool: JedisPool = _
