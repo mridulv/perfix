@@ -4,29 +4,34 @@ trait Questionnaire {
 
   val questions: Iterator[Question]
 
-  def getQuestions: Iterator[Question] = {
+  def iterator: Iterator[Question] = {
     new Iterator[Question] {
-      private var nextQuestion: Option[Question] = findNextQuestion()
+      private var nextQuestion: Option[Question] = None
 
-      private def findNextQuestion(): Option[Question] = {
+      private def findNextQuestion(): Unit = {
         while (questions.hasNext) {
           val potentialQuestion = questions.next()
           if (potentialQuestion.shouldAsk()) {
-            return Some(potentialQuestion)
+            nextQuestion = Some(potentialQuestion)
+            return
           }
         }
-        None
+        nextQuestion = None
       }
 
-      override def hasNext: Boolean = nextQuestion.isDefined
+      override def hasNext: Boolean = {
+        if (nextQuestion.isEmpty) {
+          findNextQuestion()
+        }
+        nextQuestion.isDefined
+      }
 
       override def next(): Question = {
         nextQuestion match {
-          case Some(question) =>
-            nextQuestion = findNextQuestion() // Prepare the next question for future calls to next
-            question
-          case None =>
-            throw new NoSuchElementException("No more questions to ask")
+          case Some(ques) =>
+            nextQuestion = None
+            ques
+          case None => throw new NoSuchElementException("No more questions to ask")
         }
       }
     }

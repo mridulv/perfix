@@ -7,10 +7,10 @@ import io.perfix.question.{Question, Questionnaire}
 class PerfixQuestionnaireExecutor(questionnaire: Questionnaire) extends Iterator[Map[QuestionLabel, DataType]] {
 
   private var currentOpt: Option[Question] = None
-  private val allQuestionsIterator: Iterator[Question] = questionnaire.getQuestions
+  private val allQuestionsIterator: Iterator[Question] = questionnaire.iterator
 
   override def hasNext: Boolean = {
-    questionnaire.getQuestions.hasNext
+    allQuestionsIterator.hasNext
   }
 
   override def next(): Map[QuestionLabel, DataType] = {

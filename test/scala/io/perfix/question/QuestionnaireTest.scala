@@ -23,7 +23,7 @@ class QuestionnaireTest extends AnyFlatSpec with Matchers {
 
   "Questionnaire" should "provide an iterator that only returns questions that should be asked" in {
     val questionnaire = new TestQuestionnaire()
-    val questions = questionnaire.getQuestions
+    val questions = questionnaire.iterator
 
     val retrievedQuestions = questions.toList
     retrievedQuestions should have length 2
@@ -33,7 +33,7 @@ class QuestionnaireTest extends AnyFlatSpec with Matchers {
 
   it should "throw NoSuchElementException if no more questions to ask" in {
     val questionnaire = new TestQuestionnaire()
-    val questions = questionnaire.getQuestions
+    val questions = questionnaire.iterator
 
     while (questions.hasNext) {
       questions.next()

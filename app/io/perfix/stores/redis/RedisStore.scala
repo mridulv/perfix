@@ -63,6 +63,5 @@ class RedisStore extends DataStore {
 
   override def cleanup(): Unit = {
     jedisPool.getResource.flushAll()
-    jedisPool.close()
   }
 }

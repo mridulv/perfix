@@ -9,10 +9,8 @@ class ExperimentQuestionnaire(experimentParams: ExperimentParams,
                               dataStore: DataStore) extends Questionnaire {
 
   override val questions: Iterator[Question] = {
-    val initialQuestions = Iterator(
-      new DataQuestions(experimentParams),
-      new ExperimentParamsQuestion(experimentParams)
-    )
+    val initialQuestions = Iterator(new DataQuestions(experimentParams)) ++
+      Iterator(new ExperimentParamsQuestion(experimentParams))
 
     val nextSet = dataStore.storeInputs(experimentParams.dataDescription).questions
 
