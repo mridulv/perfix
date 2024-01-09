@@ -5,6 +5,7 @@ import io.perfix.exceptions.ParamsAlreadyDefinedException
 import io.perfix.model.{ColumnDescription, DataType, DoubleType, ExperimentParams, StringType, TextType}
 import io.perfix.question.Question.QuestionLabel
 import io.perfix.question.{Question, QuestionParams}
+import play.api.libs.json.Json
 
 class DataQuestions(experimentParams: ExperimentParams) extends Question {
 
@@ -25,11 +26,7 @@ class DataQuestions(experimentParams: ExperimentParams) extends Question {
     (dataDescription.rowsOpt, dataDescription.columnsOpt) match {
       case (None, None) =>
         dataDescription.rowsOpt = Some(answers(ROWS).toString.toInt)
-        dataDescription.columnsOpt = Some(
-          answers(COLUMNS).toString.split(",").map { e =>
-            ColumnDescription(e, TextType)
-          }
-        )
+        dataDescription.columnsOpt = Some(Json.parse(answers(COLUMNS).toString).as[Seq[ColumnDescription]])
         dataDescription.setData()
       case (_, _) => throw ParamsAlreadyDefinedException("DataDescription")
     }
