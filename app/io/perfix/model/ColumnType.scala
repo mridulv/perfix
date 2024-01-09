@@ -2,6 +2,7 @@ package io.perfix.model
 
 import com.amazonaws.services.dynamodbv2.model.ScalarAttributeType
 import com.github.javafaker.Faker
+import play.api.libs.json._
 
 trait ColumnType {
   protected val faker: Faker = new Faker
@@ -72,4 +73,45 @@ case object TextType extends ColumnType {
 
 case object BooleanValueType extends ColumnType {
   override def getValue: Any = faker.bool().bool()
+}
+
+object ColumnType {
+  implicit val epochRangeConstraintFormat: OFormat[EpochRangeConstraint] = Json.format[EpochRangeConstraint]
+  implicit val numericRangeConstantFormat: OFormat[NumericRangeConstraint] = Json.format[NumericRangeConstraint]
+  implicit val numericTypeFormat: OFormat[NumericType] = Json.format[NumericType]
+  implicit val epochTypeFormat: OFormat[EpochType] = Json.format[EpochType]
+  implicit val nameTypeFormat: OFormat[NameType.type] = Json.format[NameType.type]
+  implicit val addressTypeFormat: OFormat[AddressType.type] = Json.format[AddressType.type]
+  implicit val emailTypeFormat: OFormat[EmailType.type] = Json.format[EmailType.type]
+  implicit val phoneNumberTypeFormat: OFormat[PhoneNumberType.type] = Json.format[PhoneNumberType.type]
+  implicit val urlTypeFormat: OFormat[URLType.type] = Json.format[URLType.type]
+  implicit val textTypeFormat: OFormat[TextType.type] = Json.format[TextType.type]
+  implicit val booleanValueTypeFormat: OFormat[BooleanValueType.type] = Json.format[BooleanValueType.type]
+
+  // Define a serializer and deserializer for the ColumnType trait
+  implicit val columnTypeFormat: Format[ColumnType] = Format(
+    Reads {
+      case json if (json \ "constraint").toOption.exists(_.isInstanceOf[JsObject]) =>
+        json.validate[NumericType].orElse(json.validate[EpochType]).orElse(json.validate[NameType.type])
+          .orElse(json.validate[AddressType.type]).orElse(json.validate[EmailType.type])
+          .orElse(json.validate[PhoneNumberType.type]).orElse(json.validate[URLType.type])
+          .orElse(json.validate[TextType.type]).orElse(json.validate[BooleanValueType.type])
+      case _ =>
+        JsError("Invalid ColumnType")
+    },
+    Writes {
+      case columnType: ColumnType =>
+        columnType match {
+          case numericType: NumericType => numericTypeFormat.writes(numericType)
+          case epochType: EpochType => epochTypeFormat.writes(epochType)
+          case nameType: NameType.type => nameTypeFormat.writes(nameType)
+          case addressType: AddressType.type => addressTypeFormat.writes(addressType)
+          case emailType: EmailType.type => emailTypeFormat.writes(emailType)
+          case phoneNumberType: PhoneNumberType.type => phoneNumberTypeFormat.writes(phoneNumberType)
+          case urlType: URLType.type => urlTypeFormat.writes(urlType)
+          case textType: TextType.type => textTypeFormat.writes(textType)
+          case booleanValueType: BooleanValueType.type => booleanValueTypeFormat.writes(booleanValueType)
+        }
+    }
+  )
 }
