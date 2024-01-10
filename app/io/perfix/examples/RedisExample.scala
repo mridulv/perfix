@@ -11,7 +11,7 @@ object RedisExample {
   def main(args: Array[String]): Unit = {
     val mappedVariables: Map[String, Any] = Map(
       ROWS -> 100,
-      COLUMNS -> "student_name,student_address",
+      COLUMNS -> "[{\"columnName\":\"student_name\",\"columnType\":{\"constraint\":{\"startEpoch\":1,\"endEpoch\":2},\"type\":\"EpochType\"}},{\"columnName\":\"student_address\",\"columnType\":{\"type\":\"EpochType\"}}]",
       CONCURRENT_QUERIES -> 10,
       URL -> "localhost",
       PORT -> 6379,

@@ -11,7 +11,7 @@ object MySQLExample {
   def main(args: Array[String]): Unit = {
     val mappedVariables: Map[String, Any] = Map(
       ROWS -> 100000,
-      COLUMNS -> "name,address",
+      COLUMNS -> "[{\"columnName\":\"name\",\"columnType\":{\"constraint\":{\"startEpoch\":1,\"endEpoch\":2},\"type\":\"EpochType\"}},{\"columnName\":\"address\",\"columnType\":{\"type\":\"EpochType\"}}]",
       CONCURRENT_QUERIES -> 10,
       URL -> "jdbc:mysql://localhost:3306/perfix?autoReconnect=true&useSSL=false&allowPublicKeyRetrieval=true",
       USERNAME -> "root",

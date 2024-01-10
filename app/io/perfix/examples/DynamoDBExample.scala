@@ -11,7 +11,7 @@ object DynamoDBExample {
   def main(args: Array[String]): Unit = {
     val mappedVariables: Map[String, Any] = Map(
       ROWS -> 100000,
-      COLUMNS -> "student_name,student_address",
+      COLUMNS -> "[{\"columnName\":\"student_name\",\"columnType\":{\"constraint\":{\"startEpoch\":1,\"endEpoch\":2},\"type\":\"EpochType\"}},{\"columnName\":\"student_address\",\"columnType\":{\"type\":\"EpochType\"}}]",
       CONCURRENT_QUERIES -> 10,
       TABLE_NAME -> "test",
       PARTITION_KEY -> "student_name",
