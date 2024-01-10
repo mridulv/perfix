@@ -78,40 +78,41 @@ case object BooleanValueType extends ColumnType {
 object ColumnType {
   implicit val epochRangeConstraintFormat: OFormat[EpochRangeConstraint] = Json.format[EpochRangeConstraint]
   implicit val numericRangeConstantFormat: OFormat[NumericRangeConstraint] = Json.format[NumericRangeConstraint]
-  implicit val numericTypeFormat: OFormat[NumericType] = Json.format[NumericType]
-  implicit val epochTypeFormat: OFormat[EpochType] = Json.format[EpochType]
-  implicit val nameTypeFormat: OFormat[NameType.type] = Json.format[NameType.type]
-  implicit val addressTypeFormat: OFormat[AddressType.type] = Json.format[AddressType.type]
-  implicit val emailTypeFormat: OFormat[EmailType.type] = Json.format[EmailType.type]
-  implicit val phoneNumberTypeFormat: OFormat[PhoneNumberType.type] = Json.format[PhoneNumberType.type]
-  implicit val urlTypeFormat: OFormat[URLType.type] = Json.format[URLType.type]
-  implicit val textTypeFormat: OFormat[TextType.type] = Json.format[TextType.type]
-  implicit val booleanValueTypeFormat: OFormat[BooleanValueType.type] = Json.format[BooleanValueType.type]
+  implicit val numericTypeFormat: Format[NumericType] = Json.format[NumericType]
+  implicit val epochTypeFormat: Format[EpochType] = Json.format[EpochType]
+  implicit val nameTypeFormat: Format[NameType.type] = Format(Reads(_ => JsSuccess(NameType)), Writes(_ => JsNull))
+  implicit val addressTypeFormat: Format[AddressType.type] = Format(Reads(_ => JsSuccess(AddressType)), Writes(_ => JsNull))
+  implicit val emailTypeFormat: Format[EmailType.type] = Format(Reads(_ => JsSuccess(EmailType)), Writes(_ => JsNull))
+  implicit val phoneNumberTypeFormat: Format[PhoneNumberType.type] = Format(Reads(_ => JsSuccess(PhoneNumberType)), Writes(_ => JsNull))
+  implicit val urlTypeFormat: Format[URLType.type] = Format(Reads(_ => JsSuccess(URLType)), Writes(_ => JsNull))
+  implicit val textTypeFormat: Format[TextType.type] = Format(Reads(_ => JsSuccess(TextType)), Writes(_ => JsNull))
+  implicit val booleanValueTypeFormat: Format[BooleanValueType.type] = Format(Reads(_ => JsSuccess(BooleanValueType)), Writes(_ => JsNull))
 
-  // Define a serializer and deserializer for the ColumnType trait
   implicit val columnTypeFormat: Format[ColumnType] = Format(
-    Reads {
-      case json if (json \ "constraint").toOption.exists(_.isInstanceOf[JsObject]) =>
-        json.validate[NumericType].orElse(json.validate[EpochType]).orElse(json.validate[NameType.type])
-          .orElse(json.validate[AddressType.type]).orElse(json.validate[EmailType.type])
-          .orElse(json.validate[PhoneNumberType.type]).orElse(json.validate[URLType.type])
-          .orElse(json.validate[TextType.type]).orElse(json.validate[BooleanValueType.type])
-      case _ =>
-        JsError("Invalid ColumnType")
+    Reads { json =>
+      (json \ "type").as[String] match {
+        case "NumericType" => Json.fromJson[NumericType](json)
+        case "EpochType" => Json.fromJson[EpochType](json)
+        case "NameType" => JsSuccess(NameType)
+        case "AddressType" => JsSuccess(AddressType)
+        case "EmailType" => JsSuccess(EmailType)
+        case "PhoneNumberType" => JsSuccess(PhoneNumberType)
+        case "URLType" => JsSuccess(URLType)
+        case "TextType" => JsSuccess(TextType)
+        case "BooleanValueType" => JsSuccess(BooleanValueType)
+        case _ => JsError("Unknown ColumnType")
+      }
     },
     Writes {
-      case columnType: ColumnType =>
-        columnType match {
-          case numericType: NumericType => numericTypeFormat.writes(numericType)
-          case epochType: EpochType => epochTypeFormat.writes(epochType)
-          case nameType: NameType.type => nameTypeFormat.writes(nameType)
-          case addressType: AddressType.type => addressTypeFormat.writes(addressType)
-          case emailType: EmailType.type => emailTypeFormat.writes(emailType)
-          case phoneNumberType: PhoneNumberType.type => phoneNumberTypeFormat.writes(phoneNumberType)
-          case urlType: URLType.type => urlTypeFormat.writes(urlType)
-          case textType: TextType.type => textTypeFormat.writes(textType)
-          case booleanValueType: BooleanValueType.type => booleanValueTypeFormat.writes(booleanValueType)
-        }
+      case numericType: NumericType => Json.toJson(numericType)(numericTypeFormat).as[JsObject] + ("type" -> JsString("NumericType"))
+      case epochType: EpochType => Json.toJson(epochType)(epochTypeFormat).as[JsObject] + ("type" -> JsString("EpochType"))
+      case NameType => Json.obj("type" -> "NameType")
+      case AddressType => Json.obj("type" -> "AddressType")
+      case EmailType => Json.obj("type" -> "EmailType")
+      case PhoneNumberType => Json.obj("type" -> "PhoneNumberType")
+      case URLType => Json.obj("type" -> "URLType")
+      case TextType => Json.obj("type" -> "TextType")
+      case BooleanValueType => Json.obj("type" -> "BooleanValueType")
     }
   )
 }
