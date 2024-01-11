@@ -15,4 +15,4 @@ case class DynamoDBParams(dataDescription: DataDescription) extends QuestionPara
 
 case class DynamoDBConnectionParams(urlOpt: Option[String], accessKey: String, accessSecret: String)
 case class DynamoDBTableParams(tableName: String, partitionKey: String, sortKey: String)
-case class DynamoDBCapacityParams(readCapacity: Option[Int], writeCapacity: Option[Int])
+case class DynamoDBCapacityParams(readCapacity: Option[Long], writeCapacity: Option[Long])

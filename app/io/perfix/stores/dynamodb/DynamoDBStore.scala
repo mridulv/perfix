@@ -51,10 +51,9 @@ class DynamoDBStore extends DataStore {
       }  )).build()
     }
 
-    val provisionedThroughput = new ProvisionedThroughput(
-      capacityParams.readCapacity.getOrElse(5),
-      capacityParams.writeCapacity.getOrElse(5)
-    )
+    val readCapacity: Long = capacityParams.readCapacity.getOrElse(5L)
+    val writeCapacity: Long = capacityParams.writeCapacity.getOrElse(5L)
+    val provisionedThroughput = new ProvisionedThroughput(readCapacity, writeCapacity)
 
     val createTableRequest = new CreateTableRequest()
       .withTableName(tableParams.tableName)

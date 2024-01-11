@@ -24,8 +24,8 @@ class DynamoDBCapacityQuestions(override val storeQuestionParams: DynamoDBParams
       case None =>
         dynamoDBCapacityParams = Some(
           DynamoDBCapacityParams(
-            readCapacity = answers.get(READ_CAPACITY).map(_.toString.toInt),
-            writeCapacity = answers.get(WRITE_CAPACITY).map(_.toString.toInt)
+            readCapacity = answers.get(READ_CAPACITY).map(_.toString.toLong),
+            writeCapacity = answers.get(WRITE_CAPACITY).map(_.toString.toLong)
           )
         )
     }
