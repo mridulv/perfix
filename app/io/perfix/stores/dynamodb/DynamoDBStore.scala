@@ -28,6 +28,7 @@ class DynamoDBStore extends DataStore {
   def connectAndInitialize(): Unit = {
     tableParams = dynamoDBParams.dynamoDBTableParams.getOrElse(throw InvalidStateException("Table Params should have been defined"))
     connectionParams = dynamoDBParams.dynamoDBConnectionParams.getOrElse(throw InvalidStateException("Connection Params should have been defined"))
+    val capacityParams = dynamoDBParams.dynamoDBCapacityParams.getOrElse(throw InvalidStateException("Capacity Params should have been defined"))
 
     val keySchemaElements = getKeySchemaElements(dynamoDBParams.dataDescription.columns)
     val attributeDefinitions = getAttributeDefinitions(dynamoDBParams.dataDescription.columns)
@@ -50,11 +51,16 @@ class DynamoDBStore extends DataStore {
       }  )).build()
     }
 
+    val provisionedThroughput = new ProvisionedThroughput(
+      capacityParams.readCapacity.getOrElse(5),
+      capacityParams.writeCapacity.getOrElse(5)
+    )
+
     val createTableRequest = new CreateTableRequest()
       .withTableName(tableParams.tableName)
       .withKeySchema(keySchemaElements.asJava)
       .withAttributeDefinitions(attributeDefinitions.asJava)
-      .withProvisionedThroughput(new ProvisionedThroughput(5L, 5L)) // Example provisioned throughput
+      .withProvisionedThroughput(provisionedThroughput)
 
     client.createTable(createTableRequest)
     // This is needed for DynamoDB Table Creation Step
