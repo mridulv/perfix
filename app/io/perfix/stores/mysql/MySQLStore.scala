@@ -34,10 +34,19 @@ class MySQLStore extends DataStore {
       case Some(tableParams) => tableParams
       case None => throw InvalidStateException("Table Params should have been defined")
     }
+
+    val tableIndexesParams = mySQLParams.mySQLTableIndexesParams match {
+      case Some(tableIndexesParams) => tableIndexesParams
+      case None => throw InvalidStateException("Table Inex Params should have been defined")
+    }
     import connectionParams._
 
     val sql = createTableStatement(tableParams.dbName + "." + tableParams.tableName, mySQLParams.dataDescription.columns)
     statement.executeUpdate(sql)
+
+    val indexSql = createTableIndexesStatement(tableIndexesParams.primaryIndexColumn, tableIndexesParams.secondaryIndexesColumn)
+    statement.executeUpdate(indexSql)
+
     statement.close()
   }
 
@@ -82,6 +91,31 @@ class MySQLStore extends DataStore {
   private def createTableStatement(tableName: String, columns: Seq[ColumnDescription]): String = {
     val columnDefs = columns.map(col => s"${col.columnName} ${toSqlType(col.columnType)}").mkString(", ")
     s"CREATE TABLE $tableName ($columnDefs);"
+  }
+
+  private def createTableIndexesStatement(primaryIndexColumnName: Option[String],
+                                          secondaryIndexesColumnNames: Option[Seq[String]]): String = {
+    val tableName = mySQLParams.mySQLTableParams match {
+      case Some(tableParams) => tableParams.tableName
+      case None => throw InvalidStateException("Table Params should have been defined")
+    }
+
+    val primaryIndexSQL = primaryIndexColumnName.map(primaryColumn => s"PRIMARY KEY ($primaryColumn)").getOrElse("")
+    val secondaryIndexSQL = secondaryIndexesColumnNames.map { secondaryColumns =>
+      if (secondaryColumns.nonEmpty) {
+        secondaryColumns.map(columnName => s"INDEX ($columnName)").mkString(", ")
+      } else {
+        ""
+      }
+    }.getOrElse("")
+
+    val indexStatements = Seq(primaryIndexSQL, secondaryIndexSQL).filter(_.nonEmpty).mkString(", ")
+
+    if (indexStatements.nonEmpty) {
+      s"ALTER TABLE $tableName ADD $indexStatements;"
+    } else {
+      ""
+    }
   }
 
   override def cleanup(): Unit = {
