@@ -9,8 +9,8 @@ import io.perfix.stores.mysql.{MySQLParams, MySQLTableIndexesParams}
 
 class TableIndicesDetailQuestion(override val storeQuestionParams: MySQLParams) extends Question {
   override val mapping: Map[QuestionLabel, QuestionType] = Map(
-    PRIMARY_INDEX_COLUMN -> QuestionType(StringType),
-    SECONDARY_INDEX_COLUMNS -> QuestionType(StringType)
+    PRIMARY_INDEX_COLUMN -> QuestionType(StringType, isRequired = false),
+    SECONDARY_INDEX_COLUMNS -> QuestionType(StringType, isRequired = false)
   )
 
   override def shouldAsk(): Boolean = {
