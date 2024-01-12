@@ -7,71 +7,50 @@ import play.api.libs.json._
 trait ColumnType {
   protected val faker: Faker = new Faker
   def getValue: Any
-
-  def toSqlType(columnType: ColumnType): String = columnType match {
-    case _: NumericType => "INT"  // or DECIMAL, depending on the precision you need
-    case _: EpochType => "BIGINT" // Epoch times are typically stored as BIGINT
-    case NameType => "VARCHAR(255)"
-    case AddressType => "VARCHAR(255)"
-    case EmailType => "VARCHAR(255)"
-    case PhoneNumberType => "VARCHAR(20)"
-    case URLType => "VARCHAR(255)"
-    case TextType => "TEXT"        // TEXT for larger string data
-    case BooleanValueType => "BOOLEAN"
-  }
-
-  def toDynamoDBType(columnType: ColumnType): String = columnType match {
-    case _: NumericType => ScalarAttributeType.S.toString
-    case _: EpochType => ScalarAttributeType.N.toString
-    case NameType => ScalarAttributeType.S.toString
-    case AddressType => ScalarAttributeType.S.toString
-    case EmailType => ScalarAttributeType.S.toString
-    case PhoneNumberType => ScalarAttributeType.S.toString
-    case URLType => ScalarAttributeType.S.toString
-    case TextType => ScalarAttributeType.S.toString
-    case BooleanValueType => ScalarAttributeType.B.toString
-  }
+  def isUnique: Boolean
 }
 
-case class NumericType(constraint: Option[NumericRangeConstraint]) extends ColumnType {
+case class NumericType(constraint: Option[NumericRangeConstraint],
+                       override val isUnique: Boolean = false) extends ColumnType {
   override def getValue: Any = constraint match {
     case Some(NumericRangeConstraint(min, max)) => faker.number().numberBetween(min, max)
     case _ => faker.number().randomNumber()
   }
 }
 
-case class EpochType(constraint: Option[EpochRangeConstraint]) extends ColumnType {
+case class EpochType(constraint: Option[EpochRangeConstraint],
+                     override val isUnique: Boolean = false) extends ColumnType {
   override def getValue: Any = constraint match {
     case Some(EpochRangeConstraint(startEpoch, endEpoch)) => startEpoch + faker.number().numberBetween(0, endEpoch - startEpoch)
     case _ => faker.date().past(365 * 30, java.util.concurrent.TimeUnit.DAYS).getTime / 1000
   }
 }
 
-case object NameType extends ColumnType {
+case class NameType(override val isUnique: Boolean = false) extends ColumnType {
   override def getValue: Any = faker.name().fullName()
 }
 
-case object AddressType extends ColumnType {
+case class AddressType(override val isUnique: Boolean = false) extends ColumnType {
   override def getValue: Any = faker.address().fullAddress()
 }
 
-case object EmailType extends ColumnType {
+case class EmailType(override val isUnique: Boolean = false) extends ColumnType {
   override def getValue: Any = faker.internet().emailAddress()
 }
 
-case object PhoneNumberType extends ColumnType {
+case class PhoneNumberType(override val isUnique: Boolean = false) extends ColumnType {
   override def getValue: Any = faker.phoneNumber().phoneNumber()
 }
 
-case object URLType extends ColumnType {
+case class URLType(override val isUnique: Boolean = false) extends ColumnType {
   override def getValue: Any = faker.internet().url()
 }
 
-case object TextType extends ColumnType {
+case class TextType(override val isUnique: Boolean = false) extends ColumnType {
   override def getValue: Any = faker.lorem().paragraph()
 }
 
-case object BooleanValueType extends ColumnType {
+case class BooleanValueType(override val isUnique: Boolean = false) extends ColumnType {
   override def getValue: Any = faker.bool().bool()
 }
 
@@ -80,39 +59,68 @@ object ColumnType {
   implicit val numericRangeConstantFormat: OFormat[NumericRangeConstraint] = Json.format[NumericRangeConstraint]
   implicit val numericTypeFormat: Format[NumericType] = Json.format[NumericType]
   implicit val epochTypeFormat: Format[EpochType] = Json.format[EpochType]
-  implicit val nameTypeFormat: Format[NameType.type] = Format(Reads(_ => JsSuccess(NameType)), Writes(_ => JsNull))
-  implicit val addressTypeFormat: Format[AddressType.type] = Format(Reads(_ => JsSuccess(AddressType)), Writes(_ => JsNull))
-  implicit val emailTypeFormat: Format[EmailType.type] = Format(Reads(_ => JsSuccess(EmailType)), Writes(_ => JsNull))
-  implicit val phoneNumberTypeFormat: Format[PhoneNumberType.type] = Format(Reads(_ => JsSuccess(PhoneNumberType)), Writes(_ => JsNull))
-  implicit val urlTypeFormat: Format[URLType.type] = Format(Reads(_ => JsSuccess(URLType)), Writes(_ => JsNull))
-  implicit val textTypeFormat: Format[TextType.type] = Format(Reads(_ => JsSuccess(TextType)), Writes(_ => JsNull))
-  implicit val booleanValueTypeFormat: Format[BooleanValueType.type] = Format(Reads(_ => JsSuccess(BooleanValueType)), Writes(_ => JsNull))
+  implicit val nameTypeFormat: Format[NameType] = Json.format[NameType]
+  implicit val addressTypeFormat: Format[AddressType] = Json.format[AddressType]
+  implicit val emailTypeFormat: Format[EmailType] = Json.format[EmailType]
+  implicit val phoneNumberTypeFormat: Format[PhoneNumberType] = Json.format[PhoneNumberType]
+  implicit val urlTypeFormat: Format[URLType] = Json.format[URLType]
+  implicit val textTypeFormat: Format[TextType] = Json.format[TextType]
+  implicit val booleanValueTypeFormat: Format[BooleanValueType] = Json.format[BooleanValueType]
 
-  implicit val columnTypeFormat: Format[ColumnType] = Format(
-    Reads { json =>
-      (json \ "type").as[String] match {
-        case "NumericType" => Json.fromJson[NumericType](json)
-        case "EpochType" => Json.fromJson[EpochType](json)
-        case "NameType" => JsSuccess(NameType)
-        case "AddressType" => JsSuccess(AddressType)
-        case "EmailType" => JsSuccess(EmailType)
-        case "PhoneNumberType" => JsSuccess(PhoneNumberType)
-        case "URLType" => JsSuccess(URLType)
-        case "TextType" => JsSuccess(TextType)
-        case "BooleanValueType" => JsSuccess(BooleanValueType)
-        case _ => JsError("Unknown ColumnType")
+  // Define a custom JSON format for the ColumnType trait
+  implicit val columnTypeFormat: Format[ColumnType] = new Format[ColumnType] {
+    override def writes(o: ColumnType): JsValue = {
+      val (typeField, jsonValue) = o match {
+        case numericType: NumericType => ("NumericType", Json.toJson(numericType))
+        case epochType: EpochType => ("EpochType", Json.toJson(epochType))
+        case nameType: NameType => ("NameType", Json.toJson(nameType))
+        case addressType: AddressType => ("AddressType", Json.toJson(addressType))
+        case emailType: EmailType => ("EmailType", Json.toJson(emailType))
+        case phoneNumberType: PhoneNumberType => ("PhoneNumberType", Json.toJson(phoneNumberType))
+        case urlType: URLType => ("URLType", Json.toJson(urlType))
+        case textType: TextType => ("TextType", Json.toJson(textType))
+        case booleanValueType: BooleanValueType => ("BooleanValueType", Json.toJson(booleanValueType))
       }
-    },
-    Writes {
-      case numericType: NumericType => Json.toJson(numericType)(numericTypeFormat).as[JsObject] + ("type" -> JsString("NumericType"))
-      case epochType: EpochType => Json.toJson(epochType)(epochTypeFormat).as[JsObject] + ("type" -> JsString("EpochType"))
-      case NameType => Json.obj("type" -> "NameType")
-      case AddressType => Json.obj("type" -> "AddressType")
-      case EmailType => Json.obj("type" -> "EmailType")
-      case PhoneNumberType => Json.obj("type" -> "PhoneNumberType")
-      case URLType => Json.obj("type" -> "URLType")
-      case TextType => Json.obj("type" -> "TextType")
-      case BooleanValueType => Json.obj("type" -> "BooleanValueType")
+      Json.obj("type" -> typeField) ++ jsonValue.asInstanceOf[JsObject]
     }
-  )
+
+    override def reads(json: JsValue): JsResult[ColumnType] = {
+      (json \ "type").validate[String] flatMap {
+        case "NumericType" => json.validate[NumericType]
+        case "EpochType" => json.validate[EpochType]
+        case "NameType" => json.validate[NameType]
+        case "AddressType" => json.validate[AddressType]
+        case "EmailType" => json.validate[EmailType]
+        case "PhoneNumberType" => json.validate[PhoneNumberType]
+        case "URLType" => json.validate[URLType]
+        case "TextType" => json.validate[TextType]
+        case "BooleanValueType" => json.validate[BooleanValueType]
+        case otherType => JsError(s"Unknown ColumnType subtype: $otherType")
+      }
+    }
+  }
+
+  def toSqlType(columnType: ColumnType): String = columnType match {
+    case _: NumericType => "INT"  // or DECIMAL, depending on the precision you need
+    case _: EpochType => "BIGINT" // Epoch times are typically stored as BIGINT
+    case _: NameType => "VARCHAR(255)"
+    case _: AddressType => "VARCHAR(255)"
+    case _: EmailType => "VARCHAR(255)"
+    case _: PhoneNumberType => "VARCHAR(20)"
+    case _: URLType => "VARCHAR(255)"
+    case _: TextType => "TEXT"        // TEXT for larger string data
+    case _: BooleanValueType => "BOOLEAN"
+  }
+
+  def toDynamoDBType(columnType: ColumnType): String = columnType match {
+    case _: NumericType => ScalarAttributeType.S.toString
+    case _: EpochType => ScalarAttributeType.N.toString
+    case _: NameType => ScalarAttributeType.S.toString
+    case _: AddressType => ScalarAttributeType.S.toString
+    case _: EmailType => ScalarAttributeType.S.toString
+    case _: PhoneNumberType => ScalarAttributeType.S.toString
+    case _: URLType => ScalarAttributeType.S.toString
+    case _: TextType => ScalarAttributeType.S.toString
+    case _: BooleanValueType => ScalarAttributeType.B.toString
+  }
 }

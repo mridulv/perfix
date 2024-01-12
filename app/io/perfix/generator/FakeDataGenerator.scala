@@ -7,11 +7,31 @@ class FakeDataGenerator extends DataGenerator {
   val faker = new Faker
 
   override def generateData(dataDescription: DataDescription): DataWithDescription = {
-    val data = (1 to dataDescription.rows).map { _ =>
-      dataDescription.columns.map { columnDesc =>
-        columnDesc.columnName -> columnDesc.columnType.getValue
-      }.toMap
+    val numRows = dataDescription.rows
+    val columns = dataDescription.columns
+
+    var rows = List[Map[String, Any]]()
+    val uniqueValuesByColumn = scala.collection.mutable.Map[String, Set[Any]]()
+    for (_ <- 1 to numRows) {
+      var row = Map[String, Any]()
+
+      for (column <- columns) {
+        val columnName = column.columnName
+        val columnType = column.columnType
+        var value = columnType.getValue
+        if (columnType.isUnique) {
+          while (uniqueValuesByColumn.getOrElse(columnName, Set.empty).contains(value)) {
+            value = columnType.getValue
+          }
+          uniqueValuesByColumn.update(columnName, uniqueValuesByColumn.getOrElse(columnName, Set.empty) + value)
+        }
+        row += (columnName -> value)
+      }
+      rows = row :: rows
     }
-    DataWithDescription(dataDescription, data)
+    rows = rows.reverse
+    val dataWithDescription = DataWithDescription(dataDescription, rows)
+
+    dataWithDescription
   }
 }
