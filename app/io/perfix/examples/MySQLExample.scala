@@ -16,7 +16,7 @@ object MySQLExample {
       CONCURRENT_QUERIES -> 10,
       URL -> "jdbc:mysql://localhost:3306/perfix?autoReconnect=true&useSSL=false&allowPublicKeyRetrieval=true",
       USERNAME -> "root",
-      PASSWORD -> "mridulv09",
+      PASSWORD -> "*********",
       DBNAME -> "perfix",
       TABLENAME -> "test"
     )
