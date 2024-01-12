@@ -37,7 +37,7 @@ class MySQLStore extends DataStore {
 
     val tableIndexesParams = mySQLParams.mySQLTableIndexesParams match {
       case Some(tableIndexesParams) => tableIndexesParams
-      case None => throw InvalidStateException("Table Inex Params should have been defined")
+      case None => throw InvalidStateException("Table Index Params should have been defined")
     }
     import connectionParams._
 
@@ -105,7 +105,7 @@ class MySQLStore extends DataStore {
     val primaryIndexSQL = primaryIndexColumnName.map(primaryColumn => s"PRIMARY KEY ($primaryColumn)").getOrElse("")
     val secondaryIndexSQL = secondaryIndexesColumnNames.map { secondaryColumns =>
       if (secondaryColumns.nonEmpty) {
-        secondaryColumns.map(columnName => s"INDEX ($columnName)").mkString(", ")
+        secondaryColumns.map(columnName => s"ADD INDEX idx_$columnName ($columnName)").mkString(", ")
       } else {
         ""
       }
