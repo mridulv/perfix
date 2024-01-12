@@ -1,6 +1,7 @@
 package io.perfix.examples
 
 import io.perfix.common.PerfixExperimentExecutor
+import io.perfix.question.Question
 import io.perfix.question.dynamodb.DynamoDBConnectionParametersQuestions.{ACCESS_ID, ACCESS_SECRET, CONNECTION_URL}
 import io.perfix.question.dynamodb.DynamoDBTableParamsQuestions._
 import io.perfix.question.experiment.DataQuestions._
@@ -23,10 +24,15 @@ object DynamoDBExample {
     val experimentExecutor = new PerfixExperimentExecutor("dynamodb")
     while (experimentExecutor.getQuestionnaireExecutor.hasNext) {
       val question = experimentExecutor.getQuestionnaireExecutor.next()
-      val answerMapping = question.map { case (k, _) =>
-        k -> mappedVariables(k)
+      val answerMapping = question.map { case (k, questionType) =>
+        val mappedValue = if (questionType.isRequired) {
+          Some(mappedVariables(k))
+        } else {
+          mappedVariables.get(k)
+        }
+        k -> mappedValue
       }
-      experimentExecutor.getQuestionnaireExecutor.submit(answerMapping)
+      experimentExecutor.getQuestionnaireExecutor.submit(Question.filteredAnswers(answerMapping))
     }
 
     experimentExecutor.runExperiment()

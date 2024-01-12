@@ -1,6 +1,7 @@
 package io.perfix.examples
 
 import io.perfix.common.PerfixExperimentExecutor
+import io.perfix.question.Question
 import io.perfix.question.experiment.DataQuestions._
 import io.perfix.question.experiment.ExperimentParamsQuestion.CONCURRENT_QUERIES
 import io.perfix.question.redis.RedisConnectionParametersQuestion.{PORT, URL}
@@ -20,10 +21,15 @@ object RedisExample {
     val experimentExecutor = new PerfixExperimentExecutor("redis")
     while (experimentExecutor.getQuestionnaireExecutor.hasNext) {
       val question = experimentExecutor.getQuestionnaireExecutor.next()
-      val answerMapping = question.map { case (k, _) =>
-        k -> mappedVariables(k)
+      val answerMapping = question.map { case (k, questionType) =>
+        val mappedValue = if (questionType.isRequired) {
+          Some(mappedVariables(k))
+        } else {
+          mappedVariables.get(k)
+        }
+        k -> mappedValue
       }
-      experimentExecutor.getQuestionnaireExecutor.submit(answerMapping)
+      experimentExecutor.getQuestionnaireExecutor.submit(Question.filteredAnswers(answerMapping))
     }
 
     experimentExecutor.runExperiment()

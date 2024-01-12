@@ -1,6 +1,7 @@
 package io.perfix.examples
 
 import io.perfix.common.PerfixExperimentExecutor
+import io.perfix.question.Question
 import io.perfix.question.experiment.DataQuestions._
 import io.perfix.question.experiment.ExperimentParamsQuestion.CONCURRENT_QUERIES
 import io.perfix.question.mysql.ConnectionParamsQuestion._
@@ -15,17 +16,22 @@ object MySQLExample {
       CONCURRENT_QUERIES -> 10,
       URL -> "jdbc:mysql://localhost:3306/perfix?autoReconnect=true&useSSL=false&allowPublicKeyRetrieval=true",
       USERNAME -> "root",
-      PASSWORD -> "**********",
+      PASSWORD -> "mridulv09",
       DBNAME -> "perfix",
       TABLENAME -> "test"
     )
     val experimentExecutor = new PerfixExperimentExecutor("mysql")
     while (experimentExecutor.getQuestionnaireExecutor.hasNext) {
       val question = experimentExecutor.getQuestionnaireExecutor.next()
-      val answerMapping = question.map { case (k, _) =>
-        k -> mappedVariables(k)
+      val answerMapping = question.map { case (k, questionType) =>
+        val mappedValue = if (questionType.isRequired) {
+          Some(mappedVariables(k))
+        } else {
+          mappedVariables.get(k)
+        }
+        k -> mappedValue
       }
-      experimentExecutor.getQuestionnaireExecutor.submit(answerMapping)
+      experimentExecutor.getQuestionnaireExecutor.submit(Question.filteredAnswers(answerMapping))
     }
 
     experimentExecutor.runExperiment()
