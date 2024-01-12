@@ -17,4 +17,10 @@ trait Question {
 
 object Question {
   type QuestionLabel = String
+
+  def filteredAnswers(answers: Map[QuestionLabel, Option[Any]]): Map[QuestionLabel, Any] = {
+    answers.collect {
+      case (label, Some(value)) => (label, value)
+    }
+  }
 }
