@@ -1,9 +1,9 @@
 package io.perfix.stores.mysql
 
 import io.perfix.exceptions.InvalidStateException
-import io.perfix.model.{ColumnDescription, DataDescription, DataWithDescription}
+import io.perfix.model.ColumnType.toSqlType
+import io.perfix.model.{ColumnDescription, DataDescription}
 import io.perfix.stores.DataStore
-import io.perfix.model.URLType.toSqlType
 import io.perfix.query.PerfixQuery
 
 import java.sql.{Connection, DriverManager, ResultSet}
@@ -45,7 +45,9 @@ class MySQLStore extends DataStore {
     statement.executeUpdate(sql)
 
     val indexSql = createTableIndexesStatement(tableIndexesParams.primaryIndexColumn, tableIndexesParams.secondaryIndexesColumn)
-    statement.executeUpdate(indexSql)
+    if (indexSql.nonEmpty) {
+      statement.executeUpdate(indexSql)
+    }
 
     statement.close()
   }

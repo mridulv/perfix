@@ -5,9 +5,9 @@ import com.amazonaws.client.builder.AwsClientBuilder
 import com.amazonaws.services.dynamodbv2.{AmazonDynamoDB, AmazonDynamoDBClientBuilder}
 import com.amazonaws.services.dynamodbv2.model._
 import io.perfix.exceptions.InvalidStateException
+import io.perfix.model.ColumnType.toDynamoDBType
 import io.perfix.model.{ColumnDescription, DataDescription}
 import io.perfix.stores.DataStore
-import io.perfix.model.URLType.toDynamoDBType
 import io.perfix.query.PerfixQuery
 
 import scala.collection.JavaConverters._
