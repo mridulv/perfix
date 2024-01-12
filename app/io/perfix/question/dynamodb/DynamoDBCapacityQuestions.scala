@@ -1,16 +1,16 @@
 package io.perfix.question.dynamodb
 
 import io.perfix.exceptions.ParamsAlreadyDefinedException
-import io.perfix.model.{DataType, IntType}
+import io.perfix.model.{DataType, IntType, QuestionType, StringType}
 import io.perfix.question.Question
 import io.perfix.question.Question.QuestionLabel
 import io.perfix.question.dynamodb.DynamoDBCapacityQuestions.{READ_CAPACITY, WRITE_CAPACITY}
 import io.perfix.stores.dynamodb.{DynamoDBCapacityParams, DynamoDBParams}
 
 class DynamoDBCapacityQuestions(override val storeQuestionParams: DynamoDBParams) extends Question {
-  override val mapping: Map[QuestionLabel, DataType] = Map(
-    READ_CAPACITY -> IntType,
-    WRITE_CAPACITY -> IntType
+  override val mapping: Map[QuestionLabel, QuestionType] = Map(
+    READ_CAPACITY -> QuestionType(IntType, isRequired = false),
+    WRITE_CAPACITY -> QuestionType(IntType, isRequired = false)
   )
 
   override def shouldAsk(): Boolean = {

@@ -1,16 +1,16 @@
 package io.perfix.question.redis
 
 import io.perfix.exceptions.ParamsAlreadyDefinedException
-import io.perfix.model.{DataType, IntType, StringType}
+import io.perfix.model.{DataType, IntType, QuestionType, StringType}
 import io.perfix.question.Question
 import io.perfix.question.Question.QuestionLabel
 import io.perfix.question.redis.RedisConnectionParametersQuestion.{PORT, URL}
 import io.perfix.stores.redis.RedisParams
 
 class RedisConnectionParametersQuestion(override val storeQuestionParams: RedisParams) extends Question {
-  override val mapping: Map[QuestionLabel, DataType] = Map(
-    URL -> StringType,
-    PORT -> IntType
+  override val mapping: Map[QuestionLabel, QuestionType] = Map(
+    URL -> QuestionType(StringType),
+    PORT -> QuestionType(IntType)
   )
 
   override def shouldAsk(): Boolean = {

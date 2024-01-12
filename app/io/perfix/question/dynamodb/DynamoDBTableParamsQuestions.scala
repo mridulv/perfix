@@ -9,10 +9,10 @@ import io.perfix.stores.dynamodb.{DynamoDBParams, DynamoDBTableParams}
 
 class DynamoDBTableParamsQuestions(override val storeQuestionParams: DynamoDBParams) extends Question {
 
-  override val mapping: Map[QuestionLabel, DataType] = Map(
-    TABLE_NAME -> StringType,
-    PARTITION_KEY -> StringType,
-    SORT_KEY -> StringType
+  override val mapping: Map[QuestionLabel, QuestionType] = Map(
+    TABLE_NAME -> QuestionType(StringType),
+    PARTITION_KEY -> QuestionType(StringType),
+    SORT_KEY -> QuestionType(StringType)
   )
 
   override def shouldAsk(): Boolean = {

@@ -2,16 +2,16 @@ package io.perfix.question.experiment
 
 import DataQuestions._
 import io.perfix.exceptions.ParamsAlreadyDefinedException
-import io.perfix.model.{ColumnDescription, DataType, DoubleType, ExperimentParams, StringType, TextType}
+import io.perfix.model.{ColumnDescription, DataType, DoubleType, ExperimentParams, QuestionType, StringType, TextType}
 import io.perfix.question.Question.QuestionLabel
 import io.perfix.question.{Question, QuestionParams}
 import play.api.libs.json.Json
 
 class DataQuestions(experimentParams: ExperimentParams) extends Question {
 
-  override val mapping: Map[QuestionLabel, DataType] = Map(
-    ROWS -> DoubleType,
-    COLUMNS -> StringType
+  override val mapping: Map[QuestionLabel, QuestionType] = Map(
+    ROWS -> QuestionType(DoubleType),
+    COLUMNS -> QuestionType(StringType)
   )
 
   override val storeQuestionParams: QuestionParams = experimentParams

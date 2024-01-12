@@ -1,16 +1,16 @@
 package io.perfix.question.mysql
 
 import io.perfix.exceptions.ParamsAlreadyDefinedException
-import io.perfix.model.{DataType, StringType}
+import io.perfix.model.{DataType, QuestionType, StringType}
 import io.perfix.question.{Question, QuestionParams}
 import io.perfix.question.Question.QuestionLabel
 import io.perfix.question.mysql.TableIndicesDetailQuestion.{PRIMARY_INDEX_COLUMN, SECONDARY_INDEX_COLUMNS}
 import io.perfix.stores.mysql.{MySQLParams, MySQLTableIndexesParams}
 
 class TableIndicesDetailQuestion(override val storeQuestionParams: MySQLParams) extends Question {
-  override val mapping: Map[QuestionLabel, DataType] = Map(
-    PRIMARY_INDEX_COLUMN -> StringType,
-    SECONDARY_INDEX_COLUMNS -> StringType
+  override val mapping: Map[QuestionLabel, QuestionType] = Map(
+    PRIMARY_INDEX_COLUMN -> QuestionType(StringType),
+    SECONDARY_INDEX_COLUMNS -> QuestionType(StringType)
   )
 
   override def shouldAsk(): Boolean = {

@@ -1,11 +1,11 @@
 package io.perfix.question
 
 import Question.QuestionLabel
-import io.perfix.model.DataType
+import io.perfix.model.{DataType, QuestionType}
 
 trait Question {
 
-  val mapping: Map[QuestionLabel, DataType]
+  val mapping: Map[QuestionLabel, QuestionType]
 
   val storeQuestionParams: QuestionParams
 

@@ -1,7 +1,7 @@
 package io.perfix.question.redis
 
 import io.perfix.exceptions.ParamsAlreadyDefinedException
-import io.perfix.model.{DataType, StringType}
+import io.perfix.model.{DataType, QuestionType, StringType}
 import io.perfix.question.Question
 import io.perfix.question.Question.QuestionLabel
 import io.perfix.question.redis.RedisTableParamsQuestion.KEY_COLUMN
@@ -10,8 +10,8 @@ import io.perfix.stores.redis.RedisParams
 class RedisTableParamsQuestion(override val storeQuestionParams: RedisParams)
   extends Question {
 
-  override val mapping: Map[QuestionLabel, DataType] = Map(
-    KEY_COLUMN -> StringType
+  override val mapping: Map[QuestionLabel, QuestionType] = Map(
+    KEY_COLUMN -> QuestionType(StringType)
   )
 
   override def shouldAsk(): Boolean = {
