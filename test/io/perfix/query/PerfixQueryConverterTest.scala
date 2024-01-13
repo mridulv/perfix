@@ -1,6 +1,6 @@
-package io.perfix.stores.mysql
+package io.perfix.query
 
-import io.perfix.query.{PerfixQuery, PerfixQueryFilter}
+import io.perfix.stores.mysql.{MySQLTableParams, PerfixQueryConverter}
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
