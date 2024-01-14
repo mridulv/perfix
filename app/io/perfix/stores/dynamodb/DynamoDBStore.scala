@@ -6,9 +6,10 @@ import com.amazonaws.services.dynamodbv2.{AmazonDynamoDB, AmazonDynamoDBClientBu
 import com.amazonaws.services.dynamodbv2.model._
 import io.perfix.exceptions.InvalidStateException
 import io.perfix.model.ColumnType.toDynamoDBType
-import io.perfix.model.{ColumnDescription, DataDescription}
+import io.perfix.model.{ColumnDescription, DataDescription, StringType}
 import io.perfix.stores.DataStore
 import io.perfix.query.PerfixQuery
+import io.perfix.stores.dynamodb.model.DynamoDBGSIMetadataParams
 
 import scala.collection.JavaConverters._
 
@@ -30,7 +31,10 @@ class DynamoDBStore extends DataStore {
     connectionParams = dynamoDBParams.dynamoDBConnectionParams.getOrElse(throw InvalidStateException("Connection Params should have been defined"))
     val capacityParams = dynamoDBParams.dynamoDBCapacityParams.getOrElse(throw InvalidStateException("Capacity Params should have been defined"))
 
-    val keySchemaElements = getKeySchemaElements(dynamoDBParams.dataDescription.columns)
+    val keySchemaElements = getKeySchemaElements(
+      tableParams.partitionKey,
+      tableParams.sortKey
+    )
     val attributeDefinitions = getAttributeDefinitions(dynamoDBParams.dataDescription.columns)
 
     client = connectionParams.urlOpt match {
@@ -62,8 +66,19 @@ class DynamoDBStore extends DataStore {
       .withProvisionedThroughput(provisionedThroughput)
 
     client.createTable(createTableRequest)
-    // This is needed for DynamoDB Table Creation Step
-    Thread.sleep(10000)
+    Thread.sleep(5000)
+
+    dynamoDBParams.dynamoDBGSIMetadataParams match {
+      case Some(gsi) =>
+        val updateTableRequest = new UpdateTableRequest()
+          .withTableName(tableParams.tableName)
+          .withAttributeDefinitions(attributeDefinitions: _*)
+          .withGlobalSecondaryIndexUpdates(createGSIs(gsi): _*)
+        client.updateTable(updateTableRequest)
+      case None =>
+    }
+
+    Thread.sleep(5000)
   }
 
   override def putData(): Unit = {
@@ -105,6 +120,22 @@ class DynamoDBStore extends DataStore {
     ).toSeq
   }
 
+  private def createGSIs(dynamoDBGSIMetadataParams: DynamoDBGSIMetadataParams): Seq[GlobalSecondaryIndexUpdate] = {
+    dynamoDBGSIMetadataParams.gsiParams.map { gsiParam =>
+
+      val keySchema = getKeySchemaElements(gsiParam.partitionKey, gsiParam.sortKey)
+      val provisionedThroughput = new ProvisionedThroughput(5L, 5L)
+      val projection = new Projection().withProjectionType(ProjectionType.ALL)
+      val globalSecondaryIndexAction = new CreateGlobalSecondaryIndexAction()
+        .withIndexName(s"gsi_${gsiParam.partitionKey}_${gsiParam.sortKey}")
+        .withKeySchema(keySchema: _*)
+        .withProjection(projection)
+        .withProvisionedThroughput(provisionedThroughput)
+
+      new GlobalSecondaryIndexUpdate().withCreate(globalSecondaryIndexAction)
+    }
+  }
+
   private def translatePerfixQueryToFilterExpression(perfixQuery: PerfixQuery): FilterExpression = {
     perfixQuery.filtersOpt match {
       case Some(filters) =>
@@ -135,18 +166,17 @@ class DynamoDBStore extends DataStore {
     }
   }
 
-  private def getKeySchemaElements(columns: Seq[ColumnDescription]): Seq[KeySchemaElement] = {
+  private def getKeySchemaElements(partitionKey: String,
+                                   sortKey: String): Seq[KeySchemaElement] = {
     val pKey = new KeySchemaElement()
-      .withAttributeName(tableParams.partitionKey)
+      .withAttributeName(partitionKey)
       .withKeyType(KeyType.HASH)
 
-    val sKey = columns.lift(1).map { col =>
-      new KeySchemaElement()
-        .withAttributeName(tableParams.sortKey)
-        .withKeyType(KeyType.RANGE)
-    }
+    val sKey = new KeySchemaElement()
+      .withAttributeName(sortKey)
+      .withKeyType(KeyType.RANGE)
 
-    Seq(Some(pKey), sKey).flatten
+    Seq(Some(pKey), Some(sKey)).flatten
   }
 
   private def getAttributeDefinitions(columns: Seq[ColumnDescription]): Seq[AttributeDefinition] = {
@@ -158,7 +188,6 @@ class DynamoDBStore extends DataStore {
   }
 
   case class FilterExpression(expression: String, values: java.util.Map[String, AttributeValue])
-
 
   override def cleanup(): Unit = {
     client.deleteTable(tableParams.tableName)
