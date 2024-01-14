@@ -2,11 +2,13 @@ package io.perfix.stores.dynamodb
 
 import io.perfix.model.DataDescription
 import io.perfix.question.QuestionParams
+import io.perfix.stores.dynamodb.model.DynamoDBGSIMetadataParams
 
 case class DynamoDBParams(dataDescription: DataDescription) extends QuestionParams {
   var dynamoDBConnectionParams: Option[DynamoDBConnectionParams] = None
   var dynamoDBTableParams: Option[DynamoDBTableParams] = None
   var dynamoDBCapacityParams: Option[DynamoDBCapacityParams] = None
+  var dynamoDBGSIMetadataParams: Option[DynamoDBGSIMetadataParams] = None
 
   def isEmpty: Boolean = {
     dynamoDBConnectionParams.isEmpty && dynamoDBTableParams.isEmpty && dynamoDBCapacityParams.isEmpty
