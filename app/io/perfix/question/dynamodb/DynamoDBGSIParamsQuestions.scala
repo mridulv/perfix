@@ -25,9 +25,9 @@ case class DynamoDBGSIParamsQuestions(override val storeQuestionParams: DynamoDB
     dynamoDBGSIMetadataParams match {
       case Some(_) => throw ParamsAlreadyDefinedException("mySQLConnectionParams")
       case None =>
-        storeQuestionParams.dynamoDBGSIMetadataParams = Some(
-          Json.parse(answers(GSI).toString).as[DynamoDBGSIMetadataParams]
-        )
+        storeQuestionParams.dynamoDBGSIMetadataParams = answers.get(GSI).map { v =>
+          Json.parse(v.toString).as[DynamoDBGSIMetadataParams]
+        }
     }
   }
 }

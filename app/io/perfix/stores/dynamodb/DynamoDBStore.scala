@@ -6,12 +6,12 @@ import com.amazonaws.services.dynamodbv2.{AmazonDynamoDB, AmazonDynamoDBClientBu
 import com.amazonaws.services.dynamodbv2.model._
 import io.perfix.exceptions.InvalidStateException
 import io.perfix.model.ColumnType.toDynamoDBType
-import io.perfix.model.{ColumnDescription, DataDescription, StringType}
+import io.perfix.model.{ColumnDescription, DataDescription}
 import io.perfix.stores.DataStore
 import io.perfix.query.PerfixQuery
 import io.perfix.stores.dynamodb.model.DynamoDBGSIMetadataParams
 
-import scala.collection.JavaConverters._
+import scala.jdk.CollectionConverters._
 
 class DynamoDBStore extends DataStore {
   private var client: AmazonDynamoDB = _
