@@ -106,18 +106,34 @@ class DynamoDBStore extends DataStore {
       case None => null  // or specify default fields you always want to fetch
     }
 
-    val scanRequest = new ScanRequest()
-      .withTableName(tableParams.tableName)
-      .withFilterExpression(filterExpression.expression)
-      .withExpressionAttributeValues(filterExpression.values)
-      .withProjectionExpression(projectionExpression)
+    val result = findRelevantTableOpt(perfixQuery) match {
+      case Some(table) =>
+        val queryRequest = new QueryRequest()
+          .withTableName(table)
+          .withKeyConditionExpression(filterExpression.expression)
+          .withExpressionAttributeValues(filterExpression.values)
+          .withProjectionExpression(projectionExpression)
+        val res = client.query(queryRequest)
+        res.getItems
+      case None =>
+        val scanRequest = new ScanRequest()
+          .withTableName(tableParams.tableName)
+          .withFilterExpression(filterExpression.expression)
+          .withExpressionAttributeValues(filterExpression.values)
+          .withProjectionExpression(projectionExpression)
+        val res = client.scan(scanRequest)
+        res.getItems
+    }
 
-    val result = client.scan(scanRequest)
-    val items = result.getItems.asScala
+    val items = result.asScala
 
     items.map(item =>
       item.asScala.toMap.view.mapValues(_.toString).toMap
     ).toSeq
+  }
+
+  private def findRelevantTableOpt(perfixQuery: PerfixQuery): Option[String] = {
+    dynamoDBParams.indexes().find(i => i.validForFilters(perfixQuery)).map(_.tableName)
   }
 
   private def createGSIs(dynamoDBGSIMetadataParams: DynamoDBGSIMetadataParams): Seq[GlobalSecondaryIndexUpdate] = {
@@ -127,7 +143,7 @@ class DynamoDBStore extends DataStore {
       val provisionedThroughput = new ProvisionedThroughput(5L, 5L)
       val projection = new Projection().withProjectionType(ProjectionType.ALL)
       val globalSecondaryIndexAction = new CreateGlobalSecondaryIndexAction()
-        .withIndexName(s"gsi_${gsiParam.partitionKey}_${gsiParam.sortKey}")
+        .withIndexName(gsiParam.tableName)
         .withKeySchema(keySchema: _*)
         .withProjection(projection)
         .withProvisionedThroughput(provisionedThroughput)

@@ -2,7 +2,7 @@ package io.perfix.stores.dynamodb
 
 import io.perfix.model.DataDescription
 import io.perfix.question.QuestionParams
-import io.perfix.stores.dynamodb.model.DynamoDBGSIMetadataParams
+import io.perfix.stores.dynamodb.model.{DynamoDBGSIMetadataParams, DynamoDBIndex}
 
 case class DynamoDBParams(dataDescription: DataDescription) extends QuestionParams {
   var dynamoDBConnectionParams: Option[DynamoDBConnectionParams] = None
@@ -12,6 +12,16 @@ case class DynamoDBParams(dataDescription: DataDescription) extends QuestionPara
 
   def isEmpty: Boolean = {
     dynamoDBConnectionParams.isEmpty && dynamoDBTableParams.isEmpty && dynamoDBCapacityParams.isEmpty
+  }
+
+  def indexes(): Seq[DynamoDBIndex] = {
+    val primaryIndex = dynamoDBTableParams.map(p => DynamoDBIndex(p.tableName, p.partitionKey, p.sortKey))
+    val secondaryIndexes = dynamoDBGSIMetadataParams
+      .map(_.gsiParams)
+      .getOrElse(Seq.empty)
+      .map(p => DynamoDBIndex(p.tableName, p.partitionKey, p.sortKey))
+
+    Seq(primaryIndex).flatten ++ secondaryIndexes
   }
 }
 

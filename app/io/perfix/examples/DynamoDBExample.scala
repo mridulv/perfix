@@ -14,10 +14,10 @@ object DynamoDBExample {
 
   def main(args: Array[String]): Unit = {
     val mappedVariables: Map[String, Any] = Map(
-      ROWS -> 1000,
+      ROWS -> 10000,
       COLUMNS -> "[{\"columnName\":\"student_name\",\"columnType\":{\"type\":\"NameType\",\"isUnique\":true}},{\"columnName\":\"student_address\",\"columnType\":{\"type\":\"AddressType\",\"isUnique\":false}}]",
       CONCURRENT_QUERIES -> 10,
-      TABLE_NAME -> "testnw232",
+      TABLE_NAME -> "testnw2323",
       PARTITION_KEY -> "student_name",
       SORT_KEY -> "student_address",
       CONNECTION_URL -> "http://localhost:8000",
