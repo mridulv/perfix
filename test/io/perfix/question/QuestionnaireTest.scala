@@ -14,20 +14,28 @@ class QuestionnaireTest extends AnyFlatSpec with Matchers {
   }
 
   // Test class that extends Questionnaire
-  class TestQuestionnaire(q: Seq[Question]) extends Questionnaire {
-    override val questions: Iterator[Question] = q.iterator
+  class TestQuestionnaire extends Questionnaire {
+    override val questions: Iterator[Question] = Iterator(
+    MockQuestion("Q1", shouldAskResult = true),
+    MockQuestion("Q2", shouldAskResult = true),
+    MockQuestion("Q3", shouldAskResult = true)
+    )
   }
 
   it should "iterate over questions and return the next question that should be asked" in {
-    val question1 = MockQuestion("Q1", shouldAskResult = false)
-    val question2 = MockQuestion("Q2", shouldAskResult = true)
-    val question3 = MockQuestion("Q3", shouldAskResult = true)
 
-    val questionnaire = new TestQuestionnaire(Seq(question1, question2, question3))
+    val questionnaire = new TestQuestionnaire
+    val iter = questionnaire.iterator
 
-    questionnaire.iterator.next().asInstanceOf[MockQuestion].label shouldEqual "Q2"
-    questionnaire.iterator.next().asInstanceOf[MockQuestion].label shouldEqual "Q3"
+    iter.hasNext shouldEqual true
+    iter.next().asInstanceOf[MockQuestion].label shouldEqual "Q1"
 
-    questionnaire.iterator.hasNext shouldEqual false
+    iter.hasNext shouldEqual true
+    iter.next().asInstanceOf[MockQuestion].label shouldEqual "Q2"
+
+    iter.hasNext shouldEqual true
+    iter.next().asInstanceOf[MockQuestion].label shouldEqual "Q3"
+
+    iter.hasNext shouldEqual false
   }
 }

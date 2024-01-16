@@ -14,6 +14,7 @@ class DataDescriptionTest extends AnyFlatSpec with Matchers {
 
     dataDescription.rows shouldBe 10
     dataDescription.columns should have size 2
+    dataDescription.setData()
     dataDescription.isDefined shouldBe true
   }
 
