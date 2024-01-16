@@ -9,7 +9,7 @@ import io.perfix.util.BenchmarkUtil
 class SimplePerformanceExperiment(dataStore: DataStore,
                                   perfixQuery: PerfixQuery) {
 
-  private val experimentParams = new ExperimentParams
+  private[experiment] val experimentParams = new ExperimentParams
 
   def questions(): Questionnaire = {
     val questionnaire = new ExperimentQuestionnaire(experimentParams, dataStore)
