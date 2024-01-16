@@ -36,8 +36,7 @@ class DataDescriptionTest extends AnyFlatSpec with Matchers {
     dataDescription.rowsOpt = Some(3)
     dataDescription.columnsOpt = Some(Seq(ColumnDescription("name", NameType(isUnique = true))))
 
-    dataDescription.data shouldEqual Seq.empty
-
+    dataDescription.fakeData shouldEqual None
     dataDescription.setData()
 
     dataDescription.data should not be empty

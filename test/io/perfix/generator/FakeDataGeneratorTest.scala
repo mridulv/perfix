@@ -33,13 +33,17 @@ class FakeDataGeneratorTest extends AnyFlatSpec with Matchers {
   it should "generate data with default values for unsupported data types" in {
     val dataDescription = DataDescription()
     dataDescription.rowsOpt = Some(5)
-    dataDescription.columnsOpt = Some(Seq(ColumnDescription("name", NameType(isUnique = true)), ColumnDescription("score", NumericType(None))))
+    dataDescription.columnsOpt = Some(Seq(
+      ColumnDescription("name", NameType(isUnique = true)),
+      ColumnDescription("score", NumericType(Some(NumericRangeConstraint(10, 11)))))
+    )
 
     val fakeDataGenerator = new FakeDataGenerator
     val dataWithDescription = fakeDataGenerator.generateData(dataDescription)
 
     dataWithDescription.data.foreach { row =>
-      row("score") shouldEqual "default_value" // Replace 'default_value' with the actual default value
+      row("score").toString.toInt >= 10 shouldBe true
+      row("score").toString.toInt <= 11 shouldBe true
     }
   }
 }
