@@ -28,4 +28,4 @@ jobs:
         distribution: 'temurin'
         cache: 'sbt'
     - name: Run Compilation
-      run: sbt compile
+      run: sbt test
