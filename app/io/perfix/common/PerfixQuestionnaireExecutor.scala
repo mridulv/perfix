@@ -1,6 +1,6 @@
 package io.perfix.common
 
-import io.perfix.model.{DataType, QuestionType}
+import io.perfix.model.QuestionType
 import io.perfix.question.Question.QuestionLabel
 import io.perfix.question.{Question, Questionnaire}
 

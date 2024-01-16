@@ -15,15 +15,15 @@ object MySQLExample {
   def main(args: Array[String]): Unit = {
     val mappedVariables: Map[String, Any] = Map(
       ROWS -> 100000,
-      COLUMNS -> "[{\"columnName\":\"name\",\"columnType\":{\"type\":\"NameType\",\"isUnique\":true}},{\"columnName\":\"address\",\"columnType\":{\"type\":\"AddressType\",\"isUnique\":false}}]",
+      COLUMNS -> "[{\"columnName\":\"student_name\",\"columnType\":{\"type\":\"NameType\",\"isUnique\":true}},{\"columnName\":\"student_address\",\"columnType\":{\"type\":\"AddressType\",\"isUnique\":false}}]",
       CONCURRENT_QUERIES -> 10,
       URL -> "jdbc:mysql://localhost:3306/perfix?autoReconnect=true&useSSL=false&allowPublicKeyRetrieval=true",
       USERNAME -> "root",
       PASSWORD -> "*********",
       DBNAME -> "perfix",
       TABLENAME -> "test",
-      PRIMARY_INDEX_COLUMN -> "name",
-      SECONDARY_INDEX_COLUMNS -> "name,address"
+      PRIMARY_INDEX_COLUMN -> "student_name",
+      SECONDARY_INDEX_COLUMNS -> "student_name,student_address"
     )
     val experimentExecutor = new PerfixExperimentExecutor("mysql")
     while (experimentExecutor.getQuestionnaireExecutor.hasNext) {
