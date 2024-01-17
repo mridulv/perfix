@@ -18,6 +18,9 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
+    env:
+      # define Java options for both official sbt and sbt-extras
+      SBT_OPTS: -Xmx1536M -XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=2G -Xss2M  -Duser.timezone=GMT
 
     steps:
     - uses: actions/checkout@v3
@@ -27,7 +30,5 @@ jobs:
         java-version: '11'
         distribution: 'temurin'
         cache: 'sbt'
-    - name: Run Tests
-    - run: |
-        export SBT_OPTS="-Xmx1536M -XX:+UseConcMarkSweepGC -XX:+CMSClassUnloadingEnabled -XX:MaxPermSize=2G -Xss2M  -Duser.timezone=GMT"
-        sbt test
+    - name: Running Tests
+    - run: sbt test
