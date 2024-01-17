@@ -21,6 +21,7 @@ jobs:
       # define Java options for both official sbt and sbt-extras
       JAVA_OPTS: -Xms2048M -Xmx2048M -Xss6M -XX:ReservedCodeCacheSize=256M -Dfile.encoding=UTF-8
       JVM_OPTS:  -Xms2048M -Xmx2048M -Xss6M -XX:ReservedCodeCacheSize=256M -Dfile.encoding=UTF-8
+      SBT_OPTS: -Xms1024M -Xmx4G -Xss2M -XX:MaxMetaspaceSize=2G
     steps:
     - uses: actions/checkout@v3
     - name: Set up JDK 11
