@@ -31,4 +31,9 @@ jobs:
         distribution: 'temurin'
         cache: 'sbt'
     - name: Running Tests
-      run: sbt test
+      run: |
+        # Set the heap size for SBT by setting the JAVA_OPTS environment variable.
+        export JAVA_OPTS="-Xmx2048m" # Adjust the heap size as needed
+        
+        # Run the SBT tests
+        sbt test
