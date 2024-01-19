@@ -22,6 +22,7 @@ lazy val root = (project in file("."))
         libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "5.0.0" % Test,
         libraryDependencies += "ai.x" %% "play-json-extensions" % "0.42.0",
         libraryDependencies += "redis.clients" % "jedis" % "5.2.0-alpha2",
-        libraryDependencies += "org.mockito" % "mockito-core" % "2.8.47" % "test"
+        libraryDependencies += "org.mockito" % "mockito-core" % "2.8.47" % "test",
+        libraryDependencies += "org.mongodb" % "mongo-java-driver" % "3.12.12"
   )
 
