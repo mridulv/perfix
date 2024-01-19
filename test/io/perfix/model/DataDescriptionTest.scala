@@ -4,7 +4,7 @@ import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
 class DataDescriptionTest extends AnyFlatSpec with Matchers {
-  "DataDescription" should "allow setting rows and columns" ignore {
+  "DataDescription" should "allow setting rows and columns" in {
     val dataDescription = DataDescription()
     dataDescription.rowsOpt shouldBe None
     dataDescription.columnsOpt shouldBe None
@@ -18,7 +18,7 @@ class DataDescriptionTest extends AnyFlatSpec with Matchers {
     dataDescription.isDefined shouldBe true
   }
 
-  it should "generate fake data" ignore {
+  it should "generate fake data" in {
     val dataDescription = DataDescription()
     dataDescription.rowsOpt = Some(5)
     dataDescription.columnsOpt = Some(Seq(ColumnDescription("name", NameType(isUnique = true))))
@@ -31,7 +31,7 @@ class DataDescriptionTest extends AnyFlatSpec with Matchers {
     dataDescription.fakeData.get.data should have size 5
   }
 
-  it should "return data if rows and columns are defined" ignore {
+  it should "return data if rows and columns are defined" in {
     val dataDescription = DataDescription()
     dataDescription.rowsOpt = Some(3)
     dataDescription.columnsOpt = Some(Seq(ColumnDescription("name", NameType(isUnique = true))))
