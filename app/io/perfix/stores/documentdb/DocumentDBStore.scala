@@ -19,7 +19,7 @@ class DocumentDBStore extends DataStore {
   override def storeInputs(dataDescription: DataDescription): DocumentDBQuestionnaire = {
     this.dataDescription = dataDescription
     this.documentDBParams = DocumentDBParams(dataDescription)
-    new DocumentDBQuestionnaire(this.documentDBParams)
+    DocumentDBQuestionnaire(this.documentDBParams)
   }
 
   def connectAndInitialize(): Unit = {
@@ -31,8 +31,8 @@ class DocumentDBStore extends DataStore {
     )
 
     mongoClient = new MongoClient(connectionParams.url)
-    mongoDatabase = mongoClient.getDatabase(connectionParams.database)
-    mongoDatabase.createCollection(tableParams.tableName)
+    mongoDatabase = mongoClient.getDatabase(connectionParams.url)
+    mongoDatabase.createCollection(tableParams.collectionName)
   }
 
   override def putData(): Unit = {
@@ -40,7 +40,7 @@ class DocumentDBStore extends DataStore {
       throw InvalidStateException("Table parameters should have been defined.")
     )
 
-    val collection: MongoCollection[Document] = mongoDatabase.getCollection(tableParams.tableName)
+    val collection: MongoCollection[Document] = mongoDatabase.getCollection(tableParams.collectionName)
 
     val data = dataDescription.data
     val documents = data.map { row =>
@@ -71,7 +71,7 @@ class DocumentDBStore extends DataStore {
       case None => Filters.and()
     }
 
-    val cursor = mongoDatabase.getCollection(tableParams.tableName).find(Filters.and(filter, projection)).iterator()
+    val cursor = mongoDatabase.getCollection(tableParams.collectionName).find(Filters.and(filter, projection)).iterator()
     cursor.asScala.toList.map { c =>
       c.asScala.toMap
     }

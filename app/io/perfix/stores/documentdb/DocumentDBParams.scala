@@ -13,4 +13,4 @@ case class DocumentDBParams(dataDescription: DataDescription) extends QuestionPa
 }
 
 case class DocumentDBConnectionParams(url: String, database: String)
-case class DocumentDBTableParams(tableName: String)
+case class DocumentDBTableParams(collectionName: String)
