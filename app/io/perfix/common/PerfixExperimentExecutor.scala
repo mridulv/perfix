@@ -3,6 +3,7 @@ package io.perfix.common
 import io.perfix.experiment.SimplePerformanceExperiment
 import io.perfix.query.{PerfixQuery, PerfixQueryFilter}
 import io.perfix.stores.DataStore
+import io.perfix.stores.documentdb.DocumentDBStore
 import io.perfix.stores.dynamodb.DynamoDBStore
 import io.perfix.stores.mysql.MySQLStore
 import io.perfix.stores.redis.RedisStore
@@ -36,6 +37,7 @@ class PerfixExperimentExecutor(storeName: String) {
       case "dynamodb" => new DynamoDBStore
       case "mysql" => new MySQLStore
       case "redis" => new RedisStore
+      case "mongodb" => new DocumentDBStore
     }
   }
 
