@@ -34,10 +34,10 @@ class PerfixExperimentExecutor(storeName: String) {
 
   private def getDataStore(storeName: String): DataStore = {
     storeName.strip().toLowerCase() match {
-      case "dynamodb" => new DynamoDBStore
-      case "mysql" => new MySQLStore
-      case "redis" => new RedisStore
-      case "mongodb" => new DocumentDBStore
+      case DataStore.DynamoDBStore => new DynamoDBStore
+      case DataStore.MySQLStore => new MySQLStore
+      case DataStore.RedisStore => new RedisStore
+      case DataStore.MongoDBStore => new DocumentDBStore
     }
   }
 
