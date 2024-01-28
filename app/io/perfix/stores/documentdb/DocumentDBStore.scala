@@ -71,7 +71,10 @@ class DocumentDBStore extends DataStore {
       case None => Filters.and()
     }
 
-    val cursor = mongoDatabase.getCollection(tableParams.collectionName).find(Filters.and(filter, projection)).iterator()
+    val cursor = mongoDatabase.getCollection(tableParams.collectionName)
+      .find(filter)
+      .projection(projection)
+      .iterator()
     cursor.asScala.toList.map { c =>
       c.asScala.toMap
     }
