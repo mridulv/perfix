@@ -11,3 +11,14 @@ trait DataStore {
   def readData(perfixQuery: PerfixQuery): Seq[Map[String, Any]]
   def cleanup(): Unit
 }
+
+object DataStore extends Enumeration {
+
+  type DataStore = Value
+
+  val MySQLStore = Value("mysql")
+  val RedisStore = Value("redis")
+  val DynamoDBStore = Value("dynamodb")
+  val MongoDBStore = Value("mongodb")
+
+}
