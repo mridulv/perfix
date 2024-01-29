@@ -33,7 +33,7 @@ class PerfixExperimentExecutor(storeName: String) {
   }
 
   private def getDataStore(storeName: String): DataStore = {
-    storeName.strip().toLowerCase() match {
+    DataStore.withName(storeName) match {
       case DataStore.DynamoDBStore => new DynamoDBStore
       case DataStore.MySQLStore => new MySQLStore
       case DataStore.RedisStore => new RedisStore
