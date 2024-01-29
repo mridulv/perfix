@@ -1,6 +1,7 @@
 package io.perfix.stores.documentdb
 
 import com.mongodb.MongoClient
+import com.mongodb.client.model.Indexes
 import com.mongodb.client.{MongoCollection, MongoDatabase}
 import io.perfix.exceptions.InvalidStateException
 import io.perfix.model.DataDescription
@@ -33,6 +34,13 @@ class DocumentDBStore extends DataStore {
     mongoClient = new MongoClient(connectionParams.url)
     mongoDatabase = mongoClient.getDatabase(connectionParams.url)
     mongoDatabase.createCollection(tableParams.collectionName)
+
+    documentDBParams.documentDBIndicesParams match {
+      case Some(indicesParams) => mongoDatabase
+        .getCollection(tableParams.collectionName)
+        .createIndex(Indexes.ascending(indicesParams.columns: _*))
+      case None => ()
+    }
   }
 
   override def putData(): Unit = {
