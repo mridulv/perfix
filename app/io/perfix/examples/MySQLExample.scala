@@ -1,14 +1,12 @@
 package io.perfix.examples
 
 import io.perfix.common.PerfixExperimentExecutor
-import io.perfix.model.{AddressType, ColumnDescription, NameType}
 import io.perfix.question.Question
 import io.perfix.question.experiment.DataQuestions._
 import io.perfix.question.experiment.ExperimentParamsQuestion.CONCURRENT_QUERIES
 import io.perfix.question.mysql.ConnectionParamsQuestion._
 import io.perfix.question.mysql.TableIndicesDetailQuestion.{PRIMARY_INDEX_COLUMN, SECONDARY_INDEX_COLUMNS}
 import io.perfix.question.mysql.TableParamsQuestions.{DBNAME, TABLENAME}
-import play.api.libs.json.Json
 
 object MySQLExample {
 
