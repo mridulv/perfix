@@ -17,6 +17,8 @@ object MongoDBExample {
       URL -> "localhost:27017",
       DATABASE -> "test",
       COLLECTION_NAME -> "students"
+      COLLECTION_NAME -> "students",
+      INDICES_COLUMNS -> "{\"columns\":[\"student_name\"]}"
     )
     val experimentExecutor = new PerfixExperimentExecutor("mongodb")
     while (experimentExecutor.getQuestionnaireExecutor.hasNext) {
