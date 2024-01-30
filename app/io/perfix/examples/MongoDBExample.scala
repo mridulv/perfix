@@ -3,6 +3,7 @@ package io.perfix.examples
 import io.perfix.common.PerfixExperimentExecutor
 import io.perfix.question.Question
 import io.perfix.question.documentdb.DocumentDBConnectionParamsQuestion._
+import io.perfix.question.documentdb.DocumentDBIndicesParamsQuestion.INDICES_COLUMNS
 import io.perfix.question.documentdb.DocumentDBTableParamsQuestions.COLLECTION_NAME
 import io.perfix.question.experiment.DataQuestions._
 import io.perfix.question.experiment.ExperimentParamsQuestion.CONCURRENT_QUERIES
@@ -16,7 +17,6 @@ object MongoDBExample {
       CONCURRENT_QUERIES -> 10,
       URL -> "localhost:27017",
       DATABASE -> "test",
-      COLLECTION_NAME -> "students"
       COLLECTION_NAME -> "students",
       INDICES_COLUMNS -> "{\"columns\":[\"student_name\"]}"
     )
