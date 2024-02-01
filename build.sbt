@@ -3,11 +3,14 @@ import sbt.Keys._
 import play.sbt.PlaySettings
 
 ThisBuild / scalaVersion     := "2.13.12"
-ThisBuild / version          := "0.1.0-SNAPSHOT"
 ThisBuild / organization     := "com.perfix"
 ThisBuild / organizationName := "perfix"
 
 resolvers += "Typesafe repo" at "https://repo.typesafe.com/typesafe/releases/"
+
+version := sys.env.get("TAG").filter(_.nonEmpty).getOrElse("latest")
+
+dockerRepository := Some("mridulverma")
 
 lazy val root = (project in file("."))
   .enablePlugins(PlayJava)

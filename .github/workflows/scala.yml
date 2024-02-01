@@ -37,23 +37,16 @@ jobs:
         
         # Run the SBT tests
         sbt test
+
+    - name: Log in to Docker Hub
+      uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
+      with:
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PASSWORD }}
+
     - name: Publish Docker Image
       if: success()
-      run: |
-        # Calculate a new version tag by incrementing the last tag
-        last_tag=$(git describe --tags --abbrev=0)
-        tag_number=$(echo $last_tag | sed 's/v//')
-        incremented_tag="v$((tag_number + 1))"
-        
-        # Set Docker image name and tag
-        docker_image_name="perfix"
-        docker_image_tag="$docker_image_name:$incremented_tag"
-        
+      run: |        
         # Build and publish the Docker image
         sbt "docker:publishLocal"
-        docker build -t $docker_image_tag .
-        docker push $docker_image_tag
-        
-        # Push the new tag to the repository
-        git tag $incremented_tag
-        git push origin $incremented_tag
+        docker push mridulverma/perfix:latest
