@@ -37,3 +37,23 @@ jobs:
         
         # Run the SBT tests
         sbt test
+    - name: Publish Docker Image
+        if: success()
+        run: |
+          # Calculate a new version tag by incrementing the last tag
+          last_tag=$(git describe --tags --abbrev=0)
+          tag_number=$(echo $last_tag | sed 's/v//')
+          incremented_tag="v$((tag_number + 1))"
+          
+          # Set Docker image name and tag
+          docker_image_name="perfix"
+          docker_image_tag="$docker_image_name:$incremented_tag"
+          
+          # Build and publish the Docker image
+          sbt "docker:publishLocal"
+          docker build -t $docker_image_tag .
+          docker push $docker_image_tag
+          
+          # Push the new tag to the repository
+          git tag $incremented_tag
+          git push origin $incremented_tag

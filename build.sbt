@@ -11,6 +11,7 @@ resolvers += "Typesafe repo" at "https://repo.typesafe.com/typesafe/releases/"
 
 lazy val root = (project in file("."))
   .enablePlugins(PlayJava)
+  .enablePlugins(DockerPlugin)
   .settings(
         name := "perfix",
         libraryDependencies += munit % Test,
