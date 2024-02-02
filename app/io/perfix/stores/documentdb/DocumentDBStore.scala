@@ -6,6 +6,7 @@ import com.mongodb.client.{MongoCollection, MongoDatabase}
 import io.perfix.exceptions.InvalidStateException
 import io.perfix.model.DataDescription
 import io.perfix.query.PerfixQuery
+import io.perfix.question.Question
 import io.perfix.stores.DataStore
 import org.bson.Document
 
@@ -16,6 +17,8 @@ class DocumentDBStore extends DataStore {
   private var mongoDatabase: MongoDatabase = _
   private var documentDBParams: DocumentDBParams = _
   private var dataDescription: DataDescription = _
+
+  override def create: Question = ???
 
   override def storeInputs(dataDescription: DataDescription): DocumentDBQuestionnaire = {
     this.dataDescription = dataDescription

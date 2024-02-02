@@ -9,6 +9,7 @@ import io.perfix.model.ColumnType.toDynamoDBType
 import io.perfix.model.{ColumnDescription, DataDescription}
 import io.perfix.stores.DataStore
 import io.perfix.query.PerfixQuery
+import io.perfix.question.Question
 import io.perfix.stores.dynamodb.model.DynamoDBGSIMetadataParams
 
 import scala.jdk.CollectionConverters._
@@ -19,6 +20,8 @@ class DynamoDBStore extends DataStore {
   private var dynamoDBParams: DynamoDBParams = _
   private var tableParams: DynamoDBTableParams = _
   private var connectionParams: DynamoDBConnectionParams = _
+
+  override def create: Question = ???
 
   override def storeInputs(dataDescription: DataDescription): DynamoDBQuestionnaire = {
     this.dataDescription = dataDescription

@@ -5,6 +5,7 @@ import io.perfix.model.ColumnType.toSqlType
 import io.perfix.model.{ColumnDescription, DataDescription}
 import io.perfix.stores.DataStore
 import io.perfix.query.PerfixQuery
+import io.perfix.question.Question
 
 import java.sql.{Connection, DriverManager, ResultSet}
 
@@ -12,6 +13,8 @@ class MySQLStore extends DataStore {
   private var connection: Connection = _
   private var dataDescription: DataDescription = _
   private var mySQLParams: MySQLParams = _
+
+  override def create: Question = ???
 
   override def storeInputs(dataDescription: DataDescription): MySQLQuestionnaire = {
     this.dataDescription = dataDescription
