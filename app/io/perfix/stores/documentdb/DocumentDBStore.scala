@@ -4,9 +4,10 @@ import com.mongodb.MongoClient
 import com.mongodb.client.model.Indexes
 import com.mongodb.client.{MongoCollection, MongoDatabase}
 import io.perfix.exceptions.InvalidStateException
+import io.perfix.launch.{AWSCloudCredentials, LaunchStoreQuestion}
 import io.perfix.model.DataDescription
 import io.perfix.query.PerfixQuery
-import io.perfix.question.Question
+import io.perfix.question.documentdb.DocumentDBLaunchQuestion
 import io.perfix.stores.DataStore
 import org.bson.Document
 
@@ -18,11 +19,13 @@ class DocumentDBStore extends DataStore {
   private var documentDBParams: DocumentDBParams = _
   private var dataDescription: DataDescription = _
 
-  override def create: Question = ???
+  override def create(credentials: AWSCloudCredentials): Option[LaunchStoreQuestion] = {
+    this.documentDBParams = DocumentDBParams()
+    Some(new DocumentDBLaunchQuestion(credentials, documentDBParams))
+  }
 
   override def storeInputs(dataDescription: DataDescription): DocumentDBQuestionnaire = {
     this.dataDescription = dataDescription
-    this.documentDBParams = DocumentDBParams(dataDescription)
     DocumentDBQuestionnaire(this.documentDBParams)
   }
 
@@ -35,7 +38,7 @@ class DocumentDBStore extends DataStore {
     )
 
     mongoClient = new MongoClient(connectionParams.url)
-    mongoDatabase = mongoClient.getDatabase(connectionParams.url)
+    mongoDatabase = mongoClient.getDatabase(connectionParams.database)
     mongoDatabase.createCollection(tableParams.collectionName)
 
     documentDBParams.documentDBIndicesParams match {

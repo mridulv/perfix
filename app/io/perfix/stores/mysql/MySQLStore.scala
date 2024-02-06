@@ -1,11 +1,12 @@
 package io.perfix.stores.mysql
 
 import io.perfix.exceptions.InvalidStateException
+import io.perfix.launch.{AWSCloudCredentials, LaunchStoreQuestion}
 import io.perfix.model.ColumnType.toSqlType
 import io.perfix.model.{ColumnDescription, DataDescription}
 import io.perfix.stores.DataStore
 import io.perfix.query.PerfixQuery
-import io.perfix.question.Question
+import io.perfix.question.mysql.MySQLLaunchQuestion
 
 import java.sql.{Connection, DriverManager, ResultSet}
 
@@ -14,11 +15,13 @@ class MySQLStore extends DataStore {
   private var dataDescription: DataDescription = _
   private var mySQLParams: MySQLParams = _
 
-  override def create: Question = ???
+  override def create(credentials: AWSCloudCredentials): Option[LaunchStoreQuestion] = {
+    mySQLParams = MySQLParams()
+    Some(new MySQLLaunchQuestion(credentials, mySQLParams))
+  }
 
   override def storeInputs(dataDescription: DataDescription): MySQLQuestionnaire = {
     this.dataDescription = dataDescription
-    mySQLParams = MySQLParams(dataDescription)
     MySQLQuestionnaire(mySQLParams)
   }
 
@@ -44,7 +47,7 @@ class MySQLStore extends DataStore {
     }
     import connectionParams._
 
-    val sql = createTableStatement(tableParams.dbName + "." + tableParams.tableName, mySQLParams.dataDescription.columns)
+    val sql = createTableStatement(tableParams.dbName + "." + tableParams.tableName, dataDescription.columns)
     statement.executeUpdate(sql)
 
     val indexSql = createTableIndexesStatement(tableIndexesParams.primaryIndexColumn, tableIndexesParams.secondaryIndexesColumn)

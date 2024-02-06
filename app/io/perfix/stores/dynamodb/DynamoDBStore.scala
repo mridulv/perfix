@@ -5,11 +5,11 @@ import com.amazonaws.client.builder.AwsClientBuilder
 import com.amazonaws.services.dynamodbv2.{AmazonDynamoDB, AmazonDynamoDBClientBuilder}
 import com.amazonaws.services.dynamodbv2.model._
 import io.perfix.exceptions.InvalidStateException
+import io.perfix.launch.{AWSCloudCredentials, LaunchStoreQuestion}
 import io.perfix.model.ColumnType.toDynamoDBType
 import io.perfix.model.{ColumnDescription, DataDescription}
 import io.perfix.stores.DataStore
 import io.perfix.query.PerfixQuery
-import io.perfix.question.Question
 import io.perfix.stores.dynamodb.model.DynamoDBGSIMetadataParams
 
 import scala.jdk.CollectionConverters._
@@ -21,11 +21,13 @@ class DynamoDBStore extends DataStore {
   private var tableParams: DynamoDBTableParams = _
   private var connectionParams: DynamoDBConnectionParams = _
 
-  override def create: Question = ???
+  override def create(credentials: AWSCloudCredentials): Option[LaunchStoreQuestion] = {
+    dynamoDBParams = DynamoDBParams()
+    None
+  }
 
   override def storeInputs(dataDescription: DataDescription): DynamoDBQuestionnaire = {
     this.dataDescription = dataDescription
-    dynamoDBParams = DynamoDBParams(dataDescription)
     DynamoDBQuestionnaire(dynamoDBParams)
   }
 
@@ -38,7 +40,7 @@ class DynamoDBStore extends DataStore {
       tableParams.partitionKey,
       tableParams.sortKey
     )
-    val attributeDefinitions = getAttributeDefinitions(dynamoDBParams.dataDescription.columns)
+    val attributeDefinitions = getAttributeDefinitions(dataDescription.columns)
 
     client = connectionParams.urlOpt match {
       case Some(url) => AmazonDynamoDBClientBuilder
