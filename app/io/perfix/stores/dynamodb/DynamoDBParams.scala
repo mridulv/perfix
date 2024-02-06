@@ -4,7 +4,7 @@ import io.perfix.model.DataDescription
 import io.perfix.question.QuestionParams
 import io.perfix.stores.dynamodb.model.{DynamoDBGSIMetadataParams, DynamoDBIndex}
 
-case class DynamoDBParams(dataDescription: DataDescription) extends QuestionParams {
+case class DynamoDBParams() extends QuestionParams {
   var dynamoDBConnectionParams: Option[DynamoDBConnectionParams] = None
   var dynamoDBTableParams: Option[DynamoDBTableParams] = None
   var dynamoDBCapacityParams: Option[DynamoDBCapacityParams] = None

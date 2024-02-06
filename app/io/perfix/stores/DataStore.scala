@@ -1,11 +1,12 @@
 package io.perfix.stores
 
+import io.perfix.launch.{AWSCloudCredentials, LaunchStoreQuestion}
 import io.perfix.model.DataDescription
 import io.perfix.query.PerfixQuery
 import io.perfix.question.{Question, Questionnaire}
 
 trait DataStore {
-  def create: Question
+  def create(credentials: AWSCloudCredentials): Option[LaunchStoreQuestion]
   def storeInputs(dataDescription: DataDescription): Questionnaire
   def connectAndInitialize(): Unit
   def putData(): Unit
