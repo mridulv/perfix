@@ -39,7 +39,6 @@ class DocumentDBLaunchQuestion(override val credentials: AWSCloudCredentials,
       .withMasterUserPassword(masterPassword)
       .withEngineVersion("4.0.0")
       .withDBClusterParameterGroupName("default.docdb4.0")
-      .withVpcSecurityGroupIds("your-vpc-security-group-id")
       .withAvailabilityZones("us-east-1a")
 
     val createDBInstanceRequest = new CreateDBInstanceRequest()

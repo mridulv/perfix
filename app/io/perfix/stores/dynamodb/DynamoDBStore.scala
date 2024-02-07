@@ -19,10 +19,11 @@ class DynamoDBStore extends DataStore {
   private var dataDescription: DataDescription = _
   private var dynamoDBParams: DynamoDBParams = _
   private var tableParams: DynamoDBTableParams = _
-  private var connectionParams: DynamoDBConnectionParams = _
+  private var awsCloudCredentials: AWSCloudCredentials = _
 
   override def create(credentials: AWSCloudCredentials): Option[LaunchStoreQuestion] = {
     dynamoDBParams = DynamoDBParams()
+    awsCloudCredentials = credentials
     None
   }
 
@@ -33,8 +34,9 @@ class DynamoDBStore extends DataStore {
 
   def connectAndInitialize(): Unit = {
     tableParams = dynamoDBParams.dynamoDBTableParams.getOrElse(throw InvalidStateException("Table Params should have been defined"))
-    connectionParams = dynamoDBParams.dynamoDBConnectionParams.getOrElse(throw InvalidStateException("Connection Params should have been defined"))
     val capacityParams = dynamoDBParams.dynamoDBCapacityParams.getOrElse(throw InvalidStateException("Capacity Params should have been defined"))
+    val accessKey = awsCloudCredentials.accessKey.getOrElse(throw InvalidStateException("Access Key should have been defined"))
+    val accessSecret = awsCloudCredentials.accessSecret.getOrElse(throw InvalidStateException("Access Secret should have been defined"))
 
     val keySchemaElements = getKeySchemaElements(
       tableParams.partitionKey,
@@ -42,21 +44,21 @@ class DynamoDBStore extends DataStore {
     )
     val attributeDefinitions = getAttributeDefinitions(dataDescription.columns)
 
-    client = connectionParams.urlOpt match {
+    client = tableParams.urlOpt match {
       case Some(url) => AmazonDynamoDBClientBuilder
         .standard()
         .withEndpointConfiguration(
           new AwsClientBuilder.EndpointConfiguration(url, "us-west-2")
         ).withCredentials(new AWSStaticCredentialsProvider(new AWSCredentials {
-        override def getAWSAccessKeyId: String = connectionParams.accessKey
-        override def getAWSSecretKey: String = connectionParams.accessSecret
+        override def getAWSAccessKeyId: String = accessKey
+        override def getAWSSecretKey: String = accessSecret
       }  )).build()
       case None => AmazonDynamoDBClientBuilder
         .standard()
         .withRegion("us-west-2")
         .withCredentials(new AWSStaticCredentialsProvider(new AWSCredentials {
-        override def getAWSAccessKeyId: String = connectionParams.accessKey
-        override def getAWSSecretKey: String = connectionParams.accessSecret
+        override def getAWSAccessKeyId: String = accessKey
+        override def getAWSSecretKey: String = accessSecret
       }  )).build()
     }
 
