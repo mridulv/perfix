@@ -1,14 +1,12 @@
 package io.perfix.examples
 
 import io.perfix.common.PerfixExperimentExecutor
+import io.perfix.question.AWSCredentialsQuestion.{AWS_ACCESS_KEY, AWS_ACCESS_SECRET}
 import io.perfix.question.Question
-import io.perfix.question.dynamodb.DynamoDBConnectionParametersQuestions.{ACCESS_ID, ACCESS_SECRET, CONNECTION_URL}
 import io.perfix.question.dynamodb.DynamoDBGSIParamsQuestions.GSI
 import io.perfix.question.dynamodb.DynamoDBTableParamsQuestions._
 import io.perfix.question.experiment.DataQuestions._
 import io.perfix.question.experiment.ExperimentParamsQuestion.CONCURRENT_QUERIES
-import io.perfix.stores.dynamodb.model.{DynamoDBGSIMetadataParams, DynamoDBGSIParam}
-import play.api.libs.json.Json
 
 object DynamoDBExample {
 
@@ -21,8 +19,8 @@ object DynamoDBExample {
       PARTITION_KEY -> "student_name",
       SORT_KEY -> "student_address",
       CONNECTION_URL -> "http://localhost:8000",
-      ACCESS_ID -> "id",
-      ACCESS_SECRET -> "secret",
+      AWS_ACCESS_KEY -> "id",
+      AWS_ACCESS_SECRET -> "secret",
       GSI -> "{\"gsiParams\":[{\"partitionKey\":\"student_address\",\"sortKey\":\"student_name\"}]}"
     )
     val experimentExecutor = new PerfixExperimentExecutor("dynamodb")
