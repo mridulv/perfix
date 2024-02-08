@@ -60,7 +60,7 @@ class MySQLStore extends DataStore {
 
   override def putData(): Unit = {
     val data = dataDescription.data
-    val batchSize = 10
+    val batchSize = 100
     data.grouped(batchSize).foreach { batchRows =>
       val tableParams = mySQLParams.mySQLTableParams match {
         case Some(tableParams) => tableParams
