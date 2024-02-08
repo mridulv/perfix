@@ -23,8 +23,8 @@ class MySQLLaunchQuestion(override val credentials: AWSCloudCredentials,
   )
 
   override def setAnswers(answers: Map[QuestionLabel, Any]): Unit = {
-    val pwd = Random.alphanumeric.mkString("").take(10)
-    val dbName = answers(DB_NAME).toString
+    val pwd = Random.alphanumeric.take(10).mkString("")
+    val dbName = answers(DBNAME).toString
     val username = answers(USERNAME).toString
     val password = answers.get(PASSWORD).map(_.toString).getOrElse(pwd)
     val instanceIdentifier = answers(INSTANCE_IDENTIFIER).toString
