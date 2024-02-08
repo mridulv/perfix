@@ -13,13 +13,16 @@ class ExperimentQuestionnaire(experimentParams: ExperimentParams,
     val credentials = new AWSCloudCredentials
     val credentialsQuestion = new AWSCredentialsQuestion(credentials)
 
-    val createQuestions = dataStore.create(credentials).map(q => Seq(credentialsQuestion, q)).getOrElse(Seq.empty)
+    val launchQuestions = dataStore.create(credentials) match {
+      case Some(q) => Iterator(credentialsQuestion) ++ Iterator(q)
+      case None => Iterator(credentialsQuestion)
+    }
 
     val initialQuestions = Iterator(new DataQuestions(experimentParams)) ++
       Iterator(new ExperimentParamsQuestion(experimentParams))
 
     val nextSet = dataStore.storeInputs(experimentParams.dataDescription).questions
 
-    createQuestions.iterator ++ initialQuestions ++ nextSet
+    launchQuestions ++ initialQuestions ++ nextSet
   }
 }
