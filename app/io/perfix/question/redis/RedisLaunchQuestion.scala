@@ -66,7 +66,6 @@ class RedisLaunchQuestion(override val credentials: AWSCloudCredentials,
     }
   }
 
-  // Function to wait for the ElastiCache cluster to become available
   def waitForCluster(elasticacheClient: AmazonElastiCache, clusterId: String): Boolean = {
     var isAvailable = false
     var attempts = 0
@@ -74,7 +73,7 @@ class RedisLaunchQuestion(override val credentials: AWSCloudCredentials,
 
     while (!isAvailable && attempts < maxAttempts) {
       try {
-        TimeUnit.SECONDS.sleep(20) // Wait for 20 seconds before checking the status again
+        TimeUnit.SECONDS.sleep(20)
         val describeRequest = new DescribeCacheClustersRequest().withCacheClusterId(clusterId).withShowCacheNodeInfo(true)
         val describeResponse = elasticacheClient.describeCacheClusters(describeRequest)
         val clusterStatus = describeResponse.getCacheClusters.get(0).getCacheClusterStatus

@@ -92,8 +92,8 @@ class DocumentDBLaunchQuestion(override val credentials: AWSCloudCredentials,
     val cluster = docDBClient.describeDBClusters(describeClustersRequest).getDBClusters.get(0)
     if (cluster.getStatus != "available") {
       println("Waiting for DocumentDB cluster to become available...")
-      TimeUnit.SECONDS.sleep(30) // Wait for 30 seconds before checking again
-      waitForClusterAvailability(docDBClient, clusterIdentifier) // Recursively check until available
+      TimeUnit.SECONDS.sleep(30)
+      waitForClusterAvailability(docDBClient, clusterIdentifier)
     } else {
       println(s"DocumentDB cluster is now available: ${cluster.getDBClusterIdentifier}")
     }
@@ -105,8 +105,8 @@ class DocumentDBLaunchQuestion(override val credentials: AWSCloudCredentials,
     val instance = docDBClient.describeDBInstances(describeInstancesRequest).getDBInstances.get(0)
     if (instance.getDBInstanceStatus != "available") {
       println("Waiting for DocumentDB instance to become available...")
-      TimeUnit.SECONDS.sleep(30) // Wait for 30 seconds before checking again
-      waitForInstanceAvailability(docDBClient, instanceIdentifier) // Recursively check until available
+      TimeUnit.SECONDS.sleep(30)
+      waitForInstanceAvailability(docDBClient, instanceIdentifier)
     } else {
       println(s"DocumentDB instance is now available: ${instance.getDBInstanceIdentifier}")
     }
