@@ -4,7 +4,7 @@ import com.mongodb.MongoClient
 import com.mongodb.client.model.Indexes
 import com.mongodb.client.{MongoCollection, MongoDatabase}
 import io.perfix.exceptions.InvalidStateException
-import io.perfix.launch.{AWSCloudCredentials, LaunchStoreQuestion}
+import io.perfix.launch.{AWSCloudParams, LaunchStoreQuestion}
 import io.perfix.model.DataDescription
 import io.perfix.query.PerfixQuery
 import io.perfix.question.documentdb.DocumentDBLaunchQuestion
@@ -16,12 +16,11 @@ import scala.jdk.CollectionConverters._
 class DocumentDBStore extends DataStore {
   private var mongoClient: MongoClient = _
   private var mongoDatabase: MongoDatabase = _
-  private var documentDBParams: DocumentDBParams = _
+  private val documentDBParams: DocumentDBParams = DocumentDBParams()
   private var dataDescription: DataDescription = _
 
-  override def create(credentials: AWSCloudCredentials): Option[LaunchStoreQuestion] = {
-    this.documentDBParams = DocumentDBParams()
-    Some(new DocumentDBLaunchQuestion(credentials, documentDBParams))
+  override def actualLaunch(awsCloudParams: AWSCloudParams): Option[LaunchStoreQuestion] = {
+    Some(new DocumentDBLaunchQuestion(awsCloudParams, documentDBParams))
   }
 
   override def storeInputs(dataDescription: DataDescription): DocumentDBQuestionnaire = {

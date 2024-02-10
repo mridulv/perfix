@@ -1,19 +1,19 @@
 package io.perfix.experiment
 
-import io.perfix.launch.AWSCloudCredentials
+import io.perfix.launch.AWSCloudParams
 import io.perfix.model.ExperimentParams
 import io.perfix.question.experiment.{DataQuestions, ExperimentParamsQuestion}
-import io.perfix.question.{AWSCredentialsQuestion, Question, Questionnaire}
+import io.perfix.question.{AWSCloudParamsQuestion, Question, Questionnaire}
 import io.perfix.stores.DataStore
 
 class ExperimentQuestionnaire(experimentParams: ExperimentParams,
                               dataStore: DataStore) extends Questionnaire {
 
   override val questions: Iterator[Question] = {
-    val credentials = new AWSCloudCredentials
-    val credentialsQuestion = new AWSCredentialsQuestion(credentials)
+    val cloudParams = new AWSCloudParams
+    val credentialsQuestion = new AWSCloudParamsQuestion(cloudParams)
 
-    val launchQuestions = dataStore.create(credentials) match {
+    val launchQuestions = dataStore.launch(cloudParams) match {
       case Some(q) => Iterator(credentialsQuestion) ++ Iterator(q)
       case None => Iterator(credentialsQuestion)
     }

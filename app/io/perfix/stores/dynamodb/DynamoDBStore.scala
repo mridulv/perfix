@@ -5,7 +5,7 @@ import com.amazonaws.client.builder.AwsClientBuilder
 import com.amazonaws.services.dynamodbv2.{AmazonDynamoDB, AmazonDynamoDBClientBuilder}
 import com.amazonaws.services.dynamodbv2.model._
 import io.perfix.exceptions.InvalidStateException
-import io.perfix.launch.{AWSCloudCredentials, LaunchStoreQuestion}
+import io.perfix.launch.{AWSCloudParams, LaunchStoreQuestion}
 import io.perfix.model.ColumnType.toDynamoDBType
 import io.perfix.model.{ColumnDescription, DataDescription}
 import io.perfix.stores.DataStore
@@ -17,13 +17,12 @@ import scala.jdk.CollectionConverters._
 class DynamoDBStore extends DataStore {
   private var client: AmazonDynamoDB = _
   private var dataDescription: DataDescription = _
-  private var dynamoDBParams: DynamoDBParams = _
+  private val dynamoDBParams: DynamoDBParams = DynamoDBParams()
   private var tableParams: DynamoDBTableParams = _
-  private var awsCloudCredentials: AWSCloudCredentials = _
+  private var awsCloudCredentials: AWSCloudParams = _
 
-  override def create(credentials: AWSCloudCredentials): Option[LaunchStoreQuestion] = {
-    dynamoDBParams = DynamoDBParams()
-    awsCloudCredentials = credentials
+  override def actualLaunch(awsCloudParams: AWSCloudParams): Option[LaunchStoreQuestion] = {
+    awsCloudCredentials = awsCloudParams
     None
   }
 
