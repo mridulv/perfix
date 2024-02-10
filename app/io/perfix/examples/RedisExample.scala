@@ -1,9 +1,11 @@
 package io.perfix.examples
 
 import io.perfix.common.PerfixExperimentExecutor
+import io.perfix.question.AWSCredentialsQuestion.{AWS_ACCESS_KEY, AWS_ACCESS_SECRET}
 import io.perfix.question.Question
 import io.perfix.question.experiment.DataQuestions._
 import io.perfix.question.experiment.ExperimentParamsQuestion.CONCURRENT_QUERIES
+import io.perfix.question.redis.ElastiCacheLaunchQuestion.{CACHE_NODE_TYPE, CLUSTER_ID}
 import io.perfix.question.redis.RedisConnectionParametersQuestion.{PORT, URL}
 import io.perfix.question.redis.RedisTableParamsQuestion.KEY_COLUMN
 
@@ -16,7 +18,11 @@ object RedisExample {
       CONCURRENT_QUERIES -> 10,
       URL -> "localhost",
       PORT -> 6379,
-      KEY_COLUMN -> "student_name"
+      KEY_COLUMN -> "student_name",
+      CLUSTER_ID -> "newrediscluster",
+      CACHE_NODE_TYPE -> "cache.t2.micro",
+      AWS_ACCESS_KEY -> "****************************",
+      AWS_ACCESS_SECRET -> "******************************************"
     )
     val experimentExecutor = new PerfixExperimentExecutor("redis")
     while (experimentExecutor.getQuestionnaireExecutor.hasNext) {
