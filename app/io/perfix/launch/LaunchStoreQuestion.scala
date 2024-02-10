@@ -4,7 +4,7 @@ import io.perfix.question.Question
 
 trait LaunchStoreQuestion extends Question {
 
-  val credentials: AWSCloudCredentials
+  val credentials: AWSCloudParams
 
   override val shouldAsk: Boolean = true
 

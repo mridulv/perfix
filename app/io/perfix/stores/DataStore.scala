@@ -1,17 +1,25 @@
 package io.perfix.stores
 
-import io.perfix.launch.{AWSCloudCredentials, LaunchStoreQuestion}
+import io.perfix.launch.{AWSCloudParams, LaunchStoreQuestion}
 import io.perfix.model.DataDescription
 import io.perfix.query.PerfixQuery
 import io.perfix.question.{Question, Questionnaire}
 
 trait DataStore {
-  def create(credentials: AWSCloudCredentials): Option[LaunchStoreQuestion]
+  def actualLaunch(awsCloudParams: AWSCloudParams): Option[LaunchStoreQuestion]
   def storeInputs(dataDescription: DataDescription): Questionnaire
   def connectAndInitialize(): Unit
   def putData(): Unit
   def readData(perfixQuery: PerfixQuery): Seq[Map[String, Any]]
   def cleanup(): Unit
+
+  def launch(awsCloudParams: AWSCloudParams): Option[LaunchStoreQuestion] = {
+    if (awsCloudParams.launchDB) {
+      actualLaunch(awsCloudParams)
+    } else {
+      None
+    }
+  }
 }
 
 object DataStore extends Enumeration {

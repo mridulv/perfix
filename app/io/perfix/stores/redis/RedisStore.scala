@@ -1,7 +1,7 @@
 package io.perfix.stores.redis
 
 import io.perfix.exceptions.{InvalidStateException, PerfixQueryException}
-import io.perfix.launch.{AWSCloudCredentials, LaunchStoreQuestion}
+import io.perfix.launch.{AWSCloudParams, LaunchStoreQuestion}
 import io.perfix.model.DataDescription
 import io.perfix.query.PerfixQuery
 import io.perfix.question.redis.RedisLaunchQuestion
@@ -11,11 +11,10 @@ import redis.clients.jedis.JedisPool
 class RedisStore extends DataStore {
   private var jedisPool: JedisPool = _
   private var dataDescription: DataDescription = _
-  private var redisParams: RedisParams = _
+  private val redisParams: RedisParams = RedisParams()
 
-  override def create(credentials: AWSCloudCredentials): Option[LaunchStoreQuestion] = {
-    redisParams = RedisParams()
-    Some(new RedisLaunchQuestion(credentials, redisParams))
+  override def actualLaunch(awsCloudParams: AWSCloudParams): Option[LaunchStoreQuestion] = {
+    Some(new RedisLaunchQuestion(awsCloudParams, redisParams))
   }
 
   override def storeInputs(dataDescription: DataDescription): RedisQuestionnaire = {
@@ -24,18 +23,18 @@ class RedisStore extends DataStore {
   }
 
   def connectAndInitialize(): Unit = {
-    (redisParams.url, redisParams.port) match {
-      case (Some(url), Some(port)) =>
-        jedisPool = new JedisPool(url, port)
+    (redisParams.redisConnectionParams) match {
+      case Some(param) =>
+        jedisPool = new JedisPool(param.url, param.port)
         jedisPool.setMinIdle(100)
-      case (_, _) => throw InvalidStateException("URL / Port Must be defined")
+      case _ => throw InvalidStateException("Redis Connection Params Must be defined")
     }
   }
 
   override def putData(): Unit = {
     val data = dataDescription.data
     val jedis = jedisPool.getResource
-    val keyColumn = redisParams.keyColumn.getOrElse(throw InvalidStateException("Key Column Must be defined"))
+    val keyColumn = redisParams.redisTableParams.map(_.keyColumn).getOrElse(throw InvalidStateException("Key Column Must be defined"))
     data.map { row =>
       val key = row(keyColumn).toString
       val value = row.map { case (k, v) =>

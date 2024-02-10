@@ -1,7 +1,7 @@
 package io.perfix.examples
 
 import io.perfix.common.PerfixExperimentExecutor
-import io.perfix.question.AWSCredentialsQuestion._
+import io.perfix.question.AWSCloudParamsQuestion._
 import io.perfix.question.Question
 import io.perfix.question.experiment.DataQuestions._
 import io.perfix.question.experiment.ExperimentParamsQuestion.CONCURRENT_QUERIES

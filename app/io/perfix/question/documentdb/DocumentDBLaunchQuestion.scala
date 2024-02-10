@@ -1,20 +1,20 @@
 package io.perfix.question.documentdb
 
-import com.amazonaws.auth.{AWSCredentials, AWSStaticCredentialsProvider, DefaultAWSCredentialsProviderChain}
+import com.amazonaws.auth.{AWSCredentials, AWSStaticCredentialsProvider}
 import com.amazonaws.services.docdb.{AmazonDocDB, AmazonDocDBClientBuilder}
 import com.amazonaws.services.docdb.model._
-import io.perfix.launch.{AWSCloudCredentials, LaunchStoreQuestion}
+import io.perfix.launch.{AWSCloudParams, LaunchStoreQuestion}
 import io.perfix.model.{QuestionType, StringType}
 import io.perfix.question.Question.QuestionLabel
 import io.perfix.question.documentdb.DocumentDBConnectionParamsQuestion.{DATABASE, URL}
 import io.perfix.question.documentdb.DocumentDBLaunchQuestion._
-import io.perfix.stores.documentdb.{DocumentDBConnectionParams, DocumentDBParams}
+import io.perfix.stores.documentdb.{DocumentDBConnectionParams, DocumentDBParams, DocumentDBTableParams}
 
 import java.util.concurrent.TimeUnit
 import scala.annotation.tailrec
 import scala.util.Random
 
-class DocumentDBLaunchQuestion(override val credentials: AWSCloudCredentials,
+class DocumentDBLaunchQuestion(override val credentials: AWSCloudParams,
                                override val storeQuestionParams: DocumentDBParams) extends LaunchStoreQuestion {
 
   override val mapping: Map[QuestionLabel, QuestionType] = Map(
@@ -74,7 +74,12 @@ class DocumentDBLaunchQuestion(override val credentials: AWSCloudCredentials,
         urlOpt.getOrElse(documentDBURL),
         dbName
       )
+      val documentDBTableParams = DocumentDBTableParams(
+        "collection" + Random.alphanumeric.take(5).mkString("")
+      )
+
       storeQuestionParams.documentDBConnectionParams = Some(connectionParams)
+      storeQuestionParams.documentDBTableParams = Some(documentDBTableParams)
 
       println(s"DocumentDB cluster creation initiated: ${clusterResponse.getDBClusterIdentifier}")
       println(s"DocumentDB instance creation initiated: ${instanceResponse.getDBInstanceIdentifier}")
