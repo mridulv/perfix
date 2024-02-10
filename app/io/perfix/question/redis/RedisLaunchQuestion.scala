@@ -4,15 +4,15 @@ import com.amazonaws.auth.{AWSCredentials, AWSStaticCredentialsProvider, Default
 import com.amazonaws.regions.Regions
 import com.amazonaws.services.elasticache.{AmazonElastiCache, AmazonElastiCacheClientBuilder}
 import com.amazonaws.services.elasticache.model._
-import io.perfix.launch.{AWSCloudCredentials, LaunchStoreQuestion}
+import io.perfix.launch.{AWSCloudParams, LaunchStoreQuestion}
 import io.perfix.model.{IntType, QuestionType, StringType}
 import io.perfix.question.Question.QuestionLabel
 import io.perfix.question.redis.ElastiCacheLaunchQuestion._
-import io.perfix.stores.redis.RedisParams
+import io.perfix.stores.redis.{RedisConnectionParams, RedisParams}
 
 import java.util.concurrent.TimeUnit
 
-class RedisLaunchQuestion(override val credentials: AWSCloudCredentials,
+class RedisLaunchQuestion(override val credentials: AWSCloudParams,
                           override val storeQuestionParams: RedisParams) extends LaunchStoreQuestion {
 
   override val mapping: Map[QuestionLabel, QuestionType] = Map(
@@ -54,8 +54,7 @@ class RedisLaunchQuestion(override val credentials: AWSCloudCredentials,
       val cacheNode = describeResponse.getCacheClusters.get(0).getCacheNodes.get(0)
       val endpoint = cacheNode.getEndpoint
 
-      storeQuestionParams.url = Some(endpoint.getAddress)
-      storeQuestionParams.port = Some(endpoint.getPort)
+      storeQuestionParams.redisConnectionParams = Some(RedisConnectionParams(endpoint.getAddress, endpoint.getPort))
 
       println(s"Redis cluster creation initiated: ${describeResponse.getCacheClusters.get(0).getCacheClusterId}")
     } catch {

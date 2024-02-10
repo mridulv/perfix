@@ -5,7 +5,7 @@ import io.perfix.model.{DataType, QuestionType, StringType}
 import io.perfix.question.Question
 import io.perfix.question.Question.QuestionLabel
 import io.perfix.question.redis.RedisTableParamsQuestion.KEY_COLUMN
-import io.perfix.stores.redis.RedisParams
+import io.perfix.stores.redis.{RedisParams, RedisTableParams}
 
 class RedisTableParamsQuestion(override val storeQuestionParams: RedisParams)
   extends Question {
@@ -15,13 +15,13 @@ class RedisTableParamsQuestion(override val storeQuestionParams: RedisParams)
   )
 
   override def shouldAsk(): Boolean = {
-    storeQuestionParams.keyColumn.isEmpty
+    storeQuestionParams.redisTableParams.isEmpty
   }
 
   override def setAnswers(answers: Map[QuestionLabel, Any]): Unit = {
-    storeQuestionParams.keyColumn match {
-      case Some(_) => throw ParamsAlreadyDefinedException("Redis URL Already Defined")
-      case None => storeQuestionParams.keyColumn = Some(answers(KEY_COLUMN).toString)
+    storeQuestionParams.redisTableParams match {
+      case Some(_) => throw ParamsAlreadyDefinedException("Redis Table Params are already defined")
+      case None => storeQuestionParams.redisTableParams = Some(RedisTableParams(answers(KEY_COLUMN).toString))
     }
   }
 }

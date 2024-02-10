@@ -5,7 +5,7 @@ import io.perfix.model.{DataType, IntType, QuestionType, StringType}
 import io.perfix.question.Question
 import io.perfix.question.Question.QuestionLabel
 import io.perfix.question.redis.RedisConnectionParametersQuestion.{PORT, URL}
-import io.perfix.stores.redis.RedisParams
+import io.perfix.stores.redis.{RedisConnectionParams, RedisParams}
 
 class RedisConnectionParametersQuestion(override val storeQuestionParams: RedisParams) extends Question {
   override val mapping: Map[QuestionLabel, QuestionType] = Map(
@@ -14,15 +14,19 @@ class RedisConnectionParametersQuestion(override val storeQuestionParams: RedisP
   )
 
   override def shouldAsk(): Boolean = {
-    storeQuestionParams.url.isEmpty || storeQuestionParams.port.isEmpty
+    storeQuestionParams.redisConnectionParams.isEmpty
   }
 
   override def setAnswers(answers: Map[QuestionLabel, Any]): Unit = {
-    storeQuestionParams.url match {
+    storeQuestionParams.redisConnectionParams match {
       case Some(_) => throw ParamsAlreadyDefinedException("Redis URL Already Defined")
       case None =>
-        storeQuestionParams.url = Some(answers(URL).toString)
-        storeQuestionParams.port = Some(answers(PORT).toString.toInt)
+        storeQuestionParams.redisConnectionParams = Some(
+          RedisConnectionParams(
+            answers(URL).toString,
+            answers(PORT).toString.toInt
+          )
+        )
     }
   }
 }

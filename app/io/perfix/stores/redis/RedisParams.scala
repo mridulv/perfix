@@ -4,8 +4,10 @@ import io.perfix.question.QuestionParams
 
 case class RedisParams() extends QuestionParams {
 
-  var url: Option[String] = None
-  var port: Option[Int] = None
-  var keyColumn: Option[String] = None
+  var redisConnectionParams: Option[RedisConnectionParams] = None
+  var redisTableParams: Option[RedisTableParams] = None
 
 }
+
+case class RedisConnectionParams(url: String, port: Int)
+case class RedisTableParams(keyColumn: String)
