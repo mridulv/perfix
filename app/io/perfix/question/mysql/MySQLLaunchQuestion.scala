@@ -3,7 +3,7 @@ package io.perfix.question.mysql
 import com.amazonaws.auth.{AWSCredentials, AWSStaticCredentialsProvider}
 import com.amazonaws.services.rds.{AmazonRDS, AmazonRDSClientBuilder}
 import com.amazonaws.services.rds.model.{CreateDBInstanceRequest, DBInstance, DescribeDBInstancesRequest}
-import io.perfix.launch.{AWSCloudCredentials, LaunchStoreQuestion}
+import io.perfix.launch.{AWSCloudParams, LaunchStoreQuestion}
 import io.perfix.model.{QuestionType, StringType}
 import io.perfix.question.Question.QuestionLabel
 import io.perfix.question.mysql.ConnectionParamsQuestion.{PASSWORD, USERNAME}
@@ -14,7 +14,7 @@ import io.perfix.stores.mysql.{MySQLConnectionParams, MySQLParams, MySQLTablePar
 import java.util.concurrent.TimeUnit
 import scala.util.Random
 
-class MySQLLaunchQuestion(override val credentials: AWSCloudCredentials,
+class MySQLLaunchQuestion(override val credentials: AWSCloudParams,
                           override val storeQuestionParams: MySQLParams) extends LaunchStoreQuestion {
 
   override val mapping: Map[QuestionLabel, QuestionType] = Map(
