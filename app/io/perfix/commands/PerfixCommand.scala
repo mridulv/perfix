@@ -19,6 +19,12 @@ class PerfixCommand extends Runnable {
 
   @CommandLine.Command(name = "dynamodb", description = Array("Run performance experiment on MySQL"))
   val dynamoDBCommand: DynamoDBCommand = new DynamoDBCommand()
+
+  override def run(): Unit = {
+    throw new CommandLine.ParameterException(spec.commandLine(), "Specify a subcommand")
+  }
+}
+
 object PerfixCommand {
   def main(args: Array[String]): Unit = {
     System.exit(new CommandLine(new PerfixCommand()).execute(args: _*))
