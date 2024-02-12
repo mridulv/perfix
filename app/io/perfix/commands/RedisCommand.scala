@@ -76,4 +76,3 @@ class RedisCommand extends Runnable {
     experimentExecutor.cleanUp()
   }
 }
-
