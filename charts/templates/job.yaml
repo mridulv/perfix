@@ -1,0 +1,12 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: perfix-job
+spec:
+  template:
+    spec:
+      containers:
+        - name: perfix-job
+          image: "{{ .Values.job.image }}"
+          command: {{ .Values.job.command }}
+      restartPolicy: Never
