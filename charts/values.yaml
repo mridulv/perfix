@@ -1,6 +1,6 @@
 image:
   repository: mridulverma/perfix
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
   tag: "latest"
 
 service:
@@ -9,4 +9,3 @@ service:
 
 job:
   image: curlimages/curl
-

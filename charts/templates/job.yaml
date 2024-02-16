@@ -8,6 +8,11 @@ spec:
       containers:
         - name: perfix-job
           image: "{{ .Values.job.image }}"
+          resources:
+            limits:
+              cpu: 100m
+            requests:
+              cpu: 100m
           command: ["/bin/sh", "-c"]
           args:
             - |

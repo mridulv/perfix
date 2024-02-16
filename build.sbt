@@ -33,3 +33,6 @@ lazy val root = (project in file("."))
           dockerBaseImage := "openjdk:11-jre-slim"
   )
 
+Universal / javaOptions ++= Seq(
+        "-Dpidfile.path=/dev/null"
+)
