@@ -1,6 +1,7 @@
-package io.perfix.common
+package io.perfix.controllers
 
 import controllers.AssetsFinder
+import io.perfix.common.PerfixManager
 import io.perfix.model.PerfixQuestion._
 import io.perfix.model.PerfixQuestionAnswers
 import play.api.libs.json.Json
