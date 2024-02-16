@@ -2,9 +2,11 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
-POST     /questionnaire                                io.perfix.common.PerfixController.questionnaire(storeName: String)
-POST     /questionnaire/:id                            io.perfix.common.PerfixController.startExperiment(id: Int)
-GET      /questionnaire/:id/question                   io.perfix.common.PerfixController.questions(id: Int)
-POST     /questionnaire/:id/question                   io.perfix.common.PerfixController.submitQuestion(id: Int)
+POST     /questionnaire                                io.perfix.controllers.PerfixController.questionnaire(storeName: String)
+POST     /questionnaire/:id                            io.perfix.controllers.PerfixController.startExperiment(id: Int)
+GET      /questionnaire/:id/question                   io.perfix.controllers.PerfixController.questions(id: Int)
+POST     /questionnaire/:id/question                   io.perfix.controllers.PerfixController.submitQuestion(id: Int)
 
-POST     /execute                                      io.perfix.common.PerfixController.executeExperiment(storeName: String)
+POST     /execute                                      io.perfix.controllers.PerfixController.executeExperiment(storeName: String)
+
+GET     /health                                        io.perfix.controllers.HealthCheckController.health
