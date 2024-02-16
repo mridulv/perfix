@@ -8,5 +8,14 @@ spec:
       containers:
         - name: perfix-job
           image: "{{ .Values.job.image }}"
-          command: {{ .Values.job.command }}
+          command: ["/bin/sh", "-c"]
+          args:
+            - |
+              echo "Waiting for perfix service to be ready..."
+              until curl --output /dev/null --silent --head --fail http://perfix-service:9000/health; do
+                printf '.'
+                sleep 5
+              done
+              echo "Perfix service is ready."
+              curl -X POST http://perfix-service:9000/test -H 'Content-Type: application/json' -d '{\"key1\":\"value1\", \"key2\":\"value2\"}'
       restartPolicy: Never

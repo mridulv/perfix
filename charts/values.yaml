@@ -9,4 +9,4 @@ service:
 
 job:
   image: curlimages/curl
-  command: [ "sh", "-c", "curl -X POST http://perfix-service:9000/test -H 'Content-Type: application/json' -d '{\"key1\":\"value1\", \"key2\":\"value2\"}'" ]
+
