@@ -14,11 +14,7 @@ trait DataStore {
   def cleanup(): Unit
 
   def launch(awsCloudParams: AWSCloudParams): Option[LaunchStoreQuestion] = {
-    if (awsCloudParams.launchDB) {
-      actualLaunch(awsCloudParams)
-    } else {
-      None
-    }
+    actualLaunch(awsCloudParams)
   }
 }
 
