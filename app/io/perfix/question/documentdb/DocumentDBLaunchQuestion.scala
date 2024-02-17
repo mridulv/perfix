@@ -1,6 +1,6 @@
 package io.perfix.question.documentdb
 
-import com.amazonaws.auth.{AWSCredentials, AWSStaticCredentialsProvider}
+import com.amazonaws.auth.{AWSCredentials, AWSStaticCredentialsProvider, DefaultAWSCredentialsProviderChain}
 import com.amazonaws.services.docdb.{AmazonDocDB, AmazonDocDBClientBuilder}
 import com.amazonaws.services.docdb.model._
 import io.perfix.launch.{AWSCloudParams, LaunchStoreQuestion}
@@ -35,10 +35,14 @@ class DocumentDBLaunchQuestion(override val credentials: AWSCloudParams,
     val urlOpt = answers.get(URL).map(_.toString)
     val dbName = answers.get(DATABASE).map(_.toString).getOrElse("perfix"+Random.alphanumeric.take(10).mkString(""))
 
-    val credentialsProvider = new AWSStaticCredentialsProvider(new AWSCredentials {
-      override def getAWSAccessKeyId: String = credentials.accessKey.get
-      override def getAWSSecretKey: String = credentials.accessSecret.get
-    })
+    val credentialsProvider = if (credentials.useInstanceRole) {
+      DefaultAWSCredentialsProviderChain.getInstance()
+    } else {
+      new AWSStaticCredentialsProvider(new AWSCredentials {
+        override def getAWSAccessKeyId: String = credentials.accessKey.get
+        override def getAWSSecretKey: String = credentials.accessSecret.get
+      })
+    }
 
     val docDBClient = AmazonDocDBClientBuilder.standard()
       .withCredentials(credentialsProvider)
