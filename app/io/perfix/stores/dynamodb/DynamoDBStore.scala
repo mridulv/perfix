@@ -13,6 +13,7 @@ import io.perfix.query.PerfixQuery
 import io.perfix.stores.dynamodb.model.DynamoDBGSIMetadataParams
 
 import scala.jdk.CollectionConverters._
+import scala.util.control.Breaks.{break, breakable}
 
 class DynamoDBStore extends DataStore {
   private var client: AmazonDynamoDB = _
@@ -72,7 +73,7 @@ class DynamoDBStore extends DataStore {
       .withProvisionedThroughput(provisionedThroughput)
 
     client.createTable(createTableRequest)
-    Thread.sleep(5000)
+    waitForMainTable()
 
     dynamoDBParams.dynamoDBGSIMetadataParams match {
       case Some(gsi) =>
@@ -81,6 +82,7 @@ class DynamoDBStore extends DataStore {
           .withAttributeDefinitions(attributeDefinitions: _*)
           .withGlobalSecondaryIndexUpdates(createGSIs(gsi): _*)
         client.updateTable(updateTableRequest)
+        waitForGSI()
       case None =>
     }
 
@@ -206,6 +208,36 @@ class DynamoDBStore extends DataStore {
       new AttributeDefinition()
         .withAttributeName(col.columnName)
         .withAttributeType(toDynamoDBType(col.columnType))
+    }
+  }
+
+  private def waitForMainTable(): Unit = {
+    breakable {
+      while (true) {
+        val describeTableRequest = new DescribeTableRequest().withTableName(tableParams.tableName)
+        val tableDescription = client.describeTable(describeTableRequest).getTable
+        if (tableDescription.getTableStatus.toLowerCase() == "active") {
+          break
+        }
+        println("Waiting for the table to become active")
+        Thread.sleep(1000)
+      }
+    }
+  }
+
+  private def waitForGSI(): Unit = {
+    breakable {
+      while (true) {
+        val describeTableRequest = new DescribeTableRequest().withTableName(tableParams.tableName)
+        val tableDescription = client.describeTable(describeTableRequest).getTable
+        val globalSecondaryIndexes = tableDescription.getGlobalSecondaryIndexes
+        val checkForAllGSI = globalSecondaryIndexes.asScala.forall(_.getIndexStatus.toLowerCase() == "active")
+        if (globalSecondaryIndexes.isEmpty || checkForAllGSI) {
+          break
+        }
+        println("Waiting for the GSI to become active")
+        Thread.sleep(1000)
+      }
     }
   }
 
