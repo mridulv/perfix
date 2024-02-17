@@ -19,7 +19,7 @@ class DocumentDBStore extends DataStore {
   private val documentDBParams: DocumentDBParams = DocumentDBParams()
   private var dataDescription: DataDescription = _
 
-  override def actualLaunch(awsCloudParams: AWSCloudParams): Option[LaunchStoreQuestion] = {
+  override def launch(awsCloudParams: AWSCloudParams): Option[LaunchStoreQuestion] = {
     Some(new DocumentDBLaunchQuestion(awsCloudParams, documentDBParams))
   }
 

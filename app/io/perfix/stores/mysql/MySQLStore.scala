@@ -15,7 +15,7 @@ class MySQLStore extends DataStore {
   private var dataDescription: DataDescription = _
   private val mySQLParams: MySQLParams = MySQLParams()
 
-  override def actualLaunch(awsCloudParams: AWSCloudParams): Option[LaunchStoreQuestion] = {
+  override def launch(awsCloudParams: AWSCloudParams): Option[LaunchStoreQuestion] = {
     Some(new MySQLLaunchQuestion(awsCloudParams, mySQLParams))
   }
 

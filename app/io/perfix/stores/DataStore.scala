@@ -6,20 +6,12 @@ import io.perfix.query.PerfixQuery
 import io.perfix.question.{Question, Questionnaire}
 
 trait DataStore {
-  def actualLaunch(awsCloudParams: AWSCloudParams): Option[LaunchStoreQuestion]
+  def launch(awsCloudParams: AWSCloudParams): Option[LaunchStoreQuestion]
   def storeInputs(dataDescription: DataDescription): Questionnaire
   def connectAndInitialize(): Unit
   def putData(): Unit
   def readData(perfixQuery: PerfixQuery): Seq[Map[String, Any]]
   def cleanup(): Unit
-
-  def launch(awsCloudParams: AWSCloudParams): Option[LaunchStoreQuestion] = {
-    if (awsCloudParams.launchDB) {
-      actualLaunch(awsCloudParams)
-    } else {
-      None
-    }
-  }
 }
 
 object DataStore extends Enumeration {

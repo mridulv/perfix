@@ -21,7 +21,7 @@ class DynamoDBStore extends DataStore {
   private var tableParams: DynamoDBTableParams = _
   private var awsCloudCredentials: AWSCloudParams = _
 
-  override def actualLaunch(awsCloudParams: AWSCloudParams): Option[LaunchStoreQuestion] = {
+  override def launch(awsCloudParams: AWSCloudParams): Option[LaunchStoreQuestion] = {
     awsCloudCredentials = awsCloudParams
     None
   }

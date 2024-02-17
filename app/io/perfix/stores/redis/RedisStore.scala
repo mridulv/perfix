@@ -13,7 +13,7 @@ class RedisStore extends DataStore {
   private var dataDescription: DataDescription = _
   private val redisParams: RedisParams = RedisParams()
 
-  override def actualLaunch(awsCloudParams: AWSCloudParams): Option[LaunchStoreQuestion] = {
+  override def launch(awsCloudParams: AWSCloudParams): Option[LaunchStoreQuestion] = {
     Some(new RedisLaunchQuestion(awsCloudParams, redisParams))
   }
 
