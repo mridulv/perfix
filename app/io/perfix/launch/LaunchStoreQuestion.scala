@@ -6,6 +6,6 @@ trait LaunchStoreQuestion extends Question {
 
   val credentials: AWSCloudParams
 
-  override val shouldAsk: Boolean = true
+  override val shouldAsk: Boolean = credentials.launchDB
 
 }
