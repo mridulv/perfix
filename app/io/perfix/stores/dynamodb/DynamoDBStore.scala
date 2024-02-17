@@ -1,6 +1,6 @@
 package io.perfix.stores.dynamodb
 
-import com.amazonaws.auth.{AWSCredentials, AWSStaticCredentialsProvider}
+import com.amazonaws.auth.{AWSCredentials, AWSStaticCredentialsProvider, DefaultAWSCredentialsProviderChain}
 import com.amazonaws.client.builder.AwsClientBuilder
 import com.amazonaws.services.dynamodbv2.{AmazonDynamoDB, AmazonDynamoDBClientBuilder}
 import com.amazonaws.services.dynamodbv2.model._
@@ -44,22 +44,25 @@ class DynamoDBStore extends DataStore {
     )
     val attributeDefinitions = getAttributeDefinitions(dataDescription.columns)
 
+    val credentialsProvider = if (awsCloudCredentials.useInstanceRole) {
+      DefaultAWSCredentialsProviderChain.getInstance()
+    } else {
+      new AWSStaticCredentialsProvider(new AWSCredentials {
+        override def getAWSAccessKeyId: String = accessKey
+        override def getAWSSecretKey: String = accessSecret
+      })
+    }
+
     client = tableParams.urlOpt match {
       case Some(url) => AmazonDynamoDBClientBuilder
         .standard()
         .withEndpointConfiguration(
           new AwsClientBuilder.EndpointConfiguration(url, "us-west-2")
-        ).withCredentials(new AWSStaticCredentialsProvider(new AWSCredentials {
-        override def getAWSAccessKeyId: String = accessKey
-        override def getAWSSecretKey: String = accessSecret
-      }  )).build()
+        ).withCredentials(credentialsProvider).build()
       case None => AmazonDynamoDBClientBuilder
         .standard()
         .withRegion("us-west-2")
-        .withCredentials(new AWSStaticCredentialsProvider(new AWSCredentials {
-        override def getAWSAccessKeyId: String = accessKey
-        override def getAWSSecretKey: String = accessSecret
-      }  )).build()
+        .withCredentials(credentialsProvider).build()
     }
 
     val readCapacity: Long = capacityParams.readCapacity.getOrElse(5L)

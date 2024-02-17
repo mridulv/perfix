@@ -26,10 +26,14 @@ class RedisLaunchQuestion(override val credentials: AWSCloudParams,
     val cacheNodeType = answers(CACHE_NODE_TYPE).toString
     val numCacheNodes = answers.get(NUM_CACHE_NODES).map(_.toString.toInt).getOrElse(1)
 
-    val credentialsProvider = new AWSStaticCredentialsProvider(new AWSCredentials {
-      override def getAWSAccessKeyId: String = credentials.accessKey.get
-      override def getAWSSecretKey: String = credentials.accessSecret.get
-    })
+    val credentialsProvider = if (credentials.useInstanceRole) {
+      DefaultAWSCredentialsProviderChain.getInstance()
+    } else {
+      new AWSStaticCredentialsProvider(new AWSCredentials {
+        override def getAWSAccessKeyId: String = credentials.accessKey.get
+        override def getAWSSecretKey: String = credentials.accessSecret.get
+      })
+    }
 
     val elasticacheClient = AmazonElastiCacheClientBuilder.standard()
       .withCredentials(credentialsProvider)
