@@ -14,7 +14,7 @@ class ExperimentQuestionnaire(experimentParams: ExperimentParams,
     val credentialsQuestion = new AWSCloudParamsQuestion(cloudParams)
 
     val launchQuestions = dataStore.launch(cloudParams) match {
-      case Some(q) => Iterator(credentialsQuestion) ++ Iterator(q)
+      case Some(launchQuestion) => Iterator(credentialsQuestion) ++ Iterator(launchQuestion)
       case None => Iterator(credentialsQuestion)
     }
 
