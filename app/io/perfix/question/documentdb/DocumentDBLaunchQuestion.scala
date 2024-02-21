@@ -13,6 +13,7 @@ import io.perfix.stores.documentdb.{DocumentDBConnectionParams, DocumentDBParams
 import java.util.concurrent.TimeUnit
 import scala.annotation.tailrec
 import scala.util.Random
+import scala.jdk.CollectionConverters._
 
 class DocumentDBLaunchQuestion(override val credentials: AWSCloudParams,
                                override val storeQuestionParams: DocumentDBParams) extends LaunchStoreQuestion {
@@ -71,6 +72,8 @@ class DocumentDBLaunchQuestion(override val credentials: AWSCloudParams,
 
       val instanceResponse = docDBClient.createDBInstance(createDBInstanceRequest)
       waitForInstanceAvailability(docDBClient, clusterIdentifier + "-instance")
+
+      createTransitGateway(instanceResponse.getDBSubnetGroup.getVpcId)
 
       val documentDBURL = s"mongodb://${masterUsername}:${masterPassword}@${clusterResponse.getEndpoint}:${clusterResponse.getPort}/"
 
