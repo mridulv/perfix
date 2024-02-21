@@ -3,6 +3,7 @@ package io.perfix.question.documentdb
 import com.amazonaws.auth.{AWSCredentials, AWSStaticCredentialsProvider, DefaultAWSCredentialsProviderChain}
 import com.amazonaws.services.docdb.{AmazonDocDB, AmazonDocDBClientBuilder}
 import com.amazonaws.services.docdb.model._
+import io.perfix.common.CommonConfig.DB_SUBNET_GROUP_NAME
 import io.perfix.launch.{AWSCloudParams, LaunchStoreQuestion}
 import io.perfix.model.{QuestionType, StringType}
 import io.perfix.question.Question.QuestionLabel
@@ -58,6 +59,7 @@ class DocumentDBLaunchQuestion(override val credentials: AWSCloudParams,
       .withEngineVersion("4.0.0")
       .withDBClusterParameterGroupName("default.docdb4.0")
       .withAvailabilityZones("us-east-1a")
+      .withDBSubnetGroupName(DB_SUBNET_GROUP_NAME)
 
     val createDBInstanceRequest = new CreateDBInstanceRequest()
       .withDBInstanceIdentifier(clusterIdentifier + "-instance")
@@ -72,8 +74,6 @@ class DocumentDBLaunchQuestion(override val credentials: AWSCloudParams,
 
       val instanceResponse = docDBClient.createDBInstance(createDBInstanceRequest)
       waitForInstanceAvailability(docDBClient, clusterIdentifier + "-instance")
-
-      createTransitGateway(instanceResponse.getDBSubnetGroup.getVpcId)
 
       val documentDBURL = s"mongodb://${masterUsername}:${masterPassword}@${clusterResponse.getEndpoint}:${clusterResponse.getPort}/"
 
