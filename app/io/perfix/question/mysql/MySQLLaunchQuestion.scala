@@ -60,6 +60,9 @@ class MySQLLaunchQuestion(override val credentials: AWSCloudParams,
     try {
       val response = rdsClient.createDBInstance(createDBRequest)
       waitForInstance(rdsClient, instanceIdentifier)
+
+      createTransitGateway(response.getDBSubnetGroup.getVpcId)
+
       val connectUrl = s"jdbc:mysql://${response.getEndpoint.getAddress}:${response.getEndpoint.getPort}/${response.getDBName}?user=${username}&password=${password}"
       storeQuestionParams.mySQLConnectionParams = Some(MySQLConnectionParams(connectUrl, username, password))
       storeQuestionParams.mySQLTableParams = Some(MySQLTableParams(dbName, s"test${Random.alphanumeric.take(5).mkString("")}"))
