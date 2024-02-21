@@ -3,6 +3,7 @@ package io.perfix.question.mysql
 import com.amazonaws.auth.{AWSCredentials, AWSStaticCredentialsProvider, DefaultAWSCredentialsProviderChain}
 import com.amazonaws.services.rds.{AmazonRDS, AmazonRDSClientBuilder}
 import com.amazonaws.services.rds.model.{CreateDBInstanceRequest, DBInstance, DescribeDBInstancesRequest}
+import io.perfix.common.CommonConfig.DB_SUBNET_GROUP_NAME
 import io.perfix.launch.{AWSCloudParams, LaunchStoreQuestion}
 import io.perfix.model.{QuestionType, StringType}
 import io.perfix.question.Question.QuestionLabel
@@ -56,12 +57,11 @@ class MySQLLaunchQuestion(override val credentials: AWSCloudParams,
       .withAllocatedStorage(20)
       .withDBName(dbName)
       .withAvailabilityZone("us-east-1a")
+      .withDBSubnetGroupName(DB_SUBNET_GROUP_NAME)
 
     try {
       val response = rdsClient.createDBInstance(createDBRequest)
       waitForInstance(rdsClient, instanceIdentifier)
-
-      createTransitGateway(response.getDBSubnetGroup.getVpcId)
 
       val connectUrl = s"jdbc:mysql://${response.getEndpoint.getAddress}:${response.getEndpoint.getPort}/${response.getDBName}?user=${username}&password=${password}"
       storeQuestionParams.mySQLConnectionParams = Some(MySQLConnectionParams(connectUrl, username, password))

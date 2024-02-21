@@ -4,6 +4,7 @@ import com.amazonaws.auth.{AWSCredentials, AWSStaticCredentialsProvider, Default
 import com.amazonaws.regions.Regions
 import com.amazonaws.services.elasticache.{AmazonElastiCache, AmazonElastiCacheClientBuilder}
 import com.amazonaws.services.elasticache.model._
+import io.perfix.common.CommonConfig.DB_SUBNET_GROUP_NAME
 import io.perfix.launch.{AWSCloudParams, LaunchStoreQuestion}
 import io.perfix.model.{IntType, QuestionType, StringType}
 import io.perfix.question.Question.QuestionLabel
@@ -46,6 +47,7 @@ class RedisLaunchQuestion(override val credentials: AWSCloudParams,
       .withEngine("redis")
       .withNumCacheNodes(numCacheNodes)
       .withPreferredAvailabilityZone("us-east-1a")
+      .withCacheSubnetGroupName(DB_SUBNET_GROUP_NAME)
 
     try {
       elasticacheClient.createCacheCluster(createCacheClusterRequest)
