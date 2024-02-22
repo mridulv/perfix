@@ -18,21 +18,23 @@ import scala.util.Random
 class MySQLLaunchQuestion(override val credentials: AWSCloudParams,
                           override val storeQuestionParams: MySQLParams) extends LaunchStoreQuestion {
 
-  override val mapping: Map[QuestionLabel, QuestionType] = Map(
-    DBNAME -> QuestionType(StringType),
-    USERNAME -> QuestionType(StringType),
+  override val launchQuestionsMapping: Map[QuestionLabel, QuestionType] = Map(
+    DBNAME -> QuestionType(StringType, isRequired = false),
+    USERNAME -> QuestionType(StringType, isRequired = false),
     PASSWORD -> QuestionType(StringType, isRequired = false),
-    INSTANCE_IDENTIFIER -> QuestionType(StringType),
-    INSTANCE_TYPE -> QuestionType(StringType)
+    INSTANCE_IDENTIFIER -> QuestionType(StringType, isRequired = false),
+    INSTANCE_TYPE -> QuestionType(StringType, isRequired = false)
   )
 
   override def setAnswers(answers: Map[QuestionLabel, Any]): Unit = {
+    val userName = "user" + Random.alphanumeric.take(10).mkString("")
+    val defaultDbName = "db" + Random.alphanumeric.take(5).mkString("")
     val pwd = Random.alphanumeric.take(10).mkString("")
-    val dbName = answers(DBNAME).toString
-    val username = answers(USERNAME).toString
+    val dbName = answers.get(DBNAME).map(_.toString).getOrElse(defaultDbName)
+    val username = answers.get(USERNAME).map(_.toString).getOrElse(userName)
     val password = answers.get(PASSWORD).map(_.toString).getOrElse(pwd)
     val instanceIdentifier = answers(INSTANCE_IDENTIFIER).toString
-    val instanceType = answers(INSTANCE_TYPE).toString
+    val instanceType = answers.get(INSTANCE_TYPE).map(_.toString).getOrElse("db.t3.micro")
 
     val credentialsProvider = if (credentials.useInstanceRole) {
       DefaultAWSCredentialsProviderChain.getInstance()
