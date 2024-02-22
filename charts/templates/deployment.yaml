@@ -15,6 +15,9 @@ spec:
       containers:
         - name: perfix
           image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          env:
+            - name: MODE
+              value: "trial"
           resources:
             limits:
               cpu: 100m

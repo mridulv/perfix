@@ -14,26 +14,27 @@ import io.perfix.stores.documentdb.{DocumentDBConnectionParams, DocumentDBParams
 import java.util.concurrent.TimeUnit
 import scala.annotation.tailrec
 import scala.util.Random
-import scala.jdk.CollectionConverters._
 
 class DocumentDBLaunchQuestion(override val credentials: AWSCloudParams,
                                override val storeQuestionParams: DocumentDBParams) extends LaunchStoreQuestion {
 
-  override val mapping: Map[QuestionLabel, QuestionType] = Map(
+  override val launchQuestionsMapping: Map[QuestionLabel, QuestionType] = Map(
     DATABASE -> QuestionType(StringType, isRequired = false),
-    DB_CLUSTER_IDENTIFIER -> QuestionType(StringType),
-    MASTER_USERNAME -> QuestionType(StringType),
+    DB_CLUSTER_IDENTIFIER -> QuestionType(StringType, isRequired = false),
+    MASTER_USERNAME -> QuestionType(StringType, isRequired = false),
     MASTER_PASSWORD -> QuestionType(StringType, isRequired = false),
-    INSTANCE_CLASS -> QuestionType(StringType),
+    INSTANCE_CLASS -> QuestionType(StringType, isRequired = false),
     URL -> QuestionType(StringType, isRequired = false)
   )
 
   override def setAnswers(answers: Map[QuestionLabel, Any]): Unit = {
+    val userName = "user" + Random.alphanumeric.take(10).mkString("")
     val pwd = Random.alphanumeric.take(10).mkString("")
-    val clusterIdentifier = answers(DB_CLUSTER_IDENTIFIER).toString
-    val masterUsername = answers(MASTER_USERNAME).toString
+    val defaultDbName = "db-" + Random.alphanumeric.take(10).mkString("")
+    val clusterIdentifier = answers.get(DB_CLUSTER_IDENTIFIER).map(_.toString).getOrElse(defaultDbName)
+    val masterUsername = answers.get(MASTER_USERNAME).map(_.toString).getOrElse(userName)
     val masterPassword = answers.get(MASTER_PASSWORD).map(_.toString).getOrElse(pwd)
-    val instanceClass = answers(INSTANCE_CLASS).toString
+    val instanceClass = answers.get(INSTANCE_CLASS).map(_.toString).getOrElse("db.t3.medium")
     val urlOpt = answers.get(URL).map(_.toString)
     val dbName = answers.get(DATABASE).map(_.toString).getOrElse("perfix"+Random.alphanumeric.take(10).mkString(""))
 
