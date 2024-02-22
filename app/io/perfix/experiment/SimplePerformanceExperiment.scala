@@ -1,6 +1,6 @@
 package io.perfix.experiment
 
-import io.perfix.model.ExperimentParams
+import io.perfix.model.{ExperimentParams, ExperimentResult, PerfixExperimentResult}
 import io.perfix.query.PerfixQuery
 import io.perfix.question.Questionnaire
 import io.perfix.stores.DataStore
@@ -24,7 +24,7 @@ class SimplePerformanceExperiment(dataStore: DataStore,
     }
   }
 
-  def run(): Unit = {
+  def run(): ExperimentResult = {
     dataStore.putData()
     BenchmarkUtil.runBenchmark(
       concurrentThreads = experimentParams.concurrentQueries,

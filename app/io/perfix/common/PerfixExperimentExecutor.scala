@@ -1,6 +1,7 @@
 package io.perfix.common
 
 import io.perfix.experiment.SimplePerformanceExperiment
+import io.perfix.model.ExperimentResult
 import io.perfix.query.{PerfixQuery, PerfixQueryFilter}
 import io.perfix.stores.DataStore
 import io.perfix.stores.documentdb.DocumentDBStore
@@ -23,7 +24,7 @@ class PerfixExperimentExecutor(storeName: String) {
     questionnaireExecutor
   }
 
-  def runExperiment(): Unit = {
+  def runExperiment(): ExperimentResult = {
     experiment.init()
     experiment.run()
   }
