@@ -18,6 +18,12 @@ spec:
           env:
             - name: MODE
               value: "trial"
+            - name: EKS_NAME
+              value: "test-cluster"
+            - name: EKS_REGION
+              value: "us-west-2"
+            - name: DB_SUBNET_GROUP_NAME
+              value: "DBSubnet"
           resources:
             limits:
               cpu: 100m
