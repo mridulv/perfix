@@ -38,7 +38,7 @@ class RedisLaunchQuestion(override val credentials: AWSCloudParams,
 
     val elasticacheClient = AmazonElastiCacheClientBuilder.standard()
       .withCredentials(credentialsProvider)
-      .withRegion(Regions.US_EAST_1)
+      .withRegion(Regions.US_WEST_2)
       .build()
 
     val createCacheClusterRequest = new CreateCacheClusterRequest()

@@ -10,12 +10,12 @@ trait LaunchStoreQuestion extends Question {
   val credentials: AWSCloudParams
   val launchQuestionsMapping: Map[QuestionLabel, QuestionType]
 
-  override val mapping: Map[QuestionLabel, QuestionType] = if (IS_TRIAL_MODE) {
+  override lazy val mapping: Map[QuestionLabel, QuestionType] = if (IS_TRIAL_MODE) {
     Map.empty
   } else {
     launchQuestionsMapping
   }
 
-  override val shouldAsk: Boolean = credentials.launchDB
+  override lazy val shouldAsk: Boolean = credentials.launchDB
 
 }

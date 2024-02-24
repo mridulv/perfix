@@ -1,6 +1,7 @@
 package io.perfix.question.documentdb
 
 import com.amazonaws.auth.{AWSCredentials, AWSStaticCredentialsProvider, DefaultAWSCredentialsProviderChain}
+import com.amazonaws.regions.Regions
 import com.amazonaws.services.docdb.{AmazonDocDB, AmazonDocDBClientBuilder}
 import com.amazonaws.services.docdb.model._
 import io.perfix.common.CommonConfig.DB_SUBNET_GROUP_NAME
@@ -49,7 +50,7 @@ class DocumentDBLaunchQuestion(override val credentials: AWSCloudParams,
 
     val docDBClient = AmazonDocDBClientBuilder.standard()
       .withCredentials(credentialsProvider)
-      .withRegion("us-east-1")
+      .withRegion(Regions.US_WEST_2)
       .build()
 
     val createDBClusterRequest = new CreateDBClusterRequest()
@@ -70,11 +71,14 @@ class DocumentDBLaunchQuestion(override val credentials: AWSCloudParams,
       .withAvailabilityZone("us-east-1a")
 
     try {
-      val clusterResponse = docDBClient.createDBCluster(createDBClusterRequest)
+      docDBClient.createDBCluster(createDBClusterRequest)
       waitForClusterAvailability(docDBClient, clusterIdentifier)
 
       val instanceResponse = docDBClient.createDBInstance(createDBInstanceRequest)
       waitForInstanceAvailability(docDBClient, clusterIdentifier + "-instance")
+
+      val describeClustersRequest = new DescribeDBClustersRequest().withDBClusterIdentifier(clusterIdentifier)
+      val clusterResponse = docDBClient.describeDBClusters(describeClustersRequest).getDBClusters.get(0)
 
       val documentDBURL = s"mongodb://${masterUsername}:${masterPassword}@${clusterResponse.getEndpoint}:${clusterResponse.getPort}/"
 
