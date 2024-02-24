@@ -19,9 +19,9 @@ class PerfixManager {
   }
 
   def startExperiment(questionnaireId: Int): PerfixExperimentResult = {
-    mapping(questionnaireId).runExperiment()
+    val experimentResult = mapping(questionnaireId).runExperiment()
     mapping(questionnaireId).cleanUp()
-    PerfixExperimentResult(questionnaireId)
+    experimentResult
   }
 
   def nextQuestion(questionnaireId: Int): Option[PerfixQuestion] = {
@@ -39,7 +39,7 @@ class PerfixManager {
   }
 
   def executeExperiment(storeName: String,
-                        questionAnswers: PerfixQuestionAnswers): Unit = {
+                        questionAnswers: PerfixQuestionAnswers): PerfixExperimentResult = {
     val mappedVariables = questionAnswers.toMap
     val experimentExecutor = new PerfixExperimentExecutor(storeName)
     while (experimentExecutor.getQuestionnaireExecutor.hasNext) {
@@ -55,7 +55,8 @@ class PerfixManager {
       experimentExecutor.getQuestionnaireExecutor.submit(Question.filteredAnswers(answerMapping))
     }
 
-    experimentExecutor.runExperiment()
+    val result = experimentExecutor.runExperiment()
     experimentExecutor.cleanUp()
+    result
   }
 }
