@@ -1,6 +1,7 @@
 package io.perfix.question.mysql
 
 import com.amazonaws.auth.{AWSCredentials, AWSStaticCredentialsProvider, DefaultAWSCredentialsProviderChain}
+import com.amazonaws.regions.Regions
 import com.amazonaws.services.rds.{AmazonRDS, AmazonRDSClientBuilder}
 import com.amazonaws.services.rds.model.{CreateDBInstanceRequest, DBInstance, DescribeDBInstancesRequest}
 import io.perfix.common.CommonConfig.DB_SUBNET_GROUP_NAME
@@ -29,11 +30,12 @@ class MySQLLaunchQuestion(override val credentials: AWSCloudParams,
   override def setAnswers(answers: Map[QuestionLabel, Any]): Unit = {
     val userName = "user" + Random.alphanumeric.take(10).mkString("")
     val defaultDbName = "db" + Random.alphanumeric.take(5).mkString("")
+    val instanceName = "instance" + Random.alphanumeric.take(5).mkString("")
     val pwd = Random.alphanumeric.take(10).mkString("")
     val dbName = answers.get(DBNAME).map(_.toString).getOrElse(defaultDbName)
     val username = answers.get(USERNAME).map(_.toString).getOrElse(userName)
     val password = answers.get(PASSWORD).map(_.toString).getOrElse(pwd)
-    val instanceIdentifier = answers(INSTANCE_IDENTIFIER).toString
+    val instanceIdentifier = answers.get(INSTANCE_IDENTIFIER).map(_.toString).getOrElse(instanceName)
     val instanceType = answers.get(INSTANCE_TYPE).map(_.toString).getOrElse("db.t3.micro")
 
     val credentialsProvider = if (credentials.useInstanceRole) {
@@ -47,7 +49,7 @@ class MySQLLaunchQuestion(override val credentials: AWSCloudParams,
 
     val rdsClient = AmazonRDSClientBuilder.standard()
       .withCredentials(credentialsProvider)
-      .withRegion("us-east-1")
+      .withRegion(Regions.US_WEST_2)
       .build()
 
     val createDBRequest = new CreateDBInstanceRequest()
@@ -58,12 +60,15 @@ class MySQLLaunchQuestion(override val credentials: AWSCloudParams,
       .withMasterUserPassword(password)
       .withAllocatedStorage(20)
       .withDBName(dbName)
-      .withAvailabilityZone("us-east-1a")
+      .withAvailabilityZone("us-west-2a")
       .withDBSubnetGroupName(DB_SUBNET_GROUP_NAME)
 
     try {
-      val response = rdsClient.createDBInstance(createDBRequest)
+      rdsClient.createDBInstance(createDBRequest)
       waitForInstance(rdsClient, instanceIdentifier)
+
+      val describeDBInstancesRequest = new DescribeDBInstancesRequest().withDBInstanceIdentifier(instanceIdentifier)
+      val response = rdsClient.describeDBInstances(describeDBInstancesRequest).getDBInstances.get(0)
 
       val connectUrl = s"jdbc:mysql://${response.getEndpoint.getAddress}:${response.getEndpoint.getPort}/${response.getDBName}?user=${username}&password=${password}"
       storeQuestionParams.mySQLConnectionParams = Some(MySQLConnectionParams(connectUrl, username, password))
