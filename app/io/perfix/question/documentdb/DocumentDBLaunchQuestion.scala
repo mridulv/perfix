@@ -74,7 +74,7 @@ class DocumentDBLaunchQuestion(override val credentials: AWSCloudParams,
       docDBClient.createDBCluster(createDBClusterRequest)
       waitForClusterAvailability(docDBClient, clusterIdentifier)
 
-      docDBClient.createDBInstance(createDBInstanceRequest)
+      val instanceResponse = docDBClient.createDBInstance(createDBInstanceRequest)
       waitForInstanceAvailability(docDBClient, clusterIdentifier + "-instance")
 
       val describeClustersRequest = new DescribeDBClustersRequest().withDBClusterIdentifier(clusterIdentifier)
