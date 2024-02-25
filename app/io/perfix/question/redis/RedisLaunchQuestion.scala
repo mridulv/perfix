@@ -46,7 +46,7 @@ class RedisLaunchQuestion(override val credentials: AWSCloudParams,
       .withCacheNodeType(cacheNodeType)
       .withEngine("redis")
       .withNumCacheNodes(numCacheNodes)
-      .withPreferredAvailabilityZone("us-east-1a")
+      .withPreferredAvailabilityZone("us-west-2b")
       .withCacheSubnetGroupName(DB_SUBNET_GROUP_NAME)
 
     try {
@@ -59,6 +59,8 @@ class RedisLaunchQuestion(override val credentials: AWSCloudParams,
       val describeResponse = elasticacheClient.describeCacheClusters(describeRequest)
       val cacheNode = describeResponse.getCacheClusters.get(0).getCacheNodes.get(0)
       val endpoint = cacheNode.getEndpoint
+
+      addIngressRules(describeResponse.getCacheClusters.get(0).getCacheSecurityGroups.get(0).getSecurityGroupId)
 
       storeQuestionParams.redisConnectionParams = Some(RedisConnectionParams(endpoint.getAddress, endpoint.getPort))
 

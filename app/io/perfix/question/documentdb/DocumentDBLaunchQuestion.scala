@@ -60,7 +60,7 @@ class DocumentDBLaunchQuestion(override val credentials: AWSCloudParams,
       .withEngine("docdb")
       .withEngineVersion("4.0.0")
       .withDBClusterParameterGroupName("default.docdb4.0")
-      .withAvailabilityZones("us-east-1a")
+      .withAvailabilityZones("us-west-2b")
       .withDBSubnetGroupName(DB_SUBNET_GROUP_NAME)
 
     val createDBInstanceRequest = new CreateDBInstanceRequest()
@@ -68,7 +68,7 @@ class DocumentDBLaunchQuestion(override val credentials: AWSCloudParams,
       .withDBClusterIdentifier(clusterIdentifier)
       .withDBInstanceClass(instanceClass)
       .withEngine("docdb")
-      .withAvailabilityZone("us-east-1a")
+      .withAvailabilityZone("us-west-2b")
 
     try {
       docDBClient.createDBCluster(createDBClusterRequest)
@@ -79,6 +79,11 @@ class DocumentDBLaunchQuestion(override val credentials: AWSCloudParams,
 
       val describeClustersRequest = new DescribeDBClustersRequest().withDBClusterIdentifier(clusterIdentifier)
       val clusterResponse = docDBClient.describeDBClusters(describeClustersRequest).getDBClusters.get(0)
+
+      val dbSG = clusterResponse.getVpcSecurityGroups.get(0)
+      addIngressRules(dbSG.getVpcSecurityGroupId)
+
+      println("Response is: " + clusterResponse.getEndpoint)
 
       val documentDBURL = s"mongodb://${masterUsername}:${masterPassword}@${clusterResponse.getEndpoint}:${clusterResponse.getPort}/"
 
