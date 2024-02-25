@@ -1,8 +1,7 @@
 package io.perfix.stores.documentdb
 
-import com.mongodb.MongoClient
 import com.mongodb.client.model.Indexes
-import com.mongodb.client.{MongoCollection, MongoDatabase}
+import com.mongodb.client.{MongoClient, MongoClients, MongoCollection, MongoDatabase}
 import io.perfix.exceptions.InvalidStateException
 import io.perfix.launch.{AWSCloudParams, LaunchStoreQuestion}
 import io.perfix.model.DataDescription
@@ -36,7 +35,7 @@ class DocumentDBStore extends DataStore {
       throw InvalidStateException("Table parameters should have been defined.")
     )
 
-    mongoClient = new MongoClient(connectionParams.url)
+    mongoClient = MongoClients.create(connectionParams.url)
     mongoDatabase = mongoClient.getDatabase(connectionParams.database)
     mongoDatabase.createCollection(tableParams.collectionName)
 
