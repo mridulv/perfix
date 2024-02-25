@@ -4,7 +4,6 @@ import com.amazonaws.services.ec2.{AmazonEC2, AmazonEC2ClientBuilder}
 import com.amazonaws.services.ec2.model.{AuthorizeSecurityGroupIngressRequest, DescribeSubnetsRequest, IpPermission, IpRange}
 import com.amazonaws.services.eks.AmazonEKSClientBuilder
 import com.amazonaws.services.eks.model.DescribeClusterRequest
-import com.amazonaws.services.rds.model.VpcSecurityGroupMembership
 import io.perfix.common.CommonConfig.IS_TRIAL_MODE
 import io.perfix.model.QuestionType
 import io.perfix.question.Question
