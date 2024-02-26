@@ -11,9 +11,21 @@ case class PerfixQuestionAnswers(answers: Seq[PerfixQuestionAnswer]) {
     }.toMap
   }
 
+  def addPerfixQuestionAnswer(perfixQuestionAnswer: PerfixQuestionAnswer): PerfixQuestionAnswers = {
+    this.copy(answers ++ Seq(perfixQuestionAnswer))
+  }
+
+  def addPerfixQuestionAnswers(perfixQuestionAnswers: Seq[PerfixQuestionAnswer]): PerfixQuestionAnswers = {
+    this.copy(answers ++ perfixQuestionAnswers)
+  }
+
 }
 
 object PerfixQuestionAnswers {
   implicit val PerfixQuestionAnswersWrites: Writes[PerfixQuestionAnswers] = Json.writes[PerfixQuestionAnswers]
   implicit val PerfixQuestionAnswersReads: Reads[PerfixQuestionAnswers] = Json.reads[PerfixQuestionAnswers]
+
+  def empty: PerfixQuestionAnswers = {
+    PerfixQuestionAnswers(Seq.empty)
+  }
 }
