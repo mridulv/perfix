@@ -60,8 +60,6 @@ class RedisLaunchQuestion(override val credentials: AWSCloudParams,
       val cacheNode = describeResponse.getCacheClusters.get(0).getCacheNodes.get(0)
       val endpoint = cacheNode.getEndpoint
 
-      addIngressRules(describeResponse.getCacheClusters.get(0).getCacheSecurityGroups.get(0).getSecurityGroupId)
-
       storeQuestionParams.redisConnectionParams = Some(RedisConnectionParams(endpoint.getAddress, endpoint.getPort))
 
       println(s"Redis cluster creation initiated: ${describeResponse.getCacheClusters.get(0).getCacheClusterId}")
