@@ -12,9 +12,9 @@ class PerfixManager {
   val resultsMapping: mutable.Map[Int, PerfixExperimentResultWithMapping] = mutable.Map.empty[Int, PerfixExperimentResultWithMapping]
   val mapping: mutable.Map[Int, PerfixExperimentExecutor] = mutable.Map.empty[Int, PerfixExperimentExecutor]
 
-  def startQuestionnaire(storeName: String): QuestionnaireResponse = {
+  def startQuestionnaire(storeName: String): ExperimentId = {
     val experimentExecutor = new PerfixExperimentExecutor(storeName)
-    val response = QuestionnaireResponse(Random.nextInt(1000))
+    val response = ExperimentId(Random.nextInt(1000))
     mapping.put(response.id, experimentExecutor)
     resultsMapping.put(response.id, PerfixExperimentResultWithMapping.empty)
     response
@@ -45,7 +45,7 @@ class PerfixManager {
   }
 
   def executeExperiment(storeName: String,
-                        questionAnswers: PerfixQuestionAnswers): QuestionnaireResponse = {
+                        questionAnswers: PerfixQuestionAnswers): ExperimentId = {
     val mappedVariables = questionAnswers.toMap
     val experimentExecutor = new PerfixExperimentExecutor(storeName)
     while (experimentExecutor.getQuestionnaireExecutor.hasNext) {
@@ -61,7 +61,7 @@ class PerfixManager {
       experimentExecutor.getQuestionnaireExecutor.submit(Question.filteredAnswers(answerMapping))
     }
 
-    val response = QuestionnaireResponse(Random.nextInt(1000))
+    val response = ExperimentId(Random.nextInt(1000))
     val result = experimentExecutor.runExperiment()
     resultsMapping.update(response.id, PerfixExperimentResultWithMapping(Some(result), questionAnswers))
     experimentExecutor.cleanUp()
