@@ -34,8 +34,11 @@ class PerfixController @Inject()(cc: ControllerComponents,
 
   def executeExperiment(storeName: String) = Action(parse.json) { request =>
     val perfixQuestionAnswers = request.body.as[PerfixQuestionAnswers]
-    perfixManager.executeExperiment(storeName, perfixQuestionAnswers)
-    Results.Ok
+    Results.Ok(Json.toJson(perfixManager.executeExperiment(storeName, perfixQuestionAnswers)))
+  }
+
+  def experimentResults(experimentId: Int) = Action { request =>
+    Results.Ok(Json.toJson(perfixManager.results(experimentId)).toString())
   }
 
 }
