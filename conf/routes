@@ -8,5 +8,6 @@ GET      /questionnaire/:id/question                   io.perfix.controllers.Per
 POST     /questionnaire/:id/question                   io.perfix.controllers.PerfixController.submitQuestion(id: Int)
 
 POST     /execute                                      io.perfix.controllers.PerfixController.executeExperiment(storeName: String)
+GET      /experiment/:id                               io.perfix.controllers.PerfixController.experimentResults(id: Int)
 
 GET     /health                                        io.perfix.controllers.HealthCheckController.health

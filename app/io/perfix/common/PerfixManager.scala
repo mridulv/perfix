@@ -67,4 +67,8 @@ class PerfixManager {
     experimentExecutor.cleanUp()
     response
   }
+
+  def results(experimentId: Int): PerfixExperimentResultWithMapping = {
+    resultsMapping(experimentId)
+  }
 }
