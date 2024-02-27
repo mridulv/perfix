@@ -18,17 +18,17 @@ class PerfixController @Inject()(cc: ControllerComponents,
     Results.Ok(Json.toJson(perfixManager.startQuestionnaire(storeName)))
   }
 
-  def startExperiment(questionnaireId: Int) = Action {
-    Results.Ok(Json.toJson(perfixManager.startExperiment(questionnaireId)))
+  def startExperiment(experimentId: Int) = Action {
+    Results.Ok(Json.toJson(perfixManager.startExperiment(experimentId)))
   }
 
-  def questions(questionnaireId: Int) = Action {
-    Results.Ok(Json.toJson(perfixManager.nextQuestion(questionnaireId)))
+  def questions(experimentId: Int) = Action {
+    Results.Ok(Json.toJson(perfixManager.nextQuestion(experimentId)))
   }
 
-  def submitQuestion(questionnaireId: Int) = Action(parse.json) { request =>
+  def submitQuestion(experimentId: Int) = Action(parse.json) { request =>
     val perfixQuestionAnswers = request.body.as[PerfixQuestionAnswers]
-    perfixManager.submitQuestionAnswer(questionnaireId, perfixQuestionAnswers)
+    perfixManager.submitQuestionAnswer(experimentId, perfixQuestionAnswers)
     Results.Ok
   }
 

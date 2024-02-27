@@ -20,8 +20,8 @@ class PerfixManager {
     response
   }
 
-  def nextQuestion(questionnaireId: Int): Option[PerfixQuestion] = {
-    val perfixExecutor = mapping(questionnaireId)
+  def nextQuestion(experimentId: Int): Option[PerfixQuestion] = {
+    val perfixExecutor = mapping(experimentId)
     if (perfixExecutor.getQuestionnaireExecutor.hasNext) {
       Some(PerfixQuestion(perfixExecutor.getQuestionnaireExecutor.next()))
     } else {
@@ -29,18 +29,18 @@ class PerfixManager {
     }
   }
 
-  def submitQuestionAnswer(questionnaireId: Int,
+  def submitQuestionAnswer(experimentId: Int,
                            questionAnswers: PerfixQuestionAnswers): Unit = {
-    mapping(questionnaireId).getQuestionnaireExecutor.submit(questionAnswers.toMap)
-    val perfixExperimentResultWithMapping = resultsMapping(questionnaireId).addPerfixQuestionAnswers(questionAnswers.answers)
-    resultsMapping.update(questionnaireId, perfixExperimentResultWithMapping)
+    mapping(experimentId).getQuestionnaireExecutor.submit(questionAnswers.toMap)
+    val perfixExperimentResultWithMapping = resultsMapping(experimentId).addPerfixQuestionAnswers(questionAnswers.answers)
+    resultsMapping.update(experimentId, perfixExperimentResultWithMapping)
   }
 
-  def startExperiment(questionnaireId: Int): PerfixExperimentResult = {
-    val experimentResult = mapping(questionnaireId).runExperiment()
-    val perfixExperimentResultWithMapping = resultsMapping(questionnaireId).addPerfixExperimentResult(experimentResult)
-    resultsMapping.update(questionnaireId, perfixExperimentResultWithMapping)
-    mapping(questionnaireId).cleanUp()
+  def startExperiment(experimentId: Int): PerfixExperimentResult = {
+    val experimentResult = mapping(experimentId).runExperiment()
+    val perfixExperimentResultWithMapping = resultsMapping(experimentId).addPerfixExperimentResult(experimentResult)
+    resultsMapping.update(experimentId, perfixExperimentResultWithMapping)
+    mapping(experimentId).cleanUp()
     experimentResult
   }
 
