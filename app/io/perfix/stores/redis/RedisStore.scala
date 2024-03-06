@@ -31,17 +31,19 @@ class RedisStore extends DataStore {
     }
   }
 
-  override def putData(): Unit = {
-    val data = dataDescription.data
+  override def putData(rows: Seq[Map[String, Any]]): Unit = {
     val jedis = jedisPool.getResource
     val keyColumn = redisParams.redisTableParams.map(_.keyColumn).getOrElse(throw InvalidStateException("Key Column Must be defined"))
-    data.map { row =>
+    val keyValues = scala.collection.mutable.ListBuffer.empty[String]
+    rows.map { row =>
       val key = row(keyColumn).toString
       val value = row.map { case (k, v) =>
         s"$k:$v"
       }.mkString(",")
-      jedis.set(key, value)
+      keyValues.append(key)
+      keyValues.append(value)
     }
+    jedis.mset(keyValues.toList: _*)
   }
 
   override def readData(perfixQuery: PerfixQuery): Seq[Map[String, Any]] = {
