@@ -102,6 +102,7 @@ class MySQLLaunchQuestion(override val credentials: AWSCloudParams,
         TimeUnit.SECONDS.sleep(20)
         val describeDBInstancesRequest = new DescribeDBInstancesRequest().withDBInstanceIdentifier(instanceIdentifier)
         val response = rdsClient.describeDBInstances(describeDBInstancesRequest)
+        println("Waiting for the mysql store to be up ...")
         if (!response.getDBInstances.isEmpty) {
           val dbInstance = response.getDBInstances.get(0)
           status = dbInstance.getDBInstanceStatus
