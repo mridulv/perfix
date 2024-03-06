@@ -82,6 +82,7 @@ class RedisLaunchQuestion(override val credentials: AWSCloudParams,
         val describeRequest = new DescribeCacheClustersRequest().withCacheClusterId(clusterId).withShowCacheNodeInfo(true)
         val describeResponse = elasticacheClient.describeCacheClusters(describeRequest)
         val clusterStatus = describeResponse.getCacheClusters.get(0).getCacheClusterStatus
+        println("Waiting for the redis store to be up ...")
 
         if (clusterStatus == "available") {
           isAvailable = true
