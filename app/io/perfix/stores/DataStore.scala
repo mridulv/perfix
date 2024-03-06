@@ -9,7 +9,7 @@ trait DataStore {
   def launch(awsCloudParams: AWSCloudParams): Option[LaunchStoreQuestion]
   def storeInputs(dataDescription: DataDescription): Questionnaire
   def connectAndInitialize(): Unit
-  def putData(): Unit
+  def putData(rows: Seq[Map[String, Any]]): Unit
   def readData(perfixQuery: PerfixQuery): Seq[Map[String, Any]]
   def cleanup(): Unit
 }
