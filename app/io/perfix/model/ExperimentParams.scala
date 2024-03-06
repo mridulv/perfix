@@ -6,6 +6,7 @@ case class ExperimentParams() extends QuestionParams {
 
   val dataDescription = new DataDescription
   var concurrentQueriesOpt: Option[Int] = None
+  var writeBatchSize: Int = 100
 
   def concurrentQueries: Int = {
     concurrentQueriesOpt.get

@@ -57,33 +57,29 @@ class MySQLStore extends DataStore {
     statement.close()
   }
 
-  override def putData(): Unit = {
-    val data = dataDescription.data
-    val batchSize = 100
-    data.grouped(batchSize).foreach { batchRows =>
-      val tableParams = mySQLParams.mySQLTableParams match {
-        case Some(tableParams) => tableParams
-        case None => throw InvalidStateException("Table Params should have been defined")
-      }
+  override def putData(rows: Seq[Map[String, Any]]): Unit = {
+    val tableParams = mySQLParams.mySQLTableParams match {
+      case Some(tableParams) => tableParams
+      case None => throw InvalidStateException("Table Params should have been defined")
+    }
 
-      val allKeys = batchRows.head.keys.toSeq // Assuming all rows have the same columns
-      val columnNames = allKeys.mkString(", ")
-      val valuePlaceholders = allKeys.map(_ => "?").mkString(", ")
+    val allKeys = rows.head.keys.toSeq // Assuming all rows have the same columns
+    val columnNames = allKeys.mkString(", ")
+    val valuePlaceholders = allKeys.map(_ => "?").mkString(", ")
 
-      val sql = s"INSERT INTO ${tableParams.tableName} ($columnNames) VALUES ($valuePlaceholders);"
-      val preparedStatement = connection.prepareStatement(sql)
+    val sql = s"INSERT INTO ${tableParams.tableName} ($columnNames) VALUES ($valuePlaceholders);"
+    val preparedStatement = connection.prepareStatement(sql)
 
-      try {
-        for (row <- batchRows) {
-          for (i <- 1 to allKeys.length) {
-            preparedStatement.setObject(i, row(s"${allKeys(i - 1)}"))
-          }
-          preparedStatement.addBatch() // Add the current row to the batch
+    try {
+      for (row <- rows) {
+        for (i <- 1 to allKeys.length) {
+          preparedStatement.setObject(i, row(s"${allKeys(i - 1)}"))
         }
-        preparedStatement.executeBatch() // Execute the batch insert
-      } finally {
-        preparedStatement.close()
+        preparedStatement.addBatch() // Add the current row to the batch
       }
+      preparedStatement.executeBatch() // Execute the batch insert
+    } finally {
+      preparedStatement.close()
     }
   }
 

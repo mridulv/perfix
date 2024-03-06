@@ -35,7 +35,7 @@ class SimplePerformanceExperimentTest extends AnyFlatSpec with Matchers {
 
     // Verify that connectAndInitialize() is called on the data store
     verify(dataStore).connectAndInitialize()
-    when(dataStore.putData()).thenAnswer(new Answer[Unit] {
+    when(dataStore.putData(Seq.empty)).thenAnswer(new Answer[Unit] {
       override def answer(invocation: InvocationOnMock): Unit = {
         putDataCalled = true
       }

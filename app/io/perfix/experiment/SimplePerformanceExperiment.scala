@@ -25,7 +25,17 @@ class SimplePerformanceExperiment(dataStore: DataStore,
   }
 
   def run(): PerfixExperimentResult = {
-    dataStore.putData()
+    var rowsCount = 0
+    experimentParams.dataDescription.data.grouped(experimentParams.writeBatchSize).foreach { rows =>
+      try {
+        dataStore.putData(rows)
+      } catch {
+        case e: Exception =>
+          println(s"Error while adding data: ${e.getMessage}")
+      }
+      rowsCount += rows.size
+      println(s"Added $rowsCount to the store")
+    }
     BenchmarkUtil.runBenchmark(
       concurrentThreads = experimentParams.concurrentQueries,
       benchmarkTimeSeconds = 15,

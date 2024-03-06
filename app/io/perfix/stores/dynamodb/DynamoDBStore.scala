@@ -92,20 +92,21 @@ class DynamoDBStore extends DataStore {
     Thread.sleep(5000)
   }
 
-  override def putData(): Unit = {
-    val data = dataDescription.data
-    data.foreach { row =>
+  override def putData(rows: Seq[Map[String, Any]]): Unit = {
+    val requests = rows.map { row =>
       val item = new java.util.HashMap[String, AttributeValue]()
       row.foreach { case (key, value) =>
         item.put(key, new AttributeValue(value.toString)) // Conversion to AttributeValue
       }
 
-      val putItemRequest = new PutItemRequest()
-        .withTableName(tableParams.tableName)
+      val putItemRequest = new PutRequest()
         .withItem(item)
-
-      client.putItem(putItemRequest)
+      val writeRequest = new WriteRequest()
+      writeRequest.withPutRequest(putItemRequest)
+      writeRequest
     }
+    val batchWriteItemRequest = new BatchWriteItemRequest().withRequestItems(Map(tableParams.tableName -> requests.asJava).asJava)
+    client.batchWriteItem(batchWriteItemRequest)
   }
 
   override def readData(perfixQuery: PerfixQuery): Seq[Map[String, Any]] = {

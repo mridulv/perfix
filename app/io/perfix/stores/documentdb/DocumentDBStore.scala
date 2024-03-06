@@ -47,15 +47,14 @@ class DocumentDBStore extends DataStore {
     }
   }
 
-  override def putData(): Unit = {
+  override def putData(rows: Seq[Map[String, Any]]): Unit = {
     val tableParams = documentDBParams.documentDBTableParams.getOrElse(
       throw InvalidStateException("Table parameters should have been defined.")
     )
 
     val collection: MongoCollection[Document] = mongoDatabase.getCollection(tableParams.collectionName)
 
-    val data = dataDescription.data
-    val documents = data.map { row =>
+    val documents = rows.map { row =>
       val document = new Document()
       row.map { case (k, v) =>
         document.put(k, v)
