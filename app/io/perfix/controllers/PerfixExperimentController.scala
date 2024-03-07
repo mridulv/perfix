@@ -20,8 +20,7 @@ class PerfixExperimentController @Inject()(cc: ControllerComponents,
   }
 
   def repeatExperiment(experimentId: Int) = Action { request =>
-    perfixManager.repeatExperiment(experimentId)
-    Results.Ok
+    Results.Ok(Json.toJson(perfixManager.repeatExperiment(experimentId)))
   }
 
   def experimentResults(experimentId: Int) = Action { request =>
