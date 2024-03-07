@@ -42,7 +42,13 @@ object BenchmarkUtil {
     val totalCalls = allExecutionTimes.length
     println(s"Total tasks executed: $totalCalls")
     val percentiles = printPercentiles(allExecutionTimes.toSeq)
-    PerfixExperimentResult(benchmarkTimeSeconds, totalCalls, percentiles)
+    PerfixExperimentResult(
+      overallQueryTime = benchmarkTimeSeconds,
+      overallWriteTimeTaken = 0L,
+      totalCalls,
+      percentiles,
+      writeLatencies = Seq.empty
+    )
   }
 
   def printPercentiles(executionTimes: Seq[Long]): Seq[PercentileLatency] = {
