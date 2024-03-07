@@ -19,6 +19,10 @@ class PerfixExperimentController @Inject()(cc: ControllerComponents,
     Results.Ok(Json.toJson(perfixManager.executeExperiment(storeName, perfixQuestionAnswers)))
   }
 
+  def repeatExperiment(experimentId: Int) = Action { request =>
+    Results.Ok(Json.toJson(perfixManager.repeatExperiment(experimentId)))
+  }
+
   def experimentResults(experimentId: Int) = Action { request =>
     Results.Ok(Json.toJson(perfixManager.results(experimentId)).toString())
   }

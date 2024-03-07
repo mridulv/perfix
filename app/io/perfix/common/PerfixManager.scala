@@ -1,5 +1,6 @@
 package io.perfix.common
 
+import io.perfix.exceptions.InvalidExperimentException
 import io.perfix.model._
 import io.perfix.question.Question
 
@@ -15,6 +16,7 @@ class PerfixManager {
   def startQuestionnaire(storeName: String): ExperimentId = {
     val experimentExecutor = new PerfixExperimentExecutor(storeName)
     val response = ExperimentId(Random.nextInt(1000))
+    println(s"Experiment Id: ${response.id}")
     mapping.put(response.id, experimentExecutor)
     resultsMapping.put(response.id, PerfixExperimentResultWithMapping.empty)
     response
@@ -46,6 +48,7 @@ class PerfixManager {
 
   def executeExperiment(storeName: String,
                         questionAnswers: PerfixQuestionAnswers): ExperimentId = {
+    val response = ExperimentId(Random.nextInt(1000))
     val mappedVariables = questionAnswers.toMap
     val experimentExecutor = new PerfixExperimentExecutor(storeName)
     while (experimentExecutor.getQuestionnaireExecutor.hasNext) {
@@ -61,11 +64,19 @@ class PerfixManager {
       experimentExecutor.getQuestionnaireExecutor.submit(Question.filteredAnswers(answerMapping))
     }
 
-    val response = ExperimentId(Random.nextInt(1000))
+    mapping.put(response.id, experimentExecutor)
     val result = experimentExecutor.runExperiment()
     resultsMapping.update(response.id, PerfixExperimentResultWithMapping(Some(result), questionAnswers))
     experimentExecutor.cleanUp()
+    println(s"Experiment Id: ${response.id}")
     response
+  }
+
+  def repeatExperiment(experimentId: Int): PerfixExperimentResult = {
+    val experimentExecutor = mapping.getOrElse(experimentId, throw new InvalidExperimentException(experimentId))
+    val experimentResult = experimentExecutor.runExperiment()
+    experimentExecutor.cleanUp()
+    experimentResult
   }
 
   def results(experimentId: Int): PerfixExperimentResultWithMapping = {
