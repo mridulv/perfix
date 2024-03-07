@@ -2,7 +2,11 @@ package io.perfix.model
 
 import play.api.libs.json.{Format, Json}
 
-case class PerfixExperimentResult(timeTaken: Long, numberOfCalls: Int, latencies: Seq[PercentileLatency])
+case class PerfixExperimentResult(overallQueryTime: Long,
+                                  overallWriteTimeTaken: Long,
+                                  numberOfCalls: Int,
+                                  queryLatencies: Seq[PercentileLatency],
+                                  writeLatencies: Seq[PercentileLatency])
 
 object PerfixExperimentResult {
   implicit val ExperimentResultFormatter: Format[PerfixExperimentResult] = Json.format[PerfixExperimentResult]
