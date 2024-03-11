@@ -32,6 +32,9 @@ case class NameType(override val isUnique: Boolean = false) extends ColumnType {
 
 case class AddressType(override val isUnique: Boolean = false) extends ColumnType {
   override def getValue: Any = faker.address().fullAddress()
+    .replace("(", " ")
+    .replace(")", " ")
+    .take(200)
 }
 
 case class EmailType(override val isUnique: Boolean = false) extends ColumnType {
