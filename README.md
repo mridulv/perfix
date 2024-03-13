@@ -15,7 +15,7 @@ Perfix is a performance experimentation tool that allows you to conduct experime
 
 - JDK 11 or higher
 - SBT (Scala Build Tool)
-- Docker (optional)
+- Docker
 
 ### Building the Project
 
