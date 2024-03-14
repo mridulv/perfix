@@ -72,8 +72,10 @@ class PerfixManager {
     response
   }
 
-  def repeatExperiment(experimentId: Int): PerfixExperimentResult = {
+  def repeatExperiment(experimentId: Int,
+                       experimentRunParams: ExperimentRunParams): PerfixExperimentResult = {
     val experimentExecutor = mapping.getOrElse(experimentId, throw new InvalidExperimentException(experimentId))
+    experimentExecutor.repopulateExperimentParams(experimentRunParams)
     val experimentResult = experimentExecutor.runExperiment()
     experimentExecutor.cleanUp()
     experimentResult

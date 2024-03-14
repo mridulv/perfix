@@ -3,7 +3,7 @@ package io.perfix.controllers
 import controllers.AssetsFinder
 import io.perfix.common.PerfixManager
 import io.perfix.model.PerfixQuestion._
-import io.perfix.model.PerfixQuestionAnswers
+import io.perfix.model.{ExperimentRunParams, PerfixQuestionAnswers}
 import play.api.libs.json.Json
 import play.api.mvc._
 
@@ -19,8 +19,9 @@ class PerfixExperimentController @Inject()(cc: ControllerComponents,
     Results.Ok(Json.toJson(perfixManager.executeExperiment(storeName, perfixQuestionAnswers)))
   }
 
-  def repeatExperiment(experimentId: Int) = Action { request =>
-    Results.Ok(Json.toJson(perfixManager.repeatExperiment(experimentId)))
+  def repeatExperiment(experimentId: Int) = Action(parse.json) { request =>
+    val experimentRunParams = request.body.as[ExperimentRunParams]
+    Results.Ok(Json.toJson(perfixManager.repeatExperiment(experimentId, experimentRunParams)))
   }
 
   def experimentResults(experimentId: Int) = Action { request =>

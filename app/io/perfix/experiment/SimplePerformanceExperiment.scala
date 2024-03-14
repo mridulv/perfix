@@ -1,6 +1,6 @@
 package io.perfix.experiment
 
-import io.perfix.model.{ExperimentParams, PerfixExperimentResult}
+import io.perfix.model.{ExperimentParams, ExperimentRunParams, PerfixExperimentResult}
 import io.perfix.query.PerfixQuery
 import io.perfix.question.Questionnaire
 import io.perfix.stores.DataStore
@@ -26,6 +26,13 @@ class SimplePerformanceExperiment(dataStore: DataStore,
     }
   }
 
+  def repopulateExperimentParams(experimentRunParams: ExperimentRunParams): Unit = {
+    experimentParams.writeBatchSize = experimentRunParams.batchSize
+    experimentParams.benchmarkTimeSeconds = experimentRunParams.benchmarkTimeSeconds
+    experimentParams.dataDescription.rowsOpt = Some(experimentRunParams.rows)
+    experimentParams.dataDescription.setData()
+  }
+
   def run(): PerfixExperimentResult = {
     var rowsCount = 0
     val writeTimes = ListBuffer[Long]()
@@ -46,7 +53,7 @@ class SimplePerformanceExperiment(dataStore: DataStore,
       println(s"Starting with the experiment")
       val results = BenchmarkUtil.runBenchmark(
         concurrentThreads = experimentParams.concurrentQueries,
-        benchmarkTimeSeconds = 15,
+        benchmarkTimeSeconds = experimentParams.benchmarkTimeSeconds,
         runTask = () => dataStore.readData(perfixQuery)
       )
       println(results)
