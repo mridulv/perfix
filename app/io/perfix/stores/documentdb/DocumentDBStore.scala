@@ -92,6 +92,10 @@ class DocumentDBStore extends DataStore {
   }
 
   override def cleanup(): Unit = {
+    val tableParams = documentDBParams.documentDBTableParams.getOrElse(
+      throw InvalidStateException("Table parameters should have been defined.")
+    )
+    mongoDatabase.getCollection(tableParams.collectionName).drop()
     mongoDatabase.drop()
     mongoClient.close()
   }
