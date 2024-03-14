@@ -11,6 +11,8 @@ resolvers += "Typesafe repo" at "https://repo.typesafe.com/typesafe/releases/"
 version := sys.env.get("TAG").filter(_.nonEmpty).getOrElse("latest")
 
 dockerRepository := Some("mridulverma")
+dockerUpdateLatest := true
+dockerBuildxPlatforms := Seq("linux/arm64/v8", "linux/amd64")
 
 lazy val root = (project in file("."))
   .enablePlugins(PlayJava)
@@ -36,3 +38,11 @@ lazy val root = (project in file("."))
 Universal / javaOptions ++= Seq(
         "-Dpidfile.path=/dev/null"
 )
+
+dockerBuildCommand := {
+  if (sys.props("os.arch") != "amd64") {
+    // use buildx with platform to build supported amd64 images on other CPU architectures
+    // this may require that you have first run 'docker buildx create' to set docker buildx up
+    dockerExecCommand.value ++ Seq("buildx", "build", "--platform=linux/amd64", "--load") ++ dockerBuildOptions.value :+ "."
+  } else dockerBuildCommand.value
+}
