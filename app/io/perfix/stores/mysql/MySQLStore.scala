@@ -103,7 +103,7 @@ class MySQLStore extends DataStore {
       case None => throw InvalidStateException("Table Params should have been defined")
     }
 
-    val primaryIndexSQL = primaryIndexColumnName.map(primaryColumn => s"PRIMARY KEY ($primaryColumn)").getOrElse("")
+    val primaryIndexSQL = primaryIndexColumnName.map(primaryColumn => s"ADD PRIMARY KEY ($primaryColumn)").getOrElse("")
     val secondaryIndexSQL = secondaryIndexesColumnNames.map { secondaryColumns =>
       if (secondaryColumns.nonEmpty) {
         secondaryColumns.map(columnName => s"ADD INDEX idx_$columnName ($columnName)").mkString(", ")
@@ -115,7 +115,7 @@ class MySQLStore extends DataStore {
     val indexStatements = Seq(primaryIndexSQL, secondaryIndexSQL).filter(_.nonEmpty).mkString(", ")
 
     if (indexStatements.nonEmpty) {
-      s"ALTER TABLE $tableName ADD $indexStatements;"
+      s"ALTER TABLE $tableName $indexStatements;"
     } else {
       ""
     }
