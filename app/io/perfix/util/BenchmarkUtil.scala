@@ -1,16 +1,18 @@
 package io.perfix.util
 
-import io.perfix.model.{PerfixExperimentResult, PercentileLatency}
+import io.perfix.model.{PercentileLatency, PerfixExperimentResult}
+import org.graalvm.compiler.nodes.NamedLocationIdentity.mutable
 
 import java.util.concurrent.{Callable, Executors, Future, TimeUnit}
 import scala.collection.mutable.ListBuffer
 
 object BenchmarkUtil {
 
-  def runBenchmark(concurrentThreads: Int, benchmarkTimeSeconds: Long, runTask: () => Unit): PerfixExperimentResult = {
+  def runBenchmark(concurrentThreads: Int, benchmarkTimeSeconds: Long, runTask: () => Int): PerfixExperimentResult = {
     val executor = Executors.newFixedThreadPool(concurrentThreads)
     val futures = new ListBuffer[Future[List[Long]]]
     val startTime = System.currentTimeMillis()
+    val numResults = scala.collection.mutable.SortedSet[Int]()
 
     // Submit tasks to executor
     (1 to concurrentThreads).foreach { _ =>
@@ -19,8 +21,9 @@ object BenchmarkUtil {
           val executionTimes = ListBuffer[Long]()
           while (System.currentTimeMillis() - startTime < benchmarkTimeSeconds * 1000) {
             val start = System.currentTimeMillis()
-            runTask()
+            val resultSize = runTask()
             val end = System.currentTimeMillis()
+            numResults.add(resultSize)
             executionTimes += (end - start)
           }
           executionTimes.toList
@@ -41,6 +44,7 @@ object BenchmarkUtil {
     val allExecutionTimes = futures.flatMap(_.get()).sorted
     val totalCalls = allExecutionTimes.length
     println(s"Total tasks executed: $totalCalls")
+    println(s"Results Sizes are: ${numResults.mkString(",")}")
     val percentiles = printPercentiles(allExecutionTimes.toSeq)
     PerfixExperimentResult(
       overallQueryTime = benchmarkTimeSeconds,
