@@ -11,13 +11,8 @@ import io.perfix.stores.redis.RedisStore
 
 class PerfixExperimentExecutor(storeName: String) {
 
-  private val perfixQuery = PerfixQuery(
-    filtersOpt = Some(List(PerfixQueryFilter("student_name", "John"))),
-    projectedFieldsOpt = Some(List("student_name")),
-    limitOpt = Some(10)
-  )
   private val dataStore = getDataStore(storeName)
-  private val experiment = new SimplePerformanceExperiment(dataStore, perfixQuery)
+  private val experiment = new SimplePerformanceExperiment(dataStore)
   private val questionnaireExecutor = new PerfixQuestionnaireExecutor(experiment.questions())
 
   def getQuestionnaireExecutor: PerfixQuestionnaireExecutor = {

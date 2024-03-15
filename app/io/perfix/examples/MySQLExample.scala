@@ -1,33 +1,38 @@
 package io.perfix.examples
 
 import io.perfix.common.PerfixExperimentExecutor
+import io.perfix.model.{PerfixQuestionAnswer, PerfixQuestionAnswers}
 import io.perfix.question.AWSCloudParamsQuestion._
 import io.perfix.question.Question
 import io.perfix.question.experiment.DataQuestions._
-import io.perfix.question.experiment.ExperimentParamsQuestion.CONCURRENT_QUERIES
+import io.perfix.question.experiment.ExperimentParamsQuestion.{CONCURRENT_QUERIES, PERFIX_QUERY}
 import io.perfix.question.mysql.ConnectionParamsQuestion._
 import io.perfix.question.mysql.MySQLLaunchQuestion._
 import io.perfix.question.mysql.TableIndicesDetailQuestion.{PRIMARY_INDEX_COLUMN, SECONDARY_INDEX_COLUMNS}
 import io.perfix.question.mysql.TableParamsQuestions.{DBNAME, TABLENAME}
+import play.api.libs.json.Json
+
+import java.sql.DriverManager
 
 object MySQLExample {
 
   def main(args: Array[String]): Unit = {
     val mappedVariables: Map[String, Any] = Map(
       ROWS -> 1000,
-      COLUMNS -> "[{\"columnName\":\"student_name\",\"columnType\":{\"type\":\"NameType\",\"isUnique\":true}},{\"columnName\":\"student_address\",\"columnType\":{\"type\":\"AddressType\",\"isUnique\":false}}]",
+      COLUMNS -> "[{\"columnName\":\"student_name\",\"columnType\":{\"type\":\"NameType\",\"isUnique\":true},\"columnValueDistribution\":{\"value\":\"John\",\"probability\":0.1}},{\"columnName\":\"student_address\",\"columnType\":{\"type\":\"AddressType\",\"isUnique\":false}}]",
       CONCURRENT_QUERIES -> 10,
-      URL -> "jdbc:mysql://localhost:3306/perfix?autoReconnect=true&useSSL=false&allowPublicKeyRetrieval=true",
+      PERFIX_QUERY -> "{\"filtersOpt\":[{\"field\":\"student_name\",\"fieldValue\":\"John\"}],\"projectedFieldsOpt\":[\"student_name\"],\"limitOpt\":100}",
       USERNAME -> "root",
-      PASSWORD -> "*********",
+      URL -> "jdbc:mysql://localhost:3306/perfix",
+      PASSWORD -> "test12345",
       DBNAME -> "perfix",
       TABLENAME -> "test",
-      PRIMARY_INDEX_COLUMN -> "student_name",
-      SECONDARY_INDEX_COLUMNS -> "student_name,student_address",
+      SECONDARY_INDEX_COLUMNS -> "student_name",
       INSTANCE_IDENTIFIER -> "dbinstance",
       INSTANCE_TYPE -> "db.t4g.micro",
       AWS_ACCESS_KEY -> "************",
-      AWS_ACCESS_SECRET -> "************************************"
+      AWS_ACCESS_SECRET -> "************************************",
+      LAUNCH_DB -> false
     )
     val experimentExecutor = new PerfixExperimentExecutor("mysql")
     while (experimentExecutor.getQuestionnaireExecutor.hasNext) {

@@ -8,8 +8,7 @@ import io.perfix.util.BenchmarkUtil
 
 import scala.collection.mutable.ListBuffer
 
-class SimplePerformanceExperiment(dataStore: DataStore,
-                                  perfixQuery: PerfixQuery) {
+class SimplePerformanceExperiment(dataStore: DataStore) {
 
   private[experiment] val experimentParams = new ExperimentParams
 
@@ -54,7 +53,7 @@ class SimplePerformanceExperiment(dataStore: DataStore,
       val results = BenchmarkUtil.runBenchmark(
         concurrentThreads = experimentParams.concurrentQueries,
         benchmarkTimeSeconds = experimentParams.benchmarkTimeSeconds,
-        runTask = () => dataStore.readData(perfixQuery)
+        runTask = () => dataStore.readData(experimentParams.perfixQuery).size
       )
       println(results)
       results

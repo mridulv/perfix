@@ -2,7 +2,9 @@ package io.perfix.model
 
 import play.api.libs.json.{Json, Reads, Writes}
 
-case class ColumnDescription(columnName: String, columnType: ColumnType)
+case class ColumnDescription(columnName: String,
+                             columnType: ColumnType,
+                             columnValueDistribution: Option[ValueProbability] = None)
 
 object ColumnDescription {
   implicit val ColumnDescriptionWrites: Writes[ColumnDescription] = Json.writes[ColumnDescription]
