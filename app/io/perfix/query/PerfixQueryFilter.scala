@@ -1,8 +1,9 @@
 package io.perfix.query
 
 import play.api.libs.json.{Format, Json}
+import io.perfix.model.PerfixQuestionAnswer._
 
-case class PerfixQueryFilter(field: String, fieldValue: String) {
+case class PerfixQueryFilter(field: String, fieldValue: Any) {
 
   override def toString: String = {
     fieldValue match {
