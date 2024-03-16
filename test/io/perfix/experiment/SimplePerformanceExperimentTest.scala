@@ -22,10 +22,11 @@ class SimplePerformanceExperimentTest extends AnyFlatSpec with Matchers {
     )
 
     // Create a SimplePerformanceExperiment instance
-    val experiment = new SimplePerformanceExperiment(dataStore, perfixQuery)
+    val experiment = new SimplePerformanceExperiment(dataStore)
     experiment.experimentParams.concurrentQueriesOpt = Some(10)
     experiment.experimentParams.dataDescription.rowsOpt = Some(5)
     experiment.experimentParams.dataDescription.columnsOpt = Some(Seq.empty)
+    experiment.experimentParams.perfixQuery = perfixQuery
     experiment.experimentParams.dataDescription.setData()
 
     // Initialize the experiment
@@ -62,7 +63,7 @@ class SimplePerformanceExperimentTest extends AnyFlatSpec with Matchers {
     val dataStore = mock(classOf[DataStore])
 
     // Create a SimplePerformanceExperiment instance with incorrect parameters
-    val experiment = new SimplePerformanceExperiment(dataStore, PerfixQuery())
+    val experiment = new SimplePerformanceExperiment(dataStore)
 
     // Try to initialize the experiment (should throw an exception)
     an[Exception] should be thrownBy experiment.init()
