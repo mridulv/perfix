@@ -41,7 +41,7 @@ class MySQLLaunchQuestion(override val credentials: AWSCloudParams,
     val username = answers.get(USERNAME).map(_.toString).getOrElse(userName)
     val password = answers.get(PASSWORD).map(_.toString).getOrElse(pwd)
     val instanceIdentifier = answers.get(INSTANCE_IDENTIFIER).map(_.toString).getOrElse(instanceName)
-    val instanceType = answers.get(INSTANCE_TYPE).map(_.toString).getOrElse("db.t3.micro")
+    val instanceType = answers.get(INSTANCE_TYPE).map(_.toString).getOrElse("db.t3.medium")
 
     val credentialsProvider = if (credentials.useInstanceRole) {
       DefaultAWSCredentialsProviderChain.getInstance()
