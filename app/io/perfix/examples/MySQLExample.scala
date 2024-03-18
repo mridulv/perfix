@@ -21,7 +21,7 @@ object MySQLExample {
       ROWS -> 1000,
       COLUMNS -> "[{\"columnName\":\"student_name\",\"columnType\":{\"type\":\"NameType\",\"isUnique\":true},\"columnValueDistribution\":{\"value\":\"John\",\"probability\":0.1}},{\"columnName\":\"student_address\",\"columnType\":{\"type\":\"AddressType\",\"isUnique\":false}}]",
       CONCURRENT_QUERIES -> 10,
-      PERFIX_QUERY -> "{\"filtersOpt\":[{\"field\":\"student_name\",\"fieldValue\":\"John\"}],\"projectedFieldsOpt\":[\"student_name\"],\"limitOpt\":100}",
+      PERFIX_QUERY -> "{\"filtersOpt\":[{\"field\":\"student_name\",\"fieldValue\":\"John\"}],\"projectedFieldsOpt\":[\"student_address\"],\"limitOpt\":100}",
       USERNAME -> "root",
       URL -> "jdbc:mysql://localhost:3306/perfix",
       PASSWORD -> "test12345",
