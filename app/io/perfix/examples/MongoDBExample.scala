@@ -19,7 +19,7 @@ object MongoDBExample {
       ROWS -> 10000,
       COLUMNS -> "[{\"columnName\":\"student_name\",\"columnType\":{\"type\":\"NameType\",\"isUnique\":true},\"columnValueDistribution\":{\"value\":\"John\",\"probability\":0.1}},{\"columnName\":\"student_address\",\"columnType\":{\"type\":\"AddressType\",\"isUnique\":false}}]",
       CONCURRENT_QUERIES -> 10,
-      PERFIX_QUERY -> "{\"filtersOpt\":[{\"field\":\"student_name\",\"fieldValue\":\"John\"}],\"projectedFieldsOpt\":[\"student_name\"],\"limitOpt\":1}",
+      PERFIX_QUERY -> "{\"filtersOpt\":[{\"field\":\"student_name\",\"fieldValue\":\"John\"}],\"projectedFieldsOpt\":[\"student_address\"],\"limitOpt\":1}",
       DATABASE -> "test",
       URL -> "mongodb://localhost:27017",
       COLLECTION_NAME -> "students",
