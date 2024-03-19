@@ -32,6 +32,9 @@ lazy val root = (project in file("."))
           libraryDependencies += "org.mongodb" % "mongo-java-driver" % "3.12.12",
           libraryDependencies += "com.amazonaws" % "aws-java-sdk" % "1.12.115",
           libraryDependencies += "info.picocli" % "picocli" % "4.7.5",
+          libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.9" % Test,
+          libraryDependencies += "org.mockito" %% "mockito-scala" % "1.16.42" % Test,
+          libraryDependencies += "com.h2database" % "h2" % "1.4.200" % Test,
           dockerBaseImage := "openjdk:11-jre-slim"
   )
 

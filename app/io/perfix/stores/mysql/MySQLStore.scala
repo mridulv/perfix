@@ -11,7 +11,7 @@ import io.perfix.question.mysql.MySQLLaunchQuestion
 import java.sql.{Connection, DriverManager, ResultSet}
 
 class MySQLStore extends DataStore {
-  private var connection: Connection = _
+  private[stores] var connection: Connection = _
   private var dataDescription: DataDescription = _
   private val mySQLParams: MySQLParams = MySQLParams()
 
