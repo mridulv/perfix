@@ -1,10 +1,10 @@
 package io.perfix.stores
 
 import io.perfix.model.{ColumnDescription, DataDescription, NameType}
-import io.perfix.query.{PerfixQuery, PerfixQueryFilter}
+import io.perfix.query.PerfixQuery
 import io.perfix.stores.mysql._
 import org.mockito.MockitoSugar
-import org.scalatest.{BeforeAndAfterAll, BeforeAndAfterEach}
+import org.scalatest.BeforeAndAfterAll
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
@@ -20,8 +20,32 @@ class MySQLStoreTest extends AnyFlatSpec with Matchers with MockitoSugar with Be
   private val username = "sa"
   private val password = ""
 
-  // Reusable method to connect to the in-memory database and create the schema/table if necessary
-  def setupDatabase() = {
+  override def beforeAll() {
+    setupDatabase()
+  }
+
+  override def afterAll() {
+    cleanupDatabase()
+  }
+
+  it should "connect and initialize database correctly" in {
+    val statement = connection.createStatement()
+    val resultSet = statement.executeQuery("SHOW TABLES FROM testdb;")
+    resultSet.next() shouldBe true
+    resultSet.getString(1) shouldEqual "TESTTABLE"
+    println(resultSet.getString(1))
+    connection.close()
+  }
+
+  it should "insert data correctly" in {
+    val rows = Seq(Map("name" -> "test22"))
+    mySQLStore.putData(rows)
+    val res = mySQLStore.readData(PerfixQuery(filtersOpt = None))
+    println(res.size)
+    res.size should be (1)
+  }
+
+  def setupDatabase(): Boolean = {
     mySQLStore = new MySQLStore()
     connection = DriverManager.getConnection(url, username, password)
     initializeDatabase(connection)
@@ -44,34 +68,8 @@ class MySQLStoreTest extends AnyFlatSpec with Matchers with MockitoSugar with Be
     st.execute("USE testdb;")
   }
 
-  // Utility method to clean up the database after each test
-  def cleanupDatabase() = {
+  def cleanupDatabase(): Unit = {
     connection.close()
-  }
-
-  override def beforeAll() {
-    setupDatabase()
-  }
-
-  override def afterAll() {
-    //cleanupDatabase()
-  }
-
-  it should "connect and initialize database correctly" in {
-    val statement = connection.createStatement()
-    val resultSet = statement.executeQuery("SHOW TABLES FROM testdb;")
-    resultSet.next() shouldBe true
-    resultSet.getString(1) shouldEqual "TESTTABLE"
-    println(resultSet.getString(1))
-    connection.close()
-  }
-
-  it should "insert data correctly" in {
-    val rows = Seq(Map("name" -> "test22"))
-    mySQLStore.putData(rows)
-    val res = mySQLStore.readData(PerfixQuery(filtersOpt = None))
-    println(res.size)
-    res.size should be (1)
   }
 
   def initializeDatabase(connection: Connection): Unit = {
