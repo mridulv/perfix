@@ -45,7 +45,7 @@ class MySQLStoreTest extends AnyFlatSpec with Matchers with MockitoSugar with Be
     res.size should be (1)
   }
 
-  def setupDatabase(): Boolean = {
+  def setupDatabase(): Unit = {
     mySQLStore = new MySQLStore()
     connection = DriverManager.getConnection(url, username, password)
     initializeDatabase(connection)
@@ -64,8 +64,6 @@ class MySQLStoreTest extends AnyFlatSpec with Matchers with MockitoSugar with Be
     questionnaire.mySQLParams.mySQLTableIndexesParams = Some(MySQLTableIndexesParams(None, None))
 
     mySQLStore.connectAndInitialize()
-    val st = mySQLStore.connection.createStatement()
-    st.execute("USE testdb;")
   }
 
   def cleanupDatabase(): Unit = {
