@@ -67,7 +67,7 @@ class MySQLStore extends DataStore {
     val columnNames = allKeys.mkString(", ")
     val valuePlaceholders = allKeys.map(_ => "?").mkString(", ")
 
-    val sql = s"INSERT INTO ${tableParams.tableName} ($columnNames) VALUES ($valuePlaceholders);"
+    val sql = s"INSERT INTO ${tableParams.dbName}.${tableParams.tableName} ($columnNames) VALUES ($valuePlaceholders);"
     val preparedStatement = connection.prepareStatement(sql)
 
     try {
@@ -126,7 +126,7 @@ class MySQLStore extends DataStore {
       case Some(tableParams) => tableParams
       case None => throw InvalidStateException("Table Params should have been defined")
     }
-    val statement = s"DROP TABLE ${tableParams.tableName}"
+    val statement = s"DROP TABLE ${tableParams.dbName}.${tableParams.tableName}"
     val preparedStatement = connection.prepareStatement(statement)
     preparedStatement.execute()
     connection.close()
