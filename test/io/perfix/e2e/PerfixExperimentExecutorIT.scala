@@ -28,11 +28,7 @@ class PerfixExperimentExecutorIT extends AnyFlatSpec with Matchers with MockitoS
   private val username = "sa"
   private val password = ""
 
-  override def beforeAll(): Unit = {
-    initializeDatabase()
-  }
-
-  def initializeDatabase(): Unit = {
+  override def beforeAll: Unit = {
     val connection = DriverManager.getConnection(url, username, password)
     val statement = connection.createStatement()
     statement.execute("CREATE SCHEMA IF NOT EXISTS testdb;")
