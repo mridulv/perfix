@@ -2,7 +2,7 @@ package io.perfix.question.experiment
 
 import DataQuestions._
 import io.perfix.exceptions.ParamsAlreadyDefinedException
-import io.perfix.model.{ColumnDescription, DataType, DoubleType, ExperimentParams, QuestionType, StringType, TextType}
+import io.perfix.model.{ColumnDescription, DoubleType, ExperimentParams, QuestionType, StringType}
 import io.perfix.question.Question.QuestionLabel
 import io.perfix.question.{Question, QuestionParams}
 import play.api.libs.json.Json

@@ -1,7 +1,7 @@
 package io.perfix.question.redis
 
 import io.perfix.exceptions.ParamsAlreadyDefinedException
-import io.perfix.model.{DataType, IntType, QuestionType, StringType}
+import io.perfix.model.{IntType, QuestionType, StringType}
 import io.perfix.question.Question
 import io.perfix.question.Question.QuestionLabel
 import io.perfix.question.redis.RedisConnectionParametersQuestion.{PORT, URL}

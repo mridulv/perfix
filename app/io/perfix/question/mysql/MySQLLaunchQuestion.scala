@@ -1,11 +1,7 @@
 package io.perfix.question.mysql
 
 import com.amazonaws.auth.{AWSCredentials, AWSStaticCredentialsProvider, DefaultAWSCredentialsProviderChain}
-import com.amazonaws.regions.{Region, Regions}
-import com.amazonaws.services.ec2.{AmazonEC2, AmazonEC2Client, AmazonEC2ClientBuilder}
-import com.amazonaws.services.ec2.model.{AuthorizeSecurityGroupIngressRequest, DescribeSubnetsRequest, IpPermission, IpRange}
-import com.amazonaws.services.eks.{AmazonEKSClient, AmazonEKSClientBuilder}
-import com.amazonaws.services.eks.model.DescribeClusterRequest
+import com.amazonaws.regions.Regions
 import com.amazonaws.services.rds.{AmazonRDS, AmazonRDSClientBuilder}
 import com.amazonaws.services.rds.model.{CreateDBInstanceRequest, DBInstance, DescribeDBInstancesRequest}
 import io.perfix.common.CommonConfig.DB_SUBNET_GROUP_NAME
@@ -19,7 +15,6 @@ import io.perfix.stores.mysql.{MySQLConnectionParams, MySQLParams, MySQLTablePar
 
 import java.util.concurrent.TimeUnit
 import scala.util.Random
-import scala.jdk.CollectionConverters._
 
 class MySQLLaunchQuestion(override val credentials: AWSCloudParams,
                           override val storeQuestionParams: MySQLParams) extends LaunchStoreQuestion {

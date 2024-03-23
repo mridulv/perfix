@@ -44,7 +44,6 @@ class MySQLStore extends DataStore {
       case Some(tableIndexesParams) => tableIndexesParams
       case None => throw InvalidStateException("Table Index Params should have been defined")
     }
-    import connectionParams._
 
     val sql = createTableStatement(tableParams.dbName + "." + tableParams.tableName, dataDescription.columns)
     statement.executeUpdate(sql)

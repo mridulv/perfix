@@ -1,7 +1,6 @@
 package io.perfix.util
 
 import io.perfix.model.{PercentileLatency, PerfixExperimentResult}
-import org.graalvm.compiler.nodes.NamedLocationIdentity.mutable
 
 import java.util.concurrent.{Callable, Executors, Future, TimeUnit}
 import scala.collection.mutable.ListBuffer

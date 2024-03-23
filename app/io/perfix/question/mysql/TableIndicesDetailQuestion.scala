@@ -1,8 +1,8 @@
 package io.perfix.question.mysql
 
 import io.perfix.exceptions.ParamsAlreadyDefinedException
-import io.perfix.model.{DataType, QuestionType, StringType}
-import io.perfix.question.{Question, QuestionParams}
+import io.perfix.model.{QuestionType, StringType}
+import io.perfix.question.Question
 import io.perfix.question.Question.QuestionLabel
 import io.perfix.question.mysql.TableIndicesDetailQuestion.{PRIMARY_INDEX_COLUMN, SECONDARY_INDEX_COLUMNS}
 import io.perfix.stores.mysql.{MySQLParams, MySQLTableIndexesParams}

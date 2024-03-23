@@ -2,7 +2,7 @@ package io.perfix.question.mysql
 
 import TableParamsQuestions._
 import io.perfix.exceptions.ParamsAlreadyDefinedException
-import io.perfix.model.{DataType, QuestionType, StringType}
+import io.perfix.model.{QuestionType, StringType}
 import io.perfix.question.Question
 import io.perfix.question.Question.QuestionLabel
 import io.perfix.stores.mysql.{MySQLParams, MySQLTableParams}

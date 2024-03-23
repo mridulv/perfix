@@ -3,7 +3,7 @@ package io.perfix.stores
 import io.perfix.launch.{AWSCloudParams, LaunchStoreQuestion}
 import io.perfix.model.DataDescription
 import io.perfix.query.PerfixQuery
-import io.perfix.question.{Question, Questionnaire}
+import io.perfix.question.Questionnaire
 
 trait DataStore {
   def launch(awsCloudParams: AWSCloudParams): Option[LaunchStoreQuestion]

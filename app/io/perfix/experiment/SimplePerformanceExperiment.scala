@@ -1,7 +1,6 @@
 package io.perfix.experiment
 
 import io.perfix.model.{ExperimentParams, ExperimentRunParams, PerfixExperimentResult}
-import io.perfix.query.PerfixQuery
 import io.perfix.question.Questionnaire
 import io.perfix.stores.DataStore
 import io.perfix.util.BenchmarkUtil
