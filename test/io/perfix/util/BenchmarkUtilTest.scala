@@ -11,8 +11,8 @@ class BenchmarkUtilSpec extends AnyFlatSpec with Matchers {
 
   "runBenchmark" should "correctly execute tasks in multiple threads" in {
     val task = () => {
-      Thread.sleep(10) // Simulate a task that takes 100ms to run
-      1 // Return a constant value to simplify
+      Thread.sleep(5)
+      1
     }
     val concurrentThreads = 5
     val benchmarkTimeSeconds = 1
@@ -22,14 +22,12 @@ class BenchmarkUtilSpec extends AnyFlatSpec with Matchers {
     result.numberOfCalls should be > 0
     result.overallQueryTime shouldBe benchmarkTimeSeconds
     // Since the task returns a fixed result size, the numResults should contain only that value
-    result.queryLatencies.map(_.latency).min should be >= 10.0
+    result.queryLatencies.map(_.latency).min should be >= 5.0
     result.writeLatencies shouldBe empty
   }
 
   it should "calculate percentiles correctly" in {
-    // Sample execution times ranging from 100ms to 1000ms at 100ms intervals
     val executionTimes = (0 to 99).map(_ * 100L).toList
-    // Expected percentile latencies based on the above execution times
     val expectedPercentiles = Seq(
       PercentileLatency(5, 500.0),
       PercentileLatency(10, 1000.0),
@@ -47,7 +45,7 @@ class BenchmarkUtilSpec extends AnyFlatSpec with Matchers {
   }
 
   it should "terminate after the specified benchmark time" in {
-    val task = () => 1 // Task that returns immediately
+    val task = () => 1
     val benchmarkTimeSeconds = 2
     val startTime = System.nanoTime()
 
@@ -57,7 +55,7 @@ class BenchmarkUtilSpec extends AnyFlatSpec with Matchers {
     val duration = Duration.fromNanos(endTime - startTime)
 
     duration should be >= benchmarkTimeSeconds.seconds
-    duration should be < (benchmarkTimeSeconds + 5).seconds // Allowing a little extra time for cleanup
+    duration should be < (benchmarkTimeSeconds + 5).seconds
   }
 
   it should "serialize and deserialize PerfixExperimentResult correctly" in {
