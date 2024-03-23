@@ -1,7 +1,7 @@
 package io.perfix.question
 
 import Question.QuestionLabel
-import io.perfix.model.{DataType, QuestionType}
+import io.perfix.model.QuestionType
 
 trait Question {
 

@@ -1,6 +1,5 @@
 package io.perfix.stores.documentdb
 
-import io.perfix.model.DataDescription
 import io.perfix.question.QuestionParams
 import io.perfix.stores.documentdb.model.DocumentDBIndicesParams
 

@@ -4,8 +4,6 @@ import com.amazonaws.auth.{AWSCredentials, AWSStaticCredentialsProvider, Default
 import com.amazonaws.regions.Regions
 import com.amazonaws.services.docdb.{AmazonDocDB, AmazonDocDBClientBuilder}
 import com.amazonaws.services.docdb.model._
-import com.amazonaws.services.eks.AmazonEKSClientBuilder
-import com.amazonaws.services.eks.model.DescribeClusterRequest
 import io.perfix.common.CommonConfig.DB_SUBNET_GROUP_NAME
 import io.perfix.launch.{AWSCloudParams, LaunchStoreQuestion}
 import io.perfix.model.{QuestionType, StringType}

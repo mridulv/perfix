@@ -1,6 +1,5 @@
 package io.perfix.stores.dynamodb
 
-import io.perfix.model.DataDescription
 import io.perfix.question.QuestionParams
 import io.perfix.stores.dynamodb.model.{DynamoDBGSIMetadataParams, DynamoDBIndex}
 

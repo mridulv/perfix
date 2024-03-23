@@ -1,7 +1,7 @@
 package io.perfix.question.redis
 
 import io.perfix.exceptions.ParamsAlreadyDefinedException
-import io.perfix.model.{DataType, QuestionType, StringType}
+import io.perfix.model.{QuestionType, StringType}
 import io.perfix.question.Question
 import io.perfix.question.Question.QuestionLabel
 import io.perfix.question.redis.RedisTableParamsQuestion.KEY_COLUMN

@@ -2,7 +2,6 @@ package io.perfix.controllers
 
 import controllers.AssetsFinder
 import io.perfix.common.PerfixManager
-import io.perfix.model.PerfixQuestion._
 import io.perfix.model.{ExperimentRunParams, PerfixQuestionAnswers}
 import play.api.libs.json.Json
 import play.api.mvc._

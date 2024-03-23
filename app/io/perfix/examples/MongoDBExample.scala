@@ -1,7 +1,6 @@
 package io.perfix.examples
 
 import io.perfix.common.PerfixExperimentExecutor
-import io.perfix.model.{ColumnDescription, ValueProbability}
 import io.perfix.question.AWSCloudParamsQuestion.{AWS_ACCESS_KEY, AWS_ACCESS_SECRET, LAUNCH_DB}
 import io.perfix.question.Question
 import io.perfix.question.documentdb.DocumentDBConnectionParamsQuestion._
@@ -10,7 +9,6 @@ import io.perfix.question.documentdb.DocumentDBLaunchQuestion.{DB_CLUSTER_IDENTI
 import io.perfix.question.documentdb.DocumentDBTableParamsQuestions.COLLECTION_NAME
 import io.perfix.question.experiment.DataQuestions._
 import io.perfix.question.experiment.ExperimentParamsQuestion.{CONCURRENT_QUERIES, PERFIX_QUERY}
-import play.api.libs.json.Json
 
 object MongoDBExample {
 

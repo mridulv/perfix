@@ -1,8 +1,7 @@
 package io.perfix.query
 
 import io.perfix.model.PerfixQuestionAnswer
-import play.api.libs.json.{Format, Json, Writes}
-import PerfixQuestionAnswer._
+import play.api.libs.json.{Format, Json}
 
 case class PerfixQuery(filtersOpt: Option[List[PerfixQueryFilter]] = None,
                        projectedFieldsOpt: Option[List[String]] = None,

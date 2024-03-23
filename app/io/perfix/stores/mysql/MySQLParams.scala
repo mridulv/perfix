@@ -1,6 +1,5 @@
 package io.perfix.stores.mysql
 
-import io.perfix.model.DataDescription
 import io.perfix.question.QuestionParams
 
 case class MySQLParams() extends QuestionParams {

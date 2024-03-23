@@ -2,7 +2,7 @@ package io.perfix.model
 
 import io.perfix.query.PerfixQuery
 import io.perfix.query.PerfixQuery._
-import play.api.libs.json.{Format, Json, Writes}
+import play.api.libs.json.{Format, Json}
 
 case class ExperimentRunParams(rows: Int,
                                batchSize: Int,

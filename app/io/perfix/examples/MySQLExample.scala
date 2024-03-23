@@ -1,18 +1,15 @@
 package io.perfix.examples
 
 import io.perfix.common.PerfixExperimentExecutor
-import io.perfix.model.{PerfixQuestionAnswer, PerfixQuestionAnswers}
 import io.perfix.question.AWSCloudParamsQuestion._
 import io.perfix.question.Question
 import io.perfix.question.experiment.DataQuestions._
 import io.perfix.question.experiment.ExperimentParamsQuestion.{CONCURRENT_QUERIES, PERFIX_QUERY}
 import io.perfix.question.mysql.ConnectionParamsQuestion._
 import io.perfix.question.mysql.MySQLLaunchQuestion._
-import io.perfix.question.mysql.TableIndicesDetailQuestion.{PRIMARY_INDEX_COLUMN, SECONDARY_INDEX_COLUMNS}
+import io.perfix.question.mysql.TableIndicesDetailQuestion.SECONDARY_INDEX_COLUMNS
 import io.perfix.question.mysql.TableParamsQuestions.{DBNAME, TABLENAME}
-import play.api.libs.json.Json
 
-import java.sql.DriverManager
 
 object MySQLExample {
 
