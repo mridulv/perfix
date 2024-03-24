@@ -8,7 +8,7 @@ import io.perfix.question.dynamodb.DynamoDBTableParamsQuestions._
 import io.perfix.question.experiment.DataQuestions._
 import io.perfix.question.experiment.ExperimentParamsQuestion.CONCURRENT_QUERIES
 
-object DynamoDBExample {
+object DynamoDBStoreTest {
 
   def main(args: Array[String]): Unit = {
     val mappedVariables: Map[String, Any] = Map(

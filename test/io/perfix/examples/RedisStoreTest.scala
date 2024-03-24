@@ -9,7 +9,7 @@ import io.perfix.question.redis.ElastiCacheLaunchQuestion.{CACHE_NODE_TYPE, CLUS
 import io.perfix.question.redis.RedisConnectionParametersQuestion.{PORT, URL}
 import io.perfix.question.redis.RedisTableParamsQuestion.KEY_COLUMN
 
-object RedisExample {
+object RedisStoreTest {
 
   def main(args: Array[String]): Unit = {
     val mappedVariables: Map[String, Any] = Map(
