@@ -11,7 +11,7 @@ import io.perfix.question.mysql.TableIndicesDetailQuestion.SECONDARY_INDEX_COLUM
 import io.perfix.question.mysql.TableParamsQuestions.{DBNAME, TABLENAME}
 
 
-object MySQLExample {
+object MySQLStoreTest {
 
   def main(args: Array[String]): Unit = {
     val mappedVariables: Map[String, Any] = Map(

@@ -10,7 +10,7 @@ import io.perfix.question.documentdb.DocumentDBTableParamsQuestions.COLLECTION_N
 import io.perfix.question.experiment.DataQuestions._
 import io.perfix.question.experiment.ExperimentParamsQuestion.{CONCURRENT_QUERIES, PERFIX_QUERY}
 
-object MongoDBExample {
+object MongoDBStoreTest {
 
   def main(args: Array[String]): Unit = {
     val mappedVariables: Map[String, Any] = Map(
