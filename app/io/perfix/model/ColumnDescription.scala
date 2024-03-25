@@ -4,7 +4,7 @@ import play.api.libs.json.{Json, Reads, Writes}
 
 case class ColumnDescription(columnName: String,
                              columnType: ColumnType,
-                             columnValueDistribution: Option[ValueProbability] = None)
+                             valueProbabilities: Option[ValueProbabilities] = None)
 
 object ColumnDescription {
   implicit val ColumnDescriptionWrites: Writes[ColumnDescription] = Json.writes[ColumnDescription]

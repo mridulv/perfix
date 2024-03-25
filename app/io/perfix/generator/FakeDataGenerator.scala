@@ -28,11 +28,9 @@ class FakeDataGenerator extends DataGenerator {
           }
           uniqueValuesByColumn.update(columnName, uniqueValuesByColumn.getOrElse(columnName, Set.empty) + value)
         }
-        column.columnValueDistribution match {
-          case Some(valueProbability) =>
-            if (randomNum < valueProbability.probability * 10000) {
-              value = valueProbability.value
-            }
+        column.valueProbabilities match {
+          case Some(valueProbabilities) =>
+            value = valueProbabilities.generateValue(() => value)
           case _ => ()
         }
         row += (columnName -> value)
