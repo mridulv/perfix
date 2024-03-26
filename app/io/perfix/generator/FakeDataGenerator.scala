@@ -21,7 +21,6 @@ class FakeDataGenerator extends DataGenerator {
         val columnName = column.columnName
         val columnType = column.columnType
         var value = columnType.getValue
-        val randomNum = Random.nextInt(10000) + 1
         if (columnType.isUnique) {
           while (uniqueValuesByColumn.getOrElse(columnName, Set.empty).contains(value)) {
             value = columnType.getValue
@@ -30,7 +29,7 @@ class FakeDataGenerator extends DataGenerator {
         }
         column.valueProbabilities match {
           case Some(valueProbabilities) =>
-            value = valueProbabilities.generateValue(() => value)
+            value = valueProbabilities.generateValue(value, () => Random.nextInt(100))
           case _ => ()
         }
         row += (columnName -> value)
