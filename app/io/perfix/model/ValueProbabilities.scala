@@ -4,16 +4,20 @@ import play.api.libs.json.{Format, Json}
 
 case class ValueProbabilities(valueProbabilities: Seq[ValueProbability]) {
   import scala.util.Random
-  def generateValue(randomGen: () => Any): Any = {
-    val rnd = Random.nextDouble() * 10000
+  def generateValue(defaultValue: Any, randomGen: () => Int): Any = {
+    val rnd = randomGen()
     var accumulatedProbability = 0.0
 
     valueProbabilities.foreach { vp =>
       accumulatedProbability += vp.probability
-      if (rnd <= accumulatedProbability * 10000) return vp.value
+      if (rnd <= accumulatedProbability) return vp.value
     }
 
-    randomGen()
+    defaultValue
+  }
+
+  def isValid: Boolean = {
+    valueProbabilities.forall(_.isValid) && valueProbabilities.map(_.probability).sum >= 0 && valueProbabilities.map(_.probability).sum <= 100
   }
 
 }

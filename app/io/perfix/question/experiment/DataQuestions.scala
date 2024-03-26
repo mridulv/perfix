@@ -1,7 +1,7 @@
 package io.perfix.question.experiment
 
 import DataQuestions._
-import io.perfix.exceptions.ParamsAlreadyDefinedException
+import io.perfix.exceptions.{InvalidQuestionParameterExceptions, ParamsAlreadyDefinedException}
 import io.perfix.model.{ColumnDescription, DoubleType, ExperimentParams, QuestionType, StringType}
 import io.perfix.question.Question.QuestionLabel
 import io.perfix.question.{Question, QuestionParams}
@@ -25,8 +25,13 @@ class DataQuestions(experimentParams: ExperimentParams) extends Question {
     import experimentParams._
     (dataDescription.rowsOpt, dataDescription.columnsOpt) match {
       case (None, None) =>
+        val columnDescriptions = Json.parse(answers(COLUMNS).toString).as[Seq[ColumnDescription]]
         dataDescription.rowsOpt = Some(answers(ROWS).toString.toInt)
-        dataDescription.columnsOpt = Some(Json.parse(answers(COLUMNS).toString).as[Seq[ColumnDescription]])
+        if (columnDescriptions.toSeq.forall(_.isValid)) {
+          dataDescription.columnsOpt = Some(columnDescriptions)
+        } else {
+          throw InvalidQuestionParameterExceptions("Columns")
+        }
         dataDescription.setData()
       case (_, _) => throw ParamsAlreadyDefinedException("DataDescription")
     }
