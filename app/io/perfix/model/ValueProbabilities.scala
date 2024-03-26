@@ -16,6 +16,10 @@ case class ValueProbabilities(valueProbabilities: Seq[ValueProbability]) {
     defaultValue
   }
 
+  def isValid: Boolean = {
+    valueProbabilities.forall(_.isValid) && valueProbabilities.map(_.probability).sum >= 0 && valueProbabilities.map(_.probability).sum <= 100
+  }
+
 }
 
 object ValueProbabilities {
