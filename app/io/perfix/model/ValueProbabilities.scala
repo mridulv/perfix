@@ -3,7 +3,6 @@ package io.perfix.model
 import play.api.libs.json.{Format, Json}
 
 case class ValueProbabilities(valueProbabilities: Seq[ValueProbability]) {
-  import scala.util.Random
   def generateValue(defaultValue: Any, randomGen: () => Int): Any = {
     val rnd = randomGen()
     var accumulatedProbability = 0.0
