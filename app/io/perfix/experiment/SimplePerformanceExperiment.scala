@@ -7,7 +7,7 @@ import io.perfix.util.BenchmarkUtil
 
 import scala.collection.mutable.ListBuffer
 
-class SimplePerformanceExperiment(dataStore: DataStore) {
+class SimplePerformanceExperiment(dataStore: DataStore) extends Experiment {
 
   private[experiment] val experimentParams = new ExperimentParams
 
