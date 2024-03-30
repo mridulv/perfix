@@ -4,7 +4,7 @@ import io.perfix.model.{ExperimentRunParams, PerfixExperimentResult}
 
 trait Experiment {
 
-  def init: Unit
+  def init(): Unit
 
   def repopulateExperimentParams(experimentRunParams: ExperimentRunParams): Unit
 
