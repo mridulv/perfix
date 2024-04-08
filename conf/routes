@@ -12,3 +12,6 @@ POST     /experiment/:id                               io.perfix.controllers.Per
 GET      /experiment/:id                               io.perfix.controllers.PerfixExperimentController.experimentResults(id: Int)
 
 GET      /health                                       io.perfix.controllers.HealthCheckController.health
+
+POST     /dataset                                      io.perfix.controllers.DatasetController.create
+GET      /dataset/:id                                  io.perfix.controllers.DatasetController.get(id: Int)
