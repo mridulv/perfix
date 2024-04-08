@@ -2,7 +2,7 @@ package io.perfix.controllers
 
 import com.google.inject.Inject
 import io.perfix.common.DatasetManager
-import io.perfix.model.{DatasetId, DatasetParams, ExperimentRunParams, PerfixQuestionAnswers}
+import io.perfix.model.{DatasetId, DatasetParams}
 import play.api.libs.json.Json
 import play.api.mvc.{BaseController, ControllerComponents, Results}
 
