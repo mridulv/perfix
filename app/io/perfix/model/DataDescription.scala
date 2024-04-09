@@ -7,7 +7,7 @@ case class DataDescription() {
   val faker = new FakeDataGenerator
   var rowsOpt: Option[Int] = None
   var columnsOpt: Option[Seq[ColumnDescription]] = None
-  var fakeData: Option[DataWithDescription] = None
+  var fakeData: Option[Dataset] = None
 
   def rows: Int = {
     rowsOpt.get
@@ -22,7 +22,7 @@ case class DataDescription() {
   }
 
   def setData(): Unit = {
-    fakeData = Some(faker.generateData(this))
+    fakeData = Some(faker.generateData(DatasetParams(this.rows, this.columns)))
   }
 
   def isDefined: Boolean = {
