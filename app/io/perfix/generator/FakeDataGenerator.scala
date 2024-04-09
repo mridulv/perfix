@@ -1,16 +1,16 @@
 package io.perfix.generator
 
 import com.github.javafaker.Faker
-import io.perfix.model.{DataDescription, DataWithDescription}
+import io.perfix.model.{Dataset, DatasetParams}
 
 import scala.util.Random
 
 class FakeDataGenerator extends DataGenerator {
   val faker = new Faker
 
-  override def generateData(dataDescription: DataDescription): DataWithDescription = {
-    val numRows = dataDescription.rows
-    val columns = dataDescription.columns
+  override def generateData(datasetParams: DatasetParams): Dataset = {
+    val numRows = datasetParams.rows
+    val columns = datasetParams.columns
 
     var rows = List[Map[String, Any]]()
     val uniqueValuesByColumn = scala.collection.mutable.Map[String, Set[Any]]()
@@ -37,8 +37,6 @@ class FakeDataGenerator extends DataGenerator {
       rows = row :: rows
     }
     rows = rows.reverse
-    val dataWithDescription = DataWithDescription(dataDescription, rows)
-
-    dataWithDescription
+    Dataset(datasetParams, rows)
   }
 }
