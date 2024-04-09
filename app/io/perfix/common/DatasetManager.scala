@@ -21,4 +21,8 @@ class DatasetManager {
     mapping(datasetId).dataset.sampleDataset(SAMPLE_ROWS)
   }
 
+  def getAll(): Seq[DatasetParams] = {
+    mapping.values.toSeq
+  }
+
 }
