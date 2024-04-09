@@ -6,42 +6,47 @@ import org.scalatest.matchers.should.Matchers
 
 class FakeDataGeneratorTest extends AnyFlatSpec with Matchers {
   "FakeDataGenerator" should "generate fake data with specified number of rows and columns" in {
-    val dataDescription = DataDescription()
-    dataDescription.rowsOpt = Some(5)
-    dataDescription.columnsOpt = Some(Seq(ColumnDescription("name", NameType(isUnique = true)), ColumnDescription("age", NumericType(None))))
+    val datasetParams = DatasetParams(None,
+      5,
+      Seq(ColumnDescription("name", NameType(isUnique = true)), ColumnDescription("age", NumericType(None)))
+    )
 
     val fakeDataGenerator = new FakeDataGenerator
-    val dataWithDescription = fakeDataGenerator.generateData(dataDescription)
+    val dataset = fakeDataGenerator.generateData(datasetParams)
 
-    dataWithDescription.dataDescription.rows shouldEqual 5
-    dataWithDescription.dataDescription.columns should have size 2
-    dataWithDescription.data should have size 5
+    dataset.params.rows shouldEqual 5
+    dataset.params.columns should have size 2
+    dataset.data should have size 5
   }
 
   it should "generate unique values for columns marked as unique" in {
-    val dataDescription = DataDescription()
-    dataDescription.rowsOpt = Some(10)
-    dataDescription.columnsOpt = Some(Seq(ColumnDescription("id", TextType(isUnique = true))))
+    val datasetParams = DatasetParams(
+      None,
+      10,
+      Seq(ColumnDescription("id", TextType(isUnique = true)))
+    )
 
     val fakeDataGenerator = new FakeDataGenerator
-    val dataWithDescription = fakeDataGenerator.generateData(dataDescription)
+    val dataset = fakeDataGenerator.generateData(datasetParams)
 
-    val ids = dataWithDescription.data.map(_("id")).distinct
+    val ids = dataset.data.map(_("id")).distinct
     ids should have size 10
   }
 
   it should "generate data with default values for unsupported data types" in {
-    val dataDescription = DataDescription()
-    dataDescription.rowsOpt = Some(5)
-    dataDescription.columnsOpt = Some(Seq(
-      ColumnDescription("name", NameType(isUnique = true)),
-      ColumnDescription("score", NumericType(Some(NumericRangeConstraint(10, 11)))))
+    val datasetParams = DatasetParams(
+      None,
+      5,
+      Seq(
+        ColumnDescription("name", NameType(isUnique = true)),
+        ColumnDescription("score", NumericType(Some(NumericRangeConstraint(10, 11))))
+      )
     )
 
     val fakeDataGenerator = new FakeDataGenerator
-    val dataWithDescription = fakeDataGenerator.generateData(dataDescription)
+    val dataset = fakeDataGenerator.generateData(datasetParams)
 
-    dataWithDescription.data.foreach { row =>
+    dataset.data.foreach { row =>
       row("score").toString.toInt >= 10 shouldBe true
       row("score").toString.toInt <= 11 shouldBe true
     }

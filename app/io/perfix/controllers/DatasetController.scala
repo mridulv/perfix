@@ -18,4 +18,8 @@ class DatasetController @Inject()(val controllerComponents: ControllerComponents
   def get(datasetId: Int) = Action { request =>
     Results.Ok(Json.toJson(datasetManager.get(DatasetId(datasetId))))
   }
+
+  def all = Action { request =>
+    Results.Ok(Json.toJson(datasetManager.all()))
+  }
 }
