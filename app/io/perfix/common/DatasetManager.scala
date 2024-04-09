@@ -21,8 +21,10 @@ class DatasetManager {
     mapping(datasetId).dataset.sampleDataset(SAMPLE_ROWS)
   }
 
-  def getAll(): Seq[DatasetParams] = {
-    mapping.values.toSeq
+  def all(): Seq[DatasetParams] = {
+    mapping.map { case (k, v) =>
+      v.copy(id = Some(k))
+    }.toSeq
   }
 
 }
