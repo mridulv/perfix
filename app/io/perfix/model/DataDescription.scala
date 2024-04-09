@@ -22,7 +22,7 @@ case class DataDescription() {
   }
 
   def setData(): Unit = {
-    fakeData = Some(faker.generateData(DatasetParams(this.rows, this.columns)))
+    fakeData = Some(faker.generateData(DatasetParams(None, this.rows, this.columns)))
   }
 
   def isDefined: Boolean = {
