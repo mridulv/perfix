@@ -54,15 +54,14 @@ jobs:
 
     - name: Package Helm Chart
       if: success() && github.ref == 'refs/heads/master'
-      run: helm package ./charts/perfix --destination .deploy
+      run: |
+        cd charts
+        helm package ./perfix .
+        helm repo index .
 
-    - name: Publish Helm Chart
+    - name: Publish current workdir (which contains generated content) to GitHub Pages
       if: success() && github.ref == 'refs/heads/master'
-      uses: helm/chart-releaser-action@v1.2.1
-      env:
-        CR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      uses: rayluo/github-pages-overwriter@v1.3
       with:
-        charts_dir: charts
-        chart_version: latest
-        charts_repo_url: https://mridulv.github.io/perfix-charts
-        token: ${{ secrets.GITHUB_TOKEN }}
+        source-directory: charts
+        target-branch: gh-pages
