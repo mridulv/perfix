@@ -25,7 +25,6 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Set up JDK 11
-      if: success() && github.ref == 'refs/heads/master'
       uses: actions/setup-java@v3
       with:
         java-version: '11'
@@ -33,7 +32,7 @@ jobs:
         cache: 'sbt'
 
     - name: Running Tests
-      if: success() && github.ref == 'refs/heads/master'
+      if: success()
       run: |
         # Set the heap size for SBT by setting the JAVA_OPTS environment variable.
         export JAVA_OPTS="-Xmx2048m" # Adjust the heap size as needed
@@ -56,7 +55,7 @@ jobs:
         docker push mridulverma/perfix:latest
 
     - name: Package Helm Chart
-      if: success()
+      if: success() && github.ref == 'refs/heads/master'
       run: |
         cd charts
         helm package perfix
@@ -64,7 +63,7 @@ jobs:
         rm -rf perfix/
 
     - name: Publish current workdir (which contains generated content) to GitHub Pages
-      if: success()
+      if: success() && github.ref == 'refs/heads/master'
       uses: rayluo/github-pages-overwriter@v1.3
       env:
         GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
