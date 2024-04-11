@@ -59,6 +59,7 @@ jobs:
         cd charts
         helm package perfix
         helm repo index .
+        rm -rf perfix/
 
     - name: Publish current workdir (which contains generated content) to GitHub Pages
       uses: rayluo/github-pages-overwriter@v1.3
