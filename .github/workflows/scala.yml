@@ -57,16 +57,17 @@ jobs:
     - name: Package Helm Chart
       if: success() && github.ref == 'refs/heads/master'
       run: |
-        cd charts
-        helm package perfix
-        helm repo index .
-        rm -rf perfix/
+        mkdir .deploy
+        helm package charts/perfix --destination .deploy
 
-    - name: Publish current workdir (which contains generated content) to GitHub Pages
+    - name: Publishing Helm package
       if: success() && github.ref == 'refs/heads/master'
-      uses: rayluo/github-pages-overwriter@v1.3
-      env:
-        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        source-directory: charts
-        target-branch: gh-pages
+      run: |
+        git checkout gh-pages
+        git reset --hard origin/gh-pages
+        mv .deploy/* .
+        helm repo index . --url https://mridulv.github.io/perfix/
+        cp .deploy/index.yaml index.yaml
+        git add perfix-*.tgz index.yaml
+        git commit -m "Publish Helm chart for $(date +'%Y-%m-%d %H:%M:%S')"
+        git push origin gh-pages
