@@ -12,7 +12,7 @@ on:
     branches: [ "master" ]
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   build:
@@ -30,7 +30,9 @@ jobs:
         java-version: '11'
         distribution: 'temurin'
         cache: 'sbt'
+
     - name: Running Tests
+      if: success()
       run: |
         # Set the heap size for SBT by setting the JAVA_OPTS environment variable.
         export JAVA_OPTS="-Xmx2048m" # Adjust the heap size as needed
@@ -58,10 +60,13 @@ jobs:
         cd charts
         helm package perfix
         helm repo index .
+        rm -rf perfix/
 
     - name: Publish current workdir (which contains generated content) to GitHub Pages
       if: success() && github.ref == 'refs/heads/master'
       uses: rayluo/github-pages-overwriter@v1.3
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         source-directory: charts
         target-branch: gh-pages
