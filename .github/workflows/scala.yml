@@ -52,10 +52,14 @@ jobs:
         docker push mridulverma/perfix:latest
 
     - name: Package Helm Chart
+      if: success()
       run: helm package ./charts/perfix --destination .deploy
 
     - name: Publish Helm Chart
+      if: success()
       uses: helm/chart-releaser-action@v1.2.1
+      env:
+        CR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         charts_dir: charts
         chart_version: latest
