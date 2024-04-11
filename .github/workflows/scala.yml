@@ -62,6 +62,8 @@ jobs:
     - name: Publish current workdir (which contains generated content) to GitHub Pages
       if: success() && github.ref == 'refs/heads/master'
       uses: rayluo/github-pages-overwriter@v1.3
+      env:
+        GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       with:
         source-directory: charts
         target-branch: gh-pages
