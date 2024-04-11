@@ -54,13 +54,10 @@ jobs:
         sbt "docker:publishLocal"
         docker push mridulverma/perfix:latest
 
-    - name: Package Helm Chart
+    - name: Package and Publishing Helm package
       run: |
         mkdir .deploy
         helm package charts/perfix --destination .deploy
-
-    - name: Publishing Helm package
-      run: |
         git fetch origin gh-pages
         git checkout gh-pages
         git reset --hard origin/gh-pages
