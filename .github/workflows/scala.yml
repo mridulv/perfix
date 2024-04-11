@@ -39,14 +39,30 @@ jobs:
         sbt test
 
     - name: Log in to Docker Hub
+      if: success() && github.ref == 'refs/heads/master'
       uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
       with:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
 
     - name: Publish Docker Image
-      if: success()
+      if: success() && github.ref == 'refs/heads/master'
       run: |        
         # Build and publish the Docker image
         sbt "docker:publishLocal"
         docker push mridulverma/perfix:latest
+
+    - name: Package Helm Chart
+      if: success() && github.ref == 'refs/heads/master'
+      run: helm package ./charts/perfix --destination .deploy
+
+    - name: Publish Helm Chart
+      if: success() && github.ref == 'refs/heads/master'
+      uses: helm/chart-releaser-action@v1.2.1
+      env:
+        CR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        charts_dir: charts
+        chart_version: latest
+        charts_repo_url: https://mridulv.github.io/perfix-charts
+        token: ${{ secrets.GITHUB_TOKEN }}
