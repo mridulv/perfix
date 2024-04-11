@@ -50,3 +50,14 @@ jobs:
         # Build and publish the Docker image
         sbt "docker:publishLocal"
         docker push mridulverma/perfix:latest
+
+    - name: Package Helm Chart
+      run: helm package ./charts/perfix --destination .deploy
+
+    - name: Publish Helm Chart
+      uses: helm/chart-releaser-action@v1.2.1
+      with:
+        charts_dir: charts
+        chart_version: latest
+        charts_repo_url: https://mridulv.github.io/perfix-charts
+        token: ${{ secrets.GITHUB_TOKEN }}
