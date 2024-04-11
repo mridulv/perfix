@@ -32,7 +32,7 @@ jobs:
         cache: 'sbt'
 
     - name: Running Tests
-      if: success()
+      if: success() && github.ref == 'refs/heads/master'
       run: |
         # Set the heap size for SBT by setting the JAVA_OPTS environment variable.
         export JAVA_OPTS="-Xmx2048m" # Adjust the heap size as needed
@@ -55,14 +55,13 @@ jobs:
         docker push mridulverma/perfix:latest
 
     - name: Package Helm Chart
-      if: success() && github.ref == 'refs/heads/master'
       run: |
         mkdir .deploy
         helm package charts/perfix --destination .deploy
 
     - name: Publishing Helm package
-      if: success() && github.ref == 'refs/heads/master'
       run: |
+        git fetch origin gh-pages
         git checkout gh-pages
         git reset --hard origin/gh-pages
         mv .deploy/* .
