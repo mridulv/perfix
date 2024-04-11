@@ -1,0 +1,4 @@
+apiVersion: v2
+name: perfix
+description: A Helm chart for the Perfix application on Kubernetes
+version: 0.1.2
