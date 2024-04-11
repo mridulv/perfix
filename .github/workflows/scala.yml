@@ -56,6 +56,9 @@ jobs:
 
     - name: Package and Publishing Helm package
       run: |
+        git config user.name "github-actions"
+        git config user.email "github-actions@github.com"
+        
         mkdir .deploy
         helm package charts/perfix --destination .deploy
         git fetch origin gh-pages
