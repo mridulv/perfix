@@ -63,7 +63,6 @@ jobs:
         git reset --hard origin/gh-pages
         mv .deploy/* .
         helm repo index . --url https://mridulv.github.io/perfix/
-        cp .deploy/index.yaml index.yaml
         git add perfix-*.tgz index.yaml
         git commit -m "Publish Helm chart for $(date +'%Y-%m-%d %H:%M:%S')"
         git push origin gh-pages
