@@ -1,7 +1,7 @@
 package io.perfix.controllers
 
 import controllers.AssetsFinder
-import io.perfix.common.PerfixManager
+import io.perfix.common.ExperimentManager
 import io.perfix.model.{ExperimentRunParams, PerfixQuestionAnswers}
 import play.api.libs.json.Json
 import play.api.mvc._
@@ -9,8 +9,8 @@ import play.api.mvc._
 import javax.inject._
 
 @Singleton
-class PerfixExperimentController @Inject()(cc: ControllerComponents,
-                                           perfixManager: PerfixManager)(implicit assetsFinder: AssetsFinder)
+class ExperimentController @Inject()(cc: ControllerComponents,
+                                     perfixManager: ExperimentManager)(implicit assetsFinder: AssetsFinder)
   extends AbstractController(cc) {
 
   def executeExperiment(storeName: String) = Action(parse.json) { request =>
