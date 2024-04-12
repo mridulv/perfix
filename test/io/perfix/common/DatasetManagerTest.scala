@@ -1,5 +1,6 @@
 package io.perfix.common
 
+import io.perfix.manager.DatasetManager
 import io.perfix.model.{DatasetId, DatasetParams}
 import org.mockito.MockitoSugar
 import org.scalatest.flatspec.AnyFlatSpec

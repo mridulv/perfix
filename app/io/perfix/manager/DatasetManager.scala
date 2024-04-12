@@ -1,4 +1,4 @@
-package io.perfix.common
+package io.perfix.manager
 
 import com.google.inject.Inject
 import io.perfix.model.{Dataset, DatasetId, DatasetParams}
