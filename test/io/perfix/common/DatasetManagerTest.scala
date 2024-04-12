@@ -14,7 +14,7 @@ class DatasetManagerTest extends AnyFlatSpec with MockitoSugar {
     val datasetParams = DatasetParams(id = None, rows = 100, columns = Seq.empty)
     val datasetId = datasetManager.create(datasetParams)
 
-    datasetManager.get(datasetId).params shouldBe datasetParams
+    datasetManager.get(datasetId).params.copy(id = None) shouldBe datasetParams
   }
 
   "DatasetManager" should "retrieve a dataset by ID" in {

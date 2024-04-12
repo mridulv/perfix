@@ -13,7 +13,10 @@ class DatasetManager {
 
   def create(datasetParams: DatasetParams): DatasetId = {
     val id: Int = Random.nextInt()
-    mapping.put(DatasetId(id), datasetParams)
+    mapping.put(
+      DatasetId(id),
+      datasetParams.copy(id = Some(DatasetId(id)))
+    )
     DatasetId(id)
   }
 
@@ -22,9 +25,7 @@ class DatasetManager {
   }
 
   def all(): Seq[DatasetParams] = {
-    mapping.map { case (k, v) =>
-      v.copy(id = Some(k))
-    }.toSeq
+    mapping.values.toSeq
   }
 
 }
