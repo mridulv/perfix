@@ -16,3 +16,7 @@ GET      /health                                       io.perfix.controllers.Hea
 POST     /dataset                                      io.perfix.controllers.DatasetController.create
 GET      /dataset                                      io.perfix.controllers.DatasetController.all
 GET      /dataset/:id                                  io.perfix.controllers.DatasetController.get(id: Int)
+
+POST     /config                                       io.perfix.controllers.DatabaseConfigController.create
+GET      /config                                       io.perfix.controllers.DatabaseConfigController.all
+GET      /config/:id                                   io.perfix.controllers.DatabaseConfigController.get(id: Int)
