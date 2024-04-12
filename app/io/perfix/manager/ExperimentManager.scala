@@ -1,5 +1,6 @@
-package io.perfix.common
+package io.perfix.manager
 
+import io.perfix.common.PerfixExperimentExecutor
 import io.perfix.exceptions.InvalidExperimentException
 import io.perfix.model._
 import io.perfix.question.Question
@@ -9,7 +10,7 @@ import scala.collection.mutable
 import scala.util.Random
 
 @Singleton
-class PerfixManager {
+class ExperimentManager {
   val resultsMapping: mutable.Map[Int, PerfixExperimentResultWithMapping] = mutable.Map.empty[Int, PerfixExperimentResultWithMapping]
   val mapping: mutable.Map[Int, PerfixExperimentExecutor] = mutable.Map.empty[Int, PerfixExperimentExecutor]
 
