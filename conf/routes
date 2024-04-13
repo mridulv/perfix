@@ -7,11 +7,16 @@ GET      /questionnaire/:id/question                   io.perfix.controllers.Per
 POST     /questionnaire/:id/question                   io.perfix.controllers.PerfixQuestionnaireController.submitQuestion(id: Int)
 POST     /questionnaire/:id                            io.perfix.controllers.PerfixQuestionnaireController.startExperiment(id: Int)
 
-POST     /experiment                                   io.perfix.controllers.PerfixExperimentController.executeExperiment(storeName: String)
-POST     /experiment/:id                               io.perfix.controllers.PerfixExperimentController.repeatExperiment(id: Int)
-GET      /experiment/:id                               io.perfix.controllers.PerfixExperimentController.experimentResults(id: Int)
+POST     /experiment                                   io.perfix.controllers.ExperimentController.executeExperiment(storeName: String)
+POST     /experiment/:id                               io.perfix.controllers.ExperimentController.repeatExperiment(id: Int)
+GET      /experiment/:id                               io.perfix.controllers.ExperimentController.experimentResults(id: Int)
 
 GET      /health                                       io.perfix.controllers.HealthCheckController.health
 
 POST     /dataset                                      io.perfix.controllers.DatasetController.create
+GET      /dataset                                      io.perfix.controllers.DatasetController.all
 GET      /dataset/:id                                  io.perfix.controllers.DatasetController.get(id: Int)
+
+POST     /config                                       io.perfix.controllers.DatabaseConfigController.create
+GET      /config                                       io.perfix.controllers.DatabaseConfigController.all
+GET      /config/:id                                   io.perfix.controllers.DatabaseConfigController.get(id: Int)
