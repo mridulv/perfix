@@ -23,6 +23,15 @@ class DatabaseConfigManager {
     mapping(databaseConfigId)
   }
 
+  def update(databaseConfigId: DatabaseConfigId,
+             databaseConfigParams: DatabaseConfigParams): DatabaseConfigParams = {
+    mapping.put(
+      databaseConfigId,
+      databaseConfigParams.copy(databaseConfigId = Some(databaseConfigId))
+    )
+    databaseConfigParams
+  }
+
   def all(): Seq[DatabaseConfigParams] = {
     mapping.values.toSeq
   }
