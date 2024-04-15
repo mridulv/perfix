@@ -25,9 +25,10 @@ class DatasetManager {
   }
 
   def update(datasetId: DatasetId,
-             dataset: DatasetParams): DatasetId = {
-    mapping.put(datasetId, dataset.copy(id = Some(datasetId)))
-    datasetId
+             dataset: DatasetParams): Dataset = {
+    val updatedDataset = dataset.copy(id = Some(datasetId))
+    mapping.put(datasetId, updatedDataset)
+    updatedDataset.dataset.sampleDataset(SAMPLE_ROWS)
   }
 
   def all(): Seq[DatasetParams] = {
