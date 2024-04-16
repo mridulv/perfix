@@ -5,9 +5,9 @@ import { BiTrash } from "react-icons/bi";
 import { FaPlus } from "react-icons/fa6";
 import { useQuery } from "react-query";
 
-
 const Datasets = () => {
   const [datasets, setDatasets] = useState({});
+  const [columns, setColumns] = useState([{ columnName: "", columnType: "" }]);
   const [open, setOpen] = useState(false);
 
   // useEffect(() => {
@@ -20,7 +20,11 @@ const Datasets = () => {
   //   fetchDatasets();
   // }, []);
 
-  const {data: datasets1, isLoading, refetch} = useQuery({
+  const {
+    data: datasets1,
+    isLoading,
+    refetch,
+  } = useQuery({
     queryKey: ["datasets"],
     queryFn: async () => {
       const res = await axios.get("http://localhost:9000/dataset");
@@ -32,26 +36,32 @@ const Datasets = () => {
 
   console.log(datasets1);
 
+  const handleAddColumn = () => {
+    setColumns([...columns, { columnName: "", columnType: "" }]);
+  };
+
   const handleAddDataset = async (event) => {
     event.preventDefault();
-    const form = event.target;
-    const columnName = form.columnName.value;
-    const columnType = form.columnType.value;
-    console.log(columnName, columnType);
+    const formData = new FormData(event.target);
+    const columnValues = [];
 
+    columns.forEach((column, index) => {
+      const columnName = formData.get(`columnName${index}`);
+      const columnType = formData.get(`columnType${index}`);
+      
+      columnValues.push({ columnName, columnType });
+    });
+
+    console.log(columnValues);
     try {
       const url = "http://localhost:9000/dataset";
-      const data = {
-        columnName,
-        columnType,
-      };
-      const response = await axios.post(url, data, {
+      const response = await axios.post(url, columnValues, {
         headers: {
           "Content-Type": "application/json",
         },
       });
       console.log(response.data);
-      if(response.status === 200){
+      if (response.status === 200) {
         refetch();
       }
     } catch (err) {
@@ -59,48 +69,78 @@ const Datasets = () => {
     }
   };
 
-  if(isLoading) return (
-    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}>
-            <span className="loading loading-spinner loading-lg"></span>
-        </div>
-  )
+  if (isLoading)
+    return (
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          minHeight: "100vh",
+        }}
+      >
+        <span className="loading loading-spinner loading-lg"></span>
+      </div>
+    );
   return (
     <div className="px-3 py-4">
-      <h2 className="text-2xl text-center font-bold text-orange-600 my-3">Datasets</h2>
+      <h2 className="text-2xl text-center font-bold text-orange-600 my-3">
+        Datasets
+      </h2>
       <div className="flex justify-end my-4 mx-8">
-        <button className="btn btn-error text-white" onClick={() => setOpen(true)}>
-          <FaPlus/> Add
+        <button
+          className="btn btn-error text-white"
+          onClick={() => setOpen(true)}
+        >
+          <FaPlus /> Add
         </button>
       </div>
       <AddDatasetModal open={open} onClose={() => setOpen(false)}>
-        <div className=" w-[80%] md:w-[400px]">
+        <div className=" w-[280px] md:w-[400px] ">
           <div className="mx-auto my-4 w-[80%] md:w-[300px]">
             <h3 className="text-lg my-4 font-bold text-center">Add Dataset</h3>
             <form onSubmit={handleAddDataset}>
-              <div className="flex flex-col my-4">
-                <label htmlFor="">Column Name: </label>
-                <input
-                  className="border-2 border-gray-500 px-2 py-2 rounded mt-2"
-                  placeholder="Name"
-                  type="text"
-                  name="columnName"
-                  id=""
-                  required
-                />
-              </div>
-              <div className="flex flex-col my-4">
-                <label htmlFor="">Column Type:</label>
-                <select
-                  id="column-type"
-                  name="columnType"
-                  className="block w-full mt-2 px-4 py-2 pr-8 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-gray-500"
+              {columns.map((column, i) => (
+                <div key={i}>
+                  <p className="text-sm">{i + 1}.</p>
+                  <div className="flex flex-col mb-4">
+                    <label htmlFor="">Column Name: </label>
+                    <input
+                      className="border-2 border-gray-500 px-2 py-2 rounded mt-2"
+                      placeholder="Name"
+                      type="text"
+                      name={`columnName${i}`}
+                      id={`columnName${i}`}
+                      required
+                    />
+                  </div>
+                  <div className="flex flex-col my-4">
+                    <label htmlFor="">Column Type:</label>
+                    <select
+                      name={`columnType${i}`}
+                      id={`columnType${i}`}
+                      className="block w-full mt-2 px-4 py-2 pr-8 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-gray-500"
+                    >
+                      <option value="NameType">NameType</option>
+                      <option value="AddressType">AddressType</option>
+                    </select>
+                  </div>
+                </div>
+              ))}
+              <div className="flex justify-end">
+                <button
+                  onClick={handleAddColumn}
+                  className="btn btn-xs  btn-error text-white"
                 >
-                  <option value="NameType">NameType</option>
-                  <option value="AddressType">AddressType</option>
-                </select>
+                  Add Column
+                </button>
               </div>
-              <div className="flex justify-center">
-              <input type="submit" className="btn btn-primary text-center" value={"Submit"}/>
+              <div className="flex justify-center mt-4">
+                <input
+                  type="submit"
+                  className="btn btn-primary text-center"
+                  value={"Submit"}
+                />
               </div>
             </form>
           </div>

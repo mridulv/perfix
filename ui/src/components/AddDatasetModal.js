@@ -11,7 +11,7 @@ const AddDatasetModal = ({ open, onClose, children }) => {
       onClick={onClose}
       className={`
         fixed inset-0 flex justify-center items-center transition-colors
-        ${open ? "visible bg-black/20" : "invisible"}
+        ${open ? "visible bg-black/20" : "invisible"} 
       `}
     >
       {/* modal */}
@@ -21,6 +21,7 @@ const AddDatasetModal = ({ open, onClose, children }) => {
           bg-white rounded-xl shadow p-6 transition-all
           ${open ? "scale-100 opacity-100" : "scale-125 opacity-0"}
         `}
+        style={{maxHeight: "80vh", overflow: "auto"}}
       >
         <button
           onClick={onClose}
