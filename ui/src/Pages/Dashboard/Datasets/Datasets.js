@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import AddDatasetModal from "../../../components/AddDatasetModal";
-import { BiTrash } from "react-icons/bi";
 import { FaPlus } from "react-icons/fa6";
 import { useQuery } from "react-query";
+import toast from "react-hot-toast";
 
 const Datasets = () => {
-  const [datasets, setDatasets] = useState({});
+  
   const [columns, setColumns] = useState([{ columnName: "", columnType: "" }]);
   const [open, setOpen] = useState(false);
 
@@ -21,7 +21,7 @@ const Datasets = () => {
   // }, []);
 
   const {
-    data: datasets1,
+    data: datasets,
     isLoading,
     refetch,
   } = useQuery({
@@ -34,7 +34,8 @@ const Datasets = () => {
     },
   });
 
-  console.log(datasets1);
+  console.log(datasets);
+  
 
   const handleAddColumn = () => {
     setColumns([...columns, { columnName: "", columnType: "" }]);
@@ -55,13 +56,28 @@ const Datasets = () => {
     console.log(columnValues);
     try {
       const url = "http://localhost:9000/dataset";
-      const response = await axios.post(url, columnValues, {
+      const columnData = {
+        rows: 10000,
+        columns: columnValues.map(columnValue => ({
+          columnName: columnValue.columnName,
+          columnType: {
+            type: columnValue.columnType,
+            isUnique: true // Assuming isUnique is always true for all columns
+          }
+        }))
+      };
+      console.log(columnData);
+    
+      const response = await axios.post(url, columnData, {
         headers: {
           "Content-Type": "application/json",
         },
       });
       console.log(response.data);
       if (response.status === 200) {
+        setOpen(false);
+        event.target.reset();
+        toast.success("Datased Added Successfully");
         refetch();
       }
     } catch (err) {
@@ -146,6 +162,17 @@ const Datasets = () => {
           </div>
         </div>
       </AddDatasetModal>
+
+      <div>
+        {
+          datasets.map((dataset) => (
+            <div>
+              
+              <p>id: {dataset.id.id}</p>
+            </div>
+          ))
+        }
+      </div>
     </div>
   );
 };
