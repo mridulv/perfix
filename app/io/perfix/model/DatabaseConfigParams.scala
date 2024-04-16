@@ -1,8 +1,30 @@
 package io.perfix.model
 
+import io.perfix.common.PerfixExperimentExecutor
+import io.perfix.launch.AWSCloudParams
+import io.perfix.question.AWSCloudParamsQuestion
 import play.api.libs.json.{Format, Json}
 
-case class DatabaseConfigParams(databaseConfigId: Option[DatabaseConfigId] = None)
+case class DatabaseConfigParams(databaseConfigId: Option[DatabaseConfigId] = None,
+                                storeName: String,
+                                perfixQuestionAnswers: Option[Seq[PerfixQuestionAnswer]] = None) {
+
+  def questions: PerfixQuestion = {
+    val dataStore = PerfixExperimentExecutor.getDataStore(storeName)
+    val cloudParams = new AWSCloudParams
+    val credentialsQuestion = new AWSCloudParamsQuestion(cloudParams)
+
+    val launchQuestions = dataStore.launch(cloudParams) match {
+      case Some(launchQuestion) => Iterator(credentialsQuestion) ++ Iterator(launchQuestion)
+      case None => Iterator(credentialsQuestion)
+    }
+
+    val nextSet = dataStore.storeInputs(DataDescription()).questions
+
+    PerfixQuestion((launchQuestions ++ nextSet).toSeq.flatMap(_.mapping).toMap)
+  }
+
+}
 
 object DatabaseConfigParams {
   implicit val DatabaseConfigParamsFormatter: Format[DatabaseConfigParams] = Json.format[DatabaseConfigParams]
