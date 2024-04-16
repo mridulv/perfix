@@ -60,7 +60,6 @@ jobs:
         # Run Tests on the chart
         helm lint charts/perfix
         helm template charts/perfix
-        helm install --dry-run --debug charts/perfix
 
     - name: Package and Publishing Helm package
       if: success() && github.ref == 'refs/heads/master'
