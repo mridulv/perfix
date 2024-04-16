@@ -20,6 +20,18 @@ class DatabaseConfigController @Inject()(val controllerComponents: ControllerCom
     Results.Ok(Json.toJson(databaseConfigManager.get(DatabaseConfigId(databaseConfigId))))
   }
 
+  def update(databaseConfigId: Int) = Action(parse.json) { request =>
+    val databaseConfigParams = request.body.as[DatabaseConfigParams]
+    Results.Ok(
+      Json.toJson(
+        databaseConfigManager.update(
+          DatabaseConfigId(databaseConfigId),
+          databaseConfigParams
+        )
+      )
+    )
+  }
+
   def all = Action { request =>
     Results.Ok(Json.toJson(databaseConfigManager.all()))
   }
