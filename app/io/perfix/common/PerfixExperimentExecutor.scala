@@ -10,7 +10,7 @@ import io.perfix.stores.redis.RedisStore
 
 class PerfixExperimentExecutor(storeName: String) {
 
-  private val dataStore = getDataStore(storeName)
+  private val dataStore = PerfixExperimentExecutor.getDataStore(storeName)
   private val experiment = new SimplePerformanceExperiment(dataStore)
   private val questionnaireExecutor = new PerfixQuestionnaireExecutor(experiment.questions())
 
@@ -31,7 +31,10 @@ class PerfixExperimentExecutor(storeName: String) {
     experiment.cleanup()
   }
 
-  private def getDataStore(storeName: String): DataStore = {
+}
+
+object PerfixExperimentExecutor {
+  def getDataStore(storeName: String): DataStore = {
     DataStore.withName(storeName) match {
       case DataStore.DynamoDBStore => new DynamoDBStore
       case DataStore.MySQLStore => new MySQLStore
@@ -39,5 +42,4 @@ class PerfixExperimentExecutor(storeName: String) {
       case DataStore.MongoDBStore => new DocumentDBStore
     }
   }
-
 }
