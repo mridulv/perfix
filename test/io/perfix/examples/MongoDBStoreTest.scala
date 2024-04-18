@@ -1,6 +1,6 @@
 package io.perfix.examples
 
-import io.perfix.common.PerfixExperimentExecutor
+import io.perfix.common.ExperimentExecutor
 import io.perfix.question.AWSCloudParamsForm.{AWS_ACCESS_KEY, AWS_ACCESS_SECRET, LAUNCH_DB}
 import io.perfix.question.Form
 import io.perfix.question.documentdb.DocumentDBConnectionParamsForm._
@@ -30,7 +30,7 @@ object MongoDBStoreTest {
       INSTANCE_CLASS -> "db.r5.large",
       LAUNCH_DB -> false
     )
-    val experimentExecutor = new PerfixExperimentExecutor("mongodb")
+    val experimentExecutor = new ExperimentExecutor("mongodb")
     while (experimentExecutor.getQuestionnaireExecutor.hasNext) {
       val question = experimentExecutor.getQuestionnaireExecutor.next()
       val answerMapping = question.map { case (k, questionType) =>

@@ -25,7 +25,7 @@ class PerfixFormSeriesExecutorTest extends AnyFlatSpec with Matchers {
   }
 
   "A PerfixQuestionnaireExecutor" should  "return the next question"  in {
-    val executor = new PerfixQuestionnaireExecutor(mockQuestionnaire)
+    val executor = new FormSeriesEvaluator(mockQuestionnaire)
 
     executor.hasNext
     val question1 = executor.next()
@@ -37,7 +37,7 @@ class PerfixFormSeriesExecutorTest extends AnyFlatSpec with Matchers {
   }
 
   "A PerfixQuestionnaireExecutor" should "allow submitting answers to the current question" in {
-    val executor = new PerfixQuestionnaireExecutor(mockQuestionnaire)
+    val executor = new FormSeriesEvaluator(mockQuestionnaire)
 
     executor.hasNext
     executor.next()
@@ -49,7 +49,7 @@ class PerfixFormSeriesExecutorTest extends AnyFlatSpec with Matchers {
   }
 
   "A PerfixQuestionnaireExecutor" should "throw an exception when submitting answers without a defined question" in {
-    val executor = new PerfixQuestionnaireExecutor(mockQuestionnaire)
+    val executor = new FormSeriesEvaluator(mockQuestionnaire)
 
     // Attempt to submit answers without a defined question
     an[UnsupportedOperationException] should be thrownBy {

@@ -1,6 +1,6 @@
 package io.perfix.model
 
-import io.perfix.common.PerfixExperimentExecutor
+import io.perfix.common.ExperimentExecutor
 import io.perfix.launch.AWSCloudParams
 import io.perfix.question.AWSCloudParamsForm
 import play.api.libs.json.{Format, Json}
@@ -10,7 +10,7 @@ case class DatabaseConfigParams(databaseConfigId: Option[DatabaseConfigId] = Non
                                 perfixQuestionAnswers: Option[Seq[PerfixQuestionAnswer]] = None) {
 
   def questions: PerfixQuestion = {
-    val dataStore = PerfixExperimentExecutor.getDataStore(storeName)
+    val dataStore = ExperimentExecutor.getDataStore(storeName)
     val cloudParams = new AWSCloudParams
     val credentialsQuestion = new AWSCloudParamsForm(cloudParams)
 

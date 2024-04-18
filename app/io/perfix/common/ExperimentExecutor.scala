@@ -8,14 +8,14 @@ import io.perfix.stores.dynamodb.DynamoDBStore
 import io.perfix.stores.mysql.MySQLStore
 import io.perfix.stores.redis.RedisStore
 
-class PerfixExperimentExecutor(storeName: String) {
+class ExperimentExecutor(storeName: String) {
 
-  private val dataStore = PerfixExperimentExecutor.getDataStore(storeName)
+  private val dataStore = ExperimentExecutor.getDataStore(storeName)
   private val experiment = new SimplePerformanceExperiment(dataStore)
-  private val questionnaireExecutor = new PerfixQuestionnaireExecutor(experiment.questions())
+  private val formSeriesEvaluator = new FormSeriesEvaluator(experiment.questions())
 
-  def getQuestionnaireExecutor: PerfixQuestionnaireExecutor = {
-    questionnaireExecutor
+  def getQuestionnaireExecutor: FormSeriesEvaluator = {
+    formSeriesEvaluator
   }
 
   def runExperiment(): PerfixExperimentResult = {
@@ -33,7 +33,7 @@ class PerfixExperimentExecutor(storeName: String) {
 
 }
 
-object PerfixExperimentExecutor {
+object ExperimentExecutor {
   def getDataStore(storeName: String): DataStore = {
     DataStore.withName(storeName) match {
       case DataStore.DynamoDBStore => new DynamoDBStore

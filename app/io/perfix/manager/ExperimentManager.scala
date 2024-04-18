@@ -1,6 +1,6 @@
 package io.perfix.manager
 
-import io.perfix.common.PerfixExperimentExecutor
+import io.perfix.common.ExperimentExecutor
 import io.perfix.exceptions.InvalidExperimentException
 import io.perfix.model._
 import io.perfix.question.Form
@@ -12,10 +12,10 @@ import scala.util.Random
 @Singleton
 class ExperimentManager {
   val resultsMapping: mutable.Map[Int, PerfixExperimentResultWithMapping] = mutable.Map.empty[Int, PerfixExperimentResultWithMapping]
-  val mapping: mutable.Map[Int, PerfixExperimentExecutor] = mutable.Map.empty[Int, PerfixExperimentExecutor]
+  val mapping: mutable.Map[Int, ExperimentExecutor] = mutable.Map.empty[Int, ExperimentExecutor]
 
   def startQuestionnaire(storeName: String): ExperimentId = {
-    val experimentExecutor = new PerfixExperimentExecutor(storeName)
+    val experimentExecutor = new ExperimentExecutor(storeName)
     val response = ExperimentId(Random.nextInt(1000))
     println(s"Experiment Id: ${response.id}")
     mapping.put(response.id, experimentExecutor)
@@ -51,7 +51,7 @@ class ExperimentManager {
                         questionAnswers: PerfixQuestionAnswers): ExperimentId = {
     val response = ExperimentId(Random.nextInt(1000))
     val mappedVariables = questionAnswers.toMap
-    val experimentExecutor = new PerfixExperimentExecutor(storeName)
+    val experimentExecutor = new ExperimentExecutor(storeName)
     while (experimentExecutor.getQuestionnaireExecutor.hasNext) {
       val question = experimentExecutor.getQuestionnaireExecutor.next()
       val answerMapping = question.map { case (k, questionType) =>

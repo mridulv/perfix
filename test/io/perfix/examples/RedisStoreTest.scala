@@ -1,6 +1,6 @@
 package io.perfix.examples
 
-import io.perfix.common.PerfixExperimentExecutor
+import io.perfix.common.ExperimentExecutor
 import io.perfix.question.AWSCloudParamsForm.{AWS_ACCESS_KEY, AWS_ACCESS_SECRET}
 import io.perfix.question.Form
 import io.perfix.question.experiment.DataQuestions._
@@ -24,7 +24,7 @@ object RedisStoreTest {
       AWS_ACCESS_KEY -> "****************************",
       AWS_ACCESS_SECRET -> "******************************************"
     )
-    val experimentExecutor = new PerfixExperimentExecutor("redis")
+    val experimentExecutor = new ExperimentExecutor("redis")
     while (experimentExecutor.getQuestionnaireExecutor.hasNext) {
       val question = experimentExecutor.getQuestionnaireExecutor.next()
       val answerMapping = question.map { case (k, questionType) =>

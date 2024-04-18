@@ -1,6 +1,6 @@
 package io.perfix.e2e
 
-import io.perfix.common.PerfixExperimentExecutor
+import io.perfix.common.ExperimentExecutor
 import io.perfix.question.AWSCloudParamsForm.{AWS_ACCESS_KEY, AWS_ACCESS_SECRET, LAUNCH_DB}
 import io.perfix.question.Form
 import io.perfix.question.experiment.DataQuestions.{COLUMNS, ROWS}
@@ -15,7 +15,7 @@ import org.scalatest.matchers.should.Matchers
 
 import java.sql.DriverManager
 
-class PerfixExperimentExecutorIT extends AnyFlatSpec with Matchers with MockitoSugar with BeforeAndAfterAll {
+class ExperimentExecutorIT extends AnyFlatSpec with Matchers with MockitoSugar with BeforeAndAfterAll {
 
   behavior of "PerfixExperimentExecutor"
 
@@ -48,7 +48,7 @@ class PerfixExperimentExecutorIT extends AnyFlatSpec with Matchers with MockitoS
       AWS_ACCESS_SECRET -> "**********",
       LAUNCH_DB -> false
     )
-    val experimentExecutor = new PerfixExperimentExecutor("mysql")
+    val experimentExecutor = new ExperimentExecutor("mysql")
     while (experimentExecutor.getQuestionnaireExecutor.hasNext) {
       val question = experimentExecutor.getQuestionnaireExecutor.next()
       val answerMapping = question.map { case (k, questionType) =>

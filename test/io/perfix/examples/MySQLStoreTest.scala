@@ -1,6 +1,6 @@
 package io.perfix.examples
 
-import io.perfix.common.PerfixExperimentExecutor
+import io.perfix.common.ExperimentExecutor
 import io.perfix.question.AWSCloudParamsForm._
 import io.perfix.question.Form
 import io.perfix.question.experiment.DataQuestions._
@@ -31,7 +31,7 @@ object MySQLStoreTest {
       AWS_ACCESS_SECRET -> "************************************",
       LAUNCH_DB -> false
     )
-    val experimentExecutor = new PerfixExperimentExecutor("mysql")
+    val experimentExecutor = new ExperimentExecutor("mysql")
     while (experimentExecutor.getQuestionnaireExecutor.hasNext) {
       val question = experimentExecutor.getQuestionnaireExecutor.next()
       val answerMapping = question.map { case (k, questionType) =>

@@ -1,6 +1,6 @@
 package io.perfix.examples
 
-import io.perfix.common.PerfixExperimentExecutor
+import io.perfix.common.ExperimentExecutor
 import io.perfix.question.AWSCloudParamsForm.{AWS_ACCESS_KEY, AWS_ACCESS_SECRET}
 import io.perfix.question.Form
 import io.perfix.question.dynamodb.DynamoDBGSIParamsQuestions.GSI
@@ -23,7 +23,7 @@ object DynamoDBStoreTest {
       AWS_ACCESS_SECRET -> "secret",
       GSI -> "{\"gsiParams\":[{\"partitionKey\":\"student_address\",\"sortKey\":\"student_name\"}]}"
     )
-    val experimentExecutor = new PerfixExperimentExecutor("dynamodb")
+    val experimentExecutor = new ExperimentExecutor("dynamodb")
     while (experimentExecutor.getQuestionnaireExecutor.hasNext) {
       val question = experimentExecutor.getQuestionnaireExecutor.next()
       val answerMapping = question.map { case (k, questionType) =>

@@ -4,7 +4,7 @@ import io.perfix.model.FormInputType
 import io.perfix.question.Form.FormInputName
 import io.perfix.question.{Form, FormSeries}
 
-class PerfixQuestionnaireExecutor(questionnaire: FormSeries)
+class FormSeriesEvaluator(questionnaire: FormSeries)
   extends Iterator[Map[FormInputName, FormInputType]] {
 
   private var currentOpt: Option[Form] = None
