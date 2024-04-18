@@ -1,8 +1,8 @@
 package io.perfix.common
 
 import io.perfix.model.FormInputType
-import io.perfix.question.Form.FormInputName
-import io.perfix.question.{Form, FormSeries}
+import io.perfix.forms.Form.FormInputName
+import io.perfix.forms.{Form, FormSeries}
 
 class FormSeriesEvaluator(questionnaire: FormSeries)
   extends Iterator[Map[FormInputName, FormInputType]] {

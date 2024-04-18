@@ -1,6 +1,6 @@
 package io.perfix.launch
 
-import io.perfix.question.FormParams
+import io.perfix.forms.FormParams
 
 class AWSCloudParams extends FormParams {
 

@@ -1,12 +1,12 @@
 package io.perfix.examples
 
 import io.perfix.common.ExperimentExecutor
-import io.perfix.question.AWSCloudParamsForm.{AWS_ACCESS_KEY, AWS_ACCESS_SECRET}
-import io.perfix.question.Form
-import io.perfix.question.dynamodb.DynamoDBGSIParamsForm.GSI
-import io.perfix.question.dynamodb.DynamoDBTableParamsForm._
-import io.perfix.question.experiment.DataConfigurationForm._
-import io.perfix.question.experiment.ExperimentParamsForm.CONCURRENT_QUERIES
+import io.perfix.forms.AWSCloudParamsForm.{AWS_ACCESS_KEY, AWS_ACCESS_SECRET}
+import io.perfix.forms.Form
+import io.perfix.forms.dynamodb.DynamoDBGSIParamsForm.GSI
+import io.perfix.forms.dynamodb.DynamoDBTableParamsForm._
+import io.perfix.forms.experiment.DataConfigurationForm._
+import io.perfix.forms.experiment.ExperimentParamsForm.CONCURRENT_QUERIES
 
 object DynamoDBStoreTest {
 

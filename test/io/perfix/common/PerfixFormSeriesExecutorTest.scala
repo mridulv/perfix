@@ -1,8 +1,8 @@
 package io.perfix.common
 
 import io.perfix.model.{IntType, FormInputType, StringType}
-import io.perfix.question.Form.FormInputName
-import io.perfix.question.{Form, FormParams, FormSeries}
+import io.perfix.forms.Form.FormInputName
+import io.perfix.forms.{Form, FormParams, FormSeries}
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 

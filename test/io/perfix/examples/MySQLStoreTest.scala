@@ -1,14 +1,14 @@
 package io.perfix.examples
 
 import io.perfix.common.ExperimentExecutor
-import io.perfix.question.AWSCloudParamsForm._
-import io.perfix.question.Form
-import io.perfix.question.experiment.DataConfigurationForm._
-import io.perfix.question.experiment.ExperimentParamsForm.{CONCURRENT_QUERIES, PERFIX_QUERY}
-import io.perfix.question.mysql.MySQLConnectionParamsForm._
-import io.perfix.question.mysql.MySQLLaunchForm._
-import io.perfix.question.mysql.MySQLTableIndicesDetailForm.SECONDARY_INDEX_COLUMNS
-import io.perfix.question.mysql.MySQLTableParamsForm.{DBNAME, TABLENAME}
+import io.perfix.forms.AWSCloudParamsForm._
+import io.perfix.forms.Form
+import io.perfix.forms.experiment.DataConfigurationForm._
+import io.perfix.forms.experiment.ExperimentParamsForm.{CONCURRENT_QUERIES, PERFIX_QUERY}
+import io.perfix.forms.mysql.MySQLConnectionParamsForm._
+import io.perfix.forms.mysql.MySQLLaunchForm._
+import io.perfix.forms.mysql.MySQLTableIndicesDetailForm.SECONDARY_INDEX_COLUMNS
+import io.perfix.forms.mysql.MySQLTableParamsForm.{DBNAME, TABLENAME}
 
 
 object MySQLStoreTest {

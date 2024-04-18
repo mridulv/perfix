@@ -3,7 +3,7 @@ package io.perfix.manager
 import io.perfix.common.ExperimentExecutor
 import io.perfix.exceptions.InvalidExperimentException
 import io.perfix.model._
-import io.perfix.question.Form
+import io.perfix.forms.Form
 
 import javax.inject.Singleton
 import scala.collection.mutable

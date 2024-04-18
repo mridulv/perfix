@@ -1,6 +1,6 @@
 package io.perfix.stores.mysql
 
-import io.perfix.question.FormParams
+import io.perfix.forms.FormParams
 
 case class MySQLParams() extends FormParams {
 

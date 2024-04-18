@@ -19,7 +19,7 @@ import scala.util.Random
 class MySQLLaunchForm(override val credentials: AWSCloudParams,
                       override val formParams: MySQLParams) extends LaunchStoreForm {
 
-  override val launchQuestionsMapping: Map[FormInputName, FormInputType] = Map(
+  override val launchFormInputMapping: Map[FormInputName, FormInputType] = Map(
     DBNAME -> FormInputType(StringType, isRequired = false),
     USERNAME -> FormInputType(StringType, isRequired = false),
     PASSWORD -> FormInputType(StringType, isRequired = false),

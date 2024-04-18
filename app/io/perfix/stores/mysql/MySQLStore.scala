@@ -6,7 +6,7 @@ import io.perfix.model.ColumnType.toSqlType
 import io.perfix.model.{ColumnDescription, DataDescription}
 import io.perfix.stores.DataStore
 import io.perfix.query.PerfixQuery
-import io.perfix.question.mysql.MySQLLaunchForm
+import io.perfix.forms.mysql.MySQLLaunchForm
 
 import java.sql.{Connection, DriverManager, ResultSet}
 

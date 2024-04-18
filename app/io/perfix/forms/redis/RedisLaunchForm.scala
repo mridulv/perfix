@@ -17,7 +17,7 @@ import scala.util.Random
 class RedisLaunchForm(override val credentials: AWSCloudParams,
                       override val formParams: RedisParams) extends LaunchStoreForm {
 
-  override val launchQuestionsMapping: Map[FormInputName, FormInputType] = Map(
+  override val launchFormInputMapping: Map[FormInputName, FormInputType] = Map(
     CACHE_NODE_TYPE -> FormInputType(StringType, isRequired = false),
     NUM_CACHE_NODES -> FormInputType(IntType, isRequired = false)
   )

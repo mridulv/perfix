@@ -19,7 +19,7 @@ import scala.util.Random
 class DocumentDBLaunchForm(override val credentials: AWSCloudParams,
                            override val formParams: DocumentDBParams) extends LaunchStoreForm {
 
-  override val launchQuestionsMapping: Map[FormInputName, FormInputType] = Map(
+  override val launchFormInputMapping: Map[FormInputName, FormInputType] = Map(
     DATABASE -> FormInputType(StringType, isRequired = false),
     DB_CLUSTER_IDENTIFIER -> FormInputType(StringType, isRequired = false),
     MASTER_USERNAME -> FormInputType(StringType, isRequired = false),

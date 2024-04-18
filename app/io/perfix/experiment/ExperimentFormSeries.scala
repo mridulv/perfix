@@ -2,8 +2,8 @@ package io.perfix.experiment
 
 import io.perfix.launch.AWSCloudParams
 import io.perfix.model.ExperimentParams
-import io.perfix.question.experiment.{DataConfigurationForm, ExperimentParamsForm}
-import io.perfix.question.{AWSCloudParamsForm, Form, FormSeries}
+import io.perfix.forms.experiment.{DataConfigurationForm, ExperimentParamsForm}
+import io.perfix.forms.{AWSCloudParamsForm, Form, FormSeries}
 import io.perfix.stores.DataStore
 
 class ExperimentFormSeries(experimentParams: ExperimentParams,
