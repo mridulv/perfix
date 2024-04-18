@@ -1,16 +1,16 @@
 package io.perfix.question
 
-import io.perfix.model.{QuestionType, StringType}
+import io.perfix.model.{FormInputType, StringType}
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
 class QuestionnaireTest extends AnyFlatSpec with Matchers {
 
   case class MockForm(label: String, shouldAskResult: Boolean) extends Form {
-    override val mapping: Map[Form.QuestionLabel, QuestionType] = Map(label -> QuestionType(StringType))
+    override val mapping: Map[Form.FormInputName, FormInputType] = Map(label -> FormInputType(StringType))
     override val storeQuestionParams: FormParams = new FormParams {}
     override def shouldAsk(): Boolean = shouldAskResult
-    override def setAnswers(answers: Map[Form.QuestionLabel, Any]): Unit = ???
+    override def setAnswers(answers: Map[Form.FormInputName, Any]): Unit = ???
   }
 
   // Test class that extends Questionnaire

@@ -1,11 +1,11 @@
 package io.perfix.common
 
-import io.perfix.model.QuestionType
+import io.perfix.model.FormInputType
 import io.perfix.question.Form.FormInputName
 import io.perfix.question.{Form, Questionnaire}
 
 class PerfixQuestionnaireExecutor(questionnaire: Questionnaire)
-  extends Iterator[Map[FormInputName, QuestionType]] {
+  extends Iterator[Map[FormInputName, FormInputType]] {
 
   private var currentOpt: Option[Form] = None
   private val allQuestionsIterator: Iterator[Form] = questionnaire.iterator
@@ -14,7 +14,7 @@ class PerfixQuestionnaireExecutor(questionnaire: Questionnaire)
     allQuestionsIterator.hasNext
   }
 
-  override def next(): Map[FormInputName, QuestionType] = {
+  override def next(): Map[FormInputName, FormInputType] = {
     val ques = allQuestionsIterator.next()
     currentOpt = Some(ques)
     ques.mapping

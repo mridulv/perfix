@@ -1,7 +1,7 @@
 package io.perfix.question.dynamodb
 
 import io.perfix.exceptions.ParamsAlreadyDefinedException
-import io.perfix.model.{QuestionType, StringType}
+import io.perfix.model.{FormInputType, StringType}
 import io.perfix.question.Form
 import io.perfix.question.Form.FormInputName
 import io.perfix.question.dynamodb.DynamoDBGSIParamsQuestions.GSI
@@ -11,8 +11,8 @@ import play.api.libs.json.Json
 
 case class DynamoDBGSIParamsQuestions(override val storeQuestionParams: DynamoDBParams) extends Form {
 
-  override val mapping: Map[FormInputName, QuestionType] = Map(
-    GSI -> QuestionType(StringType, isRequired = false)
+  override val mapping: Map[FormInputName, FormInputType] = Map(
+    GSI -> FormInputType(StringType, isRequired = false)
   )
 
   override def shouldAsk(): Boolean = {

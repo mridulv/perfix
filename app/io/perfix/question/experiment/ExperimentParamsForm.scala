@@ -4,17 +4,17 @@ import ExperimentParamsForm.{BENCHMARK_TIME_IN_SECONDS, CONCURRENT_QUERIES, PERF
 import io.perfix.exceptions.ParamsAlreadyDefinedException
 import io.perfix.model._
 import io.perfix.query.PerfixQuery
-import io.perfix.question.Form.QuestionLabel
+import io.perfix.question.Form.FormInputName
 import io.perfix.question.{Form, FormParams}
 import play.api.libs.json.Json
 
 class ExperimentParamsForm(experimentParams: ExperimentParams) extends Form {
 
-  override val mapping: Map[QuestionLabel, QuestionType] = Map(
-    CONCURRENT_QUERIES -> QuestionType(DoubleType),
-    WRITE_BATCH_SIZE -> QuestionType(IntType, isRequired = false),
-    BENCHMARK_TIME_IN_SECONDS -> QuestionType(IntType, isRequired = false),
-    PERFIX_QUERY -> QuestionType(StringType)
+  override val mapping: Map[FormInputName, FormInputType] = Map(
+    CONCURRENT_QUERIES -> FormInputType(DoubleType),
+    WRITE_BATCH_SIZE -> FormInputType(IntType, isRequired = false),
+    BENCHMARK_TIME_IN_SECONDS -> FormInputType(IntType, isRequired = false),
+    PERFIX_QUERY -> FormInputType(StringType)
   )
 
   override val storeQuestionParams: FormParams = experimentParams
@@ -23,7 +23,7 @@ class ExperimentParamsForm(experimentParams: ExperimentParams) extends Form {
     experimentParams.concurrentQueriesOpt.isEmpty
   }
 
-  override def setAnswers(answers: Map[QuestionLabel, Any]): Unit = {
+  override def setAnswers(answers: Map[FormInputName, Any]): Unit = {
     import experimentParams._
     concurrentQueriesOpt match {
       case Some(_) => throw ParamsAlreadyDefinedException("DataDescription")

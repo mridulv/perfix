@@ -1,24 +1,24 @@
 package io.perfix.question
 
-import Form.QuestionLabel
-import io.perfix.model.QuestionType
+import Form.FormInputName
+import io.perfix.model.FormInputType
 
 trait Form {
 
-  val mapping: Map[QuestionLabel, QuestionType]
+  val mapping: Map[FormInputName, FormInputType]
 
   val storeQuestionParams: FormParams
 
   def shouldAsk(): Boolean
 
-  def setAnswers(answers: Map[QuestionLabel, Any]): Unit
+  def setAnswers(answers: Map[FormInputName, Any]): Unit
 
 }
 
 object Form {
-  type QuestionLabel = String
+  type FormInputName = String
 
-  def filteredAnswers(answers: Map[QuestionLabel, Option[Any]]): Map[QuestionLabel, Any] = {
+  def filteredAnswers(answers: Map[FormInputName, Option[Any]]): Map[FormInputName, Any] = {
     answers.collect {
       case (label, Some(value)) => (label, value)
     }

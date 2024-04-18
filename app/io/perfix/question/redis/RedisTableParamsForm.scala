@@ -1,24 +1,24 @@
 package io.perfix.question.redis
 
 import io.perfix.exceptions.ParamsAlreadyDefinedException
-import io.perfix.model.{QuestionType, StringType}
+import io.perfix.model.{FormInputType, StringType}
 import io.perfix.question.Form
-import io.perfix.question.Form.QuestionLabel
+import io.perfix.question.Form.FormInputName
 import io.perfix.question.redis.RedisTableParamsForm.KEY_COLUMN
 import io.perfix.stores.redis.{RedisParams, RedisTableParams}
 
 class RedisTableParamsForm(override val storeQuestionParams: RedisParams)
   extends Form {
 
-  override val mapping: Map[QuestionLabel, QuestionType] = Map(
-    KEY_COLUMN -> QuestionType(StringType)
+  override val mapping: Map[FormInputName, FormInputType] = Map(
+    KEY_COLUMN -> FormInputType(StringType)
   )
 
   override def shouldAsk(): Boolean = {
     storeQuestionParams.redisTableParams.isEmpty
   }
 
-  override def setAnswers(answers: Map[QuestionLabel, Any]): Unit = {
+  override def setAnswers(answers: Map[FormInputName, Any]): Unit = {
     storeQuestionParams.redisTableParams match {
       case Some(_) => throw ParamsAlreadyDefinedException("Redis Table Params are already defined")
       case None => storeQuestionParams.redisTableParams = Some(RedisTableParams(answers(KEY_COLUMN).toString))

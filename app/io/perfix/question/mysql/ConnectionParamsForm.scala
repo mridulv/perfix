@@ -2,17 +2,17 @@ package io.perfix.question.mysql
 
 import ConnectionParamsForm._
 import io.perfix.exceptions.ParamsAlreadyDefinedException
-import io.perfix.model.{QuestionType, StringType}
+import io.perfix.model.{FormInputType, StringType}
 import io.perfix.question.Form
 import io.perfix.question.Form.FormInputName
 import io.perfix.stores.mysql.{MySQLConnectionParams, MySQLParams}
 
 class ConnectionParamsForm(override val storeQuestionParams: MySQLParams) extends Form {
 
-  override val mapping: Map[FormInputName, QuestionType] = Map(
-    URL -> QuestionType(StringType),
-    USERNAME -> QuestionType(StringType),
-    PASSWORD -> QuestionType(StringType)
+  override val mapping: Map[FormInputName, FormInputType] = Map(
+    URL -> FormInputType(StringType),
+    USERNAME -> FormInputType(StringType),
+    PASSWORD -> FormInputType(StringType)
   )
 
   override def shouldAsk(): Boolean = {
