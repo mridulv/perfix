@@ -23,19 +23,19 @@ class ExperimentManager {
     response
   }
 
-  def nextQuestion(experimentId: Int): Option[PerfixQuestion] = {
+  def nextQuestion(experimentId: Int): Option[FormInputs] = {
     val perfixExecutor = mapping(experimentId)
     if (perfixExecutor.getQuestionnaireExecutor.hasNext) {
-      Some(PerfixQuestion(perfixExecutor.getQuestionnaireExecutor.next()))
+      Some(FormInputs(perfixExecutor.getQuestionnaireExecutor.next()))
     } else {
       None
     }
   }
 
   def submitQuestionAnswer(experimentId: Int,
-                           questionAnswers: PerfixQuestionAnswers): Unit = {
+                           questionAnswers: FormInputValues): Unit = {
     mapping(experimentId).getQuestionnaireExecutor.submit(questionAnswers.toMap)
-    val perfixExperimentResultWithMapping = resultsMapping(experimentId).addPerfixQuestionAnswers(questionAnswers.answers)
+    val perfixExperimentResultWithMapping = resultsMapping(experimentId).addPerfixQuestionAnswers(questionAnswers.values)
     resultsMapping.update(experimentId, perfixExperimentResultWithMapping)
   }
 
@@ -48,7 +48,7 @@ class ExperimentManager {
   }
 
   def executeExperiment(storeName: String,
-                        questionAnswers: PerfixQuestionAnswers): ExperimentId = {
+                        questionAnswers: FormInputValues): ExperimentId = {
     val response = ExperimentId(Random.nextInt(1000))
     val mappedVariables = questionAnswers.toMap
     val experimentExecutor = new ExperimentExecutor(storeName)

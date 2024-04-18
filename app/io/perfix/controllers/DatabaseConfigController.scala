@@ -2,7 +2,7 @@ package io.perfix.controllers
 
 import com.google.inject.{Inject, Singleton}
 import io.perfix.manager.DatabaseConfigManager
-import io.perfix.model.{DatabaseConfigId, DatabaseConfigParams, PerfixQuestionAnswer, PerfixQuestionAnswers}
+import io.perfix.model.{DatabaseConfigId, DatabaseConfigParams, FormInputValue, FormInputValues}
 import io.perfix.model.DatabaseConfigId._
 import io.perfix.model.DatabaseConfigParams._
 import play.api.libs.json.Json
@@ -25,7 +25,7 @@ class DatabaseConfigController @Inject()(val controllerComponents: ControllerCom
   }
 
   def submitInputs(databaseConfigId: Int) = Action(parse.json) { request =>
-    val perfixQuestionAnswers = request.body.as[PerfixQuestionAnswers]
+    val perfixQuestionAnswers = request.body.as[FormInputValues]
     Results.Ok(
       Json.toJson(databaseConfigManager.submitInputs(DatabaseConfigId(databaseConfigId), perfixQuestionAnswers))
     )

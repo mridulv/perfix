@@ -3,13 +3,13 @@ package io.perfix.model
 import play.api.libs.json.{Format, Json}
 
 case class PerfixExperimentResultWithMapping(perfixExperimentResult: Option[ExperimentResult] = None,
-                                             perfixQuestionAnswers: PerfixQuestionAnswers) {
+                                             perfixQuestionAnswers: FormInputValues) {
 
-  def addPerfixQuestionAnswer(perfixQuestionAnswer: PerfixQuestionAnswer): PerfixExperimentResultWithMapping = {
+  def addPerfixQuestionAnswer(perfixQuestionAnswer: FormInputValue): PerfixExperimentResultWithMapping = {
     this.copy(perfixQuestionAnswers = this.perfixQuestionAnswers.addPerfixQuestionAnswer(perfixQuestionAnswer))
   }
 
-  def addPerfixQuestionAnswers(perfixQuestionAnswers: Seq[PerfixQuestionAnswer]): PerfixExperimentResultWithMapping = {
+  def addPerfixQuestionAnswers(perfixQuestionAnswers: Seq[FormInputValue]): PerfixExperimentResultWithMapping = {
     this.copy(perfixQuestionAnswers = this.perfixQuestionAnswers.addPerfixQuestionAnswers(perfixQuestionAnswers))
   }
 
@@ -23,6 +23,6 @@ object PerfixExperimentResultWithMapping {
   implicit val PerfixExperimentResultWithMappingFormatter: Format[PerfixExperimentResultWithMapping] = Json.format[PerfixExperimentResultWithMapping]
 
   def empty: PerfixExperimentResultWithMapping = {
-    PerfixExperimentResultWithMapping(None, PerfixQuestionAnswers.empty)
+    PerfixExperimentResultWithMapping(None, FormInputValues.empty)
   }
 }

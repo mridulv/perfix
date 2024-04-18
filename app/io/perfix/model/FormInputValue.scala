@@ -3,9 +3,9 @@ package io.perfix.model
 import io.perfix.question.Form.FormInputName
 import play.api.libs.json.{JsBoolean, JsError, JsNumber, JsString, JsSuccess, Json, Reads, Writes}
 
-case class PerfixQuestionAnswer(questionLabel: FormInputName, answer: Any)
+case class FormInputValue(inputName: FormInputName, answer: Any)
 
-object PerfixQuestionAnswer {
+object FormInputValue {
   implicit val anyReads: Reads[Any] = Reads {
     case JsString(str) => JsSuccess(str)
     case JsNumber(num) if num.isValidInt => JsSuccess(num.toInt)
@@ -21,6 +21,6 @@ object PerfixQuestionAnswer {
     case _ => throw new UnsupportedOperationException("Serialization of this Any type is not supported")
   }
 
-  implicit val PerfixQuestionAnswerWrites: Writes[PerfixQuestionAnswer] = Json.writes[PerfixQuestionAnswer]
-  implicit val PerfixQuestionAnswerReads: Reads[PerfixQuestionAnswer] = Json.reads[PerfixQuestionAnswer]
+  implicit val PerfixQuestionAnswerWrites: Writes[FormInputValue] = Json.writes[FormInputValue]
+  implicit val PerfixQuestionAnswerReads: Reads[FormInputValue] = Json.reads[FormInputValue]
 }
