@@ -14,7 +14,7 @@ class ExperimentFormSeries(experimentParams: ExperimentParams,
     val credentialsForm = new AWSCloudParamsForm(cloudParams)
 
     val launchStoreForm = dataStore.launch(cloudParams) match {
-      case Some(launchQuestion) => Iterator(credentialsForm) ++ Iterator(launchQuestion)
+      case Some(launchForm) => Iterator(credentialsForm) ++ Iterator(launchForm)
       case None => Iterator(credentialsForm)
     }
 

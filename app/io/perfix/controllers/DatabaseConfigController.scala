@@ -25,9 +25,9 @@ class DatabaseConfigController @Inject()(val controllerComponents: ControllerCom
   }
 
   def submitInputs(databaseConfigId: Int) = Action(parse.json) { request =>
-    val perfixQuestionAnswers = request.body.as[FormInputValues]
+    val formInputValues = request.body.as[FormInputValues]
     Results.Ok(
-      Json.toJson(databaseConfigManager.submitInputs(DatabaseConfigId(databaseConfigId), perfixQuestionAnswers))
+      Json.toJson(databaseConfigManager.submitInputs(DatabaseConfigId(databaseConfigId), formInputValues))
     )
   }
 

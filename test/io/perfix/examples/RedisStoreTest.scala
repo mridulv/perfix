@@ -5,7 +5,7 @@ import io.perfix.forms.AWSCloudParamsForm.{AWS_ACCESS_KEY, AWS_ACCESS_SECRET}
 import io.perfix.forms.Form
 import io.perfix.forms.experiment.DataConfigurationForm._
 import io.perfix.forms.experiment.ExperimentParamsForm.CONCURRENT_QUERIES
-import io.perfix.forms.redis.ElastiCacheLaunchQuestion.{CACHE_NODE_TYPE, CLUSTER_ID}
+import io.perfix.forms.redis.RedisLaunchForm.{CACHE_NODE_TYPE, CLUSTER_ID}
 import io.perfix.forms.redis.RedisConnectionParametersForm.{PORT, URL}
 import io.perfix.forms.redis.RedisTableParamsForm.KEY_COLUMN
 
@@ -26,9 +26,9 @@ object RedisStoreTest {
     )
     val experimentExecutor = new ExperimentExecutor("redis")
     while (experimentExecutor.getFormSeriesEvaluator.hasNext) {
-      val question = experimentExecutor.getFormSeriesEvaluator.next()
-      val answerMapping = question.map { case (k, questionType) =>
-        val mappedValue = if (questionType.isRequired) {
+      val form = experimentExecutor.getFormSeriesEvaluator.next()
+      val answerMapping = form.map { case (k, formInputType) =>
+        val mappedValue = if (formInputType.isRequired) {
           Some(mappedVariables(k))
         } else {
           mappedVariables.get(k)

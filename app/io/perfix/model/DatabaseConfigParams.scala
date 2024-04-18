@@ -12,16 +12,16 @@ case class DatabaseConfigParams(databaseConfigId: Option[DatabaseConfigId] = Non
   def formInputs: FormInputs = {
     val dataStore = ExperimentExecutor.getDataStore(storeName)
     val cloudParams = new AWSCloudParams
-    val credentialsQuestion = new AWSCloudParamsForm(cloudParams)
+    val credentialsForm = new AWSCloudParamsForm(cloudParams)
 
-    val launchQuestions = dataStore.launch(cloudParams) match {
-      case Some(launchQuestion) => Iterator(credentialsQuestion) ++ Iterator(launchQuestion)
-      case None => Iterator(credentialsQuestion)
+    val launchForm = dataStore.launch(cloudParams) match {
+      case Some(launchForm) => Iterator(credentialsForm) ++ Iterator(launchForm)
+      case None => Iterator(credentialsForm)
     }
 
     val nextSet = dataStore.storeInputs(DataDescription()).forms
 
-    FormInputs((launchQuestions ++ nextSet).toSeq.flatMap(_.mapping).toMap)
+    FormInputs((launchForm ++ nextSet).toSeq.flatMap(_.mapping).toMap)
   }
 
 }

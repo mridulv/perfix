@@ -51,8 +51,8 @@ class ExperimentExecutorIT extends AnyFlatSpec with Matchers with MockitoSugar w
     val experimentExecutor = new ExperimentExecutor("mysql")
     while (experimentExecutor.getFormSeriesEvaluator.hasNext) {
       val form = experimentExecutor.getFormSeriesEvaluator.next()
-      val answerMapping = form.map { case (k, questionType) =>
-        val mappedValue = if (questionType.isRequired) {
+      val answerMapping = form.map { case (k, formInputType) =>
+        val mappedValue = if (formInputType.isRequired) {
           Some(mappedVariables(k))
         } else {
           mappedVariables.get(k)

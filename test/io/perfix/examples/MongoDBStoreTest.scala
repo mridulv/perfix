@@ -32,9 +32,9 @@ object MongoDBStoreTest {
     )
     val experimentExecutor = new ExperimentExecutor("mongodb")
     while (experimentExecutor.getFormSeriesEvaluator.hasNext) {
-      val question = experimentExecutor.getFormSeriesEvaluator.next()
-      val answerMapping = question.map { case (k, questionType) =>
-        val mappedValue = if (questionType.isRequired) {
+      val form = experimentExecutor.getFormSeriesEvaluator.next()
+      val answerMapping = form.map { case (k, formInputType) =>
+        val mappedValue = if (formInputType.isRequired) {
           Some(mappedVariables(k))
         } else {
           mappedVariables.get(k)

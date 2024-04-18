@@ -97,6 +97,7 @@ class RedisLaunchForm(override val credentials: AWSCloudParams,
 }
 
 object RedisLaunchForm {
+  val CLUSTER_ID = "clusterId"
   val CACHE_NODE_TYPE = "cacheNodeType"
   val NUM_CACHE_NODES = "numCacheNodes"
 }

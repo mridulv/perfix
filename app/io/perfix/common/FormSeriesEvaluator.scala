@@ -23,7 +23,7 @@ class FormSeriesEvaluator(formSeries: FormSeries)
   def submit(answers: Map[FormInputName, Any]): Unit = {
     currentOpt match {
       case Some(current) => current.setAnswers(answers)
-      case None => throw new UnsupportedOperationException("Submit can be called only on a defined question")
+      case None => throw new UnsupportedOperationException("Submit can be called only on a defined formInput")
     }
   }
 }

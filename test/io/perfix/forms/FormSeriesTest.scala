@@ -13,7 +13,7 @@ class FormSeriesTest extends AnyFlatSpec with Matchers {
     override def setAnswers(answers: Map[Form.FormInputName, Any]): Unit = ???
   }
 
-  // Test class that extends Questionnaire
+  // Test class that extends FormSeries
   class TestFormSeries extends FormSeries {
     override val forms: Iterator[Form] = Iterator(
     MockForm("Q1", shouldAskResult = true),
@@ -22,10 +22,10 @@ class FormSeriesTest extends AnyFlatSpec with Matchers {
     )
   }
 
-  it should "iterate over questions and return the next question that should be asked" in {
+  it should "iterate over the formSeries and return the next form that should be asked" in {
 
-    val questionnaire = new TestFormSeries
-    val iter = questionnaire.iterator
+    val formSeries = new TestFormSeries
+    val iter = formSeries.iterator
 
     iter.hasNext shouldEqual true
     iter.next().asInstanceOf[MockForm].label shouldEqual "Q1"

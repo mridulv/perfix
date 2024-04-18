@@ -16,6 +16,6 @@ POST     /dataset/:id                                  io.perfix.controllers.Dat
 POST     /config                                       io.perfix.controllers.DatabaseConfigController.create
 GET      /config                                       io.perfix.controllers.DatabaseConfigController.all
 GET      /config/:id                                   io.perfix.controllers.DatabaseConfigController.get(id: Int)
-GET      /config/:id/questions                         io.perfix.controllers.DatabaseConfigController.getInputs(id: Int)
+GET      /config/:id/inputs                            io.perfix.controllers.DatabaseConfigController.getInputs(id: Int)
 POST     /config/:id/submit                            io.perfix.controllers.DatabaseConfigController.submitInputs(id: Int)
 POST     /config/:id                                   io.perfix.controllers.DatabaseConfigController.update(id: Int)

@@ -15,14 +15,14 @@ class ExperimentManager {
   val mapping: mutable.Map[Int, ExperimentExecutor] = mutable.Map.empty[Int, ExperimentExecutor]
 
   def executeExperiment(storeName: String,
-                        questionAnswers: FormInputValues): ExperimentId = {
+                        formInputValues: FormInputValues): ExperimentId = {
     val response = ExperimentId(Random.nextInt(1000))
-    val mappedVariables = questionAnswers.toMap
+    val mappedVariables = formInputValues.toMap
     val experimentExecutor = new ExperimentExecutor(storeName)
     while (experimentExecutor.getFormSeriesEvaluator.hasNext) {
-      val question = experimentExecutor.getFormSeriesEvaluator.next()
-      val answerMapping = question.map { case (k, questionType) =>
-        val mappedValue = if (questionType.isRequired) {
+      val form = experimentExecutor.getFormSeriesEvaluator.next()
+      val answerMapping = form.map { case (k, formInputType) =>
+        val mappedValue = if (formInputType.isRequired) {
           Some(mappedVariables(k))
         } else {
           mappedVariables.get(k)
@@ -34,7 +34,7 @@ class ExperimentManager {
 
     mapping.put(response.id, experimentExecutor)
     val result = experimentExecutor.runExperiment()
-    resultsMapping.update(response.id, ExperimentResultWithFormInputValues(Some(result), questionAnswers))
+    resultsMapping.update(response.id, ExperimentResultWithFormInputValues(Some(result), formInputValues))
     experimentExecutor.cleanUp()
     println(s"Experiment Id: ${response.id}")
     response

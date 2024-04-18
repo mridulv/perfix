@@ -57,11 +57,11 @@ class MySQLStoreTest extends AnyFlatSpec with Matchers with MockitoSugar with Be
       )
     )
 
-    val questionnaire = mySQLStore.storeInputs(dataDescription)
+    val formSeries = mySQLStore.storeInputs(dataDescription)
 
-    questionnaire.mySQLParams.mySQLConnectionParams = Some(MySQLConnectionParams(url, username, password))
-    questionnaire.mySQLParams.mySQLTableParams = Some(MySQLTableParams("testdb", "testTable"))
-    questionnaire.mySQLParams.mySQLTableIndexesParams = Some(MySQLTableIndexesParams(None, None))
+    formSeries.mySQLParams.mySQLConnectionParams = Some(MySQLConnectionParams(url, username, password))
+    formSeries.mySQLParams.mySQLTableParams = Some(MySQLTableParams("testdb", "testTable"))
+    formSeries.mySQLParams.mySQLTableIndexesParams = Some(MySQLTableIndexesParams(None, None))
 
     mySQLStore.connectAndInitialize()
   }

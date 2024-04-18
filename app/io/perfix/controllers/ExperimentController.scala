@@ -14,8 +14,8 @@ class ExperimentController @Inject()(cc: ControllerComponents,
   extends AbstractController(cc) {
 
   def executeExperiment(storeName: String) = Action(parse.json) { request =>
-    val perfixQuestionAnswers = request.body.as[FormInputValues]
-    Results.Ok(Json.toJson(perfixManager.executeExperiment(storeName, perfixQuestionAnswers)))
+    val formInputValues = request.body.as[FormInputValues]
+    Results.Ok(Json.toJson(perfixManager.executeExperiment(storeName, formInputValues)))
   }
 
   def repeatExperiment(experimentId: Int) = Action(parse.json) { request =>
