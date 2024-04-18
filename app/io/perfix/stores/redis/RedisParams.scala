@@ -1,6 +1,6 @@
 package io.perfix.stores.redis
 
-import io.perfix.question.FormParams
+import io.perfix.forms.FormParams
 
 case class RedisParams() extends FormParams {
 

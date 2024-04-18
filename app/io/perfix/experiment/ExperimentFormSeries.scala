@@ -2,8 +2,8 @@ package io.perfix.experiment
 
 import io.perfix.launch.AWSCloudParams
 import io.perfix.model.ExperimentParams
-import io.perfix.question.experiment.{DataQuestions, ExperimentParamsForm}
-import io.perfix.question.{AWSCloudParamsForm, Form, FormSeries}
+import io.perfix.forms.experiment.{DataConfigurationForm, ExperimentParamsForm}
+import io.perfix.forms.{AWSCloudParamsForm, Form, FormSeries}
 import io.perfix.stores.DataStore
 
 class ExperimentFormSeries(experimentParams: ExperimentParams,
@@ -11,18 +11,18 @@ class ExperimentFormSeries(experimentParams: ExperimentParams,
 
   override val forms: Iterator[Form] = {
     val cloudParams = new AWSCloudParams
-    val credentialsQuestion = new AWSCloudParamsForm(cloudParams)
+    val credentialsForm = new AWSCloudParamsForm(cloudParams)
 
-    val launchQuestions = dataStore.launch(cloudParams) match {
-      case Some(launchQuestion) => Iterator(credentialsQuestion) ++ Iterator(launchQuestion)
-      case None => Iterator(credentialsQuestion)
+    val launchStoreForm = dataStore.launch(cloudParams) match {
+      case Some(launchForm) => Iterator(credentialsForm) ++ Iterator(launchForm)
+      case None => Iterator(credentialsForm)
     }
 
-    val initialQuestions = Iterator(new DataQuestions(experimentParams)) ++
+    val initForm = Iterator(new DataConfigurationForm(experimentParams)) ++
       Iterator(new ExperimentParamsForm(experimentParams))
 
     val nextSet = dataStore.storeInputs(experimentParams.dataDescription).forms
 
-    launchQuestions ++ initialQuestions ++ nextSet
+    launchStoreForm ++ initForm ++ nextSet
   }
 }

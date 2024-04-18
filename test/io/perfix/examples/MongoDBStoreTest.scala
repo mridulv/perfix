@@ -1,14 +1,14 @@
 package io.perfix.examples
 
-import io.perfix.common.PerfixExperimentExecutor
-import io.perfix.question.AWSCloudParamsForm.{AWS_ACCESS_KEY, AWS_ACCESS_SECRET, LAUNCH_DB}
-import io.perfix.question.Form
-import io.perfix.question.documentdb.DocumentDBConnectionParamsForm._
-import io.perfix.question.documentdb.DocumentDBIndicesParamsForm.INDICES_COLUMNS
-import io.perfix.question.documentdb.DocumentDBLaunchForm.{DB_CLUSTER_IDENTIFIER, INSTANCE_CLASS, MASTER_PASSWORD, MASTER_USERNAME}
-import io.perfix.question.documentdb.DocumentDBTableParamsQuestions.COLLECTION_NAME
-import io.perfix.question.experiment.DataQuestions._
-import io.perfix.question.experiment.ExperimentParamsForm.{CONCURRENT_QUERIES, PERFIX_QUERY}
+import io.perfix.common.ExperimentExecutor
+import io.perfix.forms.AWSCloudParamsForm.{AWS_ACCESS_KEY, AWS_ACCESS_SECRET, LAUNCH_DB}
+import io.perfix.forms.Form
+import io.perfix.forms.documentdb.DocumentDBConnectionParamsForm._
+import io.perfix.forms.documentdb.DocumentDBIndicesParamsForm.INDICES_COLUMNS
+import io.perfix.forms.documentdb.DocumentDBLaunchForm.{DB_CLUSTER_IDENTIFIER, INSTANCE_CLASS, MASTER_PASSWORD, MASTER_USERNAME}
+import io.perfix.forms.documentdb.DocumentDBTableParamsForm.COLLECTION_NAME
+import io.perfix.forms.experiment.DataConfigurationForm._
+import io.perfix.forms.experiment.ExperimentParamsForm.{CONCURRENT_QUERIES, PERFIX_QUERY}
 
 object MongoDBStoreTest {
 
@@ -30,18 +30,18 @@ object MongoDBStoreTest {
       INSTANCE_CLASS -> "db.r5.large",
       LAUNCH_DB -> false
     )
-    val experimentExecutor = new PerfixExperimentExecutor("mongodb")
-    while (experimentExecutor.getQuestionnaireExecutor.hasNext) {
-      val question = experimentExecutor.getQuestionnaireExecutor.next()
-      val answerMapping = question.map { case (k, questionType) =>
-        val mappedValue = if (questionType.isRequired) {
+    val experimentExecutor = new ExperimentExecutor("mongodb")
+    while (experimentExecutor.getFormSeriesEvaluator.hasNext) {
+      val form = experimentExecutor.getFormSeriesEvaluator.next()
+      val answerMapping = form.map { case (k, formInputType) =>
+        val mappedValue = if (formInputType.isRequired) {
           Some(mappedVariables(k))
         } else {
           mappedVariables.get(k)
         }
         k -> mappedValue
       }
-      experimentExecutor.getQuestionnaireExecutor.submit(Form.filteredAnswers(answerMapping))
+      experimentExecutor.getFormSeriesEvaluator.submit(Form.filteredAnswers(answerMapping))
     }
 
     experimentExecutor.runExperiment()

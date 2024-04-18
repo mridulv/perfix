@@ -6,7 +6,7 @@ import io.perfix.exceptions.InvalidStateException
 import io.perfix.launch.{AWSCloudParams, LaunchStoreForm}
 import io.perfix.model.DataDescription
 import io.perfix.query.PerfixQuery
-import io.perfix.question.documentdb.DocumentDBLaunchForm
+import io.perfix.forms.documentdb.DocumentDBLaunchForm
 import io.perfix.stores.DataStore
 import org.bson.Document
 

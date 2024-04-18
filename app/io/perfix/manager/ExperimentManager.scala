@@ -1,9 +1,9 @@
 package io.perfix.manager
 
-import io.perfix.common.PerfixExperimentExecutor
+import io.perfix.common.ExperimentExecutor
 import io.perfix.exceptions.InvalidExperimentException
 import io.perfix.model._
-import io.perfix.question.Form
+import io.perfix.forms.Form
 
 import javax.inject.Singleton
 import scala.collection.mutable
@@ -11,70 +11,37 @@ import scala.util.Random
 
 @Singleton
 class ExperimentManager {
-  val resultsMapping: mutable.Map[Int, PerfixExperimentResultWithMapping] = mutable.Map.empty[Int, PerfixExperimentResultWithMapping]
-  val mapping: mutable.Map[Int, PerfixExperimentExecutor] = mutable.Map.empty[Int, PerfixExperimentExecutor]
-
-  def startQuestionnaire(storeName: String): ExperimentId = {
-    val experimentExecutor = new PerfixExperimentExecutor(storeName)
-    val response = ExperimentId(Random.nextInt(1000))
-    println(s"Experiment Id: ${response.id}")
-    mapping.put(response.id, experimentExecutor)
-    resultsMapping.put(response.id, PerfixExperimentResultWithMapping.empty)
-    response
-  }
-
-  def nextQuestion(experimentId: Int): Option[PerfixQuestion] = {
-    val perfixExecutor = mapping(experimentId)
-    if (perfixExecutor.getQuestionnaireExecutor.hasNext) {
-      Some(PerfixQuestion(perfixExecutor.getQuestionnaireExecutor.next()))
-    } else {
-      None
-    }
-  }
-
-  def submitQuestionAnswer(experimentId: Int,
-                           questionAnswers: PerfixQuestionAnswers): Unit = {
-    mapping(experimentId).getQuestionnaireExecutor.submit(questionAnswers.toMap)
-    val perfixExperimentResultWithMapping = resultsMapping(experimentId).addPerfixQuestionAnswers(questionAnswers.answers)
-    resultsMapping.update(experimentId, perfixExperimentResultWithMapping)
-  }
-
-  def startExperiment(experimentId: Int): PerfixExperimentResult = {
-    val experimentResult = mapping(experimentId).runExperiment()
-    val perfixExperimentResultWithMapping = resultsMapping(experimentId).addPerfixExperimentResult(experimentResult)
-    resultsMapping.update(experimentId, perfixExperimentResultWithMapping)
-    mapping(experimentId).cleanUp()
-    experimentResult
-  }
+  val resultsMapping: mutable.Map[Int, ExperimentResultWithFormInputValues] = mutable.Map.empty[Int, ExperimentResultWithFormInputValues]
+  val mapping: mutable.Map[Int, ExperimentExecutor] = mutable.Map.empty[Int, ExperimentExecutor]
 
   def executeExperiment(storeName: String,
-                        questionAnswers: PerfixQuestionAnswers): ExperimentId = {
+                        formInputValues: FormInputValues): ExperimentId = {
     val response = ExperimentId(Random.nextInt(1000))
-    val mappedVariables = questionAnswers.toMap
-    val experimentExecutor = new PerfixExperimentExecutor(storeName)
-    while (experimentExecutor.getQuestionnaireExecutor.hasNext) {
-      val question = experimentExecutor.getQuestionnaireExecutor.next()
-      val answerMapping = question.map { case (k, questionType) =>
-        val mappedValue = if (questionType.isRequired) {
+    val mappedVariables = formInputValues.toMap
+    val experimentExecutor = new ExperimentExecutor(storeName)
+    while (experimentExecutor.getFormSeriesEvaluator.hasNext) {
+      val form = experimentExecutor.getFormSeriesEvaluator.next()
+      val answerMapping = form.map { case (k, formInputType) =>
+        val mappedValue = if (formInputType.isRequired) {
           Some(mappedVariables(k))
         } else {
           mappedVariables.get(k)
         }
         k -> mappedValue
       }
-      experimentExecutor.getQuestionnaireExecutor.submit(Form.filteredAnswers(answerMapping))
+      experimentExecutor.getFormSeriesEvaluator.submit(Form.filteredAnswers(answerMapping))
     }
 
     mapping.put(response.id, experimentExecutor)
     val result = experimentExecutor.runExperiment()
-    resultsMapping.update(response.id, PerfixExperimentResultWithMapping(Some(result), questionAnswers))
+    resultsMapping.update(response.id, ExperimentResultWithFormInputValues(Some(result), formInputValues))
     experimentExecutor.cleanUp()
     println(s"Experiment Id: ${response.id}")
     response
   }
 
   def repeatExperiment(experimentId: Int,
-                       experimentRunParams: ExperimentRunParams): PerfixExperimentResult = {
+                       experimentRunParams: ExperimentRunParams): ExperimentResult = {
     val experimentExecutor = mapping.getOrElse(experimentId, throw new InvalidExperimentException(experimentId))
     experimentExecutor.repopulateExperimentParams(experimentRunParams)
     val experimentResult = experimentExecutor.runExperiment()
@@ -82,7 +49,7 @@ class ExperimentManager {
     experimentResult
   }
 
-  def results(experimentId: Int): PerfixExperimentResultWithMapping = {
+  def results(experimentId: Int): ExperimentResultWithFormInputValues = {
     resultsMapping(experimentId)
   }
 }

@@ -3,7 +3,7 @@ package io.perfix.stores
 import io.perfix.launch.{AWSCloudParams, LaunchStoreForm}
 import io.perfix.model.DataDescription
 import io.perfix.query.PerfixQuery
-import io.perfix.question.FormSeries
+import io.perfix.forms.FormSeries
 
 trait DataStore {
   def launch(awsCloudParams: AWSCloudParams): Option[LaunchStoreForm]

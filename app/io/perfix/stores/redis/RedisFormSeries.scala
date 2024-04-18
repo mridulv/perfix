@@ -1,7 +1,7 @@
 package io.perfix.stores.redis
 
-import io.perfix.question.{Form, FormSeries}
-import io.perfix.question.redis.{RedisConnectionParametersForm, RedisTableParamsForm}
+import io.perfix.forms.{Form, FormSeries}
+import io.perfix.forms.redis.{RedisConnectionParametersForm, RedisTableParamsForm}
 
 class RedisFormSeries(params: RedisParams) extends FormSeries {
 

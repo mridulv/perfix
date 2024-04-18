@@ -1,7 +1,7 @@
 package io.perfix.model
 
 import io.perfix.query.PerfixQuery
-import io.perfix.question.FormParams
+import io.perfix.forms.FormParams
 
 case class ExperimentParams() extends FormParams {
 

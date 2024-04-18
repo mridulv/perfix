@@ -1,6 +1,6 @@
 package io.perfix.stores.documentdb
 
-import io.perfix.question.FormParams
+import io.perfix.forms.FormParams
 import io.perfix.stores.documentdb.model.DocumentDBIndicesParams
 
 case class DocumentDBParams() extends FormParams {

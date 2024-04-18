@@ -4,7 +4,7 @@ import io.perfix.exceptions.{InvalidStateException, PerfixQueryException}
 import io.perfix.launch.{AWSCloudParams, LaunchStoreForm}
 import io.perfix.model.DataDescription
 import io.perfix.query.PerfixQuery
-import io.perfix.question.redis.RedisLaunchForm
+import io.perfix.forms.redis.RedisLaunchForm
 import io.perfix.stores.DataStore
 import redis.clients.jedis.JedisPool
 
