@@ -1,24 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import AddDatasetModal from "../../../components/AddDatasetModal";
 import { FaPlus } from "react-icons/fa6";
 import { useQuery } from "react-query";
 import toast from "react-hot-toast";
+import DatasetCard from "../../../components/DatasetCard";
 
 const Datasets = () => {
   
   const [columns, setColumns] = useState([{ columnName: "", columnType: "" }]);
   const [open, setOpen] = useState(false);
 
-  // useEffect(() => {
-  //   const fetchDatasets = async () => {
-  //     const res = await axios.get("http://localhost:9000/dataset");
-  //     const data = await res.data;
-  //     console.log(data);
-  //   };
-
-  //   fetchDatasets();
-  // }, []);
 
   const {
     data: datasets,
@@ -155,7 +147,7 @@ const Datasets = () => {
                 <input
                   type="submit"
                   className="btn btn-primary text-center"
-                  value={"Submit"}
+                  value={"Add Dataset"}
                 />
               </div>
             </form>
@@ -163,13 +155,10 @@ const Datasets = () => {
         </div>
       </AddDatasetModal>
 
-      <div>
+      <div className="w-[90%] mx-auto grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
         {
-          datasets.map((dataset) => (
-            <div>
-              
-              <p>id: {dataset.id.id}</p>
-            </div>
+          datasets.map((dataset, i) => (
+            <DatasetCard key={dataset.id.id} dataset={dataset} index={i}></DatasetCard>
           ))
         }
       </div>
