@@ -6,7 +6,7 @@ import io.perfix.question.Form
 import io.perfix.question.documentdb.DocumentDBConnectionParamsForm._
 import io.perfix.question.documentdb.DocumentDBIndicesParamsForm.INDICES_COLUMNS
 import io.perfix.question.documentdb.DocumentDBLaunchForm.{DB_CLUSTER_IDENTIFIER, INSTANCE_CLASS, MASTER_PASSWORD, MASTER_USERNAME}
-import io.perfix.question.documentdb.DocumentDBTableParamsQuestions.COLLECTION_NAME
+import io.perfix.question.documentdb.DocumentDBTableParamsForm.COLLECTION_NAME
 import io.perfix.question.experiment.DataQuestions._
 import io.perfix.question.experiment.ExperimentParamsForm.{CONCURRENT_QUERIES, PERFIX_QUERY}
 
