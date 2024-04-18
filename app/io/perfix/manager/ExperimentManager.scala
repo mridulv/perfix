@@ -11,7 +11,7 @@ import scala.util.Random
 
 @Singleton
 class ExperimentManager {
-  val resultsMapping: mutable.Map[Int, PerfixExperimentResultWithMapping] = mutable.Map.empty[Int, PerfixExperimentResultWithMapping]
+  val resultsMapping: mutable.Map[Int, ExperimentResultWithFormInputValues] = mutable.Map.empty[Int, ExperimentResultWithFormInputValues]
   val mapping: mutable.Map[Int, ExperimentExecutor] = mutable.Map.empty[Int, ExperimentExecutor]
 
   def startQuestionnaire(storeName: String): ExperimentId = {
@@ -19,7 +19,7 @@ class ExperimentManager {
     val response = ExperimentId(Random.nextInt(1000))
     println(s"Experiment Id: ${response.id}")
     mapping.put(response.id, experimentExecutor)
-    resultsMapping.put(response.id, PerfixExperimentResultWithMapping.empty)
+    resultsMapping.put(response.id, ExperimentResultWithFormInputValues.empty)
     response
   }
 
@@ -67,7 +67,7 @@ class ExperimentManager {
 
     mapping.put(response.id, experimentExecutor)
     val result = experimentExecutor.runExperiment()
-    resultsMapping.update(response.id, PerfixExperimentResultWithMapping(Some(result), questionAnswers))
+    resultsMapping.update(response.id, ExperimentResultWithFormInputValues(Some(result), questionAnswers))
     experimentExecutor.cleanUp()
     println(s"Experiment Id: ${response.id}")
     response
@@ -82,7 +82,7 @@ class ExperimentManager {
     experimentResult
   }
 
-  def results(experimentId: Int): PerfixExperimentResultWithMapping = {
+  def results(experimentId: Int): ExperimentResultWithFormInputValues = {
     resultsMapping(experimentId)
   }
 }

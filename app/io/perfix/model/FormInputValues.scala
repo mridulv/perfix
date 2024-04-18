@@ -11,11 +11,11 @@ case class FormInputValues(values: Seq[FormInputValue]) {
     }.toMap
   }
 
-  def addPerfixQuestionAnswer(perfixQuestionAnswer: FormInputValue): FormInputValues = {
+  def addFormInputValue(perfixQuestionAnswer: FormInputValue): FormInputValues = {
     this.copy(values ++ Seq(perfixQuestionAnswer))
   }
 
-  def addPerfixQuestionAnswers(perfixQuestionAnswers: Seq[FormInputValue]): FormInputValues = {
+  def addFormInputValues(perfixQuestionAnswers: Seq[FormInputValue]): FormInputValues = {
     this.copy(values ++ perfixQuestionAnswers)
   }
 
