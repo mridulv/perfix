@@ -1,4 +1,4 @@
-package io.perfix.question
+package io.perfix.forms
 
 import Form.FormInputName
 import io.perfix.model.FormInputType

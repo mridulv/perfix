@@ -1,10 +1,10 @@
-package io.perfix.question.redis
+package io.perfix.forms.redis
 
 import io.perfix.exceptions.ParamsAlreadyDefinedException
 import io.perfix.model.{FormInputType, StringType}
-import io.perfix.question.Form
-import io.perfix.question.Form.FormInputName
-import io.perfix.question.redis.RedisTableParamsForm.KEY_COLUMN
+import io.perfix.forms.Form
+import io.perfix.forms.Form.FormInputName
+import io.perfix.forms.redis.RedisTableParamsForm.KEY_COLUMN
 import io.perfix.stores.redis.{RedisParams, RedisTableParams}
 
 class RedisTableParamsForm(override val formParams: RedisParams)

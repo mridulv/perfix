@@ -1,10 +1,10 @@
-package io.perfix.question.documentdb
+package io.perfix.forms.documentdb
 
 import io.perfix.exceptions.ParamsAlreadyDefinedException
 import io.perfix.model.{FormInputType, StringType}
-import io.perfix.question.Form
-import io.perfix.question.Form.FormInputName
-import io.perfix.question.documentdb.DocumentDBConnectionParamsForm._
+import io.perfix.forms.Form
+import io.perfix.forms.Form.FormInputName
+import io.perfix.forms.documentdb.DocumentDBConnectionParamsForm._
 import io.perfix.stores.documentdb.{DocumentDBConnectionParams, DocumentDBParams}
 
 class DocumentDBConnectionParamsForm(override val formParams: DocumentDBParams) extends Form {

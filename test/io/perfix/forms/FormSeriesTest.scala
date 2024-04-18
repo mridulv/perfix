@@ -1,4 +1,4 @@
-package io.perfix.question
+package io.perfix.forms
 
 import io.perfix.model.{FormInputType, StringType}
 import org.scalatest.flatspec.AnyFlatSpec

@@ -1,4 +1,4 @@
-package io.perfix.question.mysql
+package io.perfix.forms.mysql
 
 import com.amazonaws.auth.{AWSCredentials, AWSStaticCredentialsProvider, DefaultAWSCredentialsProviderChain}
 import com.amazonaws.regions.Regions
@@ -7,10 +7,10 @@ import com.amazonaws.services.rds.model.{CreateDBInstanceRequest, DBInstance, De
 import io.perfix.common.CommonConfig.DB_SUBNET_GROUP_NAME
 import io.perfix.launch.{AWSCloudParams, LaunchStoreForm}
 import io.perfix.model.{FormInputType, StringType}
-import io.perfix.question.Form.FormInputName
-import io.perfix.question.mysql.MySQLConnectionParamsForm.{PASSWORD, USERNAME}
-import io.perfix.question.mysql.MySQLLaunchForm._
-import io.perfix.question.mysql.MySQLTableParamsForm.DBNAME
+import io.perfix.forms.Form.FormInputName
+import io.perfix.forms.mysql.MySQLConnectionParamsForm.{PASSWORD, USERNAME}
+import io.perfix.forms.mysql.MySQLLaunchForm._
+import io.perfix.forms.mysql.MySQLTableParamsForm.DBNAME
 import io.perfix.stores.mysql.{MySQLConnectionParams, MySQLParams, MySQLTableParams}
 
 import java.util.concurrent.TimeUnit

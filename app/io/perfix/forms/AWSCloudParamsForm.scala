@@ -1,9 +1,9 @@
-package io.perfix.question
+package io.perfix.forms
 
 import io.perfix.launch.AWSCloudParams
 import io.perfix.model.{BooleanType, FormInputType, StringType}
-import io.perfix.question.AWSCloudParamsForm._
-import io.perfix.question.Form.FormInputName
+import io.perfix.forms.AWSCloudParamsForm._
+import io.perfix.forms.Form.FormInputName
 
 class AWSCloudParamsForm(override val formParams: AWSCloudParams) extends Form {
   override val mapping: Map[FormInputName, FormInputType] = Map(

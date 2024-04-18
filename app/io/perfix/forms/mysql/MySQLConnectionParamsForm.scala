@@ -1,10 +1,10 @@
-package io.perfix.question.mysql
+package io.perfix.forms.mysql
 
 import MySQLConnectionParamsForm._
 import io.perfix.exceptions.ParamsAlreadyDefinedException
 import io.perfix.model.{FormInputType, StringType}
-import io.perfix.question.Form
-import io.perfix.question.Form.FormInputName
+import io.perfix.forms.Form
+import io.perfix.forms.Form.FormInputName
 import io.perfix.stores.mysql.{MySQLConnectionParams, MySQLParams}
 
 class MySQLConnectionParamsForm(override val formParams: MySQLParams) extends Form {

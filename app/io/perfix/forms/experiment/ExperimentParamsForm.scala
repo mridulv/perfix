@@ -1,11 +1,11 @@
-package io.perfix.question.experiment
+package io.perfix.forms.experiment
 
 import ExperimentParamsForm.{BENCHMARK_TIME_IN_SECONDS, CONCURRENT_QUERIES, PERFIX_QUERY, WRITE_BATCH_SIZE}
 import io.perfix.exceptions.ParamsAlreadyDefinedException
 import io.perfix.model._
 import io.perfix.query.PerfixQuery
-import io.perfix.question.Form.FormInputName
-import io.perfix.question.{Form, FormParams}
+import io.perfix.forms.Form.FormInputName
+import io.perfix.forms.{Form, FormParams}
 import play.api.libs.json.Json
 
 class ExperimentParamsForm(experimentParams: ExperimentParams) extends Form {

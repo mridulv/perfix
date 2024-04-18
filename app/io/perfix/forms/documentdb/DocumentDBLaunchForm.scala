@@ -1,4 +1,4 @@
-package io.perfix.question.documentdb
+package io.perfix.forms.documentdb
 
 import com.amazonaws.auth.{AWSCredentials, AWSStaticCredentialsProvider, DefaultAWSCredentialsProviderChain}
 import com.amazonaws.regions.Regions
@@ -7,9 +7,9 @@ import com.amazonaws.services.docdb.model._
 import io.perfix.common.CommonConfig.DB_SUBNET_GROUP_NAME
 import io.perfix.launch.{AWSCloudParams, LaunchStoreForm}
 import io.perfix.model.{FormInputType, StringType}
-import io.perfix.question.Form.FormInputName
-import io.perfix.question.documentdb.DocumentDBConnectionParamsForm.{DATABASE, URL}
-import io.perfix.question.documentdb.DocumentDBLaunchForm._
+import io.perfix.forms.Form.FormInputName
+import io.perfix.forms.documentdb.DocumentDBConnectionParamsForm.{DATABASE, URL}
+import io.perfix.forms.documentdb.DocumentDBLaunchForm._
 import io.perfix.stores.documentdb.{DocumentDBConnectionParams, DocumentDBParams, DocumentDBTableParams}
 
 import java.util.concurrent.TimeUnit

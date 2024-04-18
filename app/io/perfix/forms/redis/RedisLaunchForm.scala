@@ -1,4 +1,4 @@
-package io.perfix.question.redis
+package io.perfix.forms.redis
 
 import com.amazonaws.auth.{AWSCredentials, AWSStaticCredentialsProvider, DefaultAWSCredentialsProviderChain}
 import com.amazonaws.regions.Regions
@@ -7,8 +7,8 @@ import com.amazonaws.services.elasticache.model._
 import io.perfix.common.CommonConfig.DB_SUBNET_GROUP_NAME
 import io.perfix.launch.{AWSCloudParams, LaunchStoreForm}
 import io.perfix.model.{IntType, FormInputType, StringType}
-import io.perfix.question.Form.FormInputName
-import io.perfix.question.redis.RedisLaunchForm._
+import io.perfix.forms.Form.FormInputName
+import io.perfix.forms.redis.RedisLaunchForm._
 import io.perfix.stores.redis.{RedisConnectionParams, RedisParams}
 
 import java.util.concurrent.TimeUnit
