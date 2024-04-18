@@ -1,11 +1,11 @@
 package io.perfix.model
 
-import io.perfix.question.Question.QuestionLabel
+import io.perfix.question.Form.FormInputName
 import play.api.libs.json.{Json, Reads, Writes}
 
 case class PerfixQuestionAnswers(answers: Seq[PerfixQuestionAnswer]) {
 
-  def toMap: Map[QuestionLabel, Any] = {
+  def toMap: Map[FormInputName, Any] = {
     answers.map { ans =>
       ans.questionLabel -> ans.answer
     }.toMap

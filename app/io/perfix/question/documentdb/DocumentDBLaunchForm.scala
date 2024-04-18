@@ -5,30 +5,30 @@ import com.amazonaws.regions.Regions
 import com.amazonaws.services.docdb.{AmazonDocDB, AmazonDocDBClientBuilder}
 import com.amazonaws.services.docdb.model._
 import io.perfix.common.CommonConfig.DB_SUBNET_GROUP_NAME
-import io.perfix.launch.{AWSCloudParams, LaunchStoreQuestion}
-import io.perfix.model.{QuestionType, StringType}
-import io.perfix.question.Question.QuestionLabel
-import io.perfix.question.documentdb.DocumentDBConnectionParamsQuestion.{DATABASE, URL}
-import io.perfix.question.documentdb.DocumentDBLaunchQuestion._
+import io.perfix.launch.{AWSCloudParams, LaunchStoreForm}
+import io.perfix.model.{FormInputType, StringType}
+import io.perfix.question.Form.FormInputName
+import io.perfix.question.documentdb.DocumentDBConnectionParamsForm.{DATABASE, URL}
+import io.perfix.question.documentdb.DocumentDBLaunchForm._
 import io.perfix.stores.documentdb.{DocumentDBConnectionParams, DocumentDBParams, DocumentDBTableParams}
 
 import java.util.concurrent.TimeUnit
 import scala.annotation.tailrec
 import scala.util.Random
 
-class DocumentDBLaunchQuestion(override val credentials: AWSCloudParams,
-                               override val storeQuestionParams: DocumentDBParams) extends LaunchStoreQuestion {
+class DocumentDBLaunchForm(override val credentials: AWSCloudParams,
+                           override val storeQuestionParams: DocumentDBParams) extends LaunchStoreForm {
 
-  override val launchQuestionsMapping: Map[QuestionLabel, QuestionType] = Map(
-    DATABASE -> QuestionType(StringType, isRequired = false),
-    DB_CLUSTER_IDENTIFIER -> QuestionType(StringType, isRequired = false),
-    MASTER_USERNAME -> QuestionType(StringType, isRequired = false),
-    MASTER_PASSWORD -> QuestionType(StringType, isRequired = false),
-    INSTANCE_CLASS -> QuestionType(StringType, isRequired = false),
-    URL -> QuestionType(StringType, isRequired = false)
+  override val launchQuestionsMapping: Map[FormInputName, FormInputType] = Map(
+    DATABASE -> FormInputType(StringType, isRequired = false),
+    DB_CLUSTER_IDENTIFIER -> FormInputType(StringType, isRequired = false),
+    MASTER_USERNAME -> FormInputType(StringType, isRequired = false),
+    MASTER_PASSWORD -> FormInputType(StringType, isRequired = false),
+    INSTANCE_CLASS -> FormInputType(StringType, isRequired = false),
+    URL -> FormInputType(StringType, isRequired = false)
   )
 
-  override def setAnswers(answers: Map[QuestionLabel, Any]): Unit = {
+  override def setAnswers(answers: Map[FormInputName, Any]): Unit = {
     val userName = "user" + Random.alphanumeric.take(10).mkString("")
     val pwd = Random.alphanumeric.take(10).mkString("")
     val defaultDbName = "db-" + Random.alphanumeric.take(10).mkString("")
@@ -135,7 +135,7 @@ class DocumentDBLaunchQuestion(override val credentials: AWSCloudParams,
   }
 }
 
-object DocumentDBLaunchQuestion {
+object DocumentDBLaunchForm {
   val DB_CLUSTER_IDENTIFIER = "dbClusterIdentifier"
   val MASTER_USERNAME = "masterUsername"
   val MASTER_PASSWORD = "masterPassword"

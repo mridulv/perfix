@@ -1,25 +1,25 @@
 package io.perfix.question.documentdb
 
 import io.perfix.exceptions.ParamsAlreadyDefinedException
-import io.perfix.model.{QuestionType, StringType}
-import io.perfix.question.Question
-import io.perfix.question.Question.QuestionLabel
-import io.perfix.question.documentdb.DocumentDBIndicesParamsQuestion.INDICES_COLUMNS
+import io.perfix.model.{FormInputType, StringType}
+import io.perfix.question.Form
+import io.perfix.question.Form.FormInputName
+import io.perfix.question.documentdb.DocumentDBIndicesParamsForm.INDICES_COLUMNS
 import io.perfix.stores.documentdb.model.DocumentDBIndicesParams
 import io.perfix.stores.documentdb.DocumentDBParams
 import play.api.libs.json.Json
 
-class DocumentDBIndicesParamsQuestion(override val storeQuestionParams: DocumentDBParams) extends Question {
+class DocumentDBIndicesParamsForm(override val storeQuestionParams: DocumentDBParams) extends Form {
 
-  override val mapping: Map[QuestionLabel, QuestionType] = Map(
-    INDICES_COLUMNS -> QuestionType(StringType, isRequired = false)
+  override val mapping: Map[FormInputName, FormInputType] = Map(
+    INDICES_COLUMNS -> FormInputType(StringType, isRequired = false)
   )
 
   override def shouldAsk(): Boolean = {
     storeQuestionParams.documentDBIndicesParams.isEmpty
   }
 
-  override def setAnswers(answers: Map[QuestionLabel, Any]): Unit = {
+  override def setAnswers(answers: Map[FormInputName, Any]): Unit = {
     import storeQuestionParams._
     documentDBIndicesParams match {
       case Some(_) => throw ParamsAlreadyDefinedException("documentDbIndicesParams")
@@ -31,11 +31,11 @@ class DocumentDBIndicesParamsQuestion(override val storeQuestionParams: Document
 
 }
 
-object DocumentDBIndicesParamsQuestion {
+object DocumentDBIndicesParamsForm {
   val INDICES_COLUMNS = "indices_columns"
 
-  def apply(documentDBParams: DocumentDBParams): DocumentDBIndicesParamsQuestion = {
-    new DocumentDBIndicesParamsQuestion(documentDBParams)
+  def apply(documentDBParams: DocumentDBParams): DocumentDBIndicesParamsForm = {
+    new DocumentDBIndicesParamsForm(documentDBParams)
   }
 }
 

@@ -1,18 +1,18 @@
 package io.perfix.question.mysql
 
-import ConnectionParamsQuestion._
+import ConnectionParamsForm._
 import io.perfix.exceptions.ParamsAlreadyDefinedException
-import io.perfix.model.{QuestionType, StringType}
-import io.perfix.question.Question
-import io.perfix.question.Question.QuestionLabel
+import io.perfix.model.{FormInputType, StringType}
+import io.perfix.question.Form
+import io.perfix.question.Form.FormInputName
 import io.perfix.stores.mysql.{MySQLConnectionParams, MySQLParams}
 
-class ConnectionParamsQuestion(override val storeQuestionParams: MySQLParams) extends Question {
+class ConnectionParamsForm(override val storeQuestionParams: MySQLParams) extends Form {
 
-  override val mapping: Map[QuestionLabel, QuestionType] = Map(
-    URL -> QuestionType(StringType),
-    USERNAME -> QuestionType(StringType),
-    PASSWORD -> QuestionType(StringType)
+  override val mapping: Map[FormInputName, FormInputType] = Map(
+    URL -> FormInputType(StringType),
+    USERNAME -> FormInputType(StringType),
+    PASSWORD -> FormInputType(StringType)
   )
 
   override def shouldAsk(): Boolean = {
@@ -20,7 +20,7 @@ class ConnectionParamsQuestion(override val storeQuestionParams: MySQLParams) ex
     mySQLConnectionParams.isEmpty
   }
 
-  override def setAnswers(answers: Map[QuestionLabel, Any]): Unit = {
+  override def setAnswers(answers: Map[FormInputName, Any]): Unit = {
     import storeQuestionParams._
     mySQLConnectionParams match {
       case Some(_) => throw ParamsAlreadyDefinedException("mySQLConnectionParams")
@@ -30,12 +30,12 @@ class ConnectionParamsQuestion(override val storeQuestionParams: MySQLParams) ex
   }
 }
 
-object ConnectionParamsQuestion {
+object ConnectionParamsForm {
   val URL = "url"
   val USERNAME = "username"
   val PASSWORD = "password"
 
-  def apply(mySQLParams: MySQLParams): ConnectionParamsQuestion = {
-    new ConnectionParamsQuestion(mySQLParams)
+  def apply(mySQLParams: MySQLParams): ConnectionParamsForm = {
+    new ConnectionParamsForm(mySQLParams)
   }
 }

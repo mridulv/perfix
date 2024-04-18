@@ -2,18 +2,18 @@ package io.perfix.question.dynamodb
 
 import DynamoDBTableParamsQuestions.{CONNECTION_URL, PARTITION_KEY, SORT_KEY, TABLE_NAME}
 import io.perfix.exceptions.ParamsAlreadyDefinedException
-import io.perfix.model.{StringType, _}
-import io.perfix.question.Question
-import io.perfix.question.Question.QuestionLabel
+import io.perfix.model._
+import io.perfix.question.Form
+import io.perfix.question.Form.FormInputName
 import io.perfix.stores.dynamodb.{DynamoDBParams, DynamoDBTableParams}
 
-class DynamoDBTableParamsQuestions(override val storeQuestionParams: DynamoDBParams) extends Question {
+class DynamoDBTableParamsQuestions(override val storeQuestionParams: DynamoDBParams) extends Form {
 
-  override val mapping: Map[QuestionLabel, QuestionType] = Map(
-    CONNECTION_URL -> QuestionType(StringType, isRequired = false),
-    TABLE_NAME -> QuestionType(StringType),
-    PARTITION_KEY -> QuestionType(StringType),
-    SORT_KEY -> QuestionType(StringType)
+  override val mapping: Map[FormInputName, FormInputType] = Map(
+    CONNECTION_URL -> FormInputType(StringType, isRequired = false),
+    TABLE_NAME -> FormInputType(StringType),
+    PARTITION_KEY -> FormInputType(StringType),
+    SORT_KEY -> FormInputType(StringType)
   )
 
   override def shouldAsk(): Boolean = {
@@ -21,7 +21,7 @@ class DynamoDBTableParamsQuestions(override val storeQuestionParams: DynamoDBPar
     dynamoDBTableParams.isEmpty
   }
 
-  override def setAnswers(answers: Map[QuestionLabel, Any]): Unit = {
+  override def setAnswers(answers: Map[FormInputName, Any]): Unit = {
     import storeQuestionParams._
     dynamoDBTableParams match {
       case Some(_) => throw ParamsAlreadyDefinedException("mySQLConnectionParams")

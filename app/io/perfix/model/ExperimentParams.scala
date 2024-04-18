@@ -1,9 +1,9 @@
 package io.perfix.model
 
 import io.perfix.query.PerfixQuery
-import io.perfix.question.QuestionParams
+import io.perfix.question.FormParams
 
-case class ExperimentParams() extends QuestionParams {
+case class ExperimentParams() extends FormParams {
 
   val dataDescription = new DataDescription
   var concurrentQueriesOpt: Option[Int] = None

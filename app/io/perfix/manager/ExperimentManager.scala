@@ -3,7 +3,7 @@ package io.perfix.manager
 import io.perfix.common.PerfixExperimentExecutor
 import io.perfix.exceptions.InvalidExperimentException
 import io.perfix.model._
-import io.perfix.question.Question
+import io.perfix.question.Form
 
 import javax.inject.Singleton
 import scala.collection.mutable
@@ -62,7 +62,7 @@ class ExperimentManager {
         }
         k -> mappedValue
       }
-      experimentExecutor.getQuestionnaireExecutor.submit(Question.filteredAnswers(answerMapping))
+      experimentExecutor.getQuestionnaireExecutor.submit(Form.filteredAnswers(answerMapping))
     }
 
     mapping.put(response.id, experimentExecutor)

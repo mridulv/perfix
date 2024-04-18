@@ -1,9 +1,9 @@
 package io.perfix.model
 
-import io.perfix.question.Question.QuestionLabel
+import io.perfix.question.Form.FormInputName
 import play.api.libs.json.{JsBoolean, JsError, JsNumber, JsString, JsSuccess, Json, Reads, Writes}
 
-case class PerfixQuestionAnswer(questionLabel: QuestionLabel, answer: Any)
+case class PerfixQuestionAnswer(questionLabel: FormInputName, answer: Any)
 
 object PerfixQuestionAnswer {
   implicit val anyReads: Reads[Any] = Reads {

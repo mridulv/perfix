@@ -5,24 +5,24 @@ import com.amazonaws.regions.Regions
 import com.amazonaws.services.elasticache.{AmazonElastiCache, AmazonElastiCacheClientBuilder}
 import com.amazonaws.services.elasticache.model._
 import io.perfix.common.CommonConfig.DB_SUBNET_GROUP_NAME
-import io.perfix.launch.{AWSCloudParams, LaunchStoreQuestion}
-import io.perfix.model.{IntType, QuestionType, StringType}
-import io.perfix.question.Question.QuestionLabel
+import io.perfix.launch.{AWSCloudParams, LaunchStoreForm}
+import io.perfix.model.{IntType, FormInputType, StringType}
+import io.perfix.question.Form.FormInputName
 import io.perfix.question.redis.ElastiCacheLaunchQuestion._
 import io.perfix.stores.redis.{RedisConnectionParams, RedisParams}
 
 import java.util.concurrent.TimeUnit
 import scala.util.Random
 
-class RedisLaunchQuestion(override val credentials: AWSCloudParams,
-                          override val storeQuestionParams: RedisParams) extends LaunchStoreQuestion {
+class RedisLaunchForm(override val credentials: AWSCloudParams,
+                      override val storeQuestionParams: RedisParams) extends LaunchStoreForm {
 
-  override val launchQuestionsMapping: Map[QuestionLabel, QuestionType] = Map(
-    CACHE_NODE_TYPE -> QuestionType(StringType, isRequired = false),
-    NUM_CACHE_NODES -> QuestionType(IntType, isRequired = false)
+  override val launchQuestionsMapping: Map[FormInputName, FormInputType] = Map(
+    CACHE_NODE_TYPE -> FormInputType(StringType, isRequired = false),
+    NUM_CACHE_NODES -> FormInputType(IntType, isRequired = false)
   )
 
-  override def setAnswers(answers: Map[QuestionLabel, Any]): Unit = {
+  override def setAnswers(answers: Map[FormInputName, Any]): Unit = {
     val clusterId = "cluster" + Random.alphanumeric.take(5).mkString("")
     val cacheNodeType = answers.get(CACHE_NODE_TYPE).map(_.toString).getOrElse("cache.t3.micro")
     val numCacheNodes = answers.get(NUM_CACHE_NODES).map(_.toString.toInt).getOrElse(1)

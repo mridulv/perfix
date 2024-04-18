@@ -1,29 +1,29 @@
 package io.perfix.question.experiment
 
-import ExperimentParamsQuestion.{BENCHMARK_TIME_IN_SECONDS, CONCURRENT_QUERIES, PERFIX_QUERY, WRITE_BATCH_SIZE}
+import ExperimentParamsForm.{BENCHMARK_TIME_IN_SECONDS, CONCURRENT_QUERIES, PERFIX_QUERY, WRITE_BATCH_SIZE}
 import io.perfix.exceptions.ParamsAlreadyDefinedException
 import io.perfix.model._
 import io.perfix.query.PerfixQuery
-import io.perfix.question.Question.QuestionLabel
-import io.perfix.question.{Question, QuestionParams}
+import io.perfix.question.Form.FormInputName
+import io.perfix.question.{Form, FormParams}
 import play.api.libs.json.Json
 
-class ExperimentParamsQuestion(experimentParams: ExperimentParams) extends Question {
+class ExperimentParamsForm(experimentParams: ExperimentParams) extends Form {
 
-  override val mapping: Map[QuestionLabel, QuestionType] = Map(
-    CONCURRENT_QUERIES -> QuestionType(DoubleType),
-    WRITE_BATCH_SIZE -> QuestionType(IntType, isRequired = false),
-    BENCHMARK_TIME_IN_SECONDS -> QuestionType(IntType, isRequired = false),
-    PERFIX_QUERY -> QuestionType(StringType)
+  override val mapping: Map[FormInputName, FormInputType] = Map(
+    CONCURRENT_QUERIES -> FormInputType(DoubleType),
+    WRITE_BATCH_SIZE -> FormInputType(IntType, isRequired = false),
+    BENCHMARK_TIME_IN_SECONDS -> FormInputType(IntType, isRequired = false),
+    PERFIX_QUERY -> FormInputType(StringType)
   )
 
-  override val storeQuestionParams: QuestionParams = experimentParams
+  override val storeQuestionParams: FormParams = experimentParams
 
   override def shouldAsk(): Boolean = {
     experimentParams.concurrentQueriesOpt.isEmpty
   }
 
-  override def setAnswers(answers: Map[QuestionLabel, Any]): Unit = {
+  override def setAnswers(answers: Map[FormInputName, Any]): Unit = {
     import experimentParams._
     concurrentQueriesOpt match {
       case Some(_) => throw ParamsAlreadyDefinedException("DataDescription")
@@ -37,7 +37,7 @@ class ExperimentParamsQuestion(experimentParams: ExperimentParams) extends Quest
 
 }
 
-object ExperimentParamsQuestion {
+object ExperimentParamsForm {
   val CONCURRENT_QUERIES = "num_queries"
   val WRITE_BATCH_SIZE ="write_batch_size"
   val BENCHMARK_TIME_IN_SECONDS = "benchmark_time_seconds"

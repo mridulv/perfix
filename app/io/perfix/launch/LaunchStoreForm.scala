@@ -5,18 +5,18 @@ import com.amazonaws.services.ec2.model.{AuthorizeSecurityGroupIngressRequest, D
 import com.amazonaws.services.eks.AmazonEKSClientBuilder
 import com.amazonaws.services.eks.model.DescribeClusterRequest
 import io.perfix.common.CommonConfig.IS_TRIAL_MODE
-import io.perfix.model.QuestionType
-import io.perfix.question.Question
-import io.perfix.question.Question.QuestionLabel
+import io.perfix.model.FormInputType
+import io.perfix.question.Form
+import io.perfix.question.Form.FormInputName
 
 import scala.jdk.CollectionConverters._
 
-trait LaunchStoreQuestion extends Question {
+trait LaunchStoreForm extends Form {
 
   val credentials: AWSCloudParams
-  val launchQuestionsMapping: Map[QuestionLabel, QuestionType]
+  val launchQuestionsMapping: Map[FormInputName, FormInputType]
 
-  override lazy val mapping: Map[QuestionLabel, QuestionType] = if (IS_TRIAL_MODE) {
+  override lazy val mapping: Map[FormInputName, FormInputType] = if (IS_TRIAL_MODE) {
     Map.empty
   } else {
     launchQuestionsMapping

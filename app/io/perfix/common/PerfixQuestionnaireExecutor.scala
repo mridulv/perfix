@@ -1,26 +1,26 @@
 package io.perfix.common
 
-import io.perfix.model.QuestionType
-import io.perfix.question.Question.QuestionLabel
-import io.perfix.question.{Question, Questionnaire}
+import io.perfix.model.FormInputType
+import io.perfix.question.Form.FormInputName
+import io.perfix.question.{Form, FormSeries}
 
-class PerfixQuestionnaireExecutor(questionnaire: Questionnaire)
-  extends Iterator[Map[QuestionLabel, QuestionType]] {
+class PerfixQuestionnaireExecutor(questionnaire: FormSeries)
+  extends Iterator[Map[FormInputName, FormInputType]] {
 
-  private var currentOpt: Option[Question] = None
-  private val allQuestionsIterator: Iterator[Question] = questionnaire.iterator
+  private var currentOpt: Option[Form] = None
+  private val allQuestionsIterator: Iterator[Form] = questionnaire.iterator
 
   override def hasNext: Boolean = {
     allQuestionsIterator.hasNext
   }
 
-  override def next(): Map[QuestionLabel, QuestionType] = {
+  override def next(): Map[FormInputName, FormInputType] = {
     val ques = allQuestionsIterator.next()
     currentOpt = Some(ques)
     ques.mapping
   }
 
-  def submit(answers: Map[QuestionLabel, Any]): Unit = {
+  def submit(answers: Map[FormInputName, Any]): Unit = {
     currentOpt match {
       case Some(current) => current.setAnswers(answers)
       case None => throw new UnsupportedOperationException("Submit can be called only on a defined question")

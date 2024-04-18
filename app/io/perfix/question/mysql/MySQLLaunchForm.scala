@@ -5,29 +5,29 @@ import com.amazonaws.regions.Regions
 import com.amazonaws.services.rds.{AmazonRDS, AmazonRDSClientBuilder}
 import com.amazonaws.services.rds.model.{CreateDBInstanceRequest, DBInstance, DescribeDBInstancesRequest}
 import io.perfix.common.CommonConfig.DB_SUBNET_GROUP_NAME
-import io.perfix.launch.{AWSCloudParams, LaunchStoreQuestion}
-import io.perfix.model.{QuestionType, StringType}
-import io.perfix.question.Question.QuestionLabel
-import io.perfix.question.mysql.ConnectionParamsQuestion.{PASSWORD, USERNAME}
-import io.perfix.question.mysql.MySQLLaunchQuestion._
+import io.perfix.launch.{AWSCloudParams, LaunchStoreForm}
+import io.perfix.model.{FormInputType, StringType}
+import io.perfix.question.Form.FormInputName
+import io.perfix.question.mysql.ConnectionParamsForm.{PASSWORD, USERNAME}
+import io.perfix.question.mysql.MySQLLaunchForm._
 import io.perfix.question.mysql.TableParamsQuestions.DBNAME
 import io.perfix.stores.mysql.{MySQLConnectionParams, MySQLParams, MySQLTableParams}
 
 import java.util.concurrent.TimeUnit
 import scala.util.Random
 
-class MySQLLaunchQuestion(override val credentials: AWSCloudParams,
-                          override val storeQuestionParams: MySQLParams) extends LaunchStoreQuestion {
+class MySQLLaunchForm(override val credentials: AWSCloudParams,
+                      override val storeQuestionParams: MySQLParams) extends LaunchStoreForm {
 
-  override val launchQuestionsMapping: Map[QuestionLabel, QuestionType] = Map(
-    DBNAME -> QuestionType(StringType, isRequired = false),
-    USERNAME -> QuestionType(StringType, isRequired = false),
-    PASSWORD -> QuestionType(StringType, isRequired = false),
-    INSTANCE_IDENTIFIER -> QuestionType(StringType, isRequired = false),
-    INSTANCE_TYPE -> QuestionType(StringType, isRequired = false)
+  override val launchQuestionsMapping: Map[FormInputName, FormInputType] = Map(
+    DBNAME -> FormInputType(StringType, isRequired = false),
+    USERNAME -> FormInputType(StringType, isRequired = false),
+    PASSWORD -> FormInputType(StringType, isRequired = false),
+    INSTANCE_IDENTIFIER -> FormInputType(StringType, isRequired = false),
+    INSTANCE_TYPE -> FormInputType(StringType, isRequired = false)
   )
 
-  override def setAnswers(answers: Map[QuestionLabel, Any]): Unit = {
+  override def setAnswers(answers: Map[FormInputName, Any]): Unit = {
     val userName = "user" + Random.alphanumeric.take(10).mkString("")
     val defaultDbName = "db" + Random.alphanumeric.take(5).mkString("")
     val instanceName = "instance" + Random.alphanumeric.take(5).mkString("")
@@ -113,7 +113,7 @@ class MySQLLaunchQuestion(override val credentials: AWSCloudParams,
   }
 }
 
-object MySQLLaunchQuestion {
+object MySQLLaunchForm {
   val INSTANCE_IDENTIFIER = "instanceIdentifier"
   val INSTANCE_TYPE = "instanceType"
 }

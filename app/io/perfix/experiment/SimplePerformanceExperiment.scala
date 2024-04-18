@@ -1,7 +1,7 @@
 package io.perfix.experiment
 
 import io.perfix.model.{ExperimentParams, ExperimentRunParams, PerfixExperimentResult}
-import io.perfix.question.Questionnaire
+import io.perfix.question.FormSeries
 import io.perfix.stores.DataStore
 import io.perfix.util.BenchmarkUtil
 
@@ -11,8 +11,8 @@ class SimplePerformanceExperiment(dataStore: DataStore) extends Experiment {
 
   private[experiment] val experimentParams = new ExperimentParams
 
-  def questions(): Questionnaire = {
-    val questionnaire = new ExperimentQuestionnaire(experimentParams, dataStore)
+  def questions(): FormSeries = {
+    val questionnaire = new ExperimentFormSeries(experimentParams, dataStore)
     questionnaire
   }
 

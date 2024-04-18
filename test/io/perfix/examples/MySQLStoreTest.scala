@@ -1,13 +1,13 @@
 package io.perfix.examples
 
 import io.perfix.common.PerfixExperimentExecutor
-import io.perfix.question.AWSCloudParamsQuestion._
-import io.perfix.question.Question
+import io.perfix.question.AWSCloudParamsForm._
+import io.perfix.question.Form
 import io.perfix.question.experiment.DataQuestions._
-import io.perfix.question.experiment.ExperimentParamsQuestion.{CONCURRENT_QUERIES, PERFIX_QUERY}
-import io.perfix.question.mysql.ConnectionParamsQuestion._
-import io.perfix.question.mysql.MySQLLaunchQuestion._
-import io.perfix.question.mysql.TableIndicesDetailQuestion.SECONDARY_INDEX_COLUMNS
+import io.perfix.question.experiment.ExperimentParamsForm.{CONCURRENT_QUERIES, PERFIX_QUERY}
+import io.perfix.question.mysql.ConnectionParamsForm._
+import io.perfix.question.mysql.MySQLLaunchForm._
+import io.perfix.question.mysql.TableIndicesDetailForm.SECONDARY_INDEX_COLUMNS
 import io.perfix.question.mysql.TableParamsQuestions.{DBNAME, TABLENAME}
 
 
@@ -42,7 +42,7 @@ object MySQLStoreTest {
         }
         k -> mappedValue
       }
-      experimentExecutor.getQuestionnaireExecutor.submit(Question.filteredAnswers(answerMapping))
+      experimentExecutor.getQuestionnaireExecutor.submit(Form.filteredAnswers(answerMapping))
     }
 
     experimentExecutor.runExperiment()

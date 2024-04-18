@@ -1,13 +1,13 @@
 package io.perfix.examples
 
 import io.perfix.common.PerfixExperimentExecutor
-import io.perfix.question.AWSCloudParamsQuestion.{AWS_ACCESS_KEY, AWS_ACCESS_SECRET}
-import io.perfix.question.Question
+import io.perfix.question.AWSCloudParamsForm.{AWS_ACCESS_KEY, AWS_ACCESS_SECRET}
+import io.perfix.question.Form
 import io.perfix.question.experiment.DataQuestions._
-import io.perfix.question.experiment.ExperimentParamsQuestion.CONCURRENT_QUERIES
+import io.perfix.question.experiment.ExperimentParamsForm.CONCURRENT_QUERIES
 import io.perfix.question.redis.ElastiCacheLaunchQuestion.{CACHE_NODE_TYPE, CLUSTER_ID}
-import io.perfix.question.redis.RedisConnectionParametersQuestion.{PORT, URL}
-import io.perfix.question.redis.RedisTableParamsQuestion.KEY_COLUMN
+import io.perfix.question.redis.RedisConnectionParametersForm.{PORT, URL}
+import io.perfix.question.redis.RedisTableParamsForm.KEY_COLUMN
 
 object RedisStoreTest {
 
@@ -35,7 +35,7 @@ object RedisStoreTest {
         }
         k -> mappedValue
       }
-      experimentExecutor.getQuestionnaireExecutor.submit(Question.filteredAnswers(answerMapping))
+      experimentExecutor.getQuestionnaireExecutor.submit(Form.filteredAnswers(answerMapping))
     }
 
     experimentExecutor.runExperiment()
