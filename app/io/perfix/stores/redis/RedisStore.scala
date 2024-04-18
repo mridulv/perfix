@@ -1,10 +1,10 @@
 package io.perfix.stores.redis
 
 import io.perfix.exceptions.{InvalidStateException, PerfixQueryException}
-import io.perfix.launch.{AWSCloudParams, LaunchStoreQuestion}
+import io.perfix.launch.{AWSCloudParams, LaunchStoreForm}
 import io.perfix.model.DataDescription
 import io.perfix.query.PerfixQuery
-import io.perfix.question.redis.RedisLaunchQuestion
+import io.perfix.question.redis.RedisLaunchForm
 import io.perfix.stores.DataStore
 import redis.clients.jedis.JedisPool
 
@@ -13,8 +13,8 @@ class RedisStore extends DataStore {
   private var dataDescription: DataDescription = _
   private val redisParams: RedisParams = RedisParams()
 
-  override def launch(awsCloudParams: AWSCloudParams): Option[LaunchStoreQuestion] = {
-    Some(new RedisLaunchQuestion(awsCloudParams, redisParams))
+  override def launch(awsCloudParams: AWSCloudParams): Option[LaunchStoreForm] = {
+    Some(new RedisLaunchForm(awsCloudParams, redisParams))
   }
 
   override def storeInputs(dataDescription: DataDescription): RedisQuestionnaire = {

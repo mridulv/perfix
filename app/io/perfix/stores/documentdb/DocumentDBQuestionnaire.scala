@@ -1,12 +1,12 @@
 package io.perfix.stores.documentdb
 
-import io.perfix.question.documentdb.{DocumentDBConnectionParamsQuestion, DocumentDBIndicesParamsQuestion, DocumentDBTableParamsQuestions}
-import io.perfix.question.{Question, Questionnaire}
+import io.perfix.question.documentdb.{DocumentDBConnectionParamsForm, DocumentDBIndicesParamsForm, DocumentDBTableParamsQuestions}
+import io.perfix.question.{Form, Questionnaire}
 
 case class DocumentDBQuestionnaire(params: DocumentDBParams) extends Questionnaire {
-  override val questions: Iterator[Question] = Iterator(
-    DocumentDBConnectionParamsQuestion(params),
+  override val questions: Iterator[Form] = Iterator(
+    DocumentDBConnectionParamsForm(params),
     DocumentDBTableParamsQuestions(params),
-    DocumentDBIndicesParamsQuestion(params)
+    DocumentDBIndicesParamsForm(params)
   )
 }

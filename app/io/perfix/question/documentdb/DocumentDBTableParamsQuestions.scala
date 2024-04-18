@@ -2,12 +2,12 @@ package io.perfix.question.documentdb
 
 import io.perfix.exceptions.ParamsAlreadyDefinedException
 import io.perfix.model.{QuestionType, StringType}
-import io.perfix.question.Question
-import io.perfix.question.Question.QuestionLabel
+import io.perfix.question.Form
+import io.perfix.question.Form.QuestionLabel
 import io.perfix.question.documentdb.DocumentDBTableParamsQuestions.COLLECTION_NAME
 import io.perfix.stores.documentdb.{DocumentDBParams, DocumentDBTableParams}
 
-class DocumentDBTableParamsQuestions(override val storeQuestionParams: DocumentDBParams) extends Question {
+class DocumentDBTableParamsQuestions(override val storeQuestionParams: DocumentDBParams) extends Form {
 
   override val mapping: Map[QuestionLabel, QuestionType] = Map(
     COLLECTION_NAME -> QuestionType(StringType)

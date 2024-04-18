@@ -2,13 +2,13 @@ package io.perfix.question.redis
 
 import io.perfix.exceptions.ParamsAlreadyDefinedException
 import io.perfix.model.{QuestionType, StringType}
-import io.perfix.question.Question
-import io.perfix.question.Question.QuestionLabel
-import io.perfix.question.redis.RedisTableParamsQuestion.KEY_COLUMN
+import io.perfix.question.Form
+import io.perfix.question.Form.QuestionLabel
+import io.perfix.question.redis.RedisTableParamsForm.KEY_COLUMN
 import io.perfix.stores.redis.{RedisParams, RedisTableParams}
 
-class RedisTableParamsQuestion(override val storeQuestionParams: RedisParams)
-  extends Question {
+class RedisTableParamsForm(override val storeQuestionParams: RedisParams)
+  extends Form {
 
   override val mapping: Map[QuestionLabel, QuestionType] = Map(
     KEY_COLUMN -> QuestionType(StringType)
@@ -26,10 +26,10 @@ class RedisTableParamsQuestion(override val storeQuestionParams: RedisParams)
   }
 }
 
-object RedisTableParamsQuestion {
+object RedisTableParamsForm {
   val KEY_COLUMN = "key_column"
 
-  def apply(redisParams: RedisParams): RedisTableParamsQuestion = {
-    new RedisTableParamsQuestion(redisParams)
+  def apply(redisParams: RedisParams): RedisTableParamsForm = {
+    new RedisTableParamsForm(redisParams)
   }
 }

@@ -1,6 +1,6 @@
 package io.perfix.model
 
-import io.perfix.question.Question.QuestionLabel
+import io.perfix.question.Form.QuestionLabel
 import play.api.libs.json.{JsBoolean, JsError, JsNumber, JsString, JsSuccess, Json, Reads, Writes}
 
 case class PerfixQuestionAnswer(questionLabel: QuestionLabel, answer: Any)

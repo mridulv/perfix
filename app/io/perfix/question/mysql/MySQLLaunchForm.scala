@@ -5,19 +5,19 @@ import com.amazonaws.regions.Regions
 import com.amazonaws.services.rds.{AmazonRDS, AmazonRDSClientBuilder}
 import com.amazonaws.services.rds.model.{CreateDBInstanceRequest, DBInstance, DescribeDBInstancesRequest}
 import io.perfix.common.CommonConfig.DB_SUBNET_GROUP_NAME
-import io.perfix.launch.{AWSCloudParams, LaunchStoreQuestion}
+import io.perfix.launch.{AWSCloudParams, LaunchStoreForm}
 import io.perfix.model.{QuestionType, StringType}
-import io.perfix.question.Question.QuestionLabel
-import io.perfix.question.mysql.ConnectionParamsQuestion.{PASSWORD, USERNAME}
-import io.perfix.question.mysql.MySQLLaunchQuestion._
+import io.perfix.question.Form.QuestionLabel
+import io.perfix.question.mysql.ConnectionParamsForm.{PASSWORD, USERNAME}
+import io.perfix.question.mysql.MySQLLaunchForm._
 import io.perfix.question.mysql.TableParamsQuestions.DBNAME
 import io.perfix.stores.mysql.{MySQLConnectionParams, MySQLParams, MySQLTableParams}
 
 import java.util.concurrent.TimeUnit
 import scala.util.Random
 
-class MySQLLaunchQuestion(override val credentials: AWSCloudParams,
-                          override val storeQuestionParams: MySQLParams) extends LaunchStoreQuestion {
+class MySQLLaunchForm(override val credentials: AWSCloudParams,
+                      override val storeQuestionParams: MySQLParams) extends LaunchStoreForm {
 
   override val launchQuestionsMapping: Map[QuestionLabel, QuestionType] = Map(
     DBNAME -> QuestionType(StringType, isRequired = false),
@@ -113,7 +113,7 @@ class MySQLLaunchQuestion(override val credentials: AWSCloudParams,
   }
 }
 
-object MySQLLaunchQuestion {
+object MySQLLaunchForm {
   val INSTANCE_IDENTIFIER = "instanceIdentifier"
   val INSTANCE_TYPE = "instanceType"
 }

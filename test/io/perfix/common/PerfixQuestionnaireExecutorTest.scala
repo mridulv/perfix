@@ -1,23 +1,23 @@
 package io.perfix.common
 
 import io.perfix.model.{IntType, QuestionType, StringType}
-import io.perfix.question.Question.QuestionLabel
-import io.perfix.question.{Question, QuestionParams, Questionnaire}
+import io.perfix.question.Form.QuestionLabel
+import io.perfix.question.{Form, FormParams, Questionnaire}
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
 class PerfixQuestionnaireExecutorTest extends AnyFlatSpec with Matchers {
   def mockQuestionnaire: Questionnaire = new Questionnaire {
-    override val questions: Iterator[Question] = Iterator(
-      new Question {
+    override val questions: Iterator[Form] = Iterator(
+      new Form {
         override val mapping: Map[QuestionLabel, QuestionType] = Map("Q1" -> QuestionType(StringType))
-        override val storeQuestionParams: QuestionParams = new QuestionParams {}
+        override val storeQuestionParams: FormParams = new FormParams {}
         override def shouldAsk(): Boolean = true
         override def setAnswers(answers: Map[QuestionLabel, Any]): Unit = {}
       },
-      new Question {
+      new Form {
         override val mapping: Map[QuestionLabel, QuestionType] = Map("Q2" -> QuestionType(IntType))
-        override val storeQuestionParams: QuestionParams = new QuestionParams {}
+        override val storeQuestionParams: FormParams = new FormParams {}
         override def shouldAsk(): Boolean = true
         override def setAnswers(answers: Map[QuestionLabel, Any]): Unit = {}
       }

@@ -2,12 +2,12 @@ package io.perfix.question.dynamodb
 
 import io.perfix.exceptions.ParamsAlreadyDefinedException
 import io.perfix.model.{IntType, QuestionType}
-import io.perfix.question.Question
-import io.perfix.question.Question.QuestionLabel
+import io.perfix.question.Form
+import io.perfix.question.Form.QuestionLabel
 import io.perfix.question.dynamodb.DynamoDBCapacityQuestions.{READ_CAPACITY, WRITE_CAPACITY}
 import io.perfix.stores.dynamodb.{DynamoDBCapacityParams, DynamoDBParams}
 
-class DynamoDBCapacityQuestions(override val storeQuestionParams: DynamoDBParams) extends Question {
+class DynamoDBCapacityQuestions(override val storeQuestionParams: DynamoDBParams) extends Form {
   override val mapping: Map[QuestionLabel, QuestionType] = Map(
     READ_CAPACITY -> QuestionType(IntType, isRequired = false),
     WRITE_CAPACITY -> QuestionType(IntType, isRequired = false)

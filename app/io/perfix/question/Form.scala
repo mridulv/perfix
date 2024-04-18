@@ -1,13 +1,13 @@
 package io.perfix.question
 
-import Question.QuestionLabel
+import Form.QuestionLabel
 import io.perfix.model.QuestionType
 
-trait Question {
+trait Form {
 
   val mapping: Map[QuestionLabel, QuestionType]
 
-  val storeQuestionParams: QuestionParams
+  val storeQuestionParams: FormParams
 
   def shouldAsk(): Boolean
 
@@ -15,7 +15,7 @@ trait Question {
 
 }
 
-object Question {
+object Form {
   type QuestionLabel = String
 
   def filteredAnswers(answers: Map[QuestionLabel, Option[Any]]): Map[QuestionLabel, Any] = {

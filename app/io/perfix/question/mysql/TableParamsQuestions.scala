@@ -3,11 +3,11 @@ package io.perfix.question.mysql
 import TableParamsQuestions._
 import io.perfix.exceptions.ParamsAlreadyDefinedException
 import io.perfix.model.{QuestionType, StringType}
-import io.perfix.question.Question
-import io.perfix.question.Question.QuestionLabel
+import io.perfix.question.Form
+import io.perfix.question.Form.QuestionLabel
 import io.perfix.stores.mysql.{MySQLParams, MySQLTableParams}
 
-class TableParamsQuestions(override val storeQuestionParams: MySQLParams) extends Question {
+class TableParamsQuestions(override val storeQuestionParams: MySQLParams) extends Form {
 
   override val mapping: Map[QuestionLabel, QuestionType] = Map(
     DBNAME -> QuestionType(StringType),

@@ -2,14 +2,14 @@ package io.perfix.question.dynamodb
 
 import io.perfix.exceptions.ParamsAlreadyDefinedException
 import io.perfix.model.{QuestionType, StringType}
-import io.perfix.question.Question
-import io.perfix.question.Question.QuestionLabel
+import io.perfix.question.Form
+import io.perfix.question.Form.QuestionLabel
 import io.perfix.question.dynamodb.DynamoDBGSIParamsQuestions.GSI
 import io.perfix.stores.dynamodb.model.DynamoDBGSIMetadataParams
 import io.perfix.stores.dynamodb.DynamoDBParams
 import play.api.libs.json.Json
 
-case class DynamoDBGSIParamsQuestions(override val storeQuestionParams: DynamoDBParams) extends Question {
+case class DynamoDBGSIParamsQuestions(override val storeQuestionParams: DynamoDBParams) extends Form {
 
   override val mapping: Map[QuestionLabel, QuestionType] = Map(
     GSI -> QuestionType(StringType, isRequired = false)

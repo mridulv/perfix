@@ -1,8 +1,8 @@
 package io.perfix.stores.mysql
 
-import io.perfix.question.QuestionParams
+import io.perfix.question.FormParams
 
-case class MySQLParams() extends QuestionParams {
+case class MySQLParams() extends FormParams {
 
   var mySQLConnectionParams: Option[MySQLConnectionParams] = None
   var mySQLTableParams: Option[MySQLTableParams] = None

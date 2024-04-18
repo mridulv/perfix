@@ -2,14 +2,14 @@ package io.perfix.question.documentdb
 
 import io.perfix.exceptions.ParamsAlreadyDefinedException
 import io.perfix.model.{QuestionType, StringType}
-import io.perfix.question.Question
-import io.perfix.question.Question.QuestionLabel
-import io.perfix.question.documentdb.DocumentDBIndicesParamsQuestion.INDICES_COLUMNS
+import io.perfix.question.Form
+import io.perfix.question.Form.QuestionLabel
+import io.perfix.question.documentdb.DocumentDBIndicesParamsForm.INDICES_COLUMNS
 import io.perfix.stores.documentdb.model.DocumentDBIndicesParams
 import io.perfix.stores.documentdb.DocumentDBParams
 import play.api.libs.json.Json
 
-class DocumentDBIndicesParamsQuestion(override val storeQuestionParams: DocumentDBParams) extends Question {
+class DocumentDBIndicesParamsForm(override val storeQuestionParams: DocumentDBParams) extends Form {
 
   override val mapping: Map[QuestionLabel, QuestionType] = Map(
     INDICES_COLUMNS -> QuestionType(StringType, isRequired = false)
@@ -31,11 +31,11 @@ class DocumentDBIndicesParamsQuestion(override val storeQuestionParams: Document
 
 }
 
-object DocumentDBIndicesParamsQuestion {
+object DocumentDBIndicesParamsForm {
   val INDICES_COLUMNS = "indices_columns"
 
-  def apply(documentDBParams: DocumentDBParams): DocumentDBIndicesParamsQuestion = {
-    new DocumentDBIndicesParamsQuestion(documentDBParams)
+  def apply(documentDBParams: DocumentDBParams): DocumentDBIndicesParamsForm = {
+    new DocumentDBIndicesParamsForm(documentDBParams)
   }
 }
 

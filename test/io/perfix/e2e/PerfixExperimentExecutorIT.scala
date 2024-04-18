@@ -1,12 +1,12 @@
 package io.perfix.e2e
 
 import io.perfix.common.PerfixExperimentExecutor
-import io.perfix.question.AWSCloudParamsQuestion.{AWS_ACCESS_KEY, AWS_ACCESS_SECRET, LAUNCH_DB}
-import io.perfix.question.Question
+import io.perfix.question.AWSCloudParamsForm.{AWS_ACCESS_KEY, AWS_ACCESS_SECRET, LAUNCH_DB}
+import io.perfix.question.Form
 import io.perfix.question.experiment.DataQuestions.{COLUMNS, ROWS}
-import io.perfix.question.experiment.ExperimentParamsQuestion.{BENCHMARK_TIME_IN_SECONDS, CONCURRENT_QUERIES, PERFIX_QUERY}
-import io.perfix.question.mysql.ConnectionParamsQuestion.{PASSWORD, URL, USERNAME}
-import io.perfix.question.mysql.MySQLLaunchQuestion.{INSTANCE_IDENTIFIER, INSTANCE_TYPE}
+import io.perfix.question.experiment.ExperimentParamsForm.{BENCHMARK_TIME_IN_SECONDS, CONCURRENT_QUERIES, PERFIX_QUERY}
+import io.perfix.question.mysql.ConnectionParamsForm.{PASSWORD, URL, USERNAME}
+import io.perfix.question.mysql.MySQLLaunchForm.{INSTANCE_IDENTIFIER, INSTANCE_TYPE}
 import io.perfix.question.mysql.TableParamsQuestions.{DBNAME, TABLENAME}
 import org.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterAll
@@ -59,7 +59,7 @@ class PerfixExperimentExecutorIT extends AnyFlatSpec with Matchers with MockitoS
         }
         k -> mappedValue
       }
-      experimentExecutor.getQuestionnaireExecutor.submit(Question.filteredAnswers(answerMapping))
+      experimentExecutor.getQuestionnaireExecutor.submit(Form.filteredAnswers(answerMapping))
     }
 
     val result = experimentExecutor.runExperiment()

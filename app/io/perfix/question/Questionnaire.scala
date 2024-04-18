@@ -2,11 +2,11 @@ package io.perfix.question
 
 trait Questionnaire {
 
-  val questions: Iterator[Question]
+  val questions: Iterator[Form]
 
-  def iterator: Iterator[Question] = {
-    new Iterator[Question] {
-      private var nextQuestion: Option[Question] = None
+  def iterator: Iterator[Form] = {
+    new Iterator[Form] {
+      private var nextQuestion: Option[Form] = None
 
       private def findNextQuestion(): Unit = {
         while (questions.hasNext) {
@@ -26,7 +26,7 @@ trait Questionnaire {
         nextQuestion.isDefined
       }
 
-      override def next(): Question = {
+      override def next(): Form = {
         nextQuestion match {
           case Some(ques) =>
             nextQuestion = None

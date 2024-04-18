@@ -1,12 +1,12 @@
 package io.perfix.stores.mysql
 
 import io.perfix.exceptions.InvalidStateException
-import io.perfix.launch.{AWSCloudParams, LaunchStoreQuestion}
+import io.perfix.launch.{AWSCloudParams, LaunchStoreForm}
 import io.perfix.model.ColumnType.toSqlType
 import io.perfix.model.{ColumnDescription, DataDescription}
 import io.perfix.stores.DataStore
 import io.perfix.query.PerfixQuery
-import io.perfix.question.mysql.MySQLLaunchQuestion
+import io.perfix.question.mysql.MySQLLaunchForm
 
 import java.sql.{Connection, DriverManager, ResultSet}
 
@@ -15,8 +15,8 @@ class MySQLStore extends DataStore {
   private var dataDescription: DataDescription = _
   private val mySQLParams: MySQLParams = MySQLParams()
 
-  override def launch(awsCloudParams: AWSCloudParams): Option[LaunchStoreQuestion] = {
-    Some(new MySQLLaunchQuestion(awsCloudParams, mySQLParams))
+  override def launch(awsCloudParams: AWSCloudParams): Option[LaunchStoreForm] = {
+    Some(new MySQLLaunchForm(awsCloudParams, mySQLParams))
   }
 
   override def storeInputs(dataDescription: DataDescription): MySQLQuestionnaire = {

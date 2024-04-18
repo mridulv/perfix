@@ -2,12 +2,12 @@ package io.perfix.question.dynamodb
 
 import DynamoDBTableParamsQuestions.{CONNECTION_URL, PARTITION_KEY, SORT_KEY, TABLE_NAME}
 import io.perfix.exceptions.ParamsAlreadyDefinedException
-import io.perfix.model.{StringType, _}
-import io.perfix.question.Question
-import io.perfix.question.Question.QuestionLabel
+import io.perfix.model._
+import io.perfix.question.Form
+import io.perfix.question.Form.QuestionLabel
 import io.perfix.stores.dynamodb.{DynamoDBParams, DynamoDBTableParams}
 
-class DynamoDBTableParamsQuestions(override val storeQuestionParams: DynamoDBParams) extends Question {
+class DynamoDBTableParamsQuestions(override val storeQuestionParams: DynamoDBParams) extends Form {
 
   override val mapping: Map[QuestionLabel, QuestionType] = Map(
     CONNECTION_URL -> QuestionType(StringType, isRequired = false),

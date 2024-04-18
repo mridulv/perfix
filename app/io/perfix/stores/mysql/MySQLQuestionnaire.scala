@@ -1,14 +1,14 @@
 package io.perfix.stores.mysql
 
-import io.perfix.question.{Question, Questionnaire}
-import io.perfix.question.mysql.{ConnectionParamsQuestion, TableIndicesDetailQuestion, TableParamsQuestions}
+import io.perfix.question.{Form, Questionnaire}
+import io.perfix.question.mysql.{ConnectionParamsForm, TableIndicesDetailForm, TableParamsQuestions}
 
 case class MySQLQuestionnaire(mySQLParams: MySQLParams) extends Questionnaire {
   
-  val questions: Iterator[Question] = Seq(
-    ConnectionParamsQuestion(mySQLParams),
+  val questions: Iterator[Form] = Seq(
+    ConnectionParamsForm(mySQLParams),
     TableParamsQuestions(mySQLParams),
-    TableIndicesDetailQuestion(mySQLParams)
+    TableIndicesDetailForm(mySQLParams)
   ).iterator
 
 }

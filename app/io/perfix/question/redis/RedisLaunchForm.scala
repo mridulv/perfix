@@ -5,17 +5,17 @@ import com.amazonaws.regions.Regions
 import com.amazonaws.services.elasticache.{AmazonElastiCache, AmazonElastiCacheClientBuilder}
 import com.amazonaws.services.elasticache.model._
 import io.perfix.common.CommonConfig.DB_SUBNET_GROUP_NAME
-import io.perfix.launch.{AWSCloudParams, LaunchStoreQuestion}
+import io.perfix.launch.{AWSCloudParams, LaunchStoreForm}
 import io.perfix.model.{IntType, QuestionType, StringType}
-import io.perfix.question.Question.QuestionLabel
+import io.perfix.question.Form.QuestionLabel
 import io.perfix.question.redis.ElastiCacheLaunchQuestion._
 import io.perfix.stores.redis.{RedisConnectionParams, RedisParams}
 
 import java.util.concurrent.TimeUnit
 import scala.util.Random
 
-class RedisLaunchQuestion(override val credentials: AWSCloudParams,
-                          override val storeQuestionParams: RedisParams) extends LaunchStoreQuestion {
+class RedisLaunchForm(override val credentials: AWSCloudParams,
+                      override val storeQuestionParams: RedisParams) extends LaunchStoreForm {
 
   override val launchQuestionsMapping: Map[QuestionLabel, QuestionType] = Map(
     CACHE_NODE_TYPE -> QuestionType(StringType, isRequired = false),

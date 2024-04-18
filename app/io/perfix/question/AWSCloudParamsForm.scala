@@ -2,10 +2,10 @@ package io.perfix.question
 
 import io.perfix.launch.AWSCloudParams
 import io.perfix.model.{BooleanType, QuestionType, StringType}
-import io.perfix.question.AWSCloudParamsQuestion._
-import io.perfix.question.Question.QuestionLabel
+import io.perfix.question.AWSCloudParamsForm._
+import io.perfix.question.Form.QuestionLabel
 
-class AWSCloudParamsQuestion(override val storeQuestionParams: AWSCloudParams) extends Question {
+class AWSCloudParamsForm(override val storeQuestionParams: AWSCloudParams) extends Form {
   override val mapping: Map[QuestionLabel, QuestionType] = Map(
     AWS_ACCESS_KEY -> QuestionType(StringType),
     AWS_ACCESS_SECRET -> QuestionType(StringType),
@@ -23,7 +23,7 @@ class AWSCloudParamsQuestion(override val storeQuestionParams: AWSCloudParams) e
   }
 }
 
-object AWSCloudParamsQuestion {
+object AWSCloudParamsForm {
   val AWS_ACCESS_KEY = "access_key"
   val AWS_ACCESS_SECRET = "access_secret"
   val LAUNCH_DB = "launch_db"

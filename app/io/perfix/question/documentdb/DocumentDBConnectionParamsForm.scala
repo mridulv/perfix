@@ -2,12 +2,12 @@ package io.perfix.question.documentdb
 
 import io.perfix.exceptions.ParamsAlreadyDefinedException
 import io.perfix.model.{QuestionType, StringType}
-import io.perfix.question.Question
-import io.perfix.question.Question.QuestionLabel
-import io.perfix.question.documentdb.DocumentDBConnectionParamsQuestion._
+import io.perfix.question.Form
+import io.perfix.question.Form.QuestionLabel
+import io.perfix.question.documentdb.DocumentDBConnectionParamsForm._
 import io.perfix.stores.documentdb.{DocumentDBConnectionParams, DocumentDBParams}
 
-class DocumentDBConnectionParamsQuestion(override val storeQuestionParams: DocumentDBParams) extends Question {
+class DocumentDBConnectionParamsForm(override val storeQuestionParams: DocumentDBParams) extends Form {
 
   override val mapping: Map[QuestionLabel, QuestionType] = Map(
     URL -> QuestionType(StringType),
@@ -29,11 +29,11 @@ class DocumentDBConnectionParamsQuestion(override val storeQuestionParams: Docum
   }
 }
 
-object DocumentDBConnectionParamsQuestion {
+object DocumentDBConnectionParamsForm {
   val URL = "url"
   val DATABASE = "database"
 
-  def apply(documentDBParams: DocumentDBParams): DocumentDBConnectionParamsQuestion = {
-    new DocumentDBConnectionParamsQuestion(documentDBParams)
+  def apply(documentDBParams: DocumentDBParams): DocumentDBConnectionParamsForm = {
+    new DocumentDBConnectionParamsForm(documentDBParams)
   }
 }

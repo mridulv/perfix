@@ -6,12 +6,12 @@ import com.amazonaws.services.eks.AmazonEKSClientBuilder
 import com.amazonaws.services.eks.model.DescribeClusterRequest
 import io.perfix.common.CommonConfig.IS_TRIAL_MODE
 import io.perfix.model.QuestionType
-import io.perfix.question.Question
-import io.perfix.question.Question.QuestionLabel
+import io.perfix.question.Form
+import io.perfix.question.Form.QuestionLabel
 
 import scala.jdk.CollectionConverters._
 
-trait LaunchStoreQuestion extends Question {
+trait LaunchStoreForm extends Form {
 
   val credentials: AWSCloudParams
   val launchQuestionsMapping: Map[QuestionLabel, QuestionType]

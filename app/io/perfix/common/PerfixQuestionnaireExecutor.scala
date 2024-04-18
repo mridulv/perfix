@@ -1,14 +1,14 @@
 package io.perfix.common
 
 import io.perfix.model.QuestionType
-import io.perfix.question.Question.QuestionLabel
-import io.perfix.question.{Question, Questionnaire}
+import io.perfix.question.Form.QuestionLabel
+import io.perfix.question.{Form, Questionnaire}
 
 class PerfixQuestionnaireExecutor(questionnaire: Questionnaire)
   extends Iterator[Map[QuestionLabel, QuestionType]] {
 
-  private var currentOpt: Option[Question] = None
-  private val allQuestionsIterator: Iterator[Question] = questionnaire.iterator
+  private var currentOpt: Option[Form] = None
+  private val allQuestionsIterator: Iterator[Form] = questionnaire.iterator
 
   override def hasNext: Boolean = {
     allQuestionsIterator.hasNext
