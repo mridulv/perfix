@@ -1,16 +1,16 @@
 package io.perfix.question
 
 import io.perfix.launch.AWSCloudParams
-import io.perfix.model.{BooleanType, QuestionType, StringType}
+import io.perfix.model.{BooleanType, FormInputType, StringType}
 import io.perfix.question.AWSCloudParamsForm._
 import io.perfix.question.Form.FormInputName
 
 class AWSCloudParamsForm(override val storeQuestionParams: AWSCloudParams) extends Form {
-  override val mapping: Map[FormInputName, QuestionType] = Map(
-    AWS_ACCESS_KEY -> QuestionType(StringType),
-    AWS_ACCESS_SECRET -> QuestionType(StringType),
-    LAUNCH_DB -> QuestionType(StringType, isRequired = false),
-    USE_INSTANCE_ROLE -> QuestionType(BooleanType, isRequired = false)
+  override val mapping: Map[FormInputName, FormInputType] = Map(
+    AWS_ACCESS_KEY -> FormInputType(StringType),
+    AWS_ACCESS_SECRET -> FormInputType(StringType),
+    LAUNCH_DB -> FormInputType(StringType, isRequired = false),
+    USE_INSTANCE_ROLE -> FormInputType(BooleanType, isRequired = false)
   )
 
   override def shouldAsk(): Boolean = true

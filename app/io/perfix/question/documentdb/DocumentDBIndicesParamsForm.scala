@@ -1,7 +1,7 @@
 package io.perfix.question.documentdb
 
 import io.perfix.exceptions.ParamsAlreadyDefinedException
-import io.perfix.model.{QuestionType, StringType}
+import io.perfix.model.{FormInputType, StringType}
 import io.perfix.question.Form
 import io.perfix.question.Form.FormInputName
 import io.perfix.question.documentdb.DocumentDBIndicesParamsForm.INDICES_COLUMNS
@@ -11,8 +11,8 @@ import play.api.libs.json.Json
 
 class DocumentDBIndicesParamsForm(override val storeQuestionParams: DocumentDBParams) extends Form {
 
-  override val mapping: Map[FormInputName, QuestionType] = Map(
-    INDICES_COLUMNS -> QuestionType(StringType, isRequired = false)
+  override val mapping: Map[FormInputName, FormInputType] = Map(
+    INDICES_COLUMNS -> FormInputType(StringType, isRequired = false)
   )
 
   override def shouldAsk(): Boolean = {

@@ -1,6 +1,6 @@
 package io.perfix.common
 
-import io.perfix.model.{IntType, QuestionType, StringType}
+import io.perfix.model.{IntType, FormInputType, StringType}
 import io.perfix.question.Form.FormInputName
 import io.perfix.question.{Form, FormParams, Questionnaire}
 import org.scalatest.flatspec.AnyFlatSpec
@@ -10,13 +10,13 @@ class PerfixQuestionnaireExecutorTest extends AnyFlatSpec with Matchers {
   def mockQuestionnaire: Questionnaire = new Questionnaire {
     override val questions: Iterator[Form] = Iterator(
       new Form {
-        override val mapping: Map[FormInputName, QuestionType] = Map("Q1" -> QuestionType(StringType))
+        override val mapping: Map[FormInputName, FormInputType] = Map("Q1" -> FormInputType(StringType))
         override val storeQuestionParams: FormParams = new FormParams {}
         override def shouldAsk(): Boolean = true
         override def setAnswers(answers: Map[FormInputName, Any]): Unit = {}
       },
       new Form {
-        override val mapping: Map[FormInputName, QuestionType] = Map("Q2" -> QuestionType(IntType))
+        override val mapping: Map[FormInputName, FormInputType] = Map("Q2" -> FormInputType(IntType))
         override val storeQuestionParams: FormParams = new FormParams {}
         override def shouldAsk(): Boolean = true
         override def setAnswers(answers: Map[FormInputName, Any]): Unit = {}
@@ -29,11 +29,11 @@ class PerfixQuestionnaireExecutorTest extends AnyFlatSpec with Matchers {
 
     executor.hasNext
     val question1 = executor.next()
-    question1 shouldBe Map("Q1" -> QuestionType(StringType))
+    question1 shouldBe Map("Q1" -> FormInputType(StringType))
 
     executor.hasNext
     val question2 = executor.next()
-    question2 shouldBe Map("Q2" -> QuestionType(IntType))
+    question2 shouldBe Map("Q2" -> FormInputType(IntType))
   }
 
   "A PerfixQuestionnaireExecutor" should "allow submitting answers to the current question" in {
