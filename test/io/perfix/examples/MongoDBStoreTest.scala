@@ -31,8 +31,8 @@ object MongoDBStoreTest {
       LAUNCH_DB -> false
     )
     val experimentExecutor = new ExperimentExecutor("mongodb")
-    while (experimentExecutor.getQuestionnaireExecutor.hasNext) {
-      val question = experimentExecutor.getQuestionnaireExecutor.next()
+    while (experimentExecutor.getFormSeriesEvaluator.hasNext) {
+      val question = experimentExecutor.getFormSeriesEvaluator.next()
       val answerMapping = question.map { case (k, questionType) =>
         val mappedValue = if (questionType.isRequired) {
           Some(mappedVariables(k))
@@ -41,7 +41,7 @@ object MongoDBStoreTest {
         }
         k -> mappedValue
       }
-      experimentExecutor.getQuestionnaireExecutor.submit(Form.filteredAnswers(answerMapping))
+      experimentExecutor.getFormSeriesEvaluator.submit(Form.filteredAnswers(answerMapping))
     }
 
     experimentExecutor.runExperiment()

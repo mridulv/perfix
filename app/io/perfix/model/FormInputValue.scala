@@ -21,6 +21,6 @@ object FormInputValue {
     case _ => throw new UnsupportedOperationException("Serialization of this Any type is not supported")
   }
 
-  implicit val PerfixQuestionAnswerWrites: Writes[FormInputValue] = Json.writes[FormInputValue]
-  implicit val PerfixQuestionAnswerReads: Reads[FormInputValue] = Json.reads[FormInputValue]
+  implicit val FormInputValueWrites: Writes[FormInputValue] = Json.writes[FormInputValue]
+  implicit val FormInputValueReads: Reads[FormInputValue] = Json.reads[FormInputValue]
 }

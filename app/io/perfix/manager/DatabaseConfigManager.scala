@@ -23,14 +23,14 @@ class DatabaseConfigManager {
     mapping(databaseConfigId)
   }
 
-  def getQuestions(databaseConfigId: DatabaseConfigId): FormInputs = {
-    mapping(databaseConfigId).questions
+  def getInputs(databaseConfigId: DatabaseConfigId): FormInputs = {
+    mapping(databaseConfigId).formInputs
   }
 
   def submitInputs(databaseConfigId: DatabaseConfigId,
-                   perfixQuestionAnswers: FormInputValues): DatabaseConfigParams = {
+                   formInputValues: FormInputValues): DatabaseConfigParams = {
     val databaseConfigParams = mapping(databaseConfigId)
-    databaseConfigParams.copy(perfixQuestionAnswers = Some(perfixQuestionAnswers.values))
+    databaseConfigParams.copy(formInputValues = Some(formInputValues.values))
   }
 
   def update(databaseConfigId: DatabaseConfigId,

@@ -49,9 +49,9 @@ class ExperimentExecutorIT extends AnyFlatSpec with Matchers with MockitoSugar w
       LAUNCH_DB -> false
     )
     val experimentExecutor = new ExperimentExecutor("mysql")
-    while (experimentExecutor.getQuestionnaireExecutor.hasNext) {
-      val question = experimentExecutor.getQuestionnaireExecutor.next()
-      val answerMapping = question.map { case (k, questionType) =>
+    while (experimentExecutor.getFormSeriesEvaluator.hasNext) {
+      val form = experimentExecutor.getFormSeriesEvaluator.next()
+      val answerMapping = form.map { case (k, questionType) =>
         val mappedValue = if (questionType.isRequired) {
           Some(mappedVariables(k))
         } else {
@@ -59,7 +59,7 @@ class ExperimentExecutorIT extends AnyFlatSpec with Matchers with MockitoSugar w
         }
         k -> mappedValue
       }
-      experimentExecutor.getQuestionnaireExecutor.submit(Form.filteredAnswers(answerMapping))
+      experimentExecutor.getFormSeriesEvaluator.submit(Form.filteredAnswers(answerMapping))
     }
 
     val result = experimentExecutor.runExperiment()

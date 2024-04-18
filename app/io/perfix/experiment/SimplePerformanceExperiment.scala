@@ -11,9 +11,9 @@ class SimplePerformanceExperiment(dataStore: DataStore) extends Experiment {
 
   private[experiment] val experimentParams = new ExperimentParams
 
-  def questions(): FormSeries = {
-    val questionnaire = new ExperimentFormSeries(experimentParams, dataStore)
-    questionnaire
+  def formSeries(): FormSeries = {
+    val formSeries = new ExperimentFormSeries(experimentParams, dataStore)
+    formSeries
   }
 
   def init(): Unit = {

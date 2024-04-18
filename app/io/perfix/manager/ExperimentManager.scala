@@ -14,46 +14,13 @@ class ExperimentManager {
   val resultsMapping: mutable.Map[Int, ExperimentResultWithFormInputValues] = mutable.Map.empty[Int, ExperimentResultWithFormInputValues]
   val mapping: mutable.Map[Int, ExperimentExecutor] = mutable.Map.empty[Int, ExperimentExecutor]
 
-  def startQuestionnaire(storeName: String): ExperimentId = {
-    val experimentExecutor = new ExperimentExecutor(storeName)
-    val response = ExperimentId(Random.nextInt(1000))
-    println(s"Experiment Id: ${response.id}")
-    mapping.put(response.id, experimentExecutor)
-    resultsMapping.put(response.id, ExperimentResultWithFormInputValues.empty)
-    response
-  }
-
-  def nextQuestion(experimentId: Int): Option[FormInputs] = {
-    val perfixExecutor = mapping(experimentId)
-    if (perfixExecutor.getQuestionnaireExecutor.hasNext) {
-      Some(FormInputs(perfixExecutor.getQuestionnaireExecutor.next()))
-    } else {
-      None
-    }
-  }
-
-  def submitQuestionAnswer(experimentId: Int,
-                           questionAnswers: FormInputValues): Unit = {
-    mapping(experimentId).getQuestionnaireExecutor.submit(questionAnswers.toMap)
-    val perfixExperimentResultWithMapping = resultsMapping(experimentId).addPerfixQuestionAnswers(questionAnswers.values)
-    resultsMapping.update(experimentId, perfixExperimentResultWithMapping)
-  }
-
-  def startExperiment(experimentId: Int): ExperimentResult = {
-    val experimentResult = mapping(experimentId).runExperiment()
-    val perfixExperimentResultWithMapping = resultsMapping(experimentId).addPerfixExperimentResult(experimentResult)
-    resultsMapping.update(experimentId, perfixExperimentResultWithMapping)
-    mapping(experimentId).cleanUp()
-    experimentResult
-  }
-
   def executeExperiment(storeName: String,
                         questionAnswers: FormInputValues): ExperimentId = {
     val response = ExperimentId(Random.nextInt(1000))
     val mappedVariables = questionAnswers.toMap
     val experimentExecutor = new ExperimentExecutor(storeName)
-    while (experimentExecutor.getQuestionnaireExecutor.hasNext) {
-      val question = experimentExecutor.getQuestionnaireExecutor.next()
+    while (experimentExecutor.getFormSeriesEvaluator.hasNext) {
+      val question = experimentExecutor.getFormSeriesEvaluator.next()
       val answerMapping = question.map { case (k, questionType) =>
         val mappedValue = if (questionType.isRequired) {
           Some(mappedVariables(k))
@@ -62,7 +29,7 @@ class ExperimentManager {
         }
         k -> mappedValue
       }
-      experimentExecutor.getQuestionnaireExecutor.submit(Form.filteredAnswers(answerMapping))
+      experimentExecutor.getFormSeriesEvaluator.submit(Form.filteredAnswers(answerMapping))
     }
 
     mapping.put(response.id, experimentExecutor)

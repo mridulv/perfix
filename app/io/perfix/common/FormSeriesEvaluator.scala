@@ -4,20 +4,20 @@ import io.perfix.model.FormInputType
 import io.perfix.forms.Form.FormInputName
 import io.perfix.forms.{Form, FormSeries}
 
-class FormSeriesEvaluator(questionnaire: FormSeries)
+class FormSeriesEvaluator(formSeries: FormSeries)
   extends Iterator[Map[FormInputName, FormInputType]] {
 
   private var currentOpt: Option[Form] = None
-  private val allQuestionsIterator: Iterator[Form] = questionnaire.iterator
+  private val forms: Iterator[Form] = formSeries.iterator
 
   override def hasNext: Boolean = {
-    allQuestionsIterator.hasNext
+    forms.hasNext
   }
 
   override def next(): Map[FormInputName, FormInputType] = {
-    val ques = allQuestionsIterator.next()
-    currentOpt = Some(ques)
-    ques.mapping
+    val form = forms.next()
+    currentOpt = Some(form)
+    form.mapping
   }
 
   def submit(answers: Map[FormInputName, Any]): Unit = {

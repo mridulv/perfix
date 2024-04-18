@@ -7,9 +7,9 @@ import play.api.libs.json.{Format, Json}
 
 case class DatabaseConfigParams(databaseConfigId: Option[DatabaseConfigId] = None,
                                 storeName: String,
-                                perfixQuestionAnswers: Option[Seq[FormInputValue]] = None) {
+                                formInputValues: Option[Seq[FormInputValue]] = None) {
 
-  def questions: FormInputs = {
+  def formInputs: FormInputs = {
     val dataStore = ExperimentExecutor.getDataStore(storeName)
     val cloudParams = new AWSCloudParams
     val credentialsQuestion = new AWSCloudParamsForm(cloudParams)

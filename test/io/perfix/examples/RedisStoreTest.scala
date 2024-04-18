@@ -25,8 +25,8 @@ object RedisStoreTest {
       AWS_ACCESS_SECRET -> "******************************************"
     )
     val experimentExecutor = new ExperimentExecutor("redis")
-    while (experimentExecutor.getQuestionnaireExecutor.hasNext) {
-      val question = experimentExecutor.getQuestionnaireExecutor.next()
+    while (experimentExecutor.getFormSeriesEvaluator.hasNext) {
+      val question = experimentExecutor.getFormSeriesEvaluator.next()
       val answerMapping = question.map { case (k, questionType) =>
         val mappedValue = if (questionType.isRequired) {
           Some(mappedVariables(k))
@@ -35,7 +35,7 @@ object RedisStoreTest {
         }
         k -> mappedValue
       }
-      experimentExecutor.getQuestionnaireExecutor.submit(Form.filteredAnswers(answerMapping))
+      experimentExecutor.getFormSeriesEvaluator.submit(Form.filteredAnswers(answerMapping))
     }
 
     experimentExecutor.runExperiment()

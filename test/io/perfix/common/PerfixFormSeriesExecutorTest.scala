@@ -7,7 +7,7 @@ import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
 class PerfixFormSeriesExecutorTest extends AnyFlatSpec with Matchers {
-  def mockQuestionnaire: FormSeries = new FormSeries {
+  def mockFormSeries: FormSeries = new FormSeries {
     override val forms: Iterator[Form] = Iterator(
       new Form {
         override val mapping: Map[FormInputName, FormInputType] = Map("Q1" -> FormInputType(StringType))
@@ -25,7 +25,7 @@ class PerfixFormSeriesExecutorTest extends AnyFlatSpec with Matchers {
   }
 
   "A PerfixQuestionnaireExecutor" should  "return the next question"  in {
-    val executor = new FormSeriesEvaluator(mockQuestionnaire)
+    val executor = new FormSeriesEvaluator(mockFormSeries)
 
     executor.hasNext
     val question1 = executor.next()
@@ -37,7 +37,7 @@ class PerfixFormSeriesExecutorTest extends AnyFlatSpec with Matchers {
   }
 
   "A PerfixQuestionnaireExecutor" should "allow submitting answers to the current question" in {
-    val executor = new FormSeriesEvaluator(mockQuestionnaire)
+    val executor = new FormSeriesEvaluator(mockFormSeries)
 
     executor.hasNext
     executor.next()
@@ -49,7 +49,7 @@ class PerfixFormSeriesExecutorTest extends AnyFlatSpec with Matchers {
   }
 
   "A PerfixQuestionnaireExecutor" should "throw an exception when submitting answers without a defined question" in {
-    val executor = new FormSeriesEvaluator(mockQuestionnaire)
+    val executor = new FormSeriesEvaluator(mockFormSeries)
 
     // Attempt to submit answers without a defined question
     an[UnsupportedOperationException] should be thrownBy {

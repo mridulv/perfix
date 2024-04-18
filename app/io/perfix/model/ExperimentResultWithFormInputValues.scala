@@ -9,11 +9,11 @@ case class ExperimentResultWithFormInputValues(perfixExperimentResult: Option[Ex
     this.copy(formInputValues = this.formInputValues.addFormInputValue(formInputValue))
   }
 
-  def addPerfixQuestionAnswers(formInputValues: Seq[FormInputValue]): ExperimentResultWithFormInputValues = {
+  def addFormInputValues(formInputValues: Seq[FormInputValue]): ExperimentResultWithFormInputValues = {
     this.copy(formInputValues = this.formInputValues.addFormInputValues(formInputValues))
   }
 
-  def addPerfixExperimentResult(perfixExperimentResult: ExperimentResult): ExperimentResultWithFormInputValues = {
+  def addExperimentResult(perfixExperimentResult: ExperimentResult): ExperimentResultWithFormInputValues = {
     this.copy(perfixExperimentResult = Some(perfixExperimentResult))
   }
 

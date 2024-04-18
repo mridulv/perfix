@@ -11,19 +11,19 @@ case class FormInputValues(values: Seq[FormInputValue]) {
     }.toMap
   }
 
-  def addFormInputValue(perfixQuestionAnswer: FormInputValue): FormInputValues = {
-    this.copy(values ++ Seq(perfixQuestionAnswer))
+  def addFormInputValue(formInputValue: FormInputValue): FormInputValues = {
+    this.copy(values ++ Seq(formInputValue))
   }
 
-  def addFormInputValues(perfixQuestionAnswers: Seq[FormInputValue]): FormInputValues = {
-    this.copy(values ++ perfixQuestionAnswers)
+  def addFormInputValues(formInputValues: Seq[FormInputValue]): FormInputValues = {
+    this.copy(values ++ formInputValues)
   }
 
 }
 
 object FormInputValues {
-  implicit val PerfixQuestionAnswersWrites: Writes[FormInputValues] = Json.writes[FormInputValues]
-  implicit val PerfixQuestionAnswersReads: Reads[FormInputValues] = Json.reads[FormInputValues]
+  implicit val FormInputValuesWrites: Writes[FormInputValues] = Json.writes[FormInputValues]
+  implicit val FormInputValuesReads: Reads[FormInputValues] = Json.reads[FormInputValues]
 
   def empty: FormInputValues = {
     FormInputValues(Seq.empty)

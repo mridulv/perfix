@@ -8,7 +8,7 @@ trait FormSeries {
     new Iterator[Form] {
       private var nextForm: Option[Form] = None
 
-      private def findNextQuestion(): Unit = {
+      private def findNextForm(): Unit = {
         while (forms.hasNext) {
           val potentialNextForm = forms.next()
           if (potentialNextForm.shouldAsk()) {
@@ -21,16 +21,16 @@ trait FormSeries {
 
       override def hasNext: Boolean = {
         if (nextForm.isEmpty) {
-          findNextQuestion()
+          findNextForm()
         }
         nextForm.isDefined
       }
 
       override def next(): Form = {
         nextForm match {
-          case Some(ques) =>
+          case Some(form) =>
             nextForm = None
-            ques
+            form
           case None => throw new NoSuchElementException("No more forms")
         }
       }

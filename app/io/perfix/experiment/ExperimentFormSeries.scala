@@ -11,18 +11,18 @@ class ExperimentFormSeries(experimentParams: ExperimentParams,
 
   override val forms: Iterator[Form] = {
     val cloudParams = new AWSCloudParams
-    val credentialsQuestion = new AWSCloudParamsForm(cloudParams)
+    val credentialsForm = new AWSCloudParamsForm(cloudParams)
 
-    val launchQuestions = dataStore.launch(cloudParams) match {
-      case Some(launchQuestion) => Iterator(credentialsQuestion) ++ Iterator(launchQuestion)
-      case None => Iterator(credentialsQuestion)
+    val launchStoreForm = dataStore.launch(cloudParams) match {
+      case Some(launchQuestion) => Iterator(credentialsForm) ++ Iterator(launchQuestion)
+      case None => Iterator(credentialsForm)
     }
 
-    val initialQuestions = Iterator(new DataConfigurationForm(experimentParams)) ++
+    val initForm = Iterator(new DataConfigurationForm(experimentParams)) ++
       Iterator(new ExperimentParamsForm(experimentParams))
 
     val nextSet = dataStore.storeInputs(experimentParams.dataDescription).forms
 
-    launchQuestions ++ initialQuestions ++ nextSet
+    launchStoreForm ++ initForm ++ nextSet
   }
 }

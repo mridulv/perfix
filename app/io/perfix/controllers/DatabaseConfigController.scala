@@ -20,8 +20,8 @@ class DatabaseConfigController @Inject()(val controllerComponents: ControllerCom
     Results.Ok(Json.toJson(databaseConfigManager.get(DatabaseConfigId(databaseConfigId))))
   }
 
-  def getQuestions(databaseConfigId: Int) = Action { request =>
-    Results.Ok(Json.toJson(databaseConfigManager.getQuestions(DatabaseConfigId(databaseConfigId))))
+  def getInputs(databaseConfigId: Int) = Action { request =>
+    Results.Ok(Json.toJson(databaseConfigManager.getInputs(DatabaseConfigId(databaseConfigId))))
   }
 
   def submitInputs(databaseConfigId: Int) = Action(parse.json) { request =>

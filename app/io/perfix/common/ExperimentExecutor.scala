@@ -12,9 +12,9 @@ class ExperimentExecutor(storeName: String) {
 
   private val dataStore = ExperimentExecutor.getDataStore(storeName)
   private val experiment = new SimplePerformanceExperiment(dataStore)
-  private val formSeriesEvaluator = new FormSeriesEvaluator(experiment.questions())
+  private val formSeriesEvaluator = new FormSeriesEvaluator(experiment.formSeries())
 
-  def getQuestionnaireExecutor: FormSeriesEvaluator = {
+  def getFormSeriesEvaluator: FormSeriesEvaluator = {
     formSeriesEvaluator
   }
 
