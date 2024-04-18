@@ -3,12 +3,12 @@ package io.perfix.question.mysql
 import io.perfix.exceptions.ParamsAlreadyDefinedException
 import io.perfix.model.{QuestionType, StringType}
 import io.perfix.question.Form
-import io.perfix.question.Form.QuestionLabel
+import io.perfix.question.Form.FormInputName
 import io.perfix.question.mysql.TableIndicesDetailForm.{PRIMARY_INDEX_COLUMN, SECONDARY_INDEX_COLUMNS}
 import io.perfix.stores.mysql.{MySQLParams, MySQLTableIndexesParams}
 
 class TableIndicesDetailForm(override val storeQuestionParams: MySQLParams) extends Form {
-  override val mapping: Map[QuestionLabel, QuestionType] = Map(
+  override val mapping: Map[FormInputName, QuestionType] = Map(
     PRIMARY_INDEX_COLUMN -> QuestionType(StringType, isRequired = false),
     SECONDARY_INDEX_COLUMNS -> QuestionType(StringType, isRequired = false)
   )
@@ -17,7 +17,7 @@ class TableIndicesDetailForm(override val storeQuestionParams: MySQLParams) exte
     storeQuestionParams.mySQLTableIndexesParams.isEmpty
   }
 
-  override def setAnswers(answers: Map[QuestionLabel, Any]): Unit = {
+  override def setAnswers(answers: Map[FormInputName, Any]): Unit = {
     import storeQuestionParams._
     mySQLTableIndexesParams match {
       case Some(_) => throw ParamsAlreadyDefinedException("mySQLTableIndexesParams")

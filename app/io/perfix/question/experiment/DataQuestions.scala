@@ -3,13 +3,13 @@ package io.perfix.question.experiment
 import DataQuestions._
 import io.perfix.exceptions.{InvalidQuestionParameterExceptions, ParamsAlreadyDefinedException}
 import io.perfix.model.{ColumnDescription, DoubleType, ExperimentParams, QuestionType, StringType}
-import io.perfix.question.Form.QuestionLabel
+import io.perfix.question.Form.FormInputName
 import io.perfix.question.{Form, FormParams}
 import play.api.libs.json.Json
 
 class DataQuestions(experimentParams: ExperimentParams) extends Form {
 
-  override val mapping: Map[QuestionLabel, QuestionType] = Map(
+  override val mapping: Map[FormInputName, QuestionType] = Map(
     ROWS -> QuestionType(DoubleType),
     COLUMNS -> QuestionType(StringType)
   )
@@ -21,7 +21,7 @@ class DataQuestions(experimentParams: ExperimentParams) extends Form {
     dataDescription.rowsOpt.isEmpty || dataDescription.columnsOpt.isEmpty
   }
 
-  override def setAnswers(answers: Map[QuestionLabel, Any]): Unit = {
+  override def setAnswers(answers: Map[FormInputName, Any]): Unit = {
     import experimentParams._
     (dataDescription.rowsOpt, dataDescription.columnsOpt) match {
       case (None, None) =>

@@ -4,12 +4,12 @@ import TableParamsQuestions._
 import io.perfix.exceptions.ParamsAlreadyDefinedException
 import io.perfix.model.{QuestionType, StringType}
 import io.perfix.question.Form
-import io.perfix.question.Form.QuestionLabel
+import io.perfix.question.Form.FormInputName
 import io.perfix.stores.mysql.{MySQLParams, MySQLTableParams}
 
 class TableParamsQuestions(override val storeQuestionParams: MySQLParams) extends Form {
 
-  override val mapping: Map[QuestionLabel, QuestionType] = Map(
+  override val mapping: Map[FormInputName, QuestionType] = Map(
     DBNAME -> QuestionType(StringType),
     TABLENAME -> QuestionType(StringType)
   )
@@ -18,7 +18,7 @@ class TableParamsQuestions(override val storeQuestionParams: MySQLParams) extend
     storeQuestionParams.mySQLTableParams.isEmpty
   }
 
-  override def setAnswers(answers: Map[QuestionLabel, Any]): Unit = {
+  override def setAnswers(answers: Map[FormInputName, Any]): Unit = {
     import storeQuestionParams._
     mySQLTableParams match {
       case Some(_) => throw ParamsAlreadyDefinedException("mySQLTableParams")

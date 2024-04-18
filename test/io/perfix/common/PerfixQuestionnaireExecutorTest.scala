@@ -1,7 +1,7 @@
 package io.perfix.common
 
 import io.perfix.model.{IntType, QuestionType, StringType}
-import io.perfix.question.Form.QuestionLabel
+import io.perfix.question.Form.FormInputName
 import io.perfix.question.{Form, FormParams, Questionnaire}
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
@@ -10,16 +10,16 @@ class PerfixQuestionnaireExecutorTest extends AnyFlatSpec with Matchers {
   def mockQuestionnaire: Questionnaire = new Questionnaire {
     override val questions: Iterator[Form] = Iterator(
       new Form {
-        override val mapping: Map[QuestionLabel, QuestionType] = Map("Q1" -> QuestionType(StringType))
+        override val mapping: Map[FormInputName, QuestionType] = Map("Q1" -> QuestionType(StringType))
         override val storeQuestionParams: FormParams = new FormParams {}
         override def shouldAsk(): Boolean = true
-        override def setAnswers(answers: Map[QuestionLabel, Any]): Unit = {}
+        override def setAnswers(answers: Map[FormInputName, Any]): Unit = {}
       },
       new Form {
-        override val mapping: Map[QuestionLabel, QuestionType] = Map("Q2" -> QuestionType(IntType))
+        override val mapping: Map[FormInputName, QuestionType] = Map("Q2" -> QuestionType(IntType))
         override val storeQuestionParams: FormParams = new FormParams {}
         override def shouldAsk(): Boolean = true
-        override def setAnswers(answers: Map[QuestionLabel, Any]): Unit = {}
+        override def setAnswers(answers: Map[FormInputName, Any]): Unit = {}
       }
     )
   }

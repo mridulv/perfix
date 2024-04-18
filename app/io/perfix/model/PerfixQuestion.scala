@@ -1,9 +1,9 @@
 package io.perfix.model
 
-import io.perfix.question.Form.QuestionLabel
+import io.perfix.question.Form.FormInputName
 import play.api.libs.json._
 
-case class PerfixQuestion(questions: Map[QuestionLabel, QuestionType])
+case class PerfixQuestion(questions: Map[FormInputName, QuestionType])
 
 object PerfixQuestion {
   implicit val reads: Reads[PerfixQuestion] = Json.reads[PerfixQuestion]

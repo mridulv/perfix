@@ -3,10 +3,10 @@ package io.perfix.question
 import io.perfix.launch.AWSCloudParams
 import io.perfix.model.{BooleanType, QuestionType, StringType}
 import io.perfix.question.AWSCloudParamsForm._
-import io.perfix.question.Form.QuestionLabel
+import io.perfix.question.Form.FormInputName
 
 class AWSCloudParamsForm(override val storeQuestionParams: AWSCloudParams) extends Form {
-  override val mapping: Map[QuestionLabel, QuestionType] = Map(
+  override val mapping: Map[FormInputName, QuestionType] = Map(
     AWS_ACCESS_KEY -> QuestionType(StringType),
     AWS_ACCESS_SECRET -> QuestionType(StringType),
     LAUNCH_DB -> QuestionType(StringType, isRequired = false),
@@ -15,7 +15,7 @@ class AWSCloudParamsForm(override val storeQuestionParams: AWSCloudParams) exten
 
   override def shouldAsk(): Boolean = true
 
-  override def setAnswers(answers: Map[QuestionLabel, Any]): Unit = {
+  override def setAnswers(answers: Map[FormInputName, Any]): Unit = {
     storeQuestionParams.accessKey = Some(answers(AWS_ACCESS_KEY).toString)
     storeQuestionParams.accessSecret = Some(answers(AWS_ACCESS_SECRET).toString)
     storeQuestionParams.launchDB = answers.get(LAUNCH_DB).exists(_.toString.toBoolean)

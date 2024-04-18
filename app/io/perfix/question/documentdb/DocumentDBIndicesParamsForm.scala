@@ -3,7 +3,7 @@ package io.perfix.question.documentdb
 import io.perfix.exceptions.ParamsAlreadyDefinedException
 import io.perfix.model.{QuestionType, StringType}
 import io.perfix.question.Form
-import io.perfix.question.Form.QuestionLabel
+import io.perfix.question.Form.FormInputName
 import io.perfix.question.documentdb.DocumentDBIndicesParamsForm.INDICES_COLUMNS
 import io.perfix.stores.documentdb.model.DocumentDBIndicesParams
 import io.perfix.stores.documentdb.DocumentDBParams
@@ -11,7 +11,7 @@ import play.api.libs.json.Json
 
 class DocumentDBIndicesParamsForm(override val storeQuestionParams: DocumentDBParams) extends Form {
 
-  override val mapping: Map[QuestionLabel, QuestionType] = Map(
+  override val mapping: Map[FormInputName, QuestionType] = Map(
     INDICES_COLUMNS -> QuestionType(StringType, isRequired = false)
   )
 
@@ -19,7 +19,7 @@ class DocumentDBIndicesParamsForm(override val storeQuestionParams: DocumentDBPa
     storeQuestionParams.documentDBIndicesParams.isEmpty
   }
 
-  override def setAnswers(answers: Map[QuestionLabel, Any]): Unit = {
+  override def setAnswers(answers: Map[FormInputName, Any]): Unit = {
     import storeQuestionParams._
     documentDBIndicesParams match {
       case Some(_) => throw ParamsAlreadyDefinedException("documentDbIndicesParams")

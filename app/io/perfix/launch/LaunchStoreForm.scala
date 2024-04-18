@@ -7,16 +7,16 @@ import com.amazonaws.services.eks.model.DescribeClusterRequest
 import io.perfix.common.CommonConfig.IS_TRIAL_MODE
 import io.perfix.model.QuestionType
 import io.perfix.question.Form
-import io.perfix.question.Form.QuestionLabel
+import io.perfix.question.Form.FormInputName
 
 import scala.jdk.CollectionConverters._
 
 trait LaunchStoreForm extends Form {
 
   val credentials: AWSCloudParams
-  val launchQuestionsMapping: Map[QuestionLabel, QuestionType]
+  val launchQuestionsMapping: Map[FormInputName, QuestionType]
 
-  override lazy val mapping: Map[QuestionLabel, QuestionType] = if (IS_TRIAL_MODE) {
+  override lazy val mapping: Map[FormInputName, QuestionType] = if (IS_TRIAL_MODE) {
     Map.empty
   } else {
     launchQuestionsMapping
