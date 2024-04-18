@@ -7,18 +7,18 @@ import io.perfix.question.Form.FormInputName
 import io.perfix.question.mysql.TableIndicesDetailForm.{PRIMARY_INDEX_COLUMN, SECONDARY_INDEX_COLUMNS}
 import io.perfix.stores.mysql.{MySQLParams, MySQLTableIndexesParams}
 
-class TableIndicesDetailForm(override val storeQuestionParams: MySQLParams) extends Form {
+class TableIndicesDetailForm(override val formParams: MySQLParams) extends Form {
   override val mapping: Map[FormInputName, FormInputType] = Map(
     PRIMARY_INDEX_COLUMN -> FormInputType(StringType, isRequired = false),
     SECONDARY_INDEX_COLUMNS -> FormInputType(StringType, isRequired = false)
   )
 
   override def shouldAsk(): Boolean = {
-    storeQuestionParams.mySQLTableIndexesParams.isEmpty
+    formParams.mySQLTableIndexesParams.isEmpty
   }
 
   override def setAnswers(answers: Map[FormInputName, Any]): Unit = {
-    import storeQuestionParams._
+    import formParams._
     mySQLTableIndexesParams match {
       case Some(_) => throw ParamsAlreadyDefinedException("mySQLTableIndexesParams")
       case None =>

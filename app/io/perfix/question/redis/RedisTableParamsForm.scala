@@ -7,7 +7,7 @@ import io.perfix.question.Form.FormInputName
 import io.perfix.question.redis.RedisTableParamsForm.KEY_COLUMN
 import io.perfix.stores.redis.{RedisParams, RedisTableParams}
 
-class RedisTableParamsForm(override val storeQuestionParams: RedisParams)
+class RedisTableParamsForm(override val formParams: RedisParams)
   extends Form {
 
   override val mapping: Map[FormInputName, FormInputType] = Map(
@@ -15,13 +15,13 @@ class RedisTableParamsForm(override val storeQuestionParams: RedisParams)
   )
 
   override def shouldAsk(): Boolean = {
-    storeQuestionParams.redisTableParams.isEmpty
+    formParams.redisTableParams.isEmpty
   }
 
   override def setAnswers(answers: Map[FormInputName, Any]): Unit = {
-    storeQuestionParams.redisTableParams match {
+    formParams.redisTableParams match {
       case Some(_) => throw ParamsAlreadyDefinedException("Redis Table Params are already defined")
-      case None => storeQuestionParams.redisTableParams = Some(RedisTableParams(answers(KEY_COLUMN).toString))
+      case None => formParams.redisTableParams = Some(RedisTableParams(answers(KEY_COLUMN).toString))
     }
   }
 }

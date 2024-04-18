@@ -3,7 +3,7 @@ package io.perfix.e2e
 import io.perfix.common.ExperimentExecutor
 import io.perfix.question.AWSCloudParamsForm.{AWS_ACCESS_KEY, AWS_ACCESS_SECRET, LAUNCH_DB}
 import io.perfix.question.Form
-import io.perfix.question.experiment.DataQuestions.{COLUMNS, ROWS}
+import io.perfix.question.experiment.DataConfigurationForm.{COLUMNS, ROWS}
 import io.perfix.question.experiment.ExperimentParamsForm.{BENCHMARK_TIME_IN_SECONDS, CONCURRENT_QUERIES, PERFIX_QUERY}
 import io.perfix.question.mysql.ConnectionParamsForm.{PASSWORD, URL, USERNAME}
 import io.perfix.question.mysql.MySQLLaunchForm.{INSTANCE_IDENTIFIER, INSTANCE_TYPE}

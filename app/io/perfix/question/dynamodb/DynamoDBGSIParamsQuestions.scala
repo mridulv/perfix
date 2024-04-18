@@ -9,23 +9,23 @@ import io.perfix.stores.dynamodb.model.DynamoDBGSIMetadataParams
 import io.perfix.stores.dynamodb.DynamoDBParams
 import play.api.libs.json.Json
 
-case class DynamoDBGSIParamsQuestions(override val storeQuestionParams: DynamoDBParams) extends Form {
+case class DynamoDBGSIParamsQuestions(override val formParams: DynamoDBParams) extends Form {
 
   override val mapping: Map[FormInputName, FormInputType] = Map(
     GSI -> FormInputType(StringType, isRequired = false)
   )
 
   override def shouldAsk(): Boolean = {
-    import storeQuestionParams._
+    import formParams._
     dynamoDBGSIMetadataParams.isEmpty
   }
 
   override def setAnswers(answers: Map[FormInputName, Any]): Unit = {
-    import storeQuestionParams._
+    import formParams._
     dynamoDBGSIMetadataParams match {
       case Some(_) => throw ParamsAlreadyDefinedException("mySQLConnectionParams")
       case None =>
-        storeQuestionParams.dynamoDBGSIMetadataParams = answers.get(GSI).map { v =>
+        formParams.dynamoDBGSIMetadataParams = answers.get(GSI).map { v =>
           Json.parse(v.toString).as[DynamoDBGSIMetadataParams]
         }
     }

@@ -17,7 +17,7 @@ class ExperimentParamsForm(experimentParams: ExperimentParams) extends Form {
     PERFIX_QUERY -> FormInputType(StringType)
   )
 
-  override val storeQuestionParams: FormParams = experimentParams
+  override val formParams: FormParams = experimentParams
 
   override def shouldAsk(): Boolean = {
     experimentParams.concurrentQueriesOpt.isEmpty

@@ -11,13 +11,13 @@ class PerfixFormSeriesExecutorTest extends AnyFlatSpec with Matchers {
     override val forms: Iterator[Form] = Iterator(
       new Form {
         override val mapping: Map[FormInputName, FormInputType] = Map("Q1" -> FormInputType(StringType))
-        override val storeQuestionParams: FormParams = new FormParams {}
+        override val formParams: FormParams = new FormParams {}
         override def shouldAsk(): Boolean = true
         override def setAnswers(answers: Map[FormInputName, Any]): Unit = {}
       },
       new Form {
         override val mapping: Map[FormInputName, FormInputType] = Map("Q2" -> FormInputType(IntType))
-        override val storeQuestionParams: FormParams = new FormParams {}
+        override val formParams: FormParams = new FormParams {}
         override def shouldAsk(): Boolean = true
         override def setAnswers(answers: Map[FormInputName, Any]): Unit = {}
       }

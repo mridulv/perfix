@@ -3,7 +3,7 @@ package io.perfix.examples
 import io.perfix.common.ExperimentExecutor
 import io.perfix.question.AWSCloudParamsForm._
 import io.perfix.question.Form
-import io.perfix.question.experiment.DataQuestions._
+import io.perfix.question.experiment.DataConfigurationForm._
 import io.perfix.question.experiment.ExperimentParamsForm.{CONCURRENT_QUERIES, PERFIX_QUERY}
 import io.perfix.question.mysql.ConnectionParamsForm._
 import io.perfix.question.mysql.MySQLLaunchForm._

@@ -8,7 +8,7 @@ class FormSeriesTest extends AnyFlatSpec with Matchers {
 
   case class MockForm(label: String, shouldAskResult: Boolean) extends Form {
     override val mapping: Map[Form.FormInputName, FormInputType] = Map(label -> FormInputType(StringType))
-    override val storeQuestionParams: FormParams = new FormParams {}
+    override val formParams: FormParams = new FormParams {}
     override def shouldAsk(): Boolean = shouldAskResult
     override def setAnswers(answers: Map[Form.FormInputName, Any]): Unit = ???
   }

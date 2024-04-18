@@ -5,7 +5,7 @@ import io.perfix.question.AWSCloudParamsForm.{AWS_ACCESS_KEY, AWS_ACCESS_SECRET}
 import io.perfix.question.Form
 import io.perfix.question.dynamodb.DynamoDBGSIParamsQuestions.GSI
 import io.perfix.question.dynamodb.DynamoDBTableParamsQuestions._
-import io.perfix.question.experiment.DataQuestions._
+import io.perfix.question.experiment.DataConfigurationForm._
 import io.perfix.question.experiment.ExperimentParamsForm.CONCURRENT_QUERIES
 
 object DynamoDBStoreTest {

@@ -9,18 +9,18 @@ import io.perfix.stores.documentdb.model.DocumentDBIndicesParams
 import io.perfix.stores.documentdb.DocumentDBParams
 import play.api.libs.json.Json
 
-class DocumentDBIndicesParamsForm(override val storeQuestionParams: DocumentDBParams) extends Form {
+class DocumentDBIndicesParamsForm(override val formParams: DocumentDBParams) extends Form {
 
   override val mapping: Map[FormInputName, FormInputType] = Map(
     INDICES_COLUMNS -> FormInputType(StringType, isRequired = false)
   )
 
   override def shouldAsk(): Boolean = {
-    storeQuestionParams.documentDBIndicesParams.isEmpty
+    formParams.documentDBIndicesParams.isEmpty
   }
 
   override def setAnswers(answers: Map[FormInputName, Any]): Unit = {
-    import storeQuestionParams._
+    import formParams._
     documentDBIndicesParams match {
       case Some(_) => throw ParamsAlreadyDefinedException("documentDbIndicesParams")
       case None => documentDBIndicesParams = answers.get(INDICES_COLUMNS).map { v =>

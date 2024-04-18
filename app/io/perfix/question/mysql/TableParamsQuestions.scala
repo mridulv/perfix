@@ -7,7 +7,7 @@ import io.perfix.question.Form
 import io.perfix.question.Form.FormInputName
 import io.perfix.stores.mysql.{MySQLParams, MySQLTableParams}
 
-class TableParamsQuestions(override val storeQuestionParams: MySQLParams) extends Form {
+class TableParamsQuestions(override val formParams: MySQLParams) extends Form {
 
   override val mapping: Map[FormInputName, FormInputType] = Map(
     DBNAME -> FormInputType(StringType),
@@ -15,11 +15,11 @@ class TableParamsQuestions(override val storeQuestionParams: MySQLParams) extend
   )
 
   override def shouldAsk(): Boolean = {
-    storeQuestionParams.mySQLTableParams.isEmpty
+    formParams.mySQLTableParams.isEmpty
   }
 
   override def setAnswers(answers: Map[FormInputName, Any]): Unit = {
-    import storeQuestionParams._
+    import formParams._
     mySQLTableParams match {
       case Some(_) => throw ParamsAlreadyDefinedException("mySQLTableParams")
       case None => mySQLTableParams = Some(MySQLTableParams(answers(DBNAME).toString, answers(TABLENAME).toString))

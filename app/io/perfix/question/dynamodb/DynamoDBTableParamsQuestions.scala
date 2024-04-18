@@ -7,7 +7,7 @@ import io.perfix.question.Form
 import io.perfix.question.Form.FormInputName
 import io.perfix.stores.dynamodb.{DynamoDBParams, DynamoDBTableParams}
 
-class DynamoDBTableParamsQuestions(override val storeQuestionParams: DynamoDBParams) extends Form {
+class DynamoDBTableParamsQuestions(override val formParams: DynamoDBParams) extends Form {
 
   override val mapping: Map[FormInputName, FormInputType] = Map(
     CONNECTION_URL -> FormInputType(StringType, isRequired = false),
@@ -17,16 +17,16 @@ class DynamoDBTableParamsQuestions(override val storeQuestionParams: DynamoDBPar
   )
 
   override def shouldAsk(): Boolean = {
-    import storeQuestionParams._
+    import formParams._
     dynamoDBTableParams.isEmpty
   }
 
   override def setAnswers(answers: Map[FormInputName, Any]): Unit = {
-    import storeQuestionParams._
+    import formParams._
     dynamoDBTableParams match {
       case Some(_) => throw ParamsAlreadyDefinedException("mySQLConnectionParams")
       case None =>
-        storeQuestionParams.dynamoDBTableParams = Some(
+        formParams.dynamoDBTableParams = Some(
           DynamoDBTableParams(
             answers.get(CONNECTION_URL).map(_.toString),
             answers(TABLE_NAME).toString,

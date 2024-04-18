@@ -7,18 +7,18 @@ import io.perfix.question.Form.FormInputName
 import io.perfix.question.dynamodb.DynamoDBCapacityQuestions.{READ_CAPACITY, WRITE_CAPACITY}
 import io.perfix.stores.dynamodb.{DynamoDBCapacityParams, DynamoDBParams}
 
-class DynamoDBCapacityQuestions(override val storeQuestionParams: DynamoDBParams) extends Form {
+class DynamoDBCapacityQuestions(override val formParams: DynamoDBParams) extends Form {
   override val mapping: Map[FormInputName, FormInputType] = Map(
     READ_CAPACITY -> FormInputType(IntType, isRequired = false),
     WRITE_CAPACITY -> FormInputType(IntType, isRequired = false)
   )
 
   override def shouldAsk(): Boolean = {
-    storeQuestionParams.dynamoDBCapacityParams.isEmpty
+    formParams.dynamoDBCapacityParams.isEmpty
   }
 
   override def setAnswers(answers: Map[FormInputName, Any]): Unit = {
-    import storeQuestionParams._
+    import formParams._
     dynamoDBCapacityParams match {
       case Some(_) => throw ParamsAlreadyDefinedException("dynamoDBCapacityParams")
       case None =>

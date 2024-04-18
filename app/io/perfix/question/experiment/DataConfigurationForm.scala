@@ -1,20 +1,20 @@
 package io.perfix.question.experiment
 
-import DataQuestions._
+import DataConfigurationForm._
 import io.perfix.exceptions.{InvalidFormParameterExceptions, ParamsAlreadyDefinedException}
 import io.perfix.model.{ColumnDescription, DoubleType, ExperimentParams, FormInputType, StringType}
 import io.perfix.question.Form.FormInputName
 import io.perfix.question.{Form, FormParams}
 import play.api.libs.json.Json
 
-class DataQuestions(experimentParams: ExperimentParams) extends Form {
+class DataConfigurationForm(experimentParams: ExperimentParams) extends Form {
 
   override val mapping: Map[FormInputName, FormInputType] = Map(
     ROWS -> FormInputType(DoubleType),
     COLUMNS -> FormInputType(StringType)
   )
 
-  override val storeQuestionParams: FormParams = experimentParams
+  override val formParams: FormParams = experimentParams
 
   override def shouldAsk(): Boolean = {
     import experimentParams._
@@ -38,7 +38,7 @@ class DataQuestions(experimentParams: ExperimentParams) extends Form {
   }
 }
 
-object DataQuestions {
+object DataConfigurationForm {
   val ROWS = "rows"
   val COLUMNS = "columns"
 }

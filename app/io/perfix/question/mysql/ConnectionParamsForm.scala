@@ -7,7 +7,7 @@ import io.perfix.question.Form
 import io.perfix.question.Form.FormInputName
 import io.perfix.stores.mysql.{MySQLConnectionParams, MySQLParams}
 
-class ConnectionParamsForm(override val storeQuestionParams: MySQLParams) extends Form {
+class ConnectionParamsForm(override val formParams: MySQLParams) extends Form {
 
   override val mapping: Map[FormInputName, FormInputType] = Map(
     URL -> FormInputType(StringType),
@@ -16,12 +16,12 @@ class ConnectionParamsForm(override val storeQuestionParams: MySQLParams) extend
   )
 
   override def shouldAsk(): Boolean = {
-    import storeQuestionParams._
+    import formParams._
     mySQLConnectionParams.isEmpty
   }
 
   override def setAnswers(answers: Map[FormInputName, Any]): Unit = {
-    import storeQuestionParams._
+    import formParams._
     mySQLConnectionParams match {
       case Some(_) => throw ParamsAlreadyDefinedException("mySQLConnectionParams")
       case None =>

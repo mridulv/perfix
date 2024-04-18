@@ -7,7 +7,7 @@ import io.perfix.question.Form.FormInputName
 import io.perfix.question.documentdb.DocumentDBConnectionParamsForm._
 import io.perfix.stores.documentdb.{DocumentDBConnectionParams, DocumentDBParams}
 
-class DocumentDBConnectionParamsForm(override val storeQuestionParams: DocumentDBParams) extends Form {
+class DocumentDBConnectionParamsForm(override val formParams: DocumentDBParams) extends Form {
 
   override val mapping: Map[FormInputName, FormInputType] = Map(
     URL -> FormInputType(StringType),
@@ -15,12 +15,12 @@ class DocumentDBConnectionParamsForm(override val storeQuestionParams: DocumentD
   )
 
   override def shouldAsk(): Boolean = {
-    import storeQuestionParams._
+    import formParams._
     documentDBConnectionParams.isEmpty
   }
 
   override def setAnswers(answers: Map[FormInputName, Any]): Unit = {
-    import storeQuestionParams._
+    import formParams._
     documentDBConnectionParams match {
       case Some(_) => throw ParamsAlreadyDefinedException("mySQLConnectionParams")
       case None =>

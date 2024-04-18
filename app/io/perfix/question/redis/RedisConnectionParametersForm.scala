@@ -7,21 +7,21 @@ import io.perfix.question.Form.FormInputName
 import io.perfix.question.redis.RedisConnectionParametersForm.{PORT, URL}
 import io.perfix.stores.redis.{RedisConnectionParams, RedisParams}
 
-class RedisConnectionParametersForm(override val storeQuestionParams: RedisParams) extends Form {
+class RedisConnectionParametersForm(override val formParams: RedisParams) extends Form {
   override val mapping: Map[FormInputName, FormInputType] = Map(
     URL -> FormInputType(StringType),
     PORT -> FormInputType(IntType)
   )
 
   override def shouldAsk(): Boolean = {
-    storeQuestionParams.redisConnectionParams.isEmpty
+    formParams.redisConnectionParams.isEmpty
   }
 
   override def setAnswers(answers: Map[FormInputName, Any]): Unit = {
-    storeQuestionParams.redisConnectionParams match {
+    formParams.redisConnectionParams match {
       case Some(_) => throw ParamsAlreadyDefinedException("Redis URL Already Defined")
       case None =>
-        storeQuestionParams.redisConnectionParams = Some(
+        formParams.redisConnectionParams = Some(
           RedisConnectionParams(
             answers(URL).toString,
             answers(PORT).toString.toInt

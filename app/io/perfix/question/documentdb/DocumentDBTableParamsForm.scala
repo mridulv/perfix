@@ -7,18 +7,18 @@ import io.perfix.question.Form.FormInputName
 import io.perfix.question.documentdb.DocumentDBTableParamsForm.COLLECTION_NAME
 import io.perfix.stores.documentdb.{DocumentDBParams, DocumentDBTableParams}
 
-class DocumentDBTableParamsForm(override val storeQuestionParams: DocumentDBParams) extends Form {
+class DocumentDBTableParamsForm(override val formParams: DocumentDBParams) extends Form {
 
   override val mapping: Map[FormInputName, FormInputType] = Map(
     COLLECTION_NAME -> FormInputType(StringType)
   )
 
   override def shouldAsk(): Boolean = {
-    storeQuestionParams.documentDBTableParams.isEmpty
+    formParams.documentDBTableParams.isEmpty
   }
 
   override def setAnswers(answers: Map[FormInputName, Any]): Unit = {
-    import storeQuestionParams._
+    import formParams._
     documentDBTableParams match {
       case Some(_) => throw ParamsAlreadyDefinedException("mySQLTableParams")
       case None => documentDBTableParams = Some(DocumentDBTableParams(answers(COLLECTION_NAME).toString))

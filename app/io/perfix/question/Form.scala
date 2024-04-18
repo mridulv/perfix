@@ -7,7 +7,7 @@ trait Form {
 
   val mapping: Map[FormInputName, FormInputType]
 
-  val storeQuestionParams: FormParams
+  val formParams: FormParams
 
   def shouldAsk(): Boolean
 

@@ -17,7 +17,7 @@ import java.util.concurrent.TimeUnit
 import scala.util.Random
 
 class MySQLLaunchForm(override val credentials: AWSCloudParams,
-                      override val storeQuestionParams: MySQLParams) extends LaunchStoreForm {
+                      override val formParams: MySQLParams) extends LaunchStoreForm {
 
   override val launchQuestionsMapping: Map[FormInputName, FormInputType] = Map(
     DBNAME -> FormInputType(StringType, isRequired = false),
@@ -75,8 +75,8 @@ class MySQLLaunchForm(override val credentials: AWSCloudParams,
 
       println("Response is: " + response.getEndpoint)
       val connectUrl = s"jdbc:mysql://${response.getEndpoint.getAddress}:${response.getEndpoint.getPort}/${response.getDBName}?user=${username}&password=${password}"
-      storeQuestionParams.mySQLConnectionParams = Some(MySQLConnectionParams(connectUrl, username, password))
-      storeQuestionParams.mySQLTableParams = Some(MySQLTableParams(dbName, s"test${Random.alphanumeric.take(5).mkString("")}"))
+      formParams.mySQLConnectionParams = Some(MySQLConnectionParams(connectUrl, username, password))
+      formParams.mySQLTableParams = Some(MySQLTableParams(dbName, s"test${Random.alphanumeric.take(5).mkString("")}"))
       println(s"RDS instance creation initiated: ${response.getDBInstanceIdentifier}")
     } catch {
       case ex: Exception =>

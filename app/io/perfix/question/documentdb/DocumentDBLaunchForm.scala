@@ -17,7 +17,7 @@ import scala.annotation.tailrec
 import scala.util.Random
 
 class DocumentDBLaunchForm(override val credentials: AWSCloudParams,
-                           override val storeQuestionParams: DocumentDBParams) extends LaunchStoreForm {
+                           override val formParams: DocumentDBParams) extends LaunchStoreForm {
 
   override val launchQuestionsMapping: Map[FormInputName, FormInputType] = Map(
     DATABASE -> FormInputType(StringType, isRequired = false),
@@ -95,8 +95,8 @@ class DocumentDBLaunchForm(override val credentials: AWSCloudParams,
         "collection" + Random.alphanumeric.take(5).mkString("")
       )
 
-      storeQuestionParams.documentDBConnectionParams = Some(connectionParams)
-      storeQuestionParams.documentDBTableParams = Some(documentDBTableParams)
+      formParams.documentDBConnectionParams = Some(connectionParams)
+      formParams.documentDBTableParams = Some(documentDBTableParams)
 
       println(s"DocumentDB cluster creation initiated: ${clusterResponse.getDBClusterIdentifier}")
       println(s"DocumentDB instance creation initiated: ${instanceResponse.getDBInstanceIdentifier}")

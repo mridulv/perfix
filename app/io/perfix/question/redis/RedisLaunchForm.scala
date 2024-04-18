@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit
 import scala.util.Random
 
 class RedisLaunchForm(override val credentials: AWSCloudParams,
-                      override val storeQuestionParams: RedisParams) extends LaunchStoreForm {
+                      override val formParams: RedisParams) extends LaunchStoreForm {
 
   override val launchQuestionsMapping: Map[FormInputName, FormInputType] = Map(
     CACHE_NODE_TYPE -> FormInputType(StringType, isRequired = false),
@@ -60,7 +60,7 @@ class RedisLaunchForm(override val credentials: AWSCloudParams,
       val cacheNode = describeResponse.getCacheClusters.get(0).getCacheNodes.get(0)
       val endpoint = cacheNode.getEndpoint
 
-      storeQuestionParams.redisConnectionParams = Some(RedisConnectionParams(endpoint.getAddress, endpoint.getPort))
+      formParams.redisConnectionParams = Some(RedisConnectionParams(endpoint.getAddress, endpoint.getPort))
 
       println(s"Redis cluster creation initiated: ${describeResponse.getCacheClusters.get(0).getCacheClusterId}")
     } catch {
