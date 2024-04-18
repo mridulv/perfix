@@ -1,7 +1,7 @@
 package io.perfix.question.experiment
 
 import DataQuestions._
-import io.perfix.exceptions.{InvalidQuestionParameterExceptions, ParamsAlreadyDefinedException}
+import io.perfix.exceptions.{InvalidFormParameterExceptions, ParamsAlreadyDefinedException}
 import io.perfix.model.{ColumnDescription, DoubleType, ExperimentParams, FormInputType, StringType}
 import io.perfix.question.Form.FormInputName
 import io.perfix.question.{Form, FormParams}
@@ -30,7 +30,7 @@ class DataQuestions(experimentParams: ExperimentParams) extends Form {
         if (columnDescriptions.toSeq.forall(_.isValid)) {
           dataDescription.columnsOpt = Some(columnDescriptions)
         } else {
-          throw InvalidQuestionParameterExceptions("Columns")
+          throw InvalidFormParameterExceptions("Columns")
         }
         dataDescription.setData()
       case (_, _) => throw ParamsAlreadyDefinedException("DataDescription")
