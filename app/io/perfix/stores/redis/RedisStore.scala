@@ -17,9 +17,9 @@ class RedisStore extends DataStore {
     Some(new RedisLaunchForm(awsCloudParams, redisParams))
   }
 
-  override def storeInputs(dataDescription: DataDescription): RedisQuestionnaire = {
+  override def storeInputs(dataDescription: DataDescription): RedisFormSeries = {
     this.dataDescription = dataDescription
-    new RedisQuestionnaire(redisParams)
+    new RedisFormSeries(redisParams)
   }
 
   def connectAndInitialize(): Unit = {

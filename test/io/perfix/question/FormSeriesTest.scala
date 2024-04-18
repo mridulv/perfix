@@ -4,7 +4,7 @@ import io.perfix.model.{FormInputType, StringType}
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
-class QuestionnaireTest extends AnyFlatSpec with Matchers {
+class FormSeriesTest extends AnyFlatSpec with Matchers {
 
   case class MockForm(label: String, shouldAskResult: Boolean) extends Form {
     override val mapping: Map[Form.FormInputName, FormInputType] = Map(label -> FormInputType(StringType))
@@ -14,8 +14,8 @@ class QuestionnaireTest extends AnyFlatSpec with Matchers {
   }
 
   // Test class that extends Questionnaire
-  class TestQuestionnaire extends Questionnaire {
-    override val questions: Iterator[Form] = Iterator(
+  class TestFormSeries extends FormSeries {
+    override val forms: Iterator[Form] = Iterator(
     MockForm("Q1", shouldAskResult = true),
     MockForm("Q2", shouldAskResult = true),
     MockForm("Q3", shouldAskResult = true)
@@ -24,7 +24,7 @@ class QuestionnaireTest extends AnyFlatSpec with Matchers {
 
   it should "iterate over questions and return the next question that should be asked" in {
 
-    val questionnaire = new TestQuestionnaire
+    val questionnaire = new TestFormSeries
     val iter = questionnaire.iterator
 
     iter.hasNext shouldEqual true

@@ -27,9 +27,9 @@ class DynamoDBStore extends DataStore {
     None
   }
 
-  override def storeInputs(dataDescription: DataDescription): DynamoDBQuestionnaire = {
+  override def storeInputs(dataDescription: DataDescription): DynamoDBFormSeries = {
     this.dataDescription = dataDescription
-    DynamoDBQuestionnaire(dynamoDBParams)
+    DynamoDBFormSeries(dynamoDBParams)
   }
 
   def connectAndInitialize(): Unit = {

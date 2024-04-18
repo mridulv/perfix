@@ -19,9 +19,9 @@ class MySQLStore extends DataStore {
     Some(new MySQLLaunchForm(awsCloudParams, mySQLParams))
   }
 
-  override def storeInputs(dataDescription: DataDescription): MySQLQuestionnaire = {
+  override def storeInputs(dataDescription: DataDescription): MySQLFormSeries = {
     this.dataDescription = dataDescription
-    MySQLQuestionnaire(mySQLParams)
+    MySQLFormSeries(mySQLParams)
   }
 
   def connectAndInitialize(): Unit = {

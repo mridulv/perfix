@@ -22,9 +22,9 @@ class DocumentDBStore extends DataStore {
     Some(new DocumentDBLaunchForm(awsCloudParams, documentDBParams))
   }
 
-  override def storeInputs(dataDescription: DataDescription): DocumentDBQuestionnaire = {
+  override def storeInputs(dataDescription: DataDescription): DocumentDBFormSeries = {
     this.dataDescription = dataDescription
-    DocumentDBQuestionnaire(this.documentDBParams)
+    DocumentDBFormSeries(this.documentDBParams)
   }
 
   def connectAndInitialize(): Unit = {

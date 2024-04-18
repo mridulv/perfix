@@ -1,11 +1,11 @@
 package io.perfix.stores.redis
 
-import io.perfix.question.{Form, Questionnaire}
+import io.perfix.question.{Form, FormSeries}
 import io.perfix.question.redis.{RedisConnectionParametersForm, RedisTableParamsForm}
 
-class RedisQuestionnaire(params: RedisParams) extends Questionnaire {
+class RedisFormSeries(params: RedisParams) extends FormSeries {
 
-  override val questions: Iterator[Form] = Iterator(
+  override val forms: Iterator[Form] = Iterator(
     RedisConnectionParametersForm(params),
     RedisTableParamsForm(params)
   )
