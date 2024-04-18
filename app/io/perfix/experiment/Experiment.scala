@@ -1,6 +1,6 @@
 package io.perfix.experiment
 
-import io.perfix.model.{ExperimentRunParams, PerfixExperimentResult}
+import io.perfix.model.{ExperimentRunParams, ExperimentResult}
 
 trait Experiment {
 
@@ -8,7 +8,7 @@ trait Experiment {
 
   def repopulateExperimentParams(experimentRunParams: ExperimentRunParams): Unit
 
-  def run(): PerfixExperimentResult
+  def run(): ExperimentResult
 
   def cleanup(): Unit
 

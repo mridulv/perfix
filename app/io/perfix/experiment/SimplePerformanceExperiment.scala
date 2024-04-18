@@ -1,6 +1,6 @@
 package io.perfix.experiment
 
-import io.perfix.model.{ExperimentParams, ExperimentRunParams, PerfixExperimentResult}
+import io.perfix.model.{ExperimentParams, ExperimentRunParams, ExperimentResult}
 import io.perfix.question.FormSeries
 import io.perfix.stores.DataStore
 import io.perfix.util.BenchmarkUtil
@@ -31,7 +31,7 @@ class SimplePerformanceExperiment(dataStore: DataStore) extends Experiment {
     experimentParams.dataDescription.setData()
   }
 
-  def run(): PerfixExperimentResult = {
+  def run(): ExperimentResult = {
     var rowsCount = 0
     val writeTimes = ListBuffer[Long]()
     experimentParams.dataDescription.data.grouped(experimentParams.writeBatchSize).foreach { rows =>

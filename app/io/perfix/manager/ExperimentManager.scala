@@ -39,7 +39,7 @@ class ExperimentManager {
     resultsMapping.update(experimentId, perfixExperimentResultWithMapping)
   }
 
-  def startExperiment(experimentId: Int): PerfixExperimentResult = {
+  def startExperiment(experimentId: Int): ExperimentResult = {
     val experimentResult = mapping(experimentId).runExperiment()
     val perfixExperimentResultWithMapping = resultsMapping(experimentId).addPerfixExperimentResult(experimentResult)
     resultsMapping.update(experimentId, perfixExperimentResultWithMapping)
@@ -74,7 +74,7 @@ class ExperimentManager {
   }
 
   def repeatExperiment(experimentId: Int,
-                       experimentRunParams: ExperimentRunParams): PerfixExperimentResult = {
+                       experimentRunParams: ExperimentRunParams): ExperimentResult = {
     val experimentExecutor = mapping.getOrElse(experimentId, throw new InvalidExperimentException(experimentId))
     experimentExecutor.repopulateExperimentParams(experimentRunParams)
     val experimentResult = experimentExecutor.runExperiment()

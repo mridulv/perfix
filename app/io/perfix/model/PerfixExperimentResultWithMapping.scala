@@ -2,7 +2,7 @@ package io.perfix.model
 
 import play.api.libs.json.{Format, Json}
 
-case class PerfixExperimentResultWithMapping(perfixExperimentResult: Option[PerfixExperimentResult] = None,
+case class PerfixExperimentResultWithMapping(perfixExperimentResult: Option[ExperimentResult] = None,
                                              perfixQuestionAnswers: PerfixQuestionAnswers) {
 
   def addPerfixQuestionAnswer(perfixQuestionAnswer: PerfixQuestionAnswer): PerfixExperimentResultWithMapping = {
@@ -13,7 +13,7 @@ case class PerfixExperimentResultWithMapping(perfixExperimentResult: Option[Perf
     this.copy(perfixQuestionAnswers = this.perfixQuestionAnswers.addPerfixQuestionAnswers(perfixQuestionAnswers))
   }
 
-  def addPerfixExperimentResult(perfixExperimentResult: PerfixExperimentResult): PerfixExperimentResultWithMapping = {
+  def addPerfixExperimentResult(perfixExperimentResult: ExperimentResult): PerfixExperimentResultWithMapping = {
     this.copy(perfixExperimentResult = Some(perfixExperimentResult))
   }
 

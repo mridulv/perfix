@@ -1,7 +1,7 @@
 package io.perfix.common
 
 import io.perfix.experiment.SimplePerformanceExperiment
-import io.perfix.model.{ExperimentRunParams, PerfixExperimentResult}
+import io.perfix.model.{ExperimentRunParams, ExperimentResult}
 import io.perfix.stores.DataStore
 import io.perfix.stores.documentdb.DocumentDBStore
 import io.perfix.stores.dynamodb.DynamoDBStore
@@ -18,7 +18,7 @@ class ExperimentExecutor(storeName: String) {
     formSeriesEvaluator
   }
 
-  def runExperiment(): PerfixExperimentResult = {
+  def runExperiment(): ExperimentResult = {
     experiment.init()
     experiment.run()
   }
