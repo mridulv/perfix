@@ -5,9 +5,9 @@ import io.perfix.question.AWSCloudParamsForm.{AWS_ACCESS_KEY, AWS_ACCESS_SECRET,
 import io.perfix.question.Form
 import io.perfix.question.experiment.DataConfigurationForm.{COLUMNS, ROWS}
 import io.perfix.question.experiment.ExperimentParamsForm.{BENCHMARK_TIME_IN_SECONDS, CONCURRENT_QUERIES, PERFIX_QUERY}
-import io.perfix.question.mysql.ConnectionParamsForm.{PASSWORD, URL, USERNAME}
+import io.perfix.question.mysql.MySQLConnectionParamsForm.{PASSWORD, URL, USERNAME}
 import io.perfix.question.mysql.MySQLLaunchForm.{INSTANCE_IDENTIFIER, INSTANCE_TYPE}
-import io.perfix.question.mysql.TableParamsQuestions.{DBNAME, TABLENAME}
+import io.perfix.question.mysql.MySQLTableParamsForm.{DBNAME, TABLENAME}
 import org.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.flatspec.AnyFlatSpec

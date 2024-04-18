@@ -8,7 +8,7 @@ import io.perfix.common.CommonConfig.DB_SUBNET_GROUP_NAME
 import io.perfix.launch.{AWSCloudParams, LaunchStoreForm}
 import io.perfix.model.{IntType, FormInputType, StringType}
 import io.perfix.question.Form.FormInputName
-import io.perfix.question.redis.ElastiCacheLaunchQuestion._
+import io.perfix.question.redis.RedisLaunchForm._
 import io.perfix.stores.redis.{RedisConnectionParams, RedisParams}
 
 import java.util.concurrent.TimeUnit
@@ -96,8 +96,7 @@ class RedisLaunchForm(override val credentials: AWSCloudParams,
   }
 }
 
-object ElastiCacheLaunchQuestion {
-  val CLUSTER_ID = "clusterId"
+object RedisLaunchForm {
   val CACHE_NODE_TYPE = "cacheNodeType"
   val NUM_CACHE_NODES = "numCacheNodes"
 }

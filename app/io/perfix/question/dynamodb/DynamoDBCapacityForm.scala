@@ -4,10 +4,10 @@ import io.perfix.exceptions.ParamsAlreadyDefinedException
 import io.perfix.model.{IntType, FormInputType}
 import io.perfix.question.Form
 import io.perfix.question.Form.FormInputName
-import io.perfix.question.dynamodb.DynamoDBCapacityQuestions.{READ_CAPACITY, WRITE_CAPACITY}
+import io.perfix.question.dynamodb.DynamoDBCapacityForm.{READ_CAPACITY, WRITE_CAPACITY}
 import io.perfix.stores.dynamodb.{DynamoDBCapacityParams, DynamoDBParams}
 
-class DynamoDBCapacityQuestions(override val formParams: DynamoDBParams) extends Form {
+class DynamoDBCapacityForm(override val formParams: DynamoDBParams) extends Form {
   override val mapping: Map[FormInputName, FormInputType] = Map(
     READ_CAPACITY -> FormInputType(IntType, isRequired = false),
     WRITE_CAPACITY -> FormInputType(IntType, isRequired = false)
@@ -32,11 +32,11 @@ class DynamoDBCapacityQuestions(override val formParams: DynamoDBParams) extends
   }
 }
 
-object DynamoDBCapacityQuestions {
+object DynamoDBCapacityForm {
   val READ_CAPACITY = "read_capacity"
   val WRITE_CAPACITY = "write_capacity"
 
-  def apply(dynamoDBParams: DynamoDBParams): DynamoDBCapacityQuestions = {
-    new DynamoDBCapacityQuestions(dynamoDBParams)
+  def apply(dynamoDBParams: DynamoDBParams): DynamoDBCapacityForm = {
+    new DynamoDBCapacityForm(dynamoDBParams)
   }
 }

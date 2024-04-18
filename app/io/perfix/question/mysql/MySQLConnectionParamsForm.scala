@@ -1,13 +1,13 @@
 package io.perfix.question.mysql
 
-import ConnectionParamsForm._
+import MySQLConnectionParamsForm._
 import io.perfix.exceptions.ParamsAlreadyDefinedException
 import io.perfix.model.{FormInputType, StringType}
 import io.perfix.question.Form
 import io.perfix.question.Form.FormInputName
 import io.perfix.stores.mysql.{MySQLConnectionParams, MySQLParams}
 
-class ConnectionParamsForm(override val formParams: MySQLParams) extends Form {
+class MySQLConnectionParamsForm(override val formParams: MySQLParams) extends Form {
 
   override val mapping: Map[FormInputName, FormInputType] = Map(
     URL -> FormInputType(StringType),
@@ -30,12 +30,12 @@ class ConnectionParamsForm(override val formParams: MySQLParams) extends Form {
   }
 }
 
-object ConnectionParamsForm {
+object MySQLConnectionParamsForm {
   val URL = "url"
   val USERNAME = "username"
   val PASSWORD = "password"
 
-  def apply(mySQLParams: MySQLParams): ConnectionParamsForm = {
-    new ConnectionParamsForm(mySQLParams)
+  def apply(mySQLParams: MySQLParams): MySQLConnectionParamsForm = {
+    new MySQLConnectionParamsForm(mySQLParams)
   }
 }

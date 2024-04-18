@@ -5,8 +5,8 @@ import io.perfix.question.{Form, FormSeries}
 
 case class DynamoDBFormSeries(params: DynamoDBParams) extends FormSeries {
   override val forms: Iterator[Form] = Iterator(
-    DynamoDBTableParamsQuestions(params),
-    DynamoDBCapacityQuestions(params),
-    DynamoDBGSIParamsQuestions(params)
+    DynamoDBTableParamsForm(params),
+    DynamoDBCapacityForm(params),
+    DynamoDBGSIParamsForm(params)
   )
 }

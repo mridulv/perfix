@@ -4,12 +4,12 @@ import io.perfix.exceptions.ParamsAlreadyDefinedException
 import io.perfix.model.{FormInputType, StringType}
 import io.perfix.question.Form
 import io.perfix.question.Form.FormInputName
-import io.perfix.question.dynamodb.DynamoDBGSIParamsQuestions.GSI
+import io.perfix.question.dynamodb.DynamoDBGSIParamsForm.GSI
 import io.perfix.stores.dynamodb.model.DynamoDBGSIMetadataParams
 import io.perfix.stores.dynamodb.DynamoDBParams
 import play.api.libs.json.Json
 
-case class DynamoDBGSIParamsQuestions(override val formParams: DynamoDBParams) extends Form {
+case class DynamoDBGSIParamsForm(override val formParams: DynamoDBParams) extends Form {
 
   override val mapping: Map[FormInputName, FormInputType] = Map(
     GSI -> FormInputType(StringType, isRequired = false)
@@ -32,10 +32,10 @@ case class DynamoDBGSIParamsQuestions(override val formParams: DynamoDBParams) e
   }
 }
 
-object DynamoDBGSIParamsQuestions {
+object DynamoDBGSIParamsForm {
   val GSI = "GSI"
 
-  def apply(dynamoDBParams: DynamoDBParams): DynamoDBGSIParamsQuestions = {
-    new DynamoDBGSIParamsQuestions(dynamoDBParams)
+  def apply(dynamoDBParams: DynamoDBParams): DynamoDBGSIParamsForm = {
+    new DynamoDBGSIParamsForm(dynamoDBParams)
   }
 }

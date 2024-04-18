@@ -1,13 +1,13 @@
 package io.perfix.question.mysql
 
-import TableParamsQuestions._
+import MySQLTableParamsForm._
 import io.perfix.exceptions.ParamsAlreadyDefinedException
 import io.perfix.model.{FormInputType, StringType}
 import io.perfix.question.Form
 import io.perfix.question.Form.FormInputName
 import io.perfix.stores.mysql.{MySQLParams, MySQLTableParams}
 
-class TableParamsQuestions(override val formParams: MySQLParams) extends Form {
+class MySQLTableParamsForm(override val formParams: MySQLParams) extends Form {
 
   override val mapping: Map[FormInputName, FormInputType] = Map(
     DBNAME -> FormInputType(StringType),
@@ -28,11 +28,11 @@ class TableParamsQuestions(override val formParams: MySQLParams) extends Form {
 
 }
 
-object TableParamsQuestions {
+object MySQLTableParamsForm {
   val DBNAME = "dbName"
   val TABLENAME = "tableName"
 
-  def apply(mySQLParams: MySQLParams): TableParamsQuestions = {
-    new TableParamsQuestions(mySQLParams)
+  def apply(mySQLParams: MySQLParams): MySQLTableParamsForm = {
+    new MySQLTableParamsForm(mySQLParams)
   }
 }

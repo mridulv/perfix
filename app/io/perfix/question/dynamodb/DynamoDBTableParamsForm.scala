@@ -1,13 +1,13 @@
 package io.perfix.question.dynamodb
 
-import DynamoDBTableParamsQuestions.{CONNECTION_URL, PARTITION_KEY, SORT_KEY, TABLE_NAME}
+import DynamoDBTableParamsForm.{CONNECTION_URL, PARTITION_KEY, SORT_KEY, TABLE_NAME}
 import io.perfix.exceptions.ParamsAlreadyDefinedException
 import io.perfix.model._
 import io.perfix.question.Form
 import io.perfix.question.Form.FormInputName
 import io.perfix.stores.dynamodb.{DynamoDBParams, DynamoDBTableParams}
 
-class DynamoDBTableParamsQuestions(override val formParams: DynamoDBParams) extends Form {
+class DynamoDBTableParamsForm(override val formParams: DynamoDBParams) extends Form {
 
   override val mapping: Map[FormInputName, FormInputType] = Map(
     CONNECTION_URL -> FormInputType(StringType, isRequired = false),
@@ -38,14 +38,14 @@ class DynamoDBTableParamsQuestions(override val formParams: DynamoDBParams) exte
   }
 }
 
-object DynamoDBTableParamsQuestions {
+object DynamoDBTableParamsForm {
   val CONNECTION_URL = "connection_url"
   val TABLE_NAME = "table_name"
   val PARTITION_KEY = "partition_key"
   val SORT_KEY = "sort_key"
 
-  def apply(dynamoDBParams: DynamoDBParams): DynamoDBTableParamsQuestions = {
-    new DynamoDBTableParamsQuestions(dynamoDBParams)
+  def apply(dynamoDBParams: DynamoDBParams): DynamoDBTableParamsForm = {
+    new DynamoDBTableParamsForm(dynamoDBParams)
   }
 }
 

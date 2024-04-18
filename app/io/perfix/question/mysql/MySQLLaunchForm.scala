@@ -8,9 +8,9 @@ import io.perfix.common.CommonConfig.DB_SUBNET_GROUP_NAME
 import io.perfix.launch.{AWSCloudParams, LaunchStoreForm}
 import io.perfix.model.{FormInputType, StringType}
 import io.perfix.question.Form.FormInputName
-import io.perfix.question.mysql.ConnectionParamsForm.{PASSWORD, USERNAME}
+import io.perfix.question.mysql.MySQLConnectionParamsForm.{PASSWORD, USERNAME}
 import io.perfix.question.mysql.MySQLLaunchForm._
-import io.perfix.question.mysql.TableParamsQuestions.DBNAME
+import io.perfix.question.mysql.MySQLTableParamsForm.DBNAME
 import io.perfix.stores.mysql.{MySQLConnectionParams, MySQLParams, MySQLTableParams}
 
 import java.util.concurrent.TimeUnit
