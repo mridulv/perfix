@@ -54,7 +54,7 @@ const Datasets = () => {
           columnName: columnValue.columnName,
           columnType: {
             type: columnValue.columnType,
-            isUnique: true // Assuming isUnique is always true for all columns
+            isUnique: true
           }
         }))
       };

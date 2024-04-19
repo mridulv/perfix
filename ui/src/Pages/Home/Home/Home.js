@@ -5,7 +5,7 @@ import Design from '../../../components/Design';
 
 const Home = () => {
     return (
-        <div className='bg-[#000] min-h-screen flex flex-col justify-center my-auto'>
+        <div className='bg-[#09090d] min-h-screen flex flex-col justify-center my-auto'>
             <Design/>
             <Banner/>
         </div>

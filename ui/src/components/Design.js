@@ -5,12 +5,12 @@ import { loadSlim } from "tsparticles-slim";
 
 const Design = () => {
   const particlesInit = useCallback(async engine => {
-    console.log(engine);
+    
     await loadSlim(engine);
   }, []);
 
   const particlesLoaded = useCallback(async container => {
-    await console.log(container);
+    // await console.log(container);
   }, []);
 
   return (
@@ -39,16 +39,20 @@ const Design = () => {
               },
               onHover: {
                 enable: true,
-                mode: "",
+                mode: "moveParticles",
               },
               resize: true,
             },
             modes: {
               push: {
-                quantity: 5,
+                quantity: 20,
                 rate: {
                   delay: 0.8,
                 },
+              },
+              moveParticles: { // Add moveParticles options
+                enable: true,
+                speed: 0.5, // Adjust the speed of particle movement
               },
             },
           },
@@ -63,7 +67,7 @@ const Design = () => {
                 default: "bounce",
               },
               random: false,
-              speed: 2,
+              speed: 1,
             },
             
             number: {

@@ -1,8 +1,24 @@
 import React from "react";
 import Navbar from "../../../components/Navbar";
 import arrow from "../../../assets/button-arrow.svg"
+import axios from "axios";
 
 const Banner = () => {
+
+  const handleAddEmail = async(e) => {
+    e.preventDefault();
+    const email = e.target.email.value;
+    console.log(email);
+
+    try{
+      const res = await axios.post("http://localhost:5000/user-email", {email});
+      console.log(res);
+    }
+    catch(err){
+      console.log(err);
+    }
+    
+  };
   return (
     <div className="  px-[30px] lg:px-[160px] z-50">
       <div>
@@ -14,7 +30,7 @@ const Banner = () => {
                 alt="arrow"
               />
             </div>
-            <h3
+            <h3 
               className="text-[35px] lg:text-[60px] font-bold mb-4 leading-tight"
               style={{
                 background:
@@ -28,7 +44,7 @@ const Banner = () => {
 
             <div className=" mb-8 w-">
               <p
-                className="text-[1px] md:text-[17px] text-center"
+                className="text-[14px] md:text-[17px] text-center leading-7"
                 style={{ color: "rgb(186, 186, 186)" }}
               >
                 Discover an Array of Incredible Framer Templates and Be Prepared
@@ -36,19 +52,23 @@ const Banner = () => {
                 Our Waitlist to be notified when we launch!
               </p>
             </div>
-            <div className="block md:flex justify-center  gap-3 ">
+            <form onSubmit={handleAddEmail} className="block md:flex justify-center  gap-3 ">
               <input
-                className="bg-transparent text-white focus:outline-none text-[16px] px-4 py-[25px] w-[340px] h-10 rounded-lg"
+                className="bg-transparent text-white focus:outline-none text-[16px] px-4 py-[25px] w-full md:w-[340px] h-10 rounded-lg"
                 style={{
                   background: "rgba(89, 89, 89, 0.6)",
+                  
                 }}
-                type="text"
+                name="email"
+                type="email"
                 placeholder="email@example.com"
+                required
+                autoComplete="off"
               />
-              <button className="mt-3 md:mt-0 bg-white text-black px-5 py-1 rounded-lg text-[17px] font-semibold">
+              <button className="w-full md:w-[142px] mt-3 md:mt-0 bg-white text-black px-5 py-3 md:py-1 rounded-lg text-[17px] font-semibold">
                 Join Waitlist!
               </button>
-            </div>
+            </form>
           </div>
         </div>
       </div>
