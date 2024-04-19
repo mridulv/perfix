@@ -2,9 +2,11 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
-POST     /experiment                                   io.perfix.controllers.ExperimentController.executeExperiment(storeName: String)
-POST     /experiment/:id                               io.perfix.controllers.ExperimentController.repeatExperiment(id: Int)
-GET      /experiment/:id                               io.perfix.controllers.ExperimentController.experimentResults(id: Int)
+POST     /experiment                                   io.perfix.controllers.ExperimentController.create
+POST     /experiment/:id                               io.perfix.controllers.ExperimentController.update(id: Int)
+POST     /experiment/:id/execute                       io.perfix.controllers.ExperimentController.executeExperiment(id: Int)
+GET      /experiment/:id                               io.perfix.controllers.ExperimentController.get(id: Int)
+GET      /experiment                                   io.perfix.controllers.ExperimentController.all
 
 GET      /health                                       io.perfix.controllers.HealthCheckController.health
 
