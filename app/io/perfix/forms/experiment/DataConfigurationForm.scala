@@ -2,12 +2,12 @@ package io.perfix.forms.experiment
 
 import DataConfigurationForm._
 import io.perfix.exceptions.{InvalidFormParameterExceptions, ParamsAlreadyDefinedException}
-import io.perfix.model.{ColumnDescription, DoubleType, ExperimentParams, FormInputType, StringType}
+import io.perfix.model.{ColumnDescription, DoubleType, ExperimentFormParams, FormInputType, StringType}
 import io.perfix.forms.Form.FormInputName
 import io.perfix.forms.{Form, FormParams}
 import play.api.libs.json.Json
 
-class DataConfigurationForm(experimentParams: ExperimentParams) extends Form {
+class DataConfigurationForm(experimentParams: ExperimentFormParams) extends Form {
 
   override val mapping: Map[FormInputName, FormInputType] = Map(
     ROWS -> FormInputType(DoubleType),

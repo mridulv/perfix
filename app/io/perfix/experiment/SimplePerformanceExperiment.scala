@@ -1,6 +1,6 @@
 package io.perfix.experiment
 
-import io.perfix.model.{ExperimentParams, ExperimentRunParams, ExperimentResult}
+import io.perfix.model.{ExperimentFormParams, ExperimentRunParams, ExperimentResult}
 import io.perfix.forms.FormSeries
 import io.perfix.stores.DataStore
 import io.perfix.util.BenchmarkUtil
@@ -9,7 +9,7 @@ import scala.collection.mutable.ListBuffer
 
 class SimplePerformanceExperiment(dataStore: DataStore) extends Experiment {
 
-  private[experiment] val experimentParams = new ExperimentParams
+  private[experiment] val experimentParams = new ExperimentFormParams
 
   def formSeries(): FormSeries = {
     val formSeries = new ExperimentFormSeries(experimentParams, dataStore)

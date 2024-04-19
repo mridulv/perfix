@@ -1,7 +1,7 @@
 package io.perfix.manager
 
+import com.google.inject.Inject
 import io.perfix.common.ExperimentExecutor
-import io.perfix.exceptions.InvalidExperimentException
 import io.perfix.model._
 import io.perfix.forms.Form
 
@@ -10,46 +10,56 @@ import scala.collection.mutable
 import scala.util.Random
 
 @Singleton
-class ExperimentManager {
-  val resultsMapping: mutable.Map[Int, ExperimentResultWithFormInputValues] = mutable.Map.empty[Int, ExperimentResultWithFormInputValues]
-  val mapping: mutable.Map[Int, ExperimentExecutor] = mutable.Map.empty[Int, ExperimentExecutor]
+class ExperimentManager @Inject()(datasetManager: DatasetManager,
+                                  databaseConfigManager: DatabaseConfigManager) {
+  val mapping: mutable.Map[ExperimentId, ExperimentParams] = mutable.Map.empty[ExperimentId, ExperimentParams]
 
-  def executeExperiment(storeName: String,
-                        formInputValues: FormInputValues): ExperimentId = {
-    val response = ExperimentId(Random.nextInt(1000))
-    val mappedVariables = formInputValues.toMap
-    val experimentExecutor = new ExperimentExecutor(storeName)
+  def create(experimentParams: ExperimentParams): ExperimentId = {
+    val id: Int = Random.nextInt()
+    mapping.put(
+      ExperimentId(id),
+      experimentParams
+    )
+    ExperimentId(id)
+  }
+
+  def get(experimentId: ExperimentId): ExperimentParams = {
+    mapping(experimentId)
+  }
+
+  def all: Seq[ExperimentParams] = {
+    mapping.values.toSeq
+  }
+
+  def update(experimentId: ExperimentId, experimentParams: ExperimentParams): ExperimentParams = {
+    mapping.put(experimentId, experimentParams)
+    experimentParams
+  }
+
+  def executeExperiment(experimentId: ExperimentId): ExperimentParams = {
+    val experimentParams = mapping(experimentId)
+    val databaseConfigParams = databaseConfigManager.get(experimentParams.databaseConfigId)
+    val datasetParams = datasetManager.get(experimentParams.datasetId)
+    val inputValues = databaseConfigParams.formInputValues.getOrElse(Seq.empty).map { e =>
+      e.inputName -> e.answer
+    }.toMap
+    val experimentExecutor = new ExperimentExecutor(databaseConfigParams.storeName)
     while (experimentExecutor.getFormSeriesEvaluator.hasNext) {
       val form = experimentExecutor.getFormSeriesEvaluator.next()
       val answerMapping = form.map { case (k, formInputType) =>
         val mappedValue = if (formInputType.isRequired) {
-          Some(mappedVariables(k))
+          Some(inputValues(k))
         } else {
-          mappedVariables.get(k)
+          inputValues.get(k)
         }
         k -> mappedValue
       }
       experimentExecutor.getFormSeriesEvaluator.submit(Form.filteredAnswers(answerMapping))
     }
 
-    mapping.put(response.id, experimentExecutor)
     val result = experimentExecutor.runExperiment()
-    resultsMapping.update(response.id, ExperimentResultWithFormInputValues(Some(result), formInputValues))
+    mapping.put(experimentId, experimentParams.copy(experimentResult = Some(result)))
     experimentExecutor.cleanUp()
-    println(s"Experiment Id: ${response.id}")
-    response
-  }
-
-  def repeatExperiment(experimentId: Int,
-                       experimentRunParams: ExperimentRunParams): ExperimentResult = {
-    val experimentExecutor = mapping.getOrElse(experimentId, throw new InvalidExperimentException(experimentId))
-    experimentExecutor.repopulateExperimentParams(experimentRunParams)
-    val experimentResult = experimentExecutor.runExperiment()
-    experimentExecutor.cleanUp()
-    experimentResult
-  }
-
-  def results(experimentId: Int): ExperimentResultWithFormInputValues = {
-    resultsMapping(experimentId)
+    mapping(experimentId)
   }
 }
