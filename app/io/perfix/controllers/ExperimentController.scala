@@ -2,7 +2,7 @@ package io.perfix.controllers
 
 import controllers.AssetsFinder
 import io.perfix.manager.ExperimentManager
-import io.perfix.model.{ExperimentRunParams, FormInputValues}
+import io.perfix.model.{DatasetId, DatasetParams, ExperimentId, ExperimentParams, ExperimentRunParams, FormInputValues}
 import play.api.libs.json.Json
 import play.api.mvc._
 
@@ -10,21 +10,28 @@ import javax.inject._
 
 @Singleton
 class ExperimentController @Inject()(cc: ControllerComponents,
-                                     perfixManager: ExperimentManager)(implicit assetsFinder: AssetsFinder)
+                                     experimentManager: ExperimentManager)(implicit assetsFinder: AssetsFinder)
   extends AbstractController(cc) {
 
-  def executeExperiment(storeName: String) = Action(parse.json) { request =>
-    val formInputValues = request.body.as[FormInputValues]
-    Results.Ok(Json.toJson(perfixManager.executeExperiment(storeName, formInputValues)))
+  def create = Action(parse.json) { request =>
+    val experimentParams = request.body.as[ExperimentParams]
+    Results.Ok(Json.toJson(experimentManager.create(experimentParams)))
   }
 
-  def repeatExperiment(experimentId: Int) = Action(parse.json) { request =>
-    val experimentRunParams = request.body.as[ExperimentRunParams]
-    Results.Ok(Json.toJson(perfixManager.repeatExperiment(experimentId, experimentRunParams)))
+  def get(experimentId: Int) = Action { request =>
+    Results.Ok(Json.toJson(experimentManager.get(ExperimentId(experimentId))))
   }
 
-  def experimentResults(experimentId: Int) = Action { request =>
-    Results.Ok(Json.toJson(perfixManager.results(experimentId)).toString())
+  def update(experimentId: Int) = Action(parse.json) { request =>
+    val experimentParams = request.body.as[ExperimentParams]
+    Results.Ok(Json.toJson(experimentManager.update(ExperimentId(experimentId), experimentParams)))
   }
 
+  def all = Action { request =>
+    Results.Ok(Json.toJson(experimentManager.all))
+  }
+
+  def executeExperiment(experimentId: Int) = Action(parse.json) { request =>
+    Results.Ok(Json.toJson(experimentManager.executeExperiment(ExperimentId(experimentId))))
+  }
 }
