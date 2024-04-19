@@ -1,5 +1,5 @@
 package io.perfix.experiment
-import io.perfix.model.{ExperimentRunParams, PerfixExperimentResult}
+import io.perfix.model.{ExperimentRunParams, ExperimentResult}
 
 class MultiContainerPerformanceExperiment extends Experiment {
 
@@ -7,7 +7,7 @@ class MultiContainerPerformanceExperiment extends Experiment {
 
   override def repopulateExperimentParams(experimentRunParams: ExperimentRunParams): Unit = ???
 
-  override def run(): PerfixExperimentResult = ???
+  override def run(): ExperimentResult = ???
 
   override def cleanup(): Unit = ???
 }

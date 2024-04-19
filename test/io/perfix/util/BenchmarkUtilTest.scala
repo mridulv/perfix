@@ -1,6 +1,6 @@
 package io.perfix.util
 
-import io.perfix.model.{PercentileLatency, PerfixExperimentResult}
+import io.perfix.model.{PercentileLatency, ExperimentResult}
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 import play.api.libs.json.Json
@@ -61,7 +61,7 @@ class BenchmarkUtilSpec extends AnyFlatSpec with Matchers {
   it should "serialize and deserialize PerfixExperimentResult correctly" in {
     val queryLatencies = Seq(PercentileLatency(50, 100.0), PercentileLatency(90, 200.0))
     val writeLatencies = Seq(PercentileLatency(50, 150.0), PercentileLatency(90, 250.0))
-    val result = PerfixExperimentResult(
+    val result = ExperimentResult(
       overallQueryTime = 10L,
       overallWriteTimeTaken = 5L,
       numberOfCalls = 20,
@@ -70,7 +70,7 @@ class BenchmarkUtilSpec extends AnyFlatSpec with Matchers {
     )
 
     val json = Json.toJson(result)
-    val deserializedResult = json.validate[PerfixExperimentResult].get
+    val deserializedResult = json.validate[ExperimentResult].get
 
     deserializedResult shouldEqual result
   }

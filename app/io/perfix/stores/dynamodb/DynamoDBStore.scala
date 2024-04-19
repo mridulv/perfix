@@ -5,7 +5,7 @@ import com.amazonaws.client.builder.AwsClientBuilder
 import com.amazonaws.services.dynamodbv2.{AmazonDynamoDB, AmazonDynamoDBClientBuilder}
 import com.amazonaws.services.dynamodbv2.model._
 import io.perfix.exceptions.InvalidStateException
-import io.perfix.launch.{AWSCloudParams, LaunchStoreQuestion}
+import io.perfix.launch.{AWSCloudParams, LaunchStoreForm}
 import io.perfix.model.ColumnType.toDynamoDBType
 import io.perfix.model.{ColumnDescription, DataDescription}
 import io.perfix.stores.DataStore
@@ -22,14 +22,14 @@ class DynamoDBStore extends DataStore {
   private var tableParams: DynamoDBTableParams = _
   private var awsCloudCredentials: AWSCloudParams = _
 
-  override def launch(awsCloudParams: AWSCloudParams): Option[LaunchStoreQuestion] = {
+  override def launch(awsCloudParams: AWSCloudParams): Option[LaunchStoreForm] = {
     awsCloudCredentials = awsCloudParams
     None
   }
 
-  override def storeInputs(dataDescription: DataDescription): DynamoDBQuestionnaire = {
+  override def storeInputs(dataDescription: DataDescription): DynamoDBFormSeries = {
     this.dataDescription = dataDescription
-    DynamoDBQuestionnaire(dynamoDBParams)
+    DynamoDBFormSeries(dynamoDBParams)
   }
 
   def connectAndInitialize(): Unit = {

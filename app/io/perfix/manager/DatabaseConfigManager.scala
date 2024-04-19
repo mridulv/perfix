@@ -1,7 +1,7 @@
 package io.perfix.manager
 
 import com.google.inject.Singleton
-import io.perfix.model.{DatabaseConfigId, DatabaseConfigParams, DatasetId, DatasetParams}
+import io.perfix.model.{DatabaseConfigId, DatabaseConfigParams, DatasetId, DatasetParams, FormInputs, FormInputValues}
 
 import scala.collection.mutable
 import scala.util.Random
@@ -21,6 +21,16 @@ class DatabaseConfigManager {
 
   def get(databaseConfigId: DatabaseConfigId): DatabaseConfigParams = {
     mapping(databaseConfigId)
+  }
+
+  def getInputs(databaseConfigId: DatabaseConfigId): FormInputs = {
+    mapping(databaseConfigId).formInputs
+  }
+
+  def submitInputs(databaseConfigId: DatabaseConfigId,
+                   formInputValues: FormInputValues): DatabaseConfigParams = {
+    val databaseConfigParams = mapping(databaseConfigId)
+    databaseConfigParams.copy(formInputValues = Some(formInputValues.values))
   }
 
   def update(databaseConfigId: DatabaseConfigId,

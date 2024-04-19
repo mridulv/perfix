@@ -1,13 +1,13 @@
 package io.perfix.examples
 
-import io.perfix.common.PerfixExperimentExecutor
-import io.perfix.question.AWSCloudParamsQuestion.{AWS_ACCESS_KEY, AWS_ACCESS_SECRET}
-import io.perfix.question.Question
-import io.perfix.question.experiment.DataQuestions._
-import io.perfix.question.experiment.ExperimentParamsQuestion.CONCURRENT_QUERIES
-import io.perfix.question.redis.ElastiCacheLaunchQuestion.{CACHE_NODE_TYPE, CLUSTER_ID}
-import io.perfix.question.redis.RedisConnectionParametersQuestion.{PORT, URL}
-import io.perfix.question.redis.RedisTableParamsQuestion.KEY_COLUMN
+import io.perfix.common.ExperimentExecutor
+import io.perfix.forms.AWSCloudParamsForm.{AWS_ACCESS_KEY, AWS_ACCESS_SECRET}
+import io.perfix.forms.Form
+import io.perfix.forms.experiment.DataConfigurationForm._
+import io.perfix.forms.experiment.ExperimentParamsForm.CONCURRENT_QUERIES
+import io.perfix.forms.redis.RedisLaunchForm.{CACHE_NODE_TYPE, CLUSTER_ID}
+import io.perfix.forms.redis.RedisConnectionParametersForm.{PORT, URL}
+import io.perfix.forms.redis.RedisTableParamsForm.KEY_COLUMN
 
 object RedisStoreTest {
 
@@ -24,18 +24,18 @@ object RedisStoreTest {
       AWS_ACCESS_KEY -> "****************************",
       AWS_ACCESS_SECRET -> "******************************************"
     )
-    val experimentExecutor = new PerfixExperimentExecutor("redis")
-    while (experimentExecutor.getQuestionnaireExecutor.hasNext) {
-      val question = experimentExecutor.getQuestionnaireExecutor.next()
-      val answerMapping = question.map { case (k, questionType) =>
-        val mappedValue = if (questionType.isRequired) {
+    val experimentExecutor = new ExperimentExecutor("redis")
+    while (experimentExecutor.getFormSeriesEvaluator.hasNext) {
+      val form = experimentExecutor.getFormSeriesEvaluator.next()
+      val answerMapping = form.map { case (k, formInputType) =>
+        val mappedValue = if (formInputType.isRequired) {
           Some(mappedVariables(k))
         } else {
           mappedVariables.get(k)
         }
         k -> mappedValue
       }
-      experimentExecutor.getQuestionnaireExecutor.submit(Question.filteredAnswers(answerMapping))
+      experimentExecutor.getFormSeriesEvaluator.submit(Form.filteredAnswers(answerMapping))
     }
 
     experimentExecutor.runExperiment()
