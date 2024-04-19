@@ -1,12 +1,12 @@
 package io.perfix.experiment
 
 import io.perfix.launch.AWSCloudParams
-import io.perfix.model.ExperimentParams
+import io.perfix.model.ExperimentFormParams
 import io.perfix.forms.experiment.{DataConfigurationForm, ExperimentParamsForm}
 import io.perfix.forms.{AWSCloudParamsForm, Form, FormSeries}
 import io.perfix.stores.DataStore
 
-class ExperimentFormSeries(experimentParams: ExperimentParams,
+class ExperimentFormSeries(experimentParams: ExperimentFormParams,
                            dataStore: DataStore) extends FormSeries {
 
   override val forms: Iterator[Form] = {

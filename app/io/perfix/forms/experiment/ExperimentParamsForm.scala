@@ -8,7 +8,7 @@ import io.perfix.forms.Form.FormInputName
 import io.perfix.forms.{Form, FormParams}
 import play.api.libs.json.Json
 
-class ExperimentParamsForm(experimentParams: ExperimentParams) extends Form {
+class ExperimentParamsForm(experimentParams: ExperimentFormParams) extends Form {
 
   override val mapping: Map[FormInputName, FormInputType] = Map(
     CONCURRENT_QUERIES -> FormInputType(DoubleType),
