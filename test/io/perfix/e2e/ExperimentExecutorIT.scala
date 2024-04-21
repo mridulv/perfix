@@ -3,15 +3,16 @@ package io.perfix.e2e
 import io.perfix.common.ExperimentExecutor
 import io.perfix.forms.AWSCloudParamsForm.{AWS_ACCESS_KEY, AWS_ACCESS_SECRET, LAUNCH_DB}
 import io.perfix.forms.Form
-import io.perfix.forms.experiment.DataConfigurationForm.{COLUMNS, ROWS}
-import io.perfix.forms.experiment.ExperimentParamsForm.{BENCHMARK_TIME_IN_SECONDS, CONCURRENT_QUERIES, PERFIX_QUERY}
 import io.perfix.forms.mysql.MySQLConnectionParamsForm.{PASSWORD, URL, USERNAME}
 import io.perfix.forms.mysql.MySQLLaunchForm.{INSTANCE_IDENTIFIER, INSTANCE_TYPE}
 import io.perfix.forms.mysql.MySQLTableParamsForm.{DBNAME, TABLENAME}
+import io.perfix.model.{ColumnDescription, DatabaseConfigId, Dataset, DatasetId, DatasetParams, ExperimentParams}
+import io.perfix.query.PerfixQuery
 import org.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
+import play.api.libs.json.Json
 
 import java.sql.DriverManager
 
@@ -32,11 +33,6 @@ class ExperimentExecutorIT extends AnyFlatSpec with Matchers with MockitoSugar w
 
   it should "connect and initialize database correctly" in {
     val mappedVariables: Map[String, Any] = Map(
-      ROWS -> 1000,
-      COLUMNS -> "[{\"columnName\":\"student_name\",\"columnType\":{\"type\":\"NameType\",\"isUnique\":true},\"columnValueDistribution\":{\"value\":\"John\",\"probability\":0.1}},{\"columnName\":\"student_address\",\"columnType\":{\"type\":\"AddressType\",\"isUnique\":false}}]",
-      CONCURRENT_QUERIES -> 10,
-      BENCHMARK_TIME_IN_SECONDS -> 5,
-      PERFIX_QUERY -> "{\"limitOpt\":100}",
       USERNAME -> username,
       URL -> url,
       PASSWORD -> password,
@@ -48,7 +44,23 @@ class ExperimentExecutorIT extends AnyFlatSpec with Matchers with MockitoSugar w
       AWS_ACCESS_SECRET -> "**********",
       LAUNCH_DB -> false
     )
-    val experimentExecutor = new ExperimentExecutor("mysql")
+    val cols = Json.parse("[{\"columnName\":\"student_name\",\"columnType\":{\"type\":\"NameType\",\"isUnique\":true},\"columnValueDistribution\":{\"value\":\"John\",\"probability\":0.1}},{\"columnName\":\"student_address\",\"columnType\":{\"type\":\"AddressType\",\"isUnique\":false}}]").as[Seq[ColumnDescription]]
+    val experimentParams = ExperimentParams(
+      None,
+      concurrentQueries = 10,
+      experimentTimeInSeconds = 5,
+      query = PerfixQuery(limitOpt = Some(100)),
+      datasetId = DatasetId(-1),
+      databaseConfigId = DatabaseConfigId(-1),
+      experimentResult = None
+    )
+    val datasetParams = DatasetParams(
+      id = None,
+      rows = 100,
+      columns = cols
+    )
+
+    val experimentExecutor = new ExperimentExecutor("mysql", experimentParams, dataset = datasetParams.dataset)
     while (experimentExecutor.getFormSeriesEvaluator.hasNext) {
       val form = experimentExecutor.getFormSeriesEvaluator.next()
       val answerMapping = form.map { case (k, formInputType) =>

@@ -1,17 +1,19 @@
 package io.perfix.common
 
 import io.perfix.experiment.SimplePerformanceExperiment
-import io.perfix.model.{ExperimentRunParams, ExperimentResult}
+import io.perfix.model.{Dataset, DatasetParams, ExperimentParams, ExperimentResult, ExperimentRunParams}
 import io.perfix.stores.DataStore
 import io.perfix.stores.documentdb.DocumentDBStore
 import io.perfix.stores.dynamodb.DynamoDBStore
 import io.perfix.stores.mysql.MySQLStore
 import io.perfix.stores.redis.RedisStore
 
-class ExperimentExecutor(storeName: String) {
+class ExperimentExecutor(storeName: String,
+                         experimentParams: ExperimentParams,
+                         dataset: Dataset) {
 
   private val dataStore = ExperimentExecutor.getDataStore(storeName)
-  private val experiment = new SimplePerformanceExperiment(dataStore)
+  private val experiment = new SimplePerformanceExperiment(dataStore, experimentParams, dataset)
   private val formSeriesEvaluator = new FormSeriesEvaluator(experiment.formSeries())
 
   def getFormSeriesEvaluator: FormSeriesEvaluator = {
@@ -21,10 +23,6 @@ class ExperimentExecutor(storeName: String) {
   def runExperiment(): ExperimentResult = {
     experiment.init()
     experiment.run()
-  }
-
-  def repopulateExperimentParams(experimentRunParams: ExperimentRunParams): Unit = {
-    experiment.repopulateExperimentParams(experimentRunParams)
   }
 
   def cleanUp(): Unit = {
