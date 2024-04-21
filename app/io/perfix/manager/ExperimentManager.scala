@@ -39,11 +39,11 @@ class ExperimentManager @Inject()(datasetManager: DatasetManager,
   def executeExperiment(experimentId: ExperimentId): ExperimentParams = {
     val experimentParams = mapping(experimentId)
     val databaseConfigParams = databaseConfigManager.get(experimentParams.databaseConfigId)
-    val datasetParams = datasetManager.get(experimentParams.datasetId)
+    val dataset = datasetManager.get(experimentParams.datasetId)
     val inputValues = databaseConfigParams.formInputValues.getOrElse(Seq.empty).map { e =>
       e.inputName -> e.answer
     }.toMap
-    val experimentExecutor = new ExperimentExecutor(databaseConfigParams.storeName)
+    val experimentExecutor = new ExperimentExecutor(databaseConfigParams.storeName, experimentParams, dataset)
     while (experimentExecutor.getFormSeriesEvaluator.hasNext) {
       val form = experimentExecutor.getFormSeriesEvaluator.next()
       val answerMapping = form.map { case (k, formInputType) =>

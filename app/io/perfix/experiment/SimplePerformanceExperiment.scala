@@ -1,40 +1,43 @@
 package io.perfix.experiment
 
-import io.perfix.model.{ExperimentFormParams, ExperimentRunParams, ExperimentResult}
-import io.perfix.forms.FormSeries
+import io.perfix.model.{Dataset, ExperimentParams, ExperimentResult}
+import io.perfix.forms.{AWSCloudParamsForm, Form, FormSeries}
+import io.perfix.launch.AWSCloudParams
 import io.perfix.stores.DataStore
 import io.perfix.util.BenchmarkUtil
 
 import scala.collection.mutable.ListBuffer
 
-class SimplePerformanceExperiment(dataStore: DataStore) extends Experiment {
-
-  private[experiment] val experimentParams = new ExperimentFormParams
+class SimplePerformanceExperiment(dataStore: DataStore,
+                                  experimentParams: ExperimentParams,
+                                  dataset: Dataset) extends Experiment {
 
   def formSeries(): FormSeries = {
-    val formSeries = new ExperimentFormSeries(experimentParams, dataStore)
-    formSeries
-  }
+    new FormSeries {
+      override val forms: Iterator[Form] = {
+        val cloudParams = new AWSCloudParams
+        val credentialsForm = new AWSCloudParamsForm(cloudParams)
 
-  def init(): Unit = {
-    if (experimentParams.isDefined) {
-      dataStore.connectAndInitialize()
-    } else {
-      throw new Exception("Parameters not defined correctly")
+        val launchStoreForm = dataStore.launch(cloudParams) match {
+          case Some(launchForm) => Iterator(credentialsForm) ++ Iterator(launchForm)
+          case None => Iterator(credentialsForm)
+        }
+
+        val nextSet = dataStore.storeInputs(dataset.params).forms
+
+        launchStoreForm ++ nextSet
+      }
     }
   }
 
-  def repopulateExperimentParams(experimentRunParams: ExperimentRunParams): Unit = {
-    experimentParams.writeBatchSize = experimentRunParams.batchSize
-    experimentParams.benchmarkTimeSeconds = experimentRunParams.benchmarkTimeSeconds
-    experimentParams.dataDescription.rowsOpt = Some(experimentRunParams.rows)
-    experimentParams.dataDescription.setData()
+  def init(): Unit = {
+    dataStore.connectAndInitialize()
   }
 
   def run(): ExperimentResult = {
     var rowsCount = 0
     val writeTimes = ListBuffer[Long]()
-    experimentParams.dataDescription.data.grouped(experimentParams.writeBatchSize).foreach { rows =>
+    dataset.data.grouped(experimentParams.writeBatchSize).foreach { rows =>
       try {
         val start = System.currentTimeMillis()
         dataStore.putData(rows)
@@ -51,8 +54,8 @@ class SimplePerformanceExperiment(dataStore: DataStore) extends Experiment {
       println(s"Starting with the experiment")
       val results = BenchmarkUtil.runBenchmark(
         concurrentThreads = experimentParams.concurrentQueries,
-        benchmarkTimeSeconds = experimentParams.benchmarkTimeSeconds,
-        runTask = () => dataStore.readData(experimentParams.perfixQuery).size
+        benchmarkTimeSeconds = experimentParams.experimentTimeInSeconds,
+        runTask = () => dataStore.readData(experimentParams.query).size
       )
       println(results)
       results
