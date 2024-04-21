@@ -12,4 +12,8 @@ case class DatasetParams(id: Option[DatasetId], rows: Int, columns: Seq[ColumnDe
 
 object DatasetParams {
   implicit val DatasetParamsFormatter: Format[DatasetParams] = Json.format[DatasetParams]
+
+  def empty(): DatasetParams = {
+    DatasetParams(None, 0, columns = Seq.empty)
+  }
 }

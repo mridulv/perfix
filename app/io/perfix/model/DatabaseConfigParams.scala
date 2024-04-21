@@ -19,7 +19,7 @@ case class DatabaseConfigParams(databaseConfigId: Option[DatabaseConfigId] = Non
       case None => Iterator(credentialsForm)
     }
 
-    val nextSet = dataStore.storeInputs(DataDescription()).forms
+    val nextSet = dataStore.storeInputs(DatasetParams.empty()).forms
 
     FormInputs((launchForm ++ nextSet).toSeq.flatMap(_.mapping).toMap)
   }
