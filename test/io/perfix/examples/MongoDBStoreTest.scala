@@ -7,17 +7,12 @@ import io.perfix.forms.documentdb.DocumentDBConnectionParamsForm._
 import io.perfix.forms.documentdb.DocumentDBIndicesParamsForm.INDICES_COLUMNS
 import io.perfix.forms.documentdb.DocumentDBLaunchForm.{DB_CLUSTER_IDENTIFIER, INSTANCE_CLASS, MASTER_PASSWORD, MASTER_USERNAME}
 import io.perfix.forms.documentdb.DocumentDBTableParamsForm.COLLECTION_NAME
-import io.perfix.forms.experiment.DataConfigurationForm._
-import io.perfix.forms.experiment.ExperimentParamsForm.{CONCURRENT_QUERIES, PERFIX_QUERY}
+import io.perfix.model.{Dataset, ExperimentParams}
 
 object MongoDBStoreTest {
 
   def main(args: Array[String]): Unit = {
     val mappedVariables: Map[String, Any] = Map(
-      ROWS -> 10000,
-      COLUMNS -> "[{\"columnName\":\"student_name\",\"columnType\":{\"type\":\"NameType\",\"isUnique\":true},\"columnValueDistribution\":{\"value\":\"John\",\"probability\":0.1}},{\"columnName\":\"student_address\",\"columnType\":{\"type\":\"AddressType\",\"isUnique\":false}}]",
-      CONCURRENT_QUERIES -> 10,
-      PERFIX_QUERY -> "{\"filtersOpt\":[{\"field\":\"student_name\",\"fieldValue\":\"John\"}],\"projectedFieldsOpt\":[\"student_address\"],\"limitOpt\":1}",
       DATABASE -> "test",
       URL -> "mongodb://localhost:27017",
       COLLECTION_NAME -> "students",
@@ -30,7 +25,8 @@ object MongoDBStoreTest {
       INSTANCE_CLASS -> "db.r5.large",
       LAUNCH_DB -> false
     )
-    val experimentExecutor = new ExperimentExecutor("mongodb")
+    val experimentParams: ExperimentParams = ExperimentParams.experimentParamsForTesting
+    val experimentExecutor = new ExperimentExecutor("mongodb", experimentParams, dataset = Dataset.datasetForTesting)
     while (experimentExecutor.getFormSeriesEvaluator.hasNext) {
       val form = experimentExecutor.getFormSeriesEvaluator.next()
       val answerMapping = form.map { case (k, formInputType) =>
