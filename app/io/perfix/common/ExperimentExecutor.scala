@@ -23,10 +23,6 @@ class ExperimentExecutor(storeName: String) {
     experiment.run()
   }
 
-  def repopulateExperimentParams(experimentRunParams: ExperimentRunParams): Unit = {
-    experiment.repopulateExperimentParams(experimentRunParams)
-  }
-
   def cleanUp(): Unit = {
     experiment.cleanup()
   }
