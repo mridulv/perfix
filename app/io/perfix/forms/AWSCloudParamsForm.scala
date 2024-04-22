@@ -9,7 +9,7 @@ class AWSCloudParamsForm(override val formParams: AWSCloudParams) extends Form {
   override val mapping: Map[FormInputName, FormInputType] = Map(
     AWS_ACCESS_KEY -> FormInputType(StringType),
     AWS_ACCESS_SECRET -> FormInputType(StringType),
-    LAUNCH_DB -> FormInputType(StringType, isRequired = false),
+    LAUNCH_DB -> FormInputType(BooleanType, isRequired = false),
     USE_INSTANCE_ROLE -> FormInputType(BooleanType, isRequired = false)
   )
 

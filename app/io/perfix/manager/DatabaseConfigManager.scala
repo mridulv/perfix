@@ -1,7 +1,7 @@
 package io.perfix.manager
 
 import com.google.inject.Singleton
-import io.perfix.model.{DatabaseConfigId, DatabaseConfigParams, DatasetId, DatasetParams, FormInputs, FormInputValues}
+import io.perfix.model.{DatabaseConfigId, DatabaseConfigParams, FormInputs, FormInputValues}
 
 import scala.collection.mutable
 import scala.util.Random

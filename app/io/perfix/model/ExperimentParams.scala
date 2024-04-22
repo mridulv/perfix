@@ -4,6 +4,7 @@ import io.perfix.query.PerfixQuery
 import play.api.libs.json.{Format, Json}
 
 case class ExperimentParams(experimentId: Option[ExperimentId],
+                            name: String,
                             writeBatchSize: Int = 100,
                             experimentTimeInSeconds: Int = 30,
                             concurrentQueries: Int = 1,
@@ -18,6 +19,7 @@ object ExperimentParams {
   def experimentParamsForTesting: ExperimentParams = {
     ExperimentParams(
       None,
+      name = "test-experiment",
       query = PerfixQuery(limitOpt = Some(100)),
       datasetId = DatasetId(-1),
       databaseConfigId = DatabaseConfigId(-1),

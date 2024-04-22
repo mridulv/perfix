@@ -1,7 +1,7 @@
 package io.perfix.stores
 
 import io.perfix.launch.{AWSCloudParams, LaunchStoreForm}
-import io.perfix.model.{DataDescription, DatasetParams}
+import io.perfix.model.DatasetParams
 import io.perfix.query.PerfixQuery
 import io.perfix.forms.FormSeries
 

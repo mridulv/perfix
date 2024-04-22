@@ -2,7 +2,7 @@ package io.perfix.controllers
 
 import com.google.inject.{Inject, Singleton}
 import io.perfix.manager.DatabaseConfigManager
-import io.perfix.model.{DatabaseConfigId, DatabaseConfigParams, FormInputValue, FormInputValues}
+import io.perfix.model.{DatabaseConfigId, DatabaseConfigParams, FormInputValues}
 import io.perfix.model.DatabaseConfigId._
 import io.perfix.model.DatabaseConfigParams._
 import play.api.libs.json.Json

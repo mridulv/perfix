@@ -4,7 +4,7 @@ import com.mongodb.client.model.Indexes
 import com.mongodb.client.{MongoClient, MongoClients, MongoCollection, MongoDatabase}
 import io.perfix.exceptions.InvalidStateException
 import io.perfix.launch.{AWSCloudParams, LaunchStoreForm}
-import io.perfix.model.{DataDescription, DatasetParams}
+import io.perfix.model.DatasetParams
 import io.perfix.query.PerfixQuery
 import io.perfix.forms.documentdb.DocumentDBLaunchForm
 import io.perfix.stores.DataStore

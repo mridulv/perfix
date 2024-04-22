@@ -4,9 +4,12 @@ import io.perfix.model._
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
+import scala.util.Random
+
 class FakeDataGeneratorTest extends AnyFlatSpec with Matchers {
   "FakeDataGenerator" should "generate fake data with specified number of rows and columns" in {
     val datasetParams = DatasetParams(None,
+      name = s"dataset-${Random.nextInt()}",
       5,
       Seq(ColumnDescription("name", NameType(isUnique = true)), ColumnDescription("age", NumericType(None)))
     )
@@ -22,6 +25,7 @@ class FakeDataGeneratorTest extends AnyFlatSpec with Matchers {
   it should "generate unique values for columns marked as unique" in {
     val datasetParams = DatasetParams(
       None,
+      name = s"dataset-${Random.nextInt()}",
       10,
       Seq(ColumnDescription("id", TextType(isUnique = true)))
     )
@@ -36,6 +40,7 @@ class FakeDataGeneratorTest extends AnyFlatSpec with Matchers {
   it should "generate data with default values for unsupported data types" in {
     val datasetParams = DatasetParams(
       None,
+      name = s"dataset-${Random.nextInt()}",
       5,
       Seq(
         ColumnDescription("name", NameType(isUnique = true)),
