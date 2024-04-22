@@ -6,6 +6,7 @@ import io.perfix.forms.AWSCloudParamsForm
 import play.api.libs.json.{Format, Json}
 
 case class DatabaseConfigParams(databaseConfigId: Option[DatabaseConfigId] = None,
+                                name: String,
                                 storeName: String,
                                 formInputValues: Option[Seq[FormInputValue]] = None) {
 
@@ -19,7 +20,7 @@ case class DatabaseConfigParams(databaseConfigId: Option[DatabaseConfigId] = Non
       case None => Iterator(credentialsForm)
     }
 
-    val nextSet = dataStore.storeInputs(DataDescription()).forms
+    val nextSet = dataStore.storeInputs(DatasetParams.empty()).forms
 
     FormInputs((launchForm ++ nextSet).toSeq.flatMap(_.mapping).toMap)
   }

@@ -1,6 +1,6 @@
 package io.perfix.stores
 
-import io.perfix.model.{ColumnDescription, DataDescription, NameType}
+import io.perfix.model.{ColumnDescription, DatasetParams, NameType}
 import io.perfix.query.PerfixQuery
 import io.perfix.stores.mysql._
 import org.mockito.MockitoSugar
@@ -9,6 +9,7 @@ import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
 import java.sql.{Connection, DriverManager}
+import scala.util.Random
 
 class MySQLStoreTest extends AnyFlatSpec with Matchers with MockitoSugar with BeforeAndAfterAll {
 
@@ -49,15 +50,14 @@ class MySQLStoreTest extends AnyFlatSpec with Matchers with MockitoSugar with Be
     mySQLStore = new MySQLStore()
     connection = DriverManager.getConnection(url, username, password)
     initializeDatabase(connection)
-    val dataDescription = DataDescription()
-    dataDescription.rowsOpt = Some(100)
-    dataDescription.columnsOpt = Some(
-      Seq(
-        ColumnDescription("name", NameType())
-      )
-    )
 
-    val formSeries = mySQLStore.storeInputs(dataDescription)
+    val datasetParams = DatasetParams(
+      id = None,
+      name = s"dataset-${Random.nextInt()}",
+      rows = 100,
+      columns = Seq(ColumnDescription("name", NameType()))
+    )
+    val formSeries = mySQLStore.storeInputs(datasetParams)
 
     formSeries.mySQLParams.mySQLConnectionParams = Some(MySQLConnectionParams(url, username, password))
     formSeries.mySQLParams.mySQLTableParams = Some(MySQLTableParams("testdb", "testTable"))

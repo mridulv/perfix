@@ -1,5 +1,6 @@
 package io.perfix.experiment
 
+import io.perfix.model.{Dataset, ExperimentParams}
 import io.perfix.query.{PerfixQuery, PerfixQueryFilter}
 import io.perfix.stores.DataStore
 import org.mockito.Mockito
@@ -21,13 +22,8 @@ class SimplePerformanceExperimentTest extends AnyFlatSpec with Matchers {
       limitOpt = Some(10)
     )
 
-    // Create a SimplePerformanceExperiment instance
-    val experiment = new SimplePerformanceExperiment(dataStore)
-    experiment.experimentParams.concurrentQueriesOpt = Some(10)
-    experiment.experimentParams.dataDescription.rowsOpt = Some(5)
-    experiment.experimentParams.dataDescription.columnsOpt = Some(Seq.empty)
-    experiment.experimentParams.perfixQuery = perfixQuery
-    experiment.experimentParams.dataDescription.setData()
+    val experimentParams = ExperimentParams.experimentParamsForTesting
+    val experiment = new SimplePerformanceExperiment(dataStore, experimentParams, Dataset.datasetForTesting)
 
     // Initialize the experiment
     experiment.init()
@@ -56,16 +52,5 @@ class SimplePerformanceExperimentTest extends AnyFlatSpec with Matchers {
 
     // Verify that cleanup() is called on the data store
     verify(dataStore).cleanup()
-  }
-
-  "SimplePerformanceExperiment" should "throw an exception when parameters are not defined correctly" in {
-    // Create a mock DataStore
-    val dataStore = mock(classOf[DataStore])
-
-    // Create a SimplePerformanceExperiment instance with incorrect parameters
-    val experiment = new SimplePerformanceExperiment(dataStore)
-
-    // Try to initialize the experiment (should throw an exception)
-    an[Exception] should be thrownBy experiment.init()
   }
 }

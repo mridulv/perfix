@@ -7,7 +7,7 @@ import com.amazonaws.services.dynamodbv2.model._
 import io.perfix.exceptions.InvalidStateException
 import io.perfix.launch.{AWSCloudParams, LaunchStoreForm}
 import io.perfix.model.ColumnType.toDynamoDBType
-import io.perfix.model.{ColumnDescription, DataDescription}
+import io.perfix.model.{ColumnDescription, DatasetParams}
 import io.perfix.stores.DataStore
 import io.perfix.query.PerfixQuery
 import io.perfix.stores.dynamodb.model.DynamoDBGSIMetadataParams
@@ -17,7 +17,7 @@ import scala.util.control.Breaks.{break, breakable}
 
 class DynamoDBStore extends DataStore {
   private var client: AmazonDynamoDB = _
-  private var dataDescription: DataDescription = _
+  private var datasetParams: DatasetParams = _
   private val dynamoDBParams: DynamoDBParams = DynamoDBParams()
   private var tableParams: DynamoDBTableParams = _
   private var awsCloudCredentials: AWSCloudParams = _
@@ -27,8 +27,8 @@ class DynamoDBStore extends DataStore {
     None
   }
 
-  override def storeInputs(dataDescription: DataDescription): DynamoDBFormSeries = {
-    this.dataDescription = dataDescription
+  override def storeInputs(datasetParams: DatasetParams): DynamoDBFormSeries = {
+    this.datasetParams = datasetParams
     DynamoDBFormSeries(dynamoDBParams)
   }
 
@@ -42,7 +42,7 @@ class DynamoDBStore extends DataStore {
       tableParams.partitionKey,
       tableParams.sortKey
     )
-    val attributeDefinitions = getAttributeDefinitions(dataDescription.columns)
+    val attributeDefinitions = getAttributeDefinitions(datasetParams.columns)
 
     val credentialsProvider = if (awsCloudCredentials.useInstanceRole) {
       DefaultAWSCredentialsProviderChain.getInstance()

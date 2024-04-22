@@ -4,7 +4,7 @@ import com.mongodb.client.model.Indexes
 import com.mongodb.client.{MongoClient, MongoClients, MongoCollection, MongoDatabase}
 import io.perfix.exceptions.InvalidStateException
 import io.perfix.launch.{AWSCloudParams, LaunchStoreForm}
-import io.perfix.model.DataDescription
+import io.perfix.model.DatasetParams
 import io.perfix.query.PerfixQuery
 import io.perfix.forms.documentdb.DocumentDBLaunchForm
 import io.perfix.stores.DataStore
@@ -16,14 +16,14 @@ class DocumentDBStore extends DataStore {
   private var mongoClient: MongoClient = _
   private var mongoDatabase: MongoDatabase = _
   private val documentDBParams: DocumentDBParams = DocumentDBParams()
-  private var dataDescription: DataDescription = _
+  private var datasetParams: DatasetParams = _
 
   override def launch(awsCloudParams: AWSCloudParams): Option[LaunchStoreForm] = {
     Some(new DocumentDBLaunchForm(awsCloudParams, documentDBParams))
   }
 
-  override def storeInputs(dataDescription: DataDescription): DocumentDBFormSeries = {
-    this.dataDescription = dataDescription
+  override def storeInputs(datasetParams: DatasetParams): DocumentDBFormSeries = {
+    this.datasetParams = datasetParams
     DocumentDBFormSeries(this.documentDBParams)
   }
 

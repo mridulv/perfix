@@ -1,21 +1,29 @@
 package io.perfix.model
 
 import io.perfix.query.PerfixQuery
-import io.perfix.forms.FormParams
+import play.api.libs.json.{Format, Json}
 
-case class ExperimentParams() extends FormParams {
+case class ExperimentParams(experimentId: Option[ExperimentId],
+                            name: String,
+                            writeBatchSize: Int = 100,
+                            experimentTimeInSeconds: Int = 30,
+                            concurrentQueries: Int = 1,
+                            query: PerfixQuery,
+                            datasetId: DatasetId,
+                            databaseConfigId: DatabaseConfigId,
+                            experimentResult: Option[ExperimentResult] = None)
 
-  val dataDescription = new DataDescription
-  var concurrentQueriesOpt: Option[Int] = None
-  var writeBatchSize: Int = 100
-  var benchmarkTimeSeconds: Int = 15
-  var perfixQuery: PerfixQuery = PerfixQuery.empty
+object ExperimentParams {
+  implicit val ExperimentParamsFormatter: Format[ExperimentParams] = Json.format[ExperimentParams]
 
-  def concurrentQueries: Int = {
-    concurrentQueriesOpt.get
-  }
-
-  def isDefined: Boolean = {
-    concurrentQueriesOpt.isDefined && dataDescription.isDefined
+  def experimentParamsForTesting: ExperimentParams = {
+    ExperimentParams(
+      None,
+      name = "test-experiment",
+      query = PerfixQuery(limitOpt = Some(100)),
+      datasetId = DatasetId(-1),
+      databaseConfigId = DatabaseConfigId(-1),
+      experimentResult = None
+    )
   }
 }

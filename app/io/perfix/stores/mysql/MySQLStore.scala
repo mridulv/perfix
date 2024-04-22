@@ -3,7 +3,7 @@ package io.perfix.stores.mysql
 import io.perfix.exceptions.InvalidStateException
 import io.perfix.launch.{AWSCloudParams, LaunchStoreForm}
 import io.perfix.model.ColumnType.toSqlType
-import io.perfix.model.{ColumnDescription, DataDescription}
+import io.perfix.model.{ColumnDescription, DatasetParams}
 import io.perfix.stores.DataStore
 import io.perfix.query.PerfixQuery
 import io.perfix.forms.mysql.MySQLLaunchForm
@@ -12,15 +12,15 @@ import java.sql.{Connection, DriverManager, ResultSet}
 
 class MySQLStore extends DataStore {
   private[stores] var connection: Connection = _
-  private var dataDescription: DataDescription = _
+  private var datasetParams: DatasetParams = _
   private val mySQLParams: MySQLParams = MySQLParams()
 
   override def launch(awsCloudParams: AWSCloudParams): Option[LaunchStoreForm] = {
     Some(new MySQLLaunchForm(awsCloudParams, mySQLParams))
   }
 
-  override def storeInputs(dataDescription: DataDescription): MySQLFormSeries = {
-    this.dataDescription = dataDescription
+  override def storeInputs(datasetParams: DatasetParams): MySQLFormSeries = {
+    this.datasetParams = datasetParams
     MySQLFormSeries(mySQLParams)
   }
 
@@ -45,7 +45,7 @@ class MySQLStore extends DataStore {
       case None => throw InvalidStateException("Table Index Params should have been defined")
     }
 
-    val sql = createTableStatement(tableParams.dbName + "." + tableParams.tableName, dataDescription.columns)
+    val sql = createTableStatement(tableParams.dbName + "." + tableParams.tableName, datasetParams.columns)
     statement.executeUpdate(sql)
 
     val indexSql = createTableIndexesStatement(tableIndexesParams.primaryIndexColumn, tableIndexesParams.secondaryIndexesColumn)

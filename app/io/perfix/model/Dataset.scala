@@ -26,6 +26,10 @@ object Dataset {
     case _ => throw new UnsupportedOperationException("Serialization of this Any type is not supported")
   }
   implicit val DatasetFormatter: Format[Dataset] = Json.format[Dataset]
+
+  def datasetForTesting: Dataset = {
+    DatasetParams.empty().dataset
+  }
 }
 
 

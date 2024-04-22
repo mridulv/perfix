@@ -2,7 +2,7 @@ package io.perfix.stores.redis
 
 import io.perfix.exceptions.{InvalidStateException, PerfixQueryException}
 import io.perfix.launch.{AWSCloudParams, LaunchStoreForm}
-import io.perfix.model.DataDescription
+import io.perfix.model.DatasetParams
 import io.perfix.query.PerfixQuery
 import io.perfix.forms.redis.RedisLaunchForm
 import io.perfix.stores.DataStore
@@ -10,15 +10,15 @@ import redis.clients.jedis.JedisPool
 
 class RedisStore extends DataStore {
   private var jedisPool: JedisPool = _
-  private var dataDescription: DataDescription = _
+  private var datasetParams: DatasetParams = _
   private val redisParams: RedisParams = RedisParams()
 
   override def launch(awsCloudParams: AWSCloudParams): Option[LaunchStoreForm] = {
     Some(new RedisLaunchForm(awsCloudParams, redisParams))
   }
 
-  override def storeInputs(dataDescription: DataDescription): RedisFormSeries = {
-    this.dataDescription = dataDescription
+  override def storeInputs(datasetParams: DatasetParams): RedisFormSeries = {
+    this.datasetParams = datasetParams
     new RedisFormSeries(redisParams)
   }
 

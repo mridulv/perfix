@@ -1,13 +1,13 @@
 package io.perfix.stores
 
 import io.perfix.launch.{AWSCloudParams, LaunchStoreForm}
-import io.perfix.model.DataDescription
+import io.perfix.model.DatasetParams
 import io.perfix.query.PerfixQuery
 import io.perfix.forms.FormSeries
 
 trait DataStore {
   def launch(awsCloudParams: AWSCloudParams): Option[LaunchStoreForm]
-  def storeInputs(dataDescription: DataDescription): FormSeries
+  def storeInputs(datasetParams: DatasetParams): FormSeries
   def connectAndInitialize(): Unit
   def putData(rows: Seq[Map[String, Any]]): Unit
   def readData(perfixQuery: PerfixQuery): Seq[Map[String, Any]]
