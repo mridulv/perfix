@@ -6,6 +6,7 @@ import io.perfix.forms.AWSCloudParamsForm
 import play.api.libs.json.{Format, Json}
 
 case class DatabaseConfigParams(databaseConfigId: Option[DatabaseConfigId] = None,
+                                name: String,
                                 storeName: String,
                                 formInputValues: Option[Seq[FormInputValue]] = None) {
 
