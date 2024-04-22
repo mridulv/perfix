@@ -1,3 +1,4 @@
+import Configurations from "../Pages/Dashboard/DBConfiguration/Configurations";
 import Dashboard from "../Pages/Dashboard/Dashboard/Dashboard";
 import DatasetDetails from "../Pages/Dashboard/Datasets/DatasetDetails";
 import Datasets from "../Pages/Dashboard/Datasets/Datasets";
@@ -25,6 +26,10 @@ export const router = createBrowserRouter([
             {
                 path: "/db-configuration",
                 element: <DBConfiguration/>
+            },
+            {
+                path: "/input-configuration/:id",
+                element: <Configurations/>
             },
             {
                 path: "/datasets",

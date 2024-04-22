@@ -65,7 +65,7 @@ const Banner = () => {
                 required
                 autoComplete="off"
               />
-              <button className="w-full md:w-[142px] mt-3 md:mt-0 bg-white text-black px-5 py-3 md:py-1 rounded-lg text-[17px] font-semibold">
+              <button className="w-full md:w-[142px] mt-3 md:mt-0 bg-white text-black px-4 py-3 md:py-1 rounded-lg text-[17px] font-semibold">
                 Join Waitlist!
               </button>
             </form>
