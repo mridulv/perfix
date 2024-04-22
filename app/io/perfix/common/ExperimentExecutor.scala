@@ -1,7 +1,7 @@
 package io.perfix.common
 
 import io.perfix.experiment.SimplePerformanceExperiment
-import io.perfix.model.{Dataset, DatasetParams, ExperimentParams, ExperimentResult, ExperimentRunParams}
+import io.perfix.model.{Dataset, DatasetParams, ExperimentParams, ExperimentResult}
 import io.perfix.stores.DataStore
 import io.perfix.stores.documentdb.DocumentDBStore
 import io.perfix.stores.dynamodb.DynamoDBStore

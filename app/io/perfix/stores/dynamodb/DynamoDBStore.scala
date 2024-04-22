@@ -7,7 +7,7 @@ import com.amazonaws.services.dynamodbv2.model._
 import io.perfix.exceptions.InvalidStateException
 import io.perfix.launch.{AWSCloudParams, LaunchStoreForm}
 import io.perfix.model.ColumnType.toDynamoDBType
-import io.perfix.model.{ColumnDescription, DataDescription, DatasetParams}
+import io.perfix.model.{ColumnDescription, DatasetParams}
 import io.perfix.stores.DataStore
 import io.perfix.query.PerfixQuery
 import io.perfix.stores.dynamodb.model.DynamoDBGSIMetadataParams

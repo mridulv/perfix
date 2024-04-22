@@ -6,12 +6,14 @@ import org.mockito.MockitoSugar
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
 
+import scala.util.Random
+
 class DatasetManagerTest extends AnyFlatSpec with MockitoSugar {
 
   "DatasetManager" should "create a new dataset with unique ID" in {
     val datasetManager = new DatasetManager()
 
-    val datasetParams = DatasetParams(id = None, rows = 100, columns = Seq.empty)
+    val datasetParams = DatasetParams(id = None, name = s"dataset-${Random.nextInt()}", rows = 100, columns = Seq.empty)
     val datasetId = datasetManager.create(datasetParams)
 
     datasetManager.get(datasetId).params.copy(id = None) shouldBe datasetParams
@@ -19,7 +21,7 @@ class DatasetManagerTest extends AnyFlatSpec with MockitoSugar {
 
   "DatasetManager" should "retrieve a dataset by ID" in {
     val datasetManager = new DatasetManager()
-    val datasetParams = DatasetParams(id = None, rows = 100, columns = Seq.empty)
+    val datasetParams = DatasetParams(id = None, name = s"dataset-${Random.nextInt()}", rows = 100, columns = Seq.empty)
     val datasetId = datasetManager.create(datasetParams)
 
     val retrievedDataset = datasetManager.get(datasetId)
@@ -30,8 +32,8 @@ class DatasetManagerTest extends AnyFlatSpec with MockitoSugar {
 
   "DatasetManager" should "retrieve all datasets" in {
     val datasetManager = new DatasetManager()
-    val datasetParams1 = DatasetParams(id = None, rows = 100, columns = Seq.empty)
-    val datasetParams2 = DatasetParams(id = None, rows = 200, columns = Seq.empty)
+    val datasetParams1 = DatasetParams(id = None, name = s"dataset-${Random.nextInt()}", rows = 100, columns = Seq.empty)
+    val datasetParams2 = DatasetParams(id = None, name = s"dataset-${Random.nextInt()}", rows = 200, columns = Seq.empty)
 
     datasetManager.create(datasetParams1)
     datasetManager.create(datasetParams2)

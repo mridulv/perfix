@@ -6,7 +6,7 @@ import io.perfix.forms.Form
 import io.perfix.forms.mysql.MySQLConnectionParamsForm.{PASSWORD, URL, USERNAME}
 import io.perfix.forms.mysql.MySQLLaunchForm.{INSTANCE_IDENTIFIER, INSTANCE_TYPE}
 import io.perfix.forms.mysql.MySQLTableParamsForm.{DBNAME, TABLENAME}
-import io.perfix.model.{ColumnDescription, DatabaseConfigId, Dataset, DatasetId, DatasetParams, ExperimentParams}
+import io.perfix.model.{ColumnDescription, DatabaseConfigId, Dataset, DatasetId, DatasetParams, ExperimentParams, FormInputValue, FormInputValues}
 import io.perfix.query.PerfixQuery
 import org.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterAll
@@ -15,6 +15,7 @@ import org.scalatest.matchers.should.Matchers
 import play.api.libs.json.Json
 
 import java.sql.DriverManager
+import scala.util.Random
 
 class ExperimentExecutorIT extends AnyFlatSpec with Matchers with MockitoSugar with BeforeAndAfterAll {
 
@@ -47,6 +48,7 @@ class ExperimentExecutorIT extends AnyFlatSpec with Matchers with MockitoSugar w
     val cols = Json.parse("[{\"columnName\":\"student_name\",\"columnType\":{\"type\":\"NameType\",\"isUnique\":true},\"columnValueDistribution\":{\"value\":\"John\",\"probability\":0.1}},{\"columnName\":\"student_address\",\"columnType\":{\"type\":\"AddressType\",\"isUnique\":false}}]").as[Seq[ColumnDescription]]
     val experimentParams = ExperimentParams(
       None,
+      name = s"exp-${Random.nextInt()}",
       concurrentQueries = 10,
       experimentTimeInSeconds = 5,
       query = PerfixQuery(limitOpt = Some(100)),
@@ -54,8 +56,10 @@ class ExperimentExecutorIT extends AnyFlatSpec with Matchers with MockitoSugar w
       databaseConfigId = DatabaseConfigId(-1),
       experimentResult = None
     )
+    println(Json.toJson(experimentParams).toString())
     val datasetParams = DatasetParams(
       id = None,
+      name = s"dataset-${Random.nextInt()}",
       rows = 100,
       columns = cols
     )
