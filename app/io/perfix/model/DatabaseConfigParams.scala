@@ -2,30 +2,13 @@ package io.perfix.model
 
 import io.perfix.common.ExperimentExecutor
 import io.perfix.launch.AWSCloudParams
-import io.perfix.forms.AWSCloudParamsForm
+import io.perfix.forms.{AWSCloudParamsForm, FormSeries}
 import play.api.libs.json.{Format, Json}
 
 case class DatabaseConfigParams(databaseConfigId: Option[DatabaseConfigId] = None,
                                 name: String,
                                 storeName: String,
-                                formInputValues: Option[Seq[FormInputValue]] = None) {
-
-  def formInputs: FormInputs = {
-    val dataStore = ExperimentExecutor.getDataStore(storeName)
-    val cloudParams = new AWSCloudParams
-    val credentialsForm = new AWSCloudParamsForm(cloudParams)
-
-    val launchForm = dataStore.launch(cloudParams) match {
-      case Some(launchForm) => Iterator(credentialsForm) ++ Iterator(launchForm)
-      case None => Iterator(credentialsForm)
-    }
-
-    val nextSet = dataStore.storeInputs(DatasetParams.empty()).forms
-
-    FormInputs((launchForm ++ nextSet).toSeq.flatMap(_.mapping).toMap)
-  }
-
-}
+                                formInputValues: Option[Seq[FormInputValue]] = None)
 
 object DatabaseConfigParams {
   implicit val DatabaseConfigParamsFormatter: Format[DatabaseConfigParams] = Json.format[DatabaseConfigParams]
