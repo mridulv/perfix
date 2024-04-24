@@ -7,10 +7,8 @@ import toast from "react-hot-toast";
 import DatasetCard from "../../../components/DatasetCard";
 
 const Datasets = () => {
-  
   const [columns, setColumns] = useState([{ columnName: "", columnType: "" }]);
   const [open, setOpen] = useState(false);
-
 
   const {
     data: datasets,
@@ -27,7 +25,6 @@ const Datasets = () => {
   });
 
   console.log(datasets);
-  
 
   const handleAddColumn = () => {
     setColumns([...columns, { columnName: "", columnType: "" }]);
@@ -35,13 +32,24 @@ const Datasets = () => {
 
   const handleAddDataset = async (event) => {
     event.preventDefault();
+    const datasetName = event.target.datasetName.value;
+    const isDuplicateName = datasets.some(
+      (dataset) => dataset.name.toLowerCase() === datasetName.toLowerCase()
+    );
+  
+    if (isDuplicateName) {
+      toast.error(`A dataset with the name "${datasetName}" already exists.`);
+      return;
+    }
+
+    console.log(datasetName);
     const formData = new FormData(event.target);
     const columnValues = [];
 
     columns.forEach((column, index) => {
       const columnName = formData.get(`columnName${index}`);
       const columnType = formData.get(`columnType${index}`);
-      
+
       columnValues.push({ columnName, columnType });
     });
 
@@ -50,16 +58,17 @@ const Datasets = () => {
       const url = "http://localhost:9000/dataset";
       const columnData = {
         rows: 10000,
-        columns: columnValues.map(columnValue => ({
+        name: datasetName,
+        columns: columnValues.map((columnValue) => ({
           columnName: columnValue.columnName,
           columnType: {
             type: columnValue.columnType,
-            isUnique: true
-          }
-        }))
+            isUnique: true,
+          },
+        })),
       };
-      console.log(columnData);
-    
+      
+
       const response = await axios.post(url, columnData, {
         headers: {
           "Content-Type": "application/json",
@@ -69,6 +78,7 @@ const Datasets = () => {
       if (response.status === 200) {
         setOpen(false);
         event.target.reset();
+        setColumns([{ columnName: "", columnType: "" }]);
         toast.success("Datased Added Successfully");
         refetch();
       }
@@ -108,6 +118,18 @@ const Datasets = () => {
           <div className="mx-auto my-4 w-[80%] md:w-[300px]">
             <h3 className="text-lg my-4 font-bold text-center">Add Dataset</h3>
             <form onSubmit={handleAddDataset}>
+              <label className="form-control w-full max-w-xs mb-4">
+                <div className="label">
+                  <span className="label-text text-base">Enter the name of the dataset.</span>
+                </div>
+                <input
+                      className="border-2 border-gray-500 px-2 py-2 rounded mt-2"
+                      placeholder="Dataset Name"
+                      type="text"
+                      name="datasetName"
+                      required
+                    />
+              </label>
               {columns.map((column, i) => (
                 <div key={i}>
                   <p className="text-sm">{i + 1}.</p>
@@ -156,11 +178,13 @@ const Datasets = () => {
       </AddDatasetModal>
 
       <div className="w-[90%] mx-auto grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {
-          datasets.map((dataset, i) => (
-            <DatasetCard key={dataset.id.id} dataset={dataset} index={i}></DatasetCard>
-          ))
-        }
+        {datasets.map((dataset) => (
+          <DatasetCard
+            key={dataset.id.id}
+            dataset={dataset}
+            
+          ></DatasetCard>
+        ))}
       </div>
     </div>
   );

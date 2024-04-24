@@ -3,26 +3,12 @@ import React, { useEffect } from "react";
 import { useQuery } from "react-query";
 import { Link } from "react-router-dom";
 
-const DBConfiguration = () => {
-  const stores = [
-    {
-      name: "MySQL",
-      value: "mysql",
-    },
 
-    {
-      name: "Redis",
-      value: "redis",
-    },
-    {
-      name: "DynamoDB",
-      value: "dynamodb",
-    },
-    {
-      name: "MongoDB",
-      value: "mongodb",
-    },
-  ];
+
+
+
+const DBConfiguration = () => {
+  
 
   const {
     data: configs,
@@ -38,22 +24,7 @@ const DBConfiguration = () => {
     },
   });
 
-  const handleAddConfig = async (e) => {
-    e.preventDefault();
-    const storeName = e.target.storeName.value;
-
-    try {
-      const res = await axios.post("http://localhost:9000/config", {
-        storeName,
-      });
-      console.log(res);
-      if (res.status === 200) {
-        refetch();
-      }
-    } catch (err) {
-      console.log(err);
-    }
-  };
+  
 
   console.log(configs);
 
@@ -69,38 +40,27 @@ const DBConfiguration = () => {
 
   if (isLoading) return <p>Loading...</p>;
   return (
-    <div className="min-h-screen flex flex-col justify-center items-center">
-      <form onSubmit={handleAddConfig}>
-        <label className="form-control w-full max-w-xs">
-          <div className="label">
-            <span className="label-text">Store Name</span>
-          </div>
-          <select name="storeName" className="select select-bordered w-60">
-            {stores.map((store) => (
-              <option value={store.value} key={store.value}>
-                {store.name}
-              </option>
-            ))}
-          </select>
-        </label>
-        <div className="my-4 flex justify-center">
-          <input
-            className="btn btn-error text-white btn-md"
-            type="submit"
-            value={"Add"}
-          />
-        </div>
-      </form>
+      <div>
+      <h3 className="text-lg font-bold text-center">Configurations</h3>
+      <div className="flex justify-end pe-12">
+        
+          <Link
+            className="btn btn-primary btn-md text-white my-4"
+            to="/add-db-configuration"
+          >
+            Add Configuration
+          </Link>
+        
+      </div>
       <div className="mt-4">
-        <h3 className="text-lg font-bold text-center">Configurations</h3>
-        <div className="grid grid-cols-3">
+        <div className="grid grid-cols-3 gap-3">
           {configs.map((config) => (
             <div
               className="p-4 border border-gray-400 shadow-md my-3"
               key={config.databaseConfigId.id}
             >
+              <p>Configuration Name: {config.name}</p>
               <p> store name: {config.storeName}</p>
-              <p>store id: {config.databaseConfigId.id}</p>
               <Link
                 className="btn btn-error btn-sm text-white my-4"
                 to={`/input-configuration/${config.databaseConfigId.id}`}

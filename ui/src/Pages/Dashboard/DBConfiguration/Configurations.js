@@ -6,15 +6,21 @@ import { useParams } from "react-router-dom";
 const Configurations = () => {
   const { id } = useParams();
   const [formDatas, setFormDatas] = useState(null);
+  const [loading, setLoading] = useState(false);
+
 
   const {register, handleSubmit} = useForm()
  
   useEffect(() => {
+    setLoading(true)
     const fetchFormDatas = async () => {
       const res = await axios.get(`http://localhost:9000/config/${id}/inputs`);
       const data = await res.data;
       console.log(data);
-      setFormDatas(data.inputs);
+      if(res.status === 200){
+        setFormDatas(data.inputs);
+        setLoading(false)
+      }
     };
 
     fetchFormDatas();
@@ -23,18 +29,23 @@ const Configurations = () => {
   // const datas =  Object.entries(formDatas).map( => );
   // console.log(datas);
 
-  const handleSubmitInputs = async(data) => {
-   console.log(data);
+  const handleSubmitInputs = async (data) => {
+    console.log(data);
+    const values = Object.entries(data).map(([inputName, answer]) => ({
+      inputName,
+      answer: answer === null ? "" : answer,
+    }));
+    console.log(values);
+    const res = await axios.post(`http://localhost:9000/config/${id}/submit`, {values}, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const responseData = await res.data;
+    console.log(responseData);
+  };
 
-   const res = await axios.post(`http://localhost:9000/config/${id}/submit`, data, {
-    headers: {
-      "Content-Type": "application/json",
-    },
-   })
-
-   console.log(res);
-
-  }
+  if(loading) return <p>loading..</p>
 
   return (
     <div className="flex flex-col items-center">
