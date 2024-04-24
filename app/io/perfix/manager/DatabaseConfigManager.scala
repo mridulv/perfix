@@ -30,7 +30,9 @@ class DatabaseConfigManager {
   def submitInputs(databaseConfigId: DatabaseConfigId,
                    formInputValues: FormInputValues): DatabaseConfigParams = {
     val databaseConfigParams = mapping(databaseConfigId)
-    databaseConfigParams.copy(formInputValues = Some(formInputValues.values))
+    val updatedConfig = databaseConfigParams.copy(formInputValues = Some(formInputValues.values))
+    mapping.put(databaseConfigId, updatedConfig)
+    updatedConfig
   }
 
   def update(databaseConfigId: DatabaseConfigId,
