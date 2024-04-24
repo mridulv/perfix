@@ -9,30 +9,40 @@ import scala.util.Random
 @Singleton
 class DatabaseConfigManager {
   private val mapping: mutable.Map[DatabaseConfigId, DatabaseConfigParams] = mutable.Map.empty[DatabaseConfigId, DatabaseConfigParams]
+  private val formManagerMapping: mutable.Map[DatabaseConfigId, FormManager] = mutable.Map.empty[DatabaseConfigId, FormManager]
 
   def create(databaseConfigParams: DatabaseConfigParams): DatabaseConfigId = {
     val id: Int = Random.nextInt()
+    val updatedDatabaseConfigParams = databaseConfigParams.copy(databaseConfigId = Some(DatabaseConfigId(id)))
+    val databaseConfigId = DatabaseConfigId(id)
     mapping.put(
-      DatabaseConfigId(id),
-      databaseConfigParams.copy(databaseConfigId = Some(DatabaseConfigId(id)))
+      databaseConfigId,
+      updatedDatabaseConfigParams
     )
-    DatabaseConfigId(id)
+    formManagerMapping.put(databaseConfigId, new FormManager(databaseConfigParams))
+    println(s"Adding form with id: $databaseConfigId to the mapping")
+    databaseConfigId
+  }
+
+  def currentForm(databaseConfigId: DatabaseConfigId): Option[FormInputs] = {
+    println(s"Getting current form for $databaseConfigId")
+    formManagerMapping(databaseConfigId).current
+  }
+
+  def submitForm(databaseConfigId: DatabaseConfigId,
+                 formInputValues: FormInputValues): Unit = {
+    val databaseConfigParams = mapping(databaseConfigId)
+    val updatedFormInputValues = databaseConfigParams.formInputValues.map { fiv =>
+      formInputValues.values ++ fiv
+    }.getOrElse(formInputValues.values)
+    val updatedConfig = databaseConfigParams.copy(formInputValues = Some(updatedFormInputValues))
+    println(s"Moving to the next form : $databaseConfigId")
+    formManagerMapping(databaseConfigId).submit
+    mapping.put(databaseConfigId, updatedConfig)
   }
 
   def get(databaseConfigId: DatabaseConfigId): DatabaseConfigParams = {
     mapping(databaseConfigId)
-  }
-
-  def getInputs(databaseConfigId: DatabaseConfigId): FormInputs = {
-    mapping(databaseConfigId).formInputs
-  }
-
-  def submitInputs(databaseConfigId: DatabaseConfigId,
-                   formInputValues: FormInputValues): DatabaseConfigParams = {
-    val databaseConfigParams = mapping(databaseConfigId)
-    val updatedConfig = databaseConfigParams.copy(formInputValues = Some(formInputValues.values))
-    mapping.put(databaseConfigId, updatedConfig)
-    updatedConfig
   }
 
   def update(databaseConfigId: DatabaseConfigId,
