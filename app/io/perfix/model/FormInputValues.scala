@@ -11,10 +11,6 @@ case class FormInputValues(values: Seq[FormInputValue]) {
     }.toMap
   }
 
-  def addFormInputValue(formInputValue: FormInputValue): FormInputValues = {
-    this.copy(values ++ Seq(formInputValue))
-  }
-
   def addFormInputValues(formInputValues: Seq[FormInputValue]): FormInputValues = {
     this.copy(values ++ formInputValues)
   }
