@@ -60,11 +60,11 @@ const AddDBConfiguration = () => {
             storeName,
             name
           });
-          
+          console.log(res.data);
           if (res.status === 200) {
             toast.success("Configuration created successfully");
-            navigate("/db-configuration")
             e.target.reset();
+            navigate(`/input-configuration/${res.data.id}`)
           }
         } catch (err) {
           console.log(err);
@@ -108,7 +108,7 @@ const AddDBConfiguration = () => {
           <input
             className="btn btn-error text-white btn-md"
             type="submit"
-            value={"Add"}
+            value={"Next"}
           />
         </div>
       </form>

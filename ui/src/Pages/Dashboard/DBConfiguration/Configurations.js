@@ -56,8 +56,8 @@ const Configurations = () => {
   if(isLoading) return <p>loading..</p>
   return (
     <div className="flex flex-col items-center">
-
-      <form onSubmit={handleSubmitInputs}>
+      <h3 className="text-xl font-bold text-center my-4">Please submit all the input fields to create the configuration completely</h3>
+      <form className="max-w-[400px] mx-auto px-8 py-2 border border-gray-200 rounded shadow-md" onSubmit={handleSubmitInputs}>
         {inputs &&
           Object.entries(inputs.inputs).map(
             ([fieldName, { dataType, isRequired }], index) => (
