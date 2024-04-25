@@ -1,7 +1,7 @@
 package io.perfix.manager
 
 import com.google.inject.Singleton
-import io.perfix.model.{DatabaseConfigId, DatabaseConfigParams, FormInputs, FormInputValues}
+import io.perfix.model.{DatabaseConfigId, DatabaseConfigParams, FormDetails, FormInputValues, FormInputs}
 
 import scala.collection.mutable
 import scala.util.Random
@@ -32,12 +32,15 @@ class DatabaseConfigManager {
   def submitForm(databaseConfigId: DatabaseConfigId,
                  formInputValues: FormInputValues): Unit = {
     val databaseConfigParams = mapping(databaseConfigId)
-    val updatedFormInputValues = databaseConfigParams.formInputValues.map { fiv =>
-      formInputValues.values ++ fiv
-    }.getOrElse(formInputValues.values)
-    val updatedConfig = databaseConfigParams.copy(formInputValues = Some(updatedFormInputValues))
     println(s"Moving to the next form : $databaseConfigId")
-    formManagerMapping(databaseConfigId).submit
+    val formManager = formManagerMapping(databaseConfigId)
+    val inputs = formManager.submit
+    val updatedFormDetails = databaseConfigParams.formDetails.getOrElse(FormDetails.empty).addValues(formInputValues)
+    val updatedConfig = if (formManager.current.isEmpty) {
+      databaseConfigParams.copy(formDetails = Some(updatedFormDetails.complete))
+    } else {
+      databaseConfigParams.copy(formDetails = Some(updatedFormDetails))
+    }
     mapping.put(databaseConfigId, updatedConfig)
   }
 

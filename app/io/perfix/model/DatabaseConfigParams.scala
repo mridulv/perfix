@@ -8,7 +8,13 @@ import play.api.libs.json.{Format, Json}
 case class DatabaseConfigParams(databaseConfigId: Option[DatabaseConfigId] = None,
                                 name: String,
                                 storeName: String,
-                                formInputValues: Option[Seq[FormInputValue]] = None)
+                                formDetails: Option[FormDetails] = None) {
+
+  def inputValues(): Option[Seq[FormInputValue]] = {
+    formDetails.map(_.values.values)
+  }
+
+}
 
 object DatabaseConfigParams {
   implicit val DatabaseConfigParamsFormatter: Format[DatabaseConfigParams] = Json.format[DatabaseConfigParams]

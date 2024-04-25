@@ -40,7 +40,7 @@ class ExperimentManager @Inject()(datasetManager: DatasetManager,
     val experimentParams = mapping(experimentId)
     val databaseConfigParams = databaseConfigManager.get(experimentParams.databaseConfigId)
     val dataset = datasetManager.get(experimentParams.datasetId)
-    val inputValues = databaseConfigParams.formInputValues.getOrElse(Seq.empty).map { e =>
+    val inputValues = databaseConfigParams.inputValues().getOrElse(Seq.empty).map { e =>
       e.inputName -> e.answer
     }.toMap
     val experimentExecutor = new ExperimentExecutor(databaseConfigParams.storeName, experimentParams, dataset)
