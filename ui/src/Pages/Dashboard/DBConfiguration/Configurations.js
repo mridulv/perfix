@@ -1,6 +1,5 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import React, { useEffect } from "react";
 import toast from "react-hot-toast";
 import { useQuery } from "react-query";
 import { useNavigate, useParams } from "react-router-dom";
@@ -12,7 +11,7 @@ const Configurations = () => {
   
   
  
-  const {data: inputs, isLoading, refetch, error} = useQuery({
+  const {data: inputs, isLoading, refetch} = useQuery({
     queryKey: ["inputs", id],
     queryFn: async () => {
       const res = await axios.get(`http://localhost:9000/config/${id}/form`);

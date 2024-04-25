@@ -2,7 +2,8 @@ import axios from 'axios';
 import React from 'react';
 import toast from 'react-hot-toast';
 import { useQuery } from 'react-query';
-import { useNavigate, useNavigation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import Loading from '../../../components/Loading';
 
 
 
@@ -70,12 +71,11 @@ const AddDBConfiguration = () => {
           console.log(err);
         }
       };
-      if(isLoading){
-        return <div>Loading...</div>
-      }
+      if(isLoading) return <Loading/>;
     return (
         <div>
             <div className="min-h-screen flex flex-col justify-center items-center">
+        <h3 className='text-center text-xl font-bold my-2 underline'>Add Configuration</h3>
       <form onSubmit={handleAddConfig}>
         <label className="form-control w-full max-w-xs mb-4">
           <div className="label">

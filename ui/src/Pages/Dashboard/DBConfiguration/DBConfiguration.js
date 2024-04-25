@@ -1,20 +1,20 @@
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useQuery } from "react-query";
 import { Link } from "react-router-dom";
 import { SlOptionsVertical } from "react-icons/sl";
+import Loading from "../../../components/Loading";
 
 
 
 
 
 const DBConfiguration = () => {
-  const [showOptions, setShowOptions] = useState(false)
+  const [showOptions, setShowOptions] = useState(null)
 
   const {
     data: configs,
     isLoading,
-    refetch,
   } = useQuery({
     queryKey: ["config"],
     queryFn: async () => {
@@ -24,6 +24,10 @@ const DBConfiguration = () => {
       return data;
     },
   });
+
+  const handleShowOptions = (config) => {
+    setShowOptions(showOptions === config ? null : config);
+  };
 
 
   // useEffect(() => {
@@ -36,7 +40,7 @@ const DBConfiguration = () => {
   //     fetchConfig();
   // }, [])
 
-  if (isLoading) return <p>Loading...</p>;
+  if (isLoading) return <Loading/>;
   return (
       <div>
       <h3 className="text-lg font-bold text-center">Configurations</h3>
@@ -61,18 +65,18 @@ const DBConfiguration = () => {
               <p> store name: {config.storeName}</p>
               
               {
-                config.formInputValues ? (
+                config.formDetails && config.formDetails.formStatus === "Completed" ? (
                   <div className="flex justify-end my-2 relative">
-                    <button onClick={() => setShowOptions(!showOptions)}><SlOptionsVertical /></button>
-                    {
-                      showOptions && (
-                        <div className="flex flex-col gap-2 absolute top-5 right-0 bg-gray-100 px-8 py-4 rounded-lg">
-                          <button className="btn btn-sm btn-accent text-white">Update</button>
-                          <button className="btn btn-sm btn-error text-white">Delete</button>
-                        </div>
-                      )
-                    }
-                  </div>
+                  <button onClick={() => handleShowOptions(config)}><SlOptionsVertical /></button>
+                  {
+                    showOptions === config && (
+                      <div className="flex flex-col gap-2 absolute top-5 right-0 bg-gray-100 px-8 py-4 rounded-lg">
+                        <button className="btn btn-sm btn-accent text-white">Update</button>
+                        <button className="btn btn-sm btn-error text-white">Delete</button>
+                      </div>
+                    )
+                  }
+                </div>
                 ) : (
                   <Link
                 className="btn btn-error btn-sm text-white my-4"

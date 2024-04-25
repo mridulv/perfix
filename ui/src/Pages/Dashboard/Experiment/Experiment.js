@@ -1,10 +1,9 @@
-import { data } from "autoprefixer";
 import axios from "axios";
 import React, { useState } from "react";
-import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { useQuery } from "react-query";
 import AddExperimentModal from "../../../components/AddExperimentModal";
+import Loading from "../../../components/Loading";
 
 const fields = [
   {
@@ -114,9 +113,7 @@ const Experiment = () => {
     }
   };
 
-  if (datasetsLoading && configsLoading && experimentsLoading) {
-    return <p>Loading...</p>;
-  }
+  if (datasetsLoading && configsLoading && experimentsLoading) return <Loading/>
   return (
     <div>
       <h3 className="text-center text-xl my-4 font-semibold">Experiments</h3>
