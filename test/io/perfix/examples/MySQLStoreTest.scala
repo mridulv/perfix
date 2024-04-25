@@ -7,7 +7,8 @@ import io.perfix.forms.mysql.MySQLConnectionParamsForm._
 import io.perfix.forms.mysql.MySQLLaunchForm._
 import io.perfix.forms.mysql.MySQLTableIndicesDetailForm.SECONDARY_INDEX_COLUMNS
 import io.perfix.forms.mysql.MySQLTableParamsForm.{DBNAME, TABLENAME}
-import io.perfix.model.{Dataset, ExperimentParams}
+import io.perfix.model.{ColumnDescription, Dataset, DatasetParams, ExperimentParams}
+import play.api.libs.json.Json
 
 
 object MySQLStoreTest {
@@ -26,8 +27,10 @@ object MySQLStoreTest {
       AWS_ACCESS_SECRET -> "************************************",
       LAUNCH_DB -> false
     )
+    val cols = Json.parse("[{\"columnName\":\"student_name\",\"columnType\":{\"type\":\"NameType\",\"isUnique\":true},\"columnValueDistribution\":{\"value\":\"John\",\"probability\":0.1}},{\"columnName\":\"student_address\",\"columnType\":{\"type\":\"AddressType\",\"isUnique\":false}}]").as[Seq[ColumnDescription]]
+    val datasetParams = DatasetParams(None, "dataset", 100, cols)
     val experimentParams: ExperimentParams = ExperimentParams.experimentParamsForTesting
-    val experimentExecutor = new ExperimentExecutor("mysql", experimentParams, dataset = Dataset.datasetForTesting)
+    val experimentExecutor = new ExperimentExecutor("mysql", experimentParams, dataset = datasetParams.dataset)
     while (experimentExecutor.getFormSeriesEvaluator.hasNext) {
       val form = experimentExecutor.getFormSeriesEvaluator.next()
       val answerMapping = form.map { case (k, formInputType) =>
