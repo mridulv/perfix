@@ -2,6 +2,7 @@ import axios from 'axios';
 import React from 'react';
 import toast from 'react-hot-toast';
 import { useQuery } from 'react-query';
+import { useNavigate, useNavigation } from 'react-router-dom';
 
 
 
@@ -26,12 +27,13 @@ const stores = [
   ];
 const AddDBConfiguration = () => {
 
+  const navigate = useNavigate();
+
     const {
         data: configs,
-        isLoading,
-        refetch,
+        isLoading
       } = useQuery({
-        queryKey: ["config"],
+        queryKey: ["configs"],
         queryFn: async () => {
           const res = await axios.get("http://localhost:9000/config");
           const data = await res.data;
@@ -60,13 +62,17 @@ const AddDBConfiguration = () => {
           });
           
           if (res.status === 200) {
-            refetch();
+            toast.success("Configuration created successfully");
+            navigate("/db-configuration")
             e.target.reset();
           }
         } catch (err) {
           console.log(err);
         }
       };
+      if(isLoading){
+        return <div>Loading...</div>
+      }
     return (
         <div>
             <div className="min-h-screen flex flex-col justify-center items-center">

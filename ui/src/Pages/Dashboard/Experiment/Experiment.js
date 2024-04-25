@@ -143,7 +143,7 @@ const Experiment = () => {
       {
         experiments && experiments.length < 1 ? 
         (
-          <p>You haven't added any experiments yet.</p>
+          <p className="ps-5">You haven't added any experiments yet.</p>
         ) : 
         (
          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 px-4 mx-auto my-4">

@@ -1,58 +1,65 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useParams } from "react-router-dom";
+import toast from "react-hot-toast";
+import { useQuery } from "react-query";
+import { useNavigate, useParams } from "react-router-dom";
 
 const Configurations = () => {
   const { id } = useParams();
-  const [formDatas, setFormDatas] = useState(null);
-  const [loading, setLoading] = useState(false);
-
-
-  const {register, handleSubmit} = useForm()
+  
+  const navigate = useNavigate();
+  
+  
  
-  useEffect(() => {
-    setLoading(true)
-    const fetchFormDatas = async () => {
-      const res = await axios.get(`http://localhost:9000/config/${id}/inputs`);
+  const {data: inputs, isLoading, refetch, error} = useQuery({
+    queryKey: ["inputs", id],
+    queryFn: async () => {
+      const res = await axios.get(`http://localhost:9000/config/${id}/form`);
       const data = await res.data;
-      console.log(data);
-      if(res.status === 200){
-        setFormDatas(data.inputs);
-        setLoading(false)
-      }
-    };
+      return data;
+    },
+  });
+;
 
-    fetchFormDatas();
-  }, [id]);
+  const handleSubmitInputs = async (event) => {
+    event.preventDefault();
 
-  // const datas =  Object.entries(formDatas).map( => );
-  // console.log(datas);
+    const formData = new FormData(event.target);
+    let values = [];
+    formData.forEach((value, inputName) => {
+      values.push({ inputName, answer: value });
+    });
 
-  const handleSubmitInputs = async (data) => {
-    console.log(data);
-    const values = Object.entries(data).map(([inputName, answer]) => ({
-      inputName,
-      answer: answer === null ? "" : answer,
-    }));
-    console.log(values);
-    const res = await axios.post(`http://localhost:9000/config/${id}/submit`, {values}, {
+    
+    const res = await axios.post(`http://localhost:9000/config/${id}/form`, {values}, {
       headers: {
         "Content-Type": "application/json",
       },
     });
-    const responseData = await res.data;
-    console.log(responseData);
+    
+    if (res.status === 200) {
+      await refetch();
+    }
+   
   };
 
-  if(loading) return <p>loading..</p>
+  
+  useEffect(() => {
+    if(inputs === null){
+      toast.success("Form Datas submitted successfully");
+      navigate("/db-configuration");
+    }
+  }, [inputs, navigate])
+  
 
+  if(isLoading) return <p>loading..</p>
   return (
     <div className="flex flex-col items-center">
 
-      <form onSubmit={handleSubmit(handleSubmitInputs)}>
-        {formDatas &&
-          Object.entries(formDatas).map(
+      <form onSubmit={handleSubmitInputs}>
+        {inputs &&
+          Object.entries(inputs.inputs).map(
             ([fieldName, { dataType, isRequired }], index) => (
               <div className="flex flex-col my-4" key={fieldName}>
                 <label className="my-2">
@@ -65,7 +72,7 @@ const Configurations = () => {
                     style={{ outline: "none" }}
                     required={isRequired}
                     name={fieldName}
-                    {...register(`${fieldName}`, {required: isRequired})}
+                    // {...register(`${fieldName}`, {required: isRequired})}
                   />
                 )}
                 {dataType === "IntType" && (
@@ -77,7 +84,7 @@ const Configurations = () => {
                     pattern="[0-9]*"
                     inputMode="numeric"
                     name={fieldName}
-                    {...register(`${fieldName}`, {required: isRequired})}
+                    // {...register(`${fieldName}`, {required: isRequired})}
                   />
                 )}
                 {dataType === "BooleanType" && (
@@ -89,7 +96,7 @@ const Configurations = () => {
                       value="true"
                       className="radio"
                       required={isRequired}
-                      {...register(`${fieldName}`, {required: isRequired})}
+                      // {...register(`${fieldName}`, {required: isRequired})}
                     />
                     <label htmlFor={`${fieldName}-yes`} className="ml-2">
                       Yes
@@ -101,7 +108,7 @@ const Configurations = () => {
                       value="false"
                       className="radio ml-4"
                       required={isRequired}
-                      {...register(`${fieldName}`, {required: isRequired})}
+                      // {...register(`${fieldName}`, {required: isRequired})}
                     />
                     <label htmlFor={`${fieldName}-no`} className="ml-2">
                       No

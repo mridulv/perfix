@@ -1,14 +1,15 @@
 import axios from "axios";
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import { Link } from "react-router-dom";
+import { SlOptionsVertical } from "react-icons/sl";
 
 
 
 
 
 const DBConfiguration = () => {
-  
+  const [showOptions, setShowOptions] = useState(false)
 
   const {
     data: configs,
@@ -24,9 +25,6 @@ const DBConfiguration = () => {
     },
   });
 
-  
-
-  console.log(configs);
 
   // useEffect(() => {
   //     const fetchConfig = async() => {
@@ -61,12 +59,29 @@ const DBConfiguration = () => {
             >
               <p>Configuration Name: {config.name}</p>
               <p> store name: {config.storeName}</p>
-              <Link
+              
+              {
+                config.formInputValues ? (
+                  <div className="flex justify-end my-2 relative">
+                    <button onClick={() => setShowOptions(!showOptions)}><SlOptionsVertical /></button>
+                    {
+                      showOptions && (
+                        <div className="flex flex-col gap-2 absolute top-5 right-0 bg-gray-100 px-8 py-4 rounded-lg">
+                          <button className="btn btn-sm btn-accent text-white">Update</button>
+                          <button className="btn btn-sm btn-error text-white">Delete</button>
+                        </div>
+                      )
+                    }
+                  </div>
+                ) : (
+                  <Link
                 className="btn btn-error btn-sm text-white my-4"
                 to={`/input-configuration/${config.databaseConfigId.id}`}
               >
                 Submit inputs
               </Link>
+                )
+              }
             </div>
           ))}
         </div>
