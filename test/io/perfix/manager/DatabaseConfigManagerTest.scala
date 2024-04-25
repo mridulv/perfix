@@ -1,15 +1,15 @@
 package io.perfix.manager
 
 import io.perfix.forms.AWSCloudParamsForm.{AWS_ACCESS_KEY, AWS_ACCESS_SECRET, LAUNCH_DB}
-import io.perfix.forms.Form
 import io.perfix.forms.mysql.MySQLConnectionParamsForm.{PASSWORD, URL, USERNAME}
 import io.perfix.forms.mysql.MySQLLaunchForm.{INSTANCE_IDENTIFIER, INSTANCE_TYPE}
 import io.perfix.forms.mysql.MySQLTableIndicesDetailForm.SECONDARY_INDEX_COLUMNS
 import io.perfix.forms.mysql.MySQLTableParamsForm.{DBNAME, TABLENAME}
 import io.perfix.forms.redis.RedisLaunchForm.CLUSTER_ID
-import io.perfix.model.{DatabaseConfigParams, FormInputValue, FormInputValues, FormInputs}
+import io.perfix.model.{Completed, DatabaseConfigParams, FormInputValue, FormInputValues, FormInputs, InComplete}
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
+import play.api.libs.json.Json
 
 class DatabaseConfigManagerTest extends AnyFlatSpec with Matchers {
   val mappedVariables: Map[String, Any] = Map(
@@ -40,12 +40,18 @@ class DatabaseConfigManagerTest extends AnyFlatSpec with Matchers {
         }
       }
       databaseConfigManager.submitForm(configId, FormInputValues(answerMapping.toSeq))
+      databaseConfigManager.get(configId).formDetails.isDefined shouldBe true
       inputs = databaseConfigManager.currentForm(configId)
+      if (inputs.isDefined) {
+        databaseConfigManager.get(configId).formDetails.get.formStatus shouldBe InComplete
+      } else {
+        databaseConfigManager.get(configId).formDetails.get.formStatus shouldBe Completed
+      }
     }
 
-    databaseConfigManager.get(configId).formInputValues.isDefined shouldBe true
-    databaseConfigManager.get(configId).formInputValues.get.find(_.inputName == USERNAME) shouldBe Some(FormInputValue(USERNAME, "root"))
-    databaseConfigManager.get(configId).formInputValues.get.find(_.inputName == LAUNCH_DB) shouldBe Some(FormInputValue(LAUNCH_DB, false))
-    databaseConfigManager.get(configId).formInputValues.get.find(_.inputName == CLUSTER_ID) shouldBe None
+    databaseConfigManager.get(configId).formDetails.isDefined shouldBe true
+    databaseConfigManager.get(configId).formDetails.get.values.values.find(_.inputName == USERNAME) shouldBe Some(FormInputValue(USERNAME, "root"))
+    databaseConfigManager.get(configId).formDetails.get.values.values.find(_.inputName == LAUNCH_DB) shouldBe Some(FormInputValue(LAUNCH_DB, false))
+    databaseConfigManager.get(configId).formDetails.get.values.values.find(_.inputName == CLUSTER_ID) shouldBe None
   }
 }
