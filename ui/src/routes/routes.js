@@ -1,13 +1,20 @@
+
+import DashboardLayout from "../Layout/DashboardLayout"
+import AddDBConfiguration from "../Pages/Dashboard/AddDBConfiguration/AddDBConfiguration";
+import Configurations from "../Pages/Dashboard/DBConfiguration/Configurations";
 import Dashboard from "../Pages/Dashboard/Dashboard/Dashboard";
+import DBConfiguration from "../Pages/Dashboard/DBConfiguration/DBConfiguration"
+import DatasetDetails from "../Pages/Dashboard/Datasets/DatasetDetails";
 import Datasets from "../Pages/Dashboard/Datasets/Datasets";
 import Experiment from "../Pages/Dashboard/Experiment/Experiment";
 
+
 const { createBrowserRouter } = require("react-router-dom");
-const { default: DashboardLayout } = require("../Layout/DashboardLayout");
-const { default: DBConfiguration } = require("../Pages/Dashboard/DBConfiguration/DBConfiguration");
+
 
 
 export const router = createBrowserRouter([
+    
     {
         path: "/",
         element: <DashboardLayout/>,
@@ -21,8 +28,20 @@ export const router = createBrowserRouter([
                 element: <DBConfiguration/>
             },
             {
+                path: "/add-db-configuration",
+                element: <AddDBConfiguration/>
+            },
+            {
+                path: "/input-configuration/:id",
+                element: <Configurations/>
+            },
+            {
                 path: "/datasets",
                 element: <Datasets/>
+            },
+            {
+                path: "/datasets/:id",
+                element: <DatasetDetails/>,
             },
             {
                 path: "/experiment",
