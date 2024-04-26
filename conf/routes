@@ -21,3 +21,4 @@ GET      /config/:id                                   io.perfix.controllers.Dat
 GET      /config/:id/form                              io.perfix.controllers.DatabaseConfigController.getForm(id: Int)
 POST     /config/:id/form                              io.perfix.controllers.DatabaseConfigController.submitForm(id: Int)
 POST     /config/:id                                   io.perfix.controllers.DatabaseConfigController.update(id: Int)
+DELETE   /config/:id                                   io.perfix.controllers.DatabaseConfigController.delete(id: Int)
