@@ -2,7 +2,7 @@ package io.perfix.controllers
 
 import com.google.inject.Inject
 import io.perfix.manager.DatasetManager
-import io.perfix.model.{DatasetId, DatasetParams}
+import io.perfix.model.{DatabaseConfigId, DatasetId, DatasetParams}
 import play.api.libs.json.Json
 import play.api.mvc.{BaseController, ControllerComponents, Results}
 
@@ -25,5 +25,10 @@ class DatasetController @Inject()(val controllerComponents: ControllerComponents
 
   def all = Action { request =>
     Results.Ok(Json.toJson(datasetManager.all()))
+  }
+
+  def delete(datasetId: Int) = Action { request =>
+    datasetManager.delete(DatasetId(datasetId))
+    Results.Ok
   }
 }

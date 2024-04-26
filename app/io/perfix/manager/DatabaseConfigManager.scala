@@ -61,4 +61,8 @@ class DatabaseConfigManager {
     mapping.values.toSeq
   }
 
+  def delete(databaseConfigId: DatabaseConfigId): Unit = {
+    mapping.remove(databaseConfigId)
+  }
+
 }

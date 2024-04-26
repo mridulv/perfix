@@ -45,4 +45,9 @@ class DatabaseConfigController @Inject()(val controllerComponents: ControllerCom
   def all = Action { request =>
     Results.Ok(Json.toJson(databaseConfigManager.all()))
   }
+
+  def delete(databaseConfigId: Int) = Action { request =>
+    databaseConfigManager.delete(DatabaseConfigId(databaseConfigId))
+    Results.Ok
+  }
 }

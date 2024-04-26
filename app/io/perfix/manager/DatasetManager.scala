@@ -1,7 +1,7 @@
 package io.perfix.manager
 
 import com.google.inject.Inject
-import io.perfix.model.{Dataset, DatasetId, DatasetParams}
+import io.perfix.model.{DatabaseConfigId, Dataset, DatasetId, DatasetParams}
 
 import scala.collection.mutable
 import scala.util.Random
@@ -33,6 +33,10 @@ class DatasetManager {
 
   def all(): Seq[DatasetParams] = {
     mapping.values.toSeq
+  }
+
+  def delete(datasetId: DatasetId): Unit = {
+    mapping.remove(datasetId)
   }
 
 }
