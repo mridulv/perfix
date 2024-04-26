@@ -62,4 +62,8 @@ class ExperimentManager @Inject()(datasetManager: DatasetManager,
     experimentExecutor.cleanUp()
     mapping(experimentId)
   }
+
+  def delete(experimentId: ExperimentId): Unit = {
+    mapping.remove(experimentId)
+  }
 }
