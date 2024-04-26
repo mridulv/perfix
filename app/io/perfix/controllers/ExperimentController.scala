@@ -2,7 +2,7 @@ package io.perfix.controllers
 
 import controllers.AssetsFinder
 import io.perfix.manager.ExperimentManager
-import io.perfix.model.{ExperimentId, ExperimentParams}
+import io.perfix.model.{DatabaseConfigId, ExperimentId, ExperimentParams}
 import play.api.libs.json.Json
 import play.api.mvc._
 
@@ -33,5 +33,10 @@ class ExperimentController @Inject()(cc: ControllerComponents,
 
   def executeExperiment(experimentId: Int) = Action(parse.json) { request =>
     Results.Ok(Json.toJson(experimentManager.executeExperiment(ExperimentId(experimentId))))
+  }
+
+  def delete(experimentId: Int) = Action { request =>
+    experimentManager.delete(ExperimentId(experimentId))
+    Results.Ok
   }
 }

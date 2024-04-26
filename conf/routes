@@ -2,18 +2,20 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
+GET      /health                                       io.perfix.controllers.HealthCheckController.health
+
 POST     /experiment                                   io.perfix.controllers.ExperimentController.create
 POST     /experiment/:id                               io.perfix.controllers.ExperimentController.update(id: Int)
 POST     /experiment/:id/execute                       io.perfix.controllers.ExperimentController.executeExperiment(id: Int)
 GET      /experiment/:id                               io.perfix.controllers.ExperimentController.get(id: Int)
 GET      /experiment                                   io.perfix.controllers.ExperimentController.all
-
-GET      /health                                       io.perfix.controllers.HealthCheckController.health
+DELETE   /experiment/:id                               io.perfix.controllers.ExperimentController.delete(id: Int)
 
 POST     /dataset                                      io.perfix.controllers.DatasetController.create
 GET      /dataset                                      io.perfix.controllers.DatasetController.all
 GET      /dataset/:id                                  io.perfix.controllers.DatasetController.get(id: Int)
 POST     /dataset/:id                                  io.perfix.controllers.DatasetController.update(id: Int)
+DELETE   /dataset/:id                                  io.perfix.controllers.DatasetController.delete(id: Int)
 
 POST     /config                                       io.perfix.controllers.DatabaseConfigController.create
 GET      /config                                       io.perfix.controllers.DatabaseConfigController.all
@@ -21,3 +23,4 @@ GET      /config/:id                                   io.perfix.controllers.Dat
 GET      /config/:id/form                              io.perfix.controllers.DatabaseConfigController.getForm(id: Int)
 POST     /config/:id/form                              io.perfix.controllers.DatabaseConfigController.submitForm(id: Int)
 POST     /config/:id                                   io.perfix.controllers.DatabaseConfigController.update(id: Int)
+DELETE   /config/:id                                   io.perfix.controllers.DatabaseConfigController.delete(id: Int)
