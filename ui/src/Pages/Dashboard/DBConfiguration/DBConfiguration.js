@@ -55,7 +55,7 @@ const DBConfiguration = () => {
         
       </div>
       <div className="mt-4">
-        <div className="grid grid-cols-3 gap-3">
+        <div className="w-[90%] mx-auto grid grid-cols-3 gap-3">
           {configs.map((config) => (
             <div
               className="p-4 border border-gray-400 shadow-md my-3"

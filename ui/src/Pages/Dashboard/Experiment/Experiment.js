@@ -147,7 +147,7 @@ const Experiment = () => {
            {
             experiments &&
            experiments.map((experiment) => (
-            <div className="card w-60 bg-purple-400 shadow-xl">
+            <div key={experiment.name} className="card w-60 bg-purple-400 shadow-xl">
               <div className="card-body">
                 <h2 className="text-white card-title">name: {experiment.name}</h2>
               </div>

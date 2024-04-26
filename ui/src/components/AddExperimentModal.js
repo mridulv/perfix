@@ -17,7 +17,6 @@ const AddExperimentModal = ({
         ${open ? "visible bg-black/20" : "invisible"} z-50 
       `}
     >
-      {/* modal */}
       <div
         onClick={(e) => e.stopPropagation()}
         className={`
@@ -35,8 +34,22 @@ const AddExperimentModal = ({
         <div className="flex flex-col justify-center items-center">
           <h2>Add Experiment</h2>
           <form onSubmit={handleAddExperiment}>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-9">
-              {fields.map(({ name, label, type, placeholder }) => (
+            <label className="form-control w-full max-w-sm mt-3">
+              <div className="label">
+                <span className="label-text text-sm">{fields[0].label}</span>
+              </div>
+              <input
+                type={fields[0].type}
+                className="input input-bordered w-full"
+                style={{ outline: "none" }}
+                required
+                name={fields[0].name}
+                placeholder={fields[0].placeholder}
+                autoComplete="off"
+              />
+            </label>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
+              {fields.slice(1).map(({ name, label, type, placeholder }) => (
                 <label className="form-control w-full max-w-xs mb-2" key={name}>
                   <div className="label">
                     <span className="label-text text-sm">{label}</span>

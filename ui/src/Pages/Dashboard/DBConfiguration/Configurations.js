@@ -27,7 +27,27 @@ const Configurations = () => {
     const formData = new FormData(event.target);
     let values = [];
     formData.forEach((value, inputName) => {
-      values.push({ inputName, answer: value });
+      const inputField = inputs.inputs[inputName];
+  
+      if (!inputField.isRequired && value === '') {
+        return;
+      }
+      let answer;
+      switch (inputField.dataType) {
+        case 'StringType':
+          answer = value;
+          break;
+        case 'IntType':
+          answer = parseInt(value, 10);
+          break;
+        case 'BooleanType':
+          answer = value === 'true';
+          break;
+        default:
+          answer = value;
+      }
+  
+      values.push({ inputName, answer });
     });
 
     
