@@ -4,16 +4,20 @@ import { useQuery } from "react-query";
 import { Link } from "react-router-dom";
 import { SlOptionsVertical } from "react-icons/sl";
 import Loading from "../../../components/Loading";
+import ConfirmationModal from "../../../components/ConfirmationModal";
+import toast from "react-hot-toast";
 
 
 
 
 
 const DBConfiguration = () => {
-  const [showOptions, setShowOptions] = useState(null)
+  const [showOptions, setShowOptions] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedConfig, setSelectedConfig] = useState(null);
 
   const {
-    data: configs,
+    data: configs,refetch,
     isLoading,
   } = useQuery({
     queryKey: ["config"],
@@ -27,8 +31,21 @@ const DBConfiguration = () => {
 
   const handleShowOptions = (config) => {
     setShowOptions(showOptions === config ? null : config);
+    setSelectedConfig(config);
   };
 
+
+  const handleDeleteConfig = async (id) => {
+  
+    const res = await axios.delete(`http://localhost:9000/config/${id}`);
+    console.log(res);
+    if (res.status === 200) {
+      toast.success("Config successfully deleted.")
+      refetch();
+      setIsModalOpen(false);
+    }
+  };
+  
 
   // useEffect(() => {
   //     const fetchConfig = async() => {
@@ -72,7 +89,7 @@ const DBConfiguration = () => {
                     showOptions === config && (
                       <div className="flex flex-col gap-2 absolute top-5 right-0 bg-gray-100 px-8 py-4 rounded-lg">
                         <button className="btn btn-sm btn-accent text-white">Update</button>
-                        <button className="btn btn-sm btn-error text-white">Delete</button>
+                        <button onClick={() => setIsModalOpen(true)} className="btn btn-sm btn-error text-white">Delete</button>
                       </div>
                     )
                   }
@@ -88,6 +105,13 @@ const DBConfiguration = () => {
               }
             </div>
           ))}
+          <ConfirmationModal 
+          open={isModalOpen} 
+          onClose={() => setIsModalOpen(false)} 
+          data={selectedConfig}
+          action= {handleDeleteConfig}
+          actionText={"Are you sure you want to delete this"}
+          />
         </div>
       </div>
     </div>
