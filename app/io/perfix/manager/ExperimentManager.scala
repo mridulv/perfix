@@ -18,7 +18,7 @@ class ExperimentManager @Inject()(datasetManager: DatasetManager,
     val id: Int = Random.nextInt()
     mapping.put(
       ExperimentId(id),
-      experimentParams
+      experimentParams.copy(experimentId = Some(ExperimentId(id)))
     )
     ExperimentId(id)
   }
