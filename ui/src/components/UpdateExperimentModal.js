@@ -1,8 +1,79 @@
+import axios from "axios";
 import React from "react";
+import toast from "react-hot-toast";
 import { MdClose } from "react-icons/md";
 
-const AddExperimentModal = ({open,onClose,fields,datasets,configs,handleAction,actionLabel,buttonValue}) => {
+const UpdateExperimentModal = ({
+  open,
+  onClose,
+  fields,
+  datasets,
+  configs,
+  experiments,
+  refetch,
+  actionLabel,
+  experiment,
+  buttonValue,
+  setSelectedExperiment,
+}) => {
+  const handleUpdateExperiment = async (e) => {
+    e.preventDefault();
+    const form = e.target;
+    const name = form.name.value;
+    const existingName = experiment.name;
+    if (name !== existingName) {
+      const isDuplicateName = experiments.some(
+        (existingExperiment) => existingExperiment.name.toLowerCase() === name.toLowerCase()
+      );
   
+      if (isDuplicateName) {
+        toast.error(`An experiment with the name "${name}" already exists.`);
+        return;
+      }
+    }
+    const writeBatchSize = Number(form.writeBatchSize.value);
+    const experimentTimeInSeconds = Number(form.experimentTimeInSeconds.value);
+    const concurrentQueries = Number(form.concurrentQueries.value);
+    const limitOpt = Number(form.limitOpt.value);
+    const datasetId = Number(form.datasetId.value);
+    const databaseConfigId = Number(form.databaseConfigId.value);
+
+    const data = {
+      experimentId: {
+        id: experiment.experimentId.id,
+      },
+      name,
+      writeBatchSize,
+      experimentTimeInSeconds,
+      concurrentQueries,
+      query: {
+        limitOpt,
+      },
+      datasetId: {
+        id: datasetId,
+      },
+      databaseConfigId: {
+        id: databaseConfigId,
+      },
+    };
+
+    try {
+      const res = await axios.post(
+        `http://localhost:9000/experiment/${experiment?.experimentId.id}`,
+        data
+      );
+      console.log(res);
+      if (res.status === 200) {
+        toast.success("Experiment updated successfully");
+        refetch();
+        setSelectedExperiment(null);
+        onClose();
+        form.reset();
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
   return (
     <div
       onClick={onClose}
@@ -27,13 +98,14 @@ const AddExperimentModal = ({open,onClose,fields,datasets,configs,handleAction,a
         </button>
         <div className="flex flex-col justify-center items-center">
           <h2>{actionLabel}</h2>
-          <form onSubmit={handleAction}>
+          <form onSubmit={handleUpdateExperiment}>
             <label className="form-control w-full max-w-sm mt-3">
               <div className="label">
                 <span className="label-text text-sm">{fields[0].label}</span>
               </div>
               <input
                 type={fields[0].type}
+                defaultValue={experiment ? experiment.name : ""}
                 className="input input-bordered w-full"
                 style={{ outline: "none" }}
                 required
@@ -51,6 +123,7 @@ const AddExperimentModal = ({open,onClose,fields,datasets,configs,handleAction,a
                   <input
                     type={type}
                     className="input input-bordered w-full max-w-xs"
+                    defaultValue={experiment ? experiment[name] : ""}
                     style={{ outline: "none" }}
                     required
                     name={name}
@@ -65,6 +138,7 @@ const AddExperimentModal = ({open,onClose,fields,datasets,configs,handleAction,a
                 </div>
                 <input
                   type="number"
+                  defaultValue={experiment ? experiment.query.limitOpt : ""}
                   className="input input-bordered w-full max-w-xs"
                   style={{ outline: "none" }}
                   required
@@ -84,10 +158,19 @@ const AddExperimentModal = ({open,onClose,fields,datasets,configs,handleAction,a
                   name="datasetId"
                   className="select select-bordered"
                   required
+                  defaultValue={experiment ? experiment.datasetId.id : ""}
                 >
                   {datasets && datasets.length > 0 ? (
                     datasets.map((dataset) => (
-                      <option value={dataset.id.id} key={dataset.id.id}>
+                      <option
+                        value={dataset.id.id}
+                        key={dataset.id.id}
+                        selected={
+                          experiment &&
+                          experiment.datasetId &&
+                          dataset.id.id === experiment.datasetId.id
+                        }
+                      >
                         {dataset.name}
                       </option>
                     ))
@@ -107,12 +190,21 @@ const AddExperimentModal = ({open,onClose,fields,datasets,configs,handleAction,a
                   name="databaseConfigId"
                   className="select select-bordered"
                   required
+                  defaultValue={
+                    experiment ? experiment.databaseConfigId.id : ""
+                  }
                 >
                   {configs && configs.length > 0 ? (
                     configs.map((config) => (
                       <option
                         value={config.databaseConfigId.id}
                         key={config.databaseConfigId.id}
+                        selected={
+                          experiment &&
+                          experiment.databaseConfigId &&
+                          config.databaseConfigId.id ===
+                            experiment.databaseConfigId.id
+                        }
                       >
                         {config.name}
                       </option>
@@ -139,4 +231,4 @@ const AddExperimentModal = ({open,onClose,fields,datasets,configs,handleAction,a
   );
 };
 
-export default AddExperimentModal;
+export default UpdateExperimentModal;

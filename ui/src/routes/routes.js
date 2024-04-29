@@ -7,6 +7,7 @@ import DBConfiguration from "../Pages/Dashboard/DBConfiguration/DBConfiguration"
 import DatasetDetails from "../Pages/Dashboard/Datasets/DatasetDetails";
 import Datasets from "../Pages/Dashboard/Datasets/Datasets";
 import Experiment from "../Pages/Dashboard/Experiment/Experiment";
+import UpdateDataset from "../Pages/Dashboard/Datasets/UpdateDataset";
 
 
 const { createBrowserRouter } = require("react-router-dom");
@@ -42,6 +43,10 @@ export const router = createBrowserRouter([
             {
                 path: "/datasets/:id",
                 element: <DatasetDetails/>,
+            },
+            {
+                path: "/update-dataset/:id",
+                element: <UpdateDataset/>
             },
             {
                 path: "/experiment",

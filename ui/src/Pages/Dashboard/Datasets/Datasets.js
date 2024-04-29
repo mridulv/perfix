@@ -25,7 +25,6 @@ const Datasets = () => {
     },
   });
 
-  console.log(datasets);
 
   const handleAddColumn = () => {
     setColumns([...columns, { columnName: "", columnType: "" }]);
@@ -43,7 +42,6 @@ const Datasets = () => {
       return;
     }
 
-    console.log(datasetName);
     const formData = new FormData(event.target);
     const columnValues = [];
 
@@ -54,7 +52,6 @@ const Datasets = () => {
       columnValues.push({ columnName, columnType });
     });
 
-    console.log(columnValues);
     try {
       const url = "http://localhost:9000/dataset";
       const columnData = {
