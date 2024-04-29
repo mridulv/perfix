@@ -1,14 +1,14 @@
-import axios from "axios";
 import React from "react";
+import axios from "axios";
 import toast from "react-hot-toast";
 import { useQuery } from "react-query";
 import { useNavigate, useParams } from "react-router-dom";
 
-const Configurations = () => {
+const UpdateConfiguration = () => {
   const { id } = useParams();
-  
   const navigate = useNavigate();
   
+
   
  
   const {data: inputs, isLoading, refetch} = useQuery({
@@ -19,7 +19,8 @@ const Configurations = () => {
       return data;
     },
   });
-;
+
+
 
   const handleSubmitInputs = async (event) => {
     event.preventDefault();
@@ -56,13 +57,12 @@ const Configurations = () => {
         "Content-Type": "application/json",
       },
     });
-    console.log(res);
     
     if (res.status === 200) {
       await refetch();
     }
-    if(res.data === "Completed"){
-      toast.success("Form Datas submitted successfully");
+    if(res.data === "Completed") {
+      toast.success("Form Datas updated successfully");
       navigate("/db-configuration");
     }
    
@@ -77,7 +77,7 @@ const Configurations = () => {
       <form className="max-w-[400px] mx-auto px-8 py-2 border border-gray-200 rounded shadow-md" onSubmit={handleSubmitInputs}>
         {inputs &&
           Object.entries(inputs.inputs).map(
-            ([fieldName, { dataType, isRequired }], index) => (
+            ([fieldName, { dataType, isRequired, defaultValue }], index) => (
               <div className="flex flex-col my-4" key={fieldName}>
                 <label className="my-2">
                   {index + 1}. {fieldName}
@@ -89,7 +89,7 @@ const Configurations = () => {
                     style={{ outline: "none" }}
                     required={isRequired}
                     name={fieldName}
-                    // {...register(`${fieldName}`, {required: isRequired})}
+                    defaultValue={defaultValue}
                   />
                 )}
                 {dataType === "IntType" && (
@@ -101,7 +101,7 @@ const Configurations = () => {
                     pattern="[0-9]*"
                     inputMode="numeric"
                     name={fieldName}
-                    // {...register(`${fieldName}`, {required: isRequired})}
+                    defaultValue={defaultValue}
                   />
                 )}
                 {dataType === "BooleanType" && (
@@ -113,7 +113,7 @@ const Configurations = () => {
                       value="true"
                       className="radio"
                       required={isRequired}
-                      // {...register(`${fieldName}`, {required: isRequired})}
+                      defaultChecked={defaultValue === true}
                     />
                     <label htmlFor={`${fieldName}-yes`} className="ml-2">
                       Yes
@@ -125,7 +125,7 @@ const Configurations = () => {
                       value="false"
                       className="radio ml-4"
                       required={isRequired}
-                      // {...register(`${fieldName}`, {required: isRequired})}
+                      defaultChecked={defaultValue === false}
                     />
                     <label htmlFor={`${fieldName}-no`} className="ml-2">
                       No
@@ -141,4 +141,4 @@ const Configurations = () => {
   );
 };
 
-export default Configurations;
+export default UpdateConfiguration;

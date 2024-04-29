@@ -1,5 +1,5 @@
 import axios from "axios";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { MdClose } from "react-icons/md";
 
@@ -16,6 +16,18 @@ const UpdateExperimentModal = ({
   buttonValue,
   setSelectedExperiment,
 }) => {
+
+  const [selectedDatasetId, setSelectedDatasetId] = useState("");
+  const [selectedConfigId, setSelectedConfigId] = useState("");
+
+  useEffect(() => {
+    if (experiment) {
+      setSelectedDatasetId(experiment.datasetId?.id || "");
+      setSelectedConfigId(experiment.databaseConfigId?.id || "");
+    }
+  }, [experiment]);
+
+
   const handleUpdateExperiment = async (e) => {
     e.preventDefault();
     const form = e.target;
@@ -158,18 +170,19 @@ const UpdateExperimentModal = ({
                   name="datasetId"
                   className="select select-bordered"
                   required
-                  defaultValue={experiment ? experiment.datasetId.id : ""}
+                  value={selectedDatasetId}
+                  onChange={(e) => setSelectedDatasetId(e.target.value)}
                 >
                   {datasets && datasets.length > 0 ? (
                     datasets.map((dataset) => (
                       <option
                         value={dataset.id.id}
                         key={dataset.id.id}
-                        selected={
-                          experiment &&
-                          experiment.datasetId &&
-                          dataset.id.id === experiment.datasetId.id
-                        }
+                        // selected={
+                        //   experiment &&
+                        //   experiment.datasetId &&
+                        //   dataset.id.id === experiment.datasetId.id
+                        // }
                       >
                         {dataset.name}
                       </option>
@@ -190,21 +203,20 @@ const UpdateExperimentModal = ({
                   name="databaseConfigId"
                   className="select select-bordered"
                   required
-                  defaultValue={
-                    experiment ? experiment.databaseConfigId.id : ""
-                  }
+                  value={selectedConfigId}
+                  onChange={(e) => setSelectedConfigId(e.target.value)}
                 >
                   {configs && configs.length > 0 ? (
                     configs.map((config) => (
                       <option
                         value={config.databaseConfigId.id}
                         key={config.databaseConfigId.id}
-                        selected={
-                          experiment &&
-                          experiment.databaseConfigId &&
-                          config.databaseConfigId.id ===
-                            experiment.databaseConfigId.id
-                        }
+                        // selected={
+                        //   experiment &&
+                        //   experiment.databaseConfigId &&
+                        //   config.databaseConfigId.id ===
+                        //     experiment.databaseConfigId.id
+                        // }
                       >
                         {config.name}
                       </option>

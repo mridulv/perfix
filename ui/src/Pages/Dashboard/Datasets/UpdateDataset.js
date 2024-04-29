@@ -54,7 +54,7 @@ const UpdateDataset = () => {
       event.preventDefault();
       const datasetName = event.target.datasetName.value;
 
-      if (datasetName !== dataset.name) {
+      if (datasetName !== dataset?.name) {
         const isDuplicateName = datasets.some(
           (existingDataset) => existingDataset.name.toLowerCase() === datasetName.toLowerCase()
         );
@@ -103,13 +103,17 @@ const UpdateDataset = () => {
         console.log(err);
       }
     }
-     if (isLoading) {
+
+    // Render loading spinner while data is being fetched
+    if (isLoading || datasetsLoading) {
         return <Loading/>;
     }
+
+    // Render the component content after data has been fetched
     return (
         <div className='flex  justify-center items-center'>
             <div>
-            <h3 className='text-2xl font-bold my-5'>Update Dataset <span className='text-primary'>{dataset.name}</span></h3>
+            <h3 className='text-2xl font-bold my-5'>Update Dataset <span className='text-primary'>{dataset?.name}</span></h3>
             <form onSubmit={handleUpdateDataset} className='w-[350px] md:w-[500px] px-7 py-4 border border-gray-100 shadow-lg'>
               <label className="form-control w-full max-w-xs mb-4">
                 <div className="label">
@@ -121,7 +125,7 @@ const UpdateDataset = () => {
                       type="text"
                       name="datasetName"
                       required
-                      defaultValue={dataset.name}
+                      defaultValue={dataset?.name}
                     />
               </label>
               {columns.map((column, i) => (
@@ -145,11 +149,12 @@ const UpdateDataset = () => {
                   name={`columnType${i}`}
                   id={`columnType${i}`}
                   className="block w-full max-w-xs mt-2 px-4 py-2 pr-8 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-gray-500"
+                 defaultValue={column.columnType}
                 >
-                  <option value="NameType" selected={column.columnType === "NameType"}>
+                  <option value="NameType">
                     NameType
                   </option>
-                  <option value="AddressType" selected={column.columnType === "AddressType"}>
+                  <option value="AddressType">
                     AddressType
                   </option>
                 </select>
