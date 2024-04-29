@@ -6,7 +6,7 @@ import io.perfix.forms.mysql.MySQLLaunchForm.{INSTANCE_IDENTIFIER, INSTANCE_TYPE
 import io.perfix.forms.mysql.MySQLTableIndicesDetailForm.SECONDARY_INDEX_COLUMNS
 import io.perfix.forms.mysql.MySQLTableParamsForm.{DBNAME, TABLENAME}
 import io.perfix.forms.redis.RedisLaunchForm.CLUSTER_ID
-import io.perfix.model.{Completed, DatabaseConfigParams, FormInputValue, FormInputValues, FormInputs, InComplete}
+import io.perfix.model.{Completed, DatabaseConfigParams, FormInputValue, FormInputValues, FormInputs, InComplete, Updating}
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 import play.api.libs.json.Json
@@ -75,6 +75,7 @@ class DatabaseConfigManagerTest extends AnyFlatSpec with Matchers {
 
     databaseConfigManager.update(configId, configParams.copy(name = "new-name", storeName = "redis"))
     val newConfiParams = databaseConfigManager.get(configId)
+    newConfiParams.formDetails.map(_.formStatus) shouldBe Some(Updating)
 
     newConfiParams.storeName shouldBe "mysql"
     newConfiParams.formDetails.isDefined shouldBe true
@@ -108,9 +109,15 @@ class DatabaseConfigManagerTest extends AnyFlatSpec with Matchers {
       databaseConfigManager.submitForm(configId, FormInputValues(answerMapping.toSeq))
       databaseConfigManager.get(configId).formDetails.isDefined shouldBe true
       inputs = databaseConfigManager.currentForm(configId)
+      if (inputs.isDefined) {
+        databaseConfigManager.get(configId).formDetails.get.formStatus shouldBe Updating
+      } else {
+        databaseConfigManager.get(configId).formDetails.get.formStatus shouldBe Completed
+      }
     }
 
     databaseConfigManager.get(configId).formDetails.isDefined shouldBe true
+    databaseConfigManager.get(configId).formDetails.map(_.formStatus) shouldBe Some(Completed)
     databaseConfigManager.get(configId).formDetails.get.values.values.find(_.inputName == USERNAME) shouldBe Some(FormInputValue(USERNAME, "new-root"))
     databaseConfigManager.get(configId).formDetails.get.values.values.find(_.inputName == LAUNCH_DB) shouldBe Some(FormInputValue(LAUNCH_DB, false))
     databaseConfigManager.get(configId).formDetails.get.values.values.find(_.inputName == CLUSTER_ID) shouldBe None
