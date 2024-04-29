@@ -50,11 +50,14 @@ class DatabaseConfigManager {
 
   def update(databaseConfigId: DatabaseConfigId,
              databaseConfigParams: DatabaseConfigParams): DatabaseConfigParams = {
+    val exitingParams = mapping(databaseConfigId)
+    val updatedParams = exitingParams.copy(name = databaseConfigParams.name)
     mapping.put(
       databaseConfigId,
-      databaseConfigParams.copy(databaseConfigId = Some(databaseConfigId))
+      updatedParams
     )
-    databaseConfigParams
+    formManagerMapping.put(databaseConfigId, new FormManager(updatedParams))
+    updatedParams
   }
 
   def all(): Seq[DatabaseConfigParams] = {
