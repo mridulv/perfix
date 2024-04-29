@@ -1,7 +1,7 @@
 package io.perfix.manager
 
 import com.google.inject.Singleton
-import io.perfix.model.{DatabaseConfigId, DatabaseConfigParams, FormDetails, FormInputValues, FormInputs}
+import io.perfix.model._
 
 import scala.collection.mutable
 import scala.util.Random
@@ -13,7 +13,9 @@ class DatabaseConfigManager {
 
   def create(databaseConfigParams: DatabaseConfigParams): DatabaseConfigId = {
     val id: Int = Random.nextInt()
-    val updatedDatabaseConfigParams = databaseConfigParams.copy(databaseConfigId = Some(DatabaseConfigId(id)))
+    val updatedDatabaseConfigParams = databaseConfigParams
+      .copy(databaseConfigId = Some(DatabaseConfigId(id)))
+      .copy(formDetails = databaseConfigParams.formDetails.map(_.copy(formStatus = InComplete)))
     val databaseConfigId = DatabaseConfigId(id)
     mapping.put(
       databaseConfigId,
@@ -30,7 +32,7 @@ class DatabaseConfigManager {
   }
 
   def submitForm(databaseConfigId: DatabaseConfigId,
-                 formInputValues: FormInputValues): Unit = {
+                 formInputValues: FormInputValues): Option[FormStatus] = {
     val databaseConfigParams = mapping(databaseConfigId)
     println(s"Moving to the next form : $databaseConfigId")
     val formManager = formManagerMapping(databaseConfigId)
@@ -42,6 +44,7 @@ class DatabaseConfigManager {
       databaseConfigParams.copy(formDetails = Some(updatedFormDetails))
     }
     mapping.put(databaseConfigId, updatedConfig)
+    updatedConfig.formDetails.map(_.formStatus)
   }
 
   def get(databaseConfigId: DatabaseConfigId): DatabaseConfigParams = {
@@ -51,7 +54,9 @@ class DatabaseConfigManager {
   def update(databaseConfigId: DatabaseConfigId,
              databaseConfigParams: DatabaseConfigParams): DatabaseConfigParams = {
     val exitingParams = mapping(databaseConfigId)
-    val updatedParams = exitingParams.copy(name = databaseConfigParams.name)
+    val updatedParams = exitingParams
+      .copy(name = databaseConfigParams.name)
+      .copy(formDetails = exitingParams.formDetails.map(_.copy(formStatus = Updating)))
     mapping.put(
       databaseConfigId,
       updatedParams
