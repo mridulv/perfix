@@ -7,6 +7,7 @@ import io.perfix.model.DatabaseConfigId._
 import io.perfix.model.DatabaseConfigParams._
 import play.api.libs.json.Json
 import play.api.mvc.{BaseController, ControllerComponents, Results}
+import io.perfix.model.FormStatus.FormStatusFormat
 
 @Singleton
 class DatabaseConfigController @Inject()(val controllerComponents: ControllerComponents,
@@ -26,8 +27,7 @@ class DatabaseConfigController @Inject()(val controllerComponents: ControllerCom
 
   def submitForm(databaseConfigId: Int) = Action(parse.json) { request =>
     val formInputValues = request.body.as[FormInputValues]
-    databaseConfigManager.submitForm(DatabaseConfigId(databaseConfigId), formInputValues)
-    Results.Ok
+    Results.Ok(databaseConfigManager.submitForm(DatabaseConfigId(databaseConfigId), formInputValues).map(_.toString).getOrElse(""))
   }
 
   def update(databaseConfigId: Int) = Action(parse.json) { request =>
