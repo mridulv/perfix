@@ -9,7 +9,7 @@ import io.perfix.util.PeekingIterator
 
 class FormManager(databaseConfigParams: DatabaseConfigParams) {
 
-  private val iterator = {
+  private val iterator: PeekingIterator[Map[FormInputName, FormInputType]] = {
     val dataStore = ExperimentExecutor.getDataStore(databaseConfigParams.storeName)
     val cloudParams = new AWSCloudParams
     val credentialsForm = new AWSCloudParamsForm(cloudParams)
@@ -24,7 +24,15 @@ class FormManager(databaseConfigParams: DatabaseConfigParams) {
       override val forms = launchForm ++ nextSet
     }
 
-    new PeekingIterator[Map[FormInputName, FormInputType]](new FormSeriesEvaluator(formSeries))
+    val baseIterator = new FormSeriesEvaluator(formSeries)
+
+    val updatedValueIterator = new Iterator[Map[FormInputName, FormInputType]] {
+      override def hasNext: Boolean = baseIterator.hasNext
+
+      override def next(): Map[FormInputName, FormInputType] = wrapValue(baseIterator.next())
+    }
+
+    new PeekingIterator[Map[FormInputName, FormInputType]](updatedValueIterator)
   }
 
   def current: Option[FormInputs] = {
@@ -36,6 +44,19 @@ class FormManager(databaseConfigParams: DatabaseConfigParams) {
       Some(FormInputs(iterator.next()))
     } else {
       None
+    }
+  }
+
+  private def wrapValue(form: Map[FormInputName, FormInputType]): Map[FormInputName, FormInputType] = {
+    databaseConfigParams.formDetails match {
+      case Some(formDetails) =>
+        val formInputValueMap = formDetails.values.toMap
+        form.map { case (k, v) =>
+          val inputValue = formInputValueMap.get(k)
+          k -> v.copy(defaultValue = inputValue)
+        }
+      case None =>
+        form
     }
   }
 
