@@ -32,7 +32,7 @@ class ExperimentManager @Inject()(datasetManager: DatasetManager,
   }
 
   def update(experimentId: ExperimentId, experimentParams: ExperimentParams): ExperimentParams = {
-    mapping.put(experimentId, experimentParams)
+    mapping.put(experimentId, experimentParams.copy(experimentId = Some(experimentId)))
     experimentParams
   }
 
