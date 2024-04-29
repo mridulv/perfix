@@ -12,7 +12,12 @@ case class FormInputValues(values: Seq[FormInputValue]) {
   }
 
   def addFormInputValues(formInputValues: Seq[FormInputValue]): FormInputValues = {
-    this.copy(values ++ formInputValues)
+    val original = this.toMap
+    val toBeAdded = FormInputValues(formInputValues).toMap
+    val addedFormInputValues = (original ++ toBeAdded).map { case (k, v) =>
+      FormInputValue(k, v)
+    }
+    FormInputValues(addedFormInputValues.toSeq)
   }
 
 }
