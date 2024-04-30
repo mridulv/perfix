@@ -5,6 +5,7 @@ import { FaPlus } from "react-icons/fa6";
 import { useQuery } from "react-query";
 import toast from "react-hot-toast";
 import DatasetCard from "../../../components/DatasetCard";
+import Loading from "../../../components/Loading";
 
 const Datasets = () => {
   const [columns, setColumns] = useState([{ columnName: "", columnType: "" }]);
@@ -24,7 +25,6 @@ const Datasets = () => {
     },
   });
 
-  console.log(datasets);
 
   const handleAddColumn = () => {
     setColumns([...columns, { columnName: "", columnType: "" }]);
@@ -42,7 +42,6 @@ const Datasets = () => {
       return;
     }
 
-    console.log(datasetName);
     const formData = new FormData(event.target);
     const columnValues = [];
 
@@ -53,7 +52,6 @@ const Datasets = () => {
       columnValues.push({ columnName, columnType });
     });
 
-    console.log(columnValues);
     try {
       const url = "http://localhost:9000/dataset";
       const columnData = {
@@ -87,19 +85,7 @@ const Datasets = () => {
     }
   };
 
-  if (isLoading)
-    return (
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          minHeight: "100vh",
-        }}
-      >
-        <span className="loading loading-spinner loading-lg"></span>
-      </div>
-    );
+  if (isLoading) return <Loading/>
   return (
     <div className="px-3 py-4">
       <h2 className="text-2xl text-center font-bold text-orange-600 my-3">

@@ -2,33 +2,29 @@ import axios from 'axios';
 import React from 'react';
 import toast from 'react-hot-toast';
 import { useQuery } from 'react-query';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import Loading from '../../../components/Loading';
 
 
 
-const stores = [
-    {
-      name: "MySQL",
-      value: "mysql",
-    },
-  
-    {
-      name: "Redis",
-      value: "redis",
-    },
-    {
-      name: "DynamoDB",
-      value: "dynamodb",
-    },
-    {
-      name: "MongoDB",
-      value: "mongodb",
-    },
-  ];
-const AddDBConfiguration = () => {
+const UpdateDBConfiguration = () => {
+    const {id} = useParams();
+    const navigate = useNavigate();
 
-  const navigate = useNavigate();
+    
+    const {data: config, isLoading: configLoading} = useQuery({
+        queryKey: ["config", id],
+        queryFn: async () => {
+            const res = await axios.get(`http://localhost:9000/config/${id}`);
+            const data = await res.data;
+            return data;
+        },
+    });
+
+
+
+
+  
 
     const {
         data: configs,
@@ -44,43 +40,44 @@ const AddDBConfiguration = () => {
       });
 
 
-    const handleAddConfig = async (e) => {
+    const handleUpdate = async (e) => {
         e.preventDefault();
-        const storeName = e.target.storeName.value;
         const name = e.target.configurationName.value;
     
     
-        const isDuplicate = configs.some((config) => config.name.toLowerCase() === name.toLowerCase());
+        if(name !== config.name){
+            const isDuplicate = configs.some((config) => config.name.toLowerCase() === name.toLowerCase());
         if(isDuplicate){
           toast.error(`A config with the name "${name}" already exists.`);
           return;
         }
+        }
     
         try {
-          const res = await axios.post("http://localhost:9000/config", {
-            storeName,
-            name
+          const res = await axios.post(`http://localhost:9000/config/${id}`, {
+            name,
+            storeName: config.storeName
           });
-          console.log(res.data);
+          console.log(res);
           if (res.status === 200) {
-            toast.success("Configuration created successfully");
+            toast.success("Configuration update started successfully");
             e.target.reset();
-            navigate(`/input-configuration/${res.data.id}`)
+            navigate(`/update-input-configuration/${id}`)
           }
         } catch (err) {
           console.log(err);
         }
       };
-      if(isLoading) return <Loading/>;
+      if(isLoading && configLoading) return <Loading/>;
     return (
         <div>
             <div className="min-h-screen flex flex-col justify-center items-center">
-        <h3 className='text-center text-xl font-bold my-2 underline'>Add Configuration</h3>
-      <form onSubmit={handleAddConfig}>
+        <h3 className='text-center text-xl font-bold my-2 underline'>Update Configuration</h3>
+      <form onSubmit={handleUpdate}>
         <label className="form-control w-full max-w-xs mb-4">
           <div className="label">
             <span className="label-text text-base">
-              Enter the name of the configuration.
+              Name of the configuration.
             </span>
           </div>
           <input
@@ -90,19 +87,8 @@ const AddDBConfiguration = () => {
             required
             name="configurationName"
             placeholder="Configuration Name"
+            defaultValue={config?.name}
           />
-        </label>
-        <label className="form-control w-full max-w-xs">
-          <div className="label">
-            <span className="label-text">Store Name</span>
-          </div>
-          <select name="storeName" className="select select-bordered">
-            {stores.map((store) => (
-              <option value={store.value} key={store.value}>
-                {store.name}
-              </option>
-            ))}
-          </select>
         </label>
         <div className="my-4 flex justify-center">
           <input
@@ -117,4 +103,4 @@ const AddDBConfiguration = () => {
     );
 };
 
-export default AddDBConfiguration;
+export default UpdateDBConfiguration;

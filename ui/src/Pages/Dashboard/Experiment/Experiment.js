@@ -1,10 +1,10 @@
-import { data } from "autoprefixer";
 import axios from "axios";
 import React, { useState } from "react";
-import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { useQuery } from "react-query";
 import AddExperimentModal from "../../../components/AddExperimentModal";
+import UpdateExperimentModal from "../../../components/UpdateExperimentModal";
+import Loading from "../../../components/Loading";
 
 const fields = [
   {
@@ -31,15 +31,11 @@ const fields = [
     type: "number",
     placeholder: "Concurrent Queries",
   },
-  {
-    name: "limitOpt",
-    label: "Limit Opt",
-    type: "number",
-    placeholder: "Limit Opt",
-  },
 ];
 const Experiment = () => {
   const [open, setOpen] = useState(false);
+  const [openForUpdate, setOpenForUpdate] = useState(false);
+  const [selectedExperiment, setSelectedExperiment] = useState(null);
 
   const { data: datasets, isLoading: datasetsLoading } = useQuery({
     queryKey: ["datasets"],
@@ -57,7 +53,11 @@ const Experiment = () => {
       return data;
     },
   });
-  const { data: experiments, isLoading: experimentsLoading, refetch } = useQuery({
+  const {
+    data: experiments,
+    isLoading: experimentsLoading,
+    refetch,
+  } = useQuery({
     queryKey: ["experiments"],
     queryFn: async () => {
       const res = await axios.get("http://localhost:9000/experiment");
@@ -66,12 +66,22 @@ const Experiment = () => {
     },
   });
 
-  console.log(experiments);
 
   const handleAddExperiment = async (e) => {
     e.preventDefault();
     const form = e.target;
     const name = form.name.value;
+
+
+    const isDuplicateName = experiments.some(
+      (existingExperiment) => existingExperiment.name.toLowerCase() === name.toLowerCase()
+    );
+  
+    if (isDuplicateName) {
+      toast.error(`An experiment with the name "${name}" already exists.`);
+      return;
+    }
+    
     const writeBatchSize = Number(form.writeBatchSize.value);
     const experimentTimeInSeconds = Number(form.experimentTimeInSeconds.value);
     const concurrentQueries = Number(form.concurrentQueries.value);
@@ -109,14 +119,21 @@ const Experiment = () => {
         setOpen(false);
         form.reset();
       }
+      
     } catch (err) {
       console.log(err);
     }
   };
 
-  if (datasetsLoading && configsLoading && experimentsLoading) {
-    return <p>Loading...</p>;
-  }
+  
+  const handleOpenModalForUpdate = (experiment) => {
+    // setSelectedExperiment(experiment);
+    setOpenForUpdate(true);
+    setSelectedExperiment(experiment)
+  };
+
+  if (datasetsLoading && configsLoading && experimentsLoading)
+    return <Loading />;
   return (
     <div>
       <h3 className="text-center text-xl my-4 font-semibold">Experiments</h3>
@@ -136,29 +153,54 @@ const Experiment = () => {
           fields={fields}
           datasets={datasets}
           configs={configs}
-          handleAddExperiment={handleAddExperiment}
+          handleAction={handleAddExperiment}
+          actionLabel={"Add Experiment"}
+          buttonValue={"Add"}
         ></AddExperimentModal>
       )}
 
-      {
-        experiments && experiments.length < 1 ? 
-        (
-          <p className="ps-5">You haven't added any experiments yet.</p>
-        ) : 
-        (
-         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 px-4 mx-auto my-4">
-           {
-            experiments &&
-           experiments.map((experiment) => (
-            <div className="card w-60 bg-purple-400 shadow-xl">
-              <div className="card-body">
-                <h2 className="text-white card-title">name: {experiment.name}</h2>
+      {experiments && experiments.length < 1 ? (
+        <p className="ps-5">You haven't added any experiments yet.</p>
+      ) : (
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 px-4 mx-auto my-4">
+          {experiments &&
+            experiments.map((experiment) => (
+              <div
+                key={experiment.name}
+                className="card w-60 bg-purple-400 shadow-xl"
+               >
+                <div className="card-body">
+                  <h2 className="text-white card-title">
+                    name: {experiment.name}
+                  </h2>
+                  <div>
+                    <button
+                      onClick={() => handleOpenModalForUpdate(experiment)}
+                      className="btn btn-success btn-sm text-sm"
+                    >
+                      Update
+                    </button>
+                  </div>
+                </div>
+                {datasets && configs && (
+                  <UpdateExperimentModal
+                  open={openForUpdate}
+                  onClose={() => setOpenForUpdate(false)}
+                    fields={fields}
+                    datasets={datasets}
+                    configs={configs}
+                    experiments={experiments}
+                    refetch={refetch}
+                    experiment={selectedExperiment}
+                    setSelectedExperiment={setSelectedExperiment}
+                    actionLabel={"Update Experiment"}
+                    buttonValue={"Update"}
+                  ></UpdateExperimentModal>
+                )}
               </div>
-            </div>
-          ))}
-         </div>
-        )
-      }
+            ))}
+        </div>
+      )}
     </div>
   );
 };
