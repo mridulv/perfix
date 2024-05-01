@@ -24,3 +24,6 @@ GET      /config/:id/form                              io.perfix.controllers.Dat
 POST     /config/:id/form                              io.perfix.controllers.DatabaseConfigController.submitForm(id: Int)
 POST     /config/:id                                   io.perfix.controllers.DatabaseConfigController.update(id: Int)
 DELETE   /config/:id                                   io.perfix.controllers.DatabaseConfigController.delete(id: Int)
+
+GET     /auth/google                  controllers.SocialAuthController.authenticate(provider = "google")
+GET     /auth/google/callback         controllers.SocialAuthController.callback(provider = "google")

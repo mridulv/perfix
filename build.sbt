@@ -10,6 +10,9 @@ resolvers += "Typesafe repo" at "https://repo.typesafe.com/typesafe/releases/"
 
 version := sys.env.get("TAG").filter(_.nonEmpty).getOrElse("latest")
 
+val playPac4jVersion = "12.0.0-PLAY2.8"
+val pac4jVersion = "6.0.2"
+
 dockerRepository := Some("mridulverma")
 dockerUpdateLatest := true
 dockerBuildxPlatforms := Seq("linux/arm64/v8", "linux/amd64")
@@ -35,6 +38,9 @@ lazy val root = (project in file("."))
     libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.9" % Test,
     libraryDependencies += "org.mockito" %% "mockito-scala" % "1.16.42" % Test,
     libraryDependencies += "com.h2database" % "h2" % "1.4.200" % Test,
+    libraryDependencies += "org.pac4j" %% "play-pac4j" % playPac4jVersion,
+    libraryDependencies += "org.pac4j" % "pac4j-oauth" % pac4jVersion excludeAll(ExclusionRule(organization = "com.fasterxml.jackson.core")),
+    libraryDependencies +=   "com.typesafe.play" %% "play-cache" % "2.9.2",
     dockerBaseImage := "openjdk:11-jre-slim",
     semanticdbEnabled := true,
     scalacOptions += "-Wunused:imports"
