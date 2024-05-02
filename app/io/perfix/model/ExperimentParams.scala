@@ -1,6 +1,7 @@
 package io.perfix.model
 
 import io.perfix.query.PerfixQuery
+import io.perfix.store.tables.DbExperiment
 import play.api.libs.json.{Format, Json}
 
 case class ExperimentParams(experimentId: Option[ExperimentId],
@@ -11,7 +12,18 @@ case class ExperimentParams(experimentId: Option[ExperimentId],
                             query: PerfixQuery,
                             datasetId: DatasetId,
                             databaseConfigId: DatabaseConfigId,
-                            experimentResult: Option[ExperimentResult] = None)
+                            experimentResult: Option[ExperimentResult] = None) {
+
+  def toDBExperiment: DbExperiment = {
+    experimentId match {
+      case Some(id) =>
+        DbExperiment(id = id.id, obj = Json.toJson(this).toString())
+      case None =>
+        DbExperiment(id = -1, obj = Json.toJson(this).toString())
+    }
+  }
+
+}
 
 object ExperimentParams {
   implicit val ExperimentParamsFormatter: Format[ExperimentParams] = Json.format[ExperimentParams]
