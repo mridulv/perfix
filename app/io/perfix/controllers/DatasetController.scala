@@ -18,6 +18,10 @@ class DatasetController @Inject()(val controllerComponents: ControllerComponents
     Results.Ok(Json.toJson(datasetManager.get(DatasetId(datasetId))))
   }
 
+  def data(datasetId: Int) = Action { request =>
+    Results.Ok(Json.toJson(datasetManager.data(DatasetId(datasetId))))
+  }
+
   def update(datasetId: Int) = Action(parse.json) { request =>
     val datasetParams = request.body.as[DatasetParams]
     Results.Ok(Json.toJson(datasetManager.update(DatasetId(datasetId), datasetParams)))
