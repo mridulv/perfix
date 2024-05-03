@@ -1,42 +1,45 @@
 package io.perfix.manager
 
-import com.google.inject.Inject
-import io.perfix.model.{DatabaseConfigId, Dataset, DatasetId, DatasetParams}
+import com.google.inject.{Inject, Singleton}
+import io.perfix.exceptions.InvalidStateException
+import io.perfix.model.{Dataset, DatasetId, DatasetParams}
+import io.perfix.store.DatasetConfigStore
 
 import scala.collection.mutable
-import scala.util.Random
 
-@Inject
-class DatasetManager {
+@Singleton
+class DatasetManager @Inject()(datasetConfigStore: DatasetConfigStore) {
   private val SAMPLE_ROWS = 100
-  private val mapping: mutable.Map[DatasetId, DatasetParams] = mutable.Map.empty[DatasetId, DatasetParams]
 
   def create(datasetParams: DatasetParams): DatasetId = {
-    val id: Int = Random.nextInt()
-    mapping.put(
-      DatasetId(id),
-      datasetParams.copy(id = Some(DatasetId(id)))
-    )
-    DatasetId(id)
+    datasetConfigStore.create(datasetParams).id
+      .getOrElse(throw InvalidStateException("Invalid DatasetParams"))
   }
 
-  def get(datasetId: DatasetId): Dataset = {
-    mapping(datasetId).dataset.sampleDataset(SAMPLE_ROWS)
+  def get(datasetId: DatasetId): DatasetParams = {
+    datasetConfigStore.get(datasetId)
+      .getOrElse(throw InvalidStateException("Invalid Dataset"))
+  }
+
+  def data(datasetId: DatasetId): Dataset = {
+    datasetConfigStore.get(datasetId)
+      .map(_.dataset.sampleDataset(SAMPLE_ROWS))
+      .getOrElse(throw InvalidStateException("Invalid Dataset"))
   }
 
   def update(datasetId: DatasetId,
-             dataset: DatasetParams): Dataset = {
-    val updatedDataset = dataset.copy(id = Some(datasetId))
-    mapping.put(datasetId, updatedDataset)
-    updatedDataset.dataset.sampleDataset(SAMPLE_ROWS)
+             dataset: DatasetParams): DatasetParams = {
+    datasetConfigStore.update(datasetId, dataset)
+    datasetConfigStore.get(datasetId)
+      .getOrElse(throw InvalidStateException("Invalid Dataset"))
   }
 
   def all(): Seq[DatasetParams] = {
-    mapping.values.toSeq
+    datasetConfigStore.list()
   }
 
   def delete(datasetId: DatasetId): Unit = {
-    mapping.remove(datasetId)
+    datasetConfigStore.delete(datasetId)
   }
 
 }

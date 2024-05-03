@@ -27,7 +27,7 @@ class DatabaseConfigManagerTest extends AnyFlatSpec with Matchers {
   )
 
   "DatabaseConfigManager" should "allow getting form inputs and submitting form inputs" in {
-    val databaseConfigManager = new DatabaseConfigManager
+    val databaseConfigManager = new DatabaseConfigManager(new InMemoryDatabaseConfigStore)
     val configParams = DatabaseConfigParams(name = "test-params", storeName = "mysql")
     val configId = databaseConfigManager.create(databaseConfigParams = configParams)
     var inputs = databaseConfigManager.currentForm(configId)
@@ -56,7 +56,7 @@ class DatabaseConfigManagerTest extends AnyFlatSpec with Matchers {
   }
 
   "DatabaseConfigManager" should "allow getting updating form inputs" in {
-    val databaseConfigManager = new DatabaseConfigManager
+    val databaseConfigManager = new DatabaseConfigManager(new InMemoryDatabaseConfigStore)
     val configParams = DatabaseConfigParams(name = "test-params", storeName = "mysql")
     val configId = databaseConfigManager.create(databaseConfigParams = configParams)
     var inputs = databaseConfigManager.currentForm(configId)

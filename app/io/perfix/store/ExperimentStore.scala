@@ -2,7 +2,7 @@ package io.perfix.store
 
 import com.google.inject.{Inject, Singleton}
 import io.perfix.model.{ExperimentId, ExperimentParams}
-import io.perfix.store.tables.{DbExperiment, DbExperiments}
+import io.perfix.store.tables.ExperimentTable
 import play.api.db.slick.DatabaseConfigProvider
 import slick.jdbc.JdbcProfile
 import slick.lifted.TableQuery
@@ -14,24 +14,24 @@ import scala.concurrent.{Await, ExecutionContext, Future}
 class ExperimentStore @Inject()(dbConfigProvider: DatabaseConfigProvider)(implicit ec: ExecutionContext) {
 
   private val dbConfig = dbConfigProvider.get[JdbcProfile]
-  private val experiments = TableQuery[DbExperiments]
+  private val experiments = TableQuery[ExperimentTable]
   import dbConfig._
   import profile.api._
 
   def create(experimentParams: ExperimentParams): ExperimentParams = unwrapFuture {
     db.run {
-      val dbExperiment = experimentParams.toDBExperiment
+      val experimentRow = experimentParams.toExperimentRow
       (experiments returning experiments.map(_.id)
         into ((experiment, id) => experiment.copy(id=id))
-        ) += dbExperiment
+        ) += experimentRow
     }
   }.toExperimentParams
 
   def update(experimentId: ExperimentId, experimentParams: ExperimentParams): Int = unwrapFuture {
     db.run {
-      val dbExperiment = experimentParams.toDBExperiment
+      val experimentRow = experimentParams.toExperimentRow
       val query = for { e <- experiments if e.id === experimentId.id } yield e.obj
-      query.update(dbExperiment.obj)
+      query.update(experimentRow.obj)
     }
   }
 

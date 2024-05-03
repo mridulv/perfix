@@ -1,6 +1,7 @@
 package io.perfix.model
 
 import io.perfix.generator.FakeDataGenerator
+import io.perfix.store.tables.{DatasetConfigRow, ExperimentRow}
 import play.api.libs.json.{Format, Json}
 
 import scala.util.Random
@@ -9,6 +10,15 @@ case class DatasetParams(id: Option[DatasetId], name: String, rows: Int, columns
 
   private val faker = new FakeDataGenerator
   lazy val dataset: Dataset = faker.generateData(this)
+
+  def toDatasetConfigParams: DatasetConfigRow = {
+    id match {
+      case Some(id) =>
+        DatasetConfigRow(id = id.id, obj = Json.toJson(this).toString())
+      case None =>
+        DatasetConfigRow(id = -1, obj = Json.toJson(this).toString())
+    }
+  }
 
 }
 
