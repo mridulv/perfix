@@ -9,3 +9,14 @@ spec:
       targetPort: {{ .Values.service.port }}
   selector:
     app: perfix
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: postgres-service
+spec:
+  ports:
+    - port: 5432
+      targetPort: 5432
+  selector:
+    app: postgres
