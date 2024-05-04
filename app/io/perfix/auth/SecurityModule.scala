@@ -13,25 +13,17 @@ import org.pac4j.play.scala.{DefaultSecurityComponents, Pac4jScalaTemplateHelper
 import org.pac4j.play.store.{PlayCookieSessionStore, ShiroAesDataEncrypter}
 import org.pac4j.play.{CallbackController, LogoutController}
 import play.api.{Configuration, Environment}
-import play.cache.AsyncCacheApi
 
 import java.nio.charset.StandardCharsets
-import scala.concurrent.ExecutionContext
 
 class SecurityModule(environment: Environment, configuration: Configuration) extends AbstractModule {
   val baseUrl = configuration.get[String]("baseUrl")
 
   override def configure(): Unit = {
-
     val sKey = configuration.get[String]("play.http.secret.key").substring(0, 16)
     val dataEncrypter = new ShiroAesDataEncrypter(sKey.getBytes(StandardCharsets.UTF_8))
     val playSessionStore = new PlayCookieSessionStore(dataEncrypter)
     bind(classOf[SessionStore]).toInstance(playSessionStore)
-    bind(classOf[SessionStore[WebContext]]).toProvider(new Provider[SessionStore[WebContext]] {
-      @Inject var cache: AsyncCacheApi = _
-      @Inject var ec: ExecutionContext = _
-      override def get(): SessionStore[WebContext] = new PlayCacheSessionStore(cache)(ec)
-    })
 
     bind(classOf[SecurityComponents]).to(classOf[DefaultSecurityComponents])
 
