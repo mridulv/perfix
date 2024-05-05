@@ -56,7 +56,6 @@ class ExperimentExecutorIT extends AnyFlatSpec with Matchers with MockitoSugar w
       databaseConfigId = DatabaseConfigId(-1),
       experimentResult = None
     )
-    println(Json.toJson(experimentParams).toString())
     val datasetParams = DatasetParams(
       id = None,
       name = s"dataset-${Random.nextInt()}",
