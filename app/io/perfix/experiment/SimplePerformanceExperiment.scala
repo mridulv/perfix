@@ -57,7 +57,6 @@ class SimplePerformanceExperiment(dataStore: DataStore,
         benchmarkTimeSeconds = experimentParams.experimentTimeInSeconds,
         runTask = () => dataStore.readData(experimentParams.query).size
       )
-      println(results)
       results
     } catch {
       case e: Exception =>
