@@ -104,12 +104,10 @@ const UpdateDataset = () => {
       }
     }
 
-    // Render loading spinner while data is being fetched
     if (isLoading || datasetsLoading) {
         return <Loading/>;
     }
 
-    // Render the component content after data has been fetched
     return (
         <div className='flex  justify-center items-center'>
             <div>

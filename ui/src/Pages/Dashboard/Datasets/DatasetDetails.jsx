@@ -16,12 +16,13 @@ const DatasetDetails = () => {
     
   })
   
-  if (isLoading) {
+    if (isLoading) {
       return <div>Loading...</div>;
     }
     const { params } = dataset;
     return (
     <div className="w-[90%] mx-auto mt-4 overflow-x-auto">
+      <p>Dataset : {dataset.name}</p>
       <table className="table">
         {/* head */}
         <thead>

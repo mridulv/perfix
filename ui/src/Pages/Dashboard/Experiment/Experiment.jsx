@@ -5,6 +5,8 @@ import { useQuery } from "react-query";
 import AddExperimentModal from "../../../components/AddExperimentModal";
 import UpdateExperimentModal from "../../../components/UpdateExperimentModal";
 import Loading from "../../../components/Loading";
+import { Link } from "react-router-dom";
+import AddButton from "../../../components/AddButton";
 
 const fields = [
   {
@@ -32,11 +34,8 @@ const fields = [
     placeholder: "Concurrent Queries",
   },
 ];
-const Experiment = () => {
-  const [open, setOpen] = useState(false);
-  const [openForUpdate, setOpenForUpdate] = useState(false);
-  const [selectedExperiment, setSelectedExperiment] = useState(null);
 
+const Experiment = () => {
   const { data: datasets, isLoading: datasetsLoading } = useQuery({
     queryKey: ["datasets"],
     queryFn: async () => {
@@ -66,22 +65,23 @@ const Experiment = () => {
     },
   });
 
+  console.log(experiments);
 
   const handleAddExperiment = async (e) => {
     e.preventDefault();
     const form = e.target;
     const name = form.name.value;
 
-
     const isDuplicateName = experiments.some(
-      (existingExperiment) => existingExperiment.name.toLowerCase() === name.toLowerCase()
+      (existingExperiment) =>
+        existingExperiment.name.toLowerCase() === name.toLowerCase()
     );
-  
+
     if (isDuplicateName) {
       toast.error(`An experiment with the name "${name}" already exists.`);
       return;
     }
-    
+
     const writeBatchSize = Number(form.writeBatchSize.value);
     const experimentTimeInSeconds = Number(form.experimentTimeInSeconds.value);
     const concurrentQueries = Number(form.concurrentQueries.value);
@@ -116,91 +116,91 @@ const Experiment = () => {
       if (res.status === 200) {
         toast.success("Experiment created successfully");
         refetch();
-        setOpen(false);
         form.reset();
       }
-      
     } catch (err) {
       console.log(err);
     }
   };
 
-  
-  const handleOpenModalForUpdate = (experiment) => {
-    // setSelectedExperiment(experiment);
-    setOpenForUpdate(true);
-    setSelectedExperiment(experiment)
+  const handleStartExperiment = async (id) => {
+    const res = await axios.post(
+      `http://localhost:9000/experiment/${id}/execute`,
+      {}
+    );
+    console.log(res);
   };
 
   if (datasetsLoading && configsLoading && experimentsLoading)
     return <Loading />;
   return (
-    <div>
-      <h3 className="text-center text-xl my-4 font-semibold">Experiments</h3>
-
-      <div className="flex justify-end pe-8 mb-3">
-        <button
-          className="btn btn-error btn-md text-white"
-          onClick={() => setOpen(true)}
-        >
-          Add Experiment
-        </button>
+    <div className="">
+      <div className="pt-7 ps-7">
+        <h3 className="text-2xl font-semibold">Experiments</h3>
       </div>
-      {datasets && configs && (
-        <AddExperimentModal
-          open={open}
-          onClose={() => setOpen(false)}
-          fields={fields}
-          datasets={datasets}
-          configs={configs}
-          handleAction={handleAddExperiment}
-          actionLabel={"Add Experiment"}
-          buttonValue={"Add"}
-        ></AddExperimentModal>
-      )}
+      <div className="w-[95%] h-[1px] bg-[#fcf8f8] my-6"></div>
+      <div className="mb-3 ps-7 pe-9 flex justify-between">
+        <div className="flex gap-x-4">
+          <input
+            className="w-[200px] p-1  border-2 border-gray-200 rounded search-input"
+            type="text"
+            name=""
+            id=""
+            placeholder="Search"
+          />
 
-      {experiments && experiments.length < 1 ? (
-        <p className="ps-5">You haven't added any experiments yet.</p>
-      ) : (
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 px-4 mx-auto my-4">
-          {experiments &&
-            experiments.map((experiment) => (
-              <div
-                key={experiment.name}
-                className="card w-60 bg-purple-400 shadow-xl"
-               >
-                <div className="card-body">
-                  <h2 className="text-white card-title">
-                    name: {experiment.name}
-                  </h2>
-                  <div>
-                    <button
-                      onClick={() => handleOpenModalForUpdate(experiment)}
-                      className="btn btn-success btn-sm text-sm"
-                    >
-                      Update
-                    </button>
-                  </div>
-                </div>
-                {datasets && configs && (
-                  <UpdateExperimentModal
-                  open={openForUpdate}
-                  onClose={() => setOpenForUpdate(false)}
-                    fields={fields}
-                    datasets={datasets}
-                    configs={configs}
-                    experiments={experiments}
-                    refetch={refetch}
-                    experiment={selectedExperiment}
-                    setSelectedExperiment={setSelectedExperiment}
-                    actionLabel={"Update Experiment"}
-                    buttonValue={"Update"}
-                  ></UpdateExperimentModal>
-                )}
-              </div>
-            ))}
+          <select className="select-type w-[90px] px-2 py-2 border-2 border-gray-300 rounded-2xl text-gray-900 text-sm focus:ring-gray-500 focus:border-gray-500 ">
+            <option>Owner</option>
+          </select>
+          <select className="select-type w-[90px] px-2 py-2 border-2 border-gray-300 rounded-2xl text-gray-900 text-sm focus:ring-gray-500 focus:border-gray-500 ">
+            <option>Status</option>
+          </select>
+          <select className="select-type w-[110px] px-2 py-2 border-2 border-gray-300 rounded-2xl text-gray-900 text-sm focus:ring-gray-500 focus:border-gray-500 ">
+            <option>Visible to</option>
+          </select>
         </div>
-      )}
+        <div>
+          <AddButton
+            value={"New Experiment"}
+            link={"/add-experiment-dataset"}
+          />
+        </div>
+      </div>
+
+      <div className="ps-7 pe-9 ">
+        <div className="bg-[#fcf8f8] py-2 ps-3 text-[14px] font-semibold border-b-2 border-gray-300 rounded-t-lg">
+          <p>1 Experiment</p>
+        </div>
+
+        <table className="w-full ">
+          <thead>
+            <tr className="border-b border-gray-300">
+              <th className="text-start w-[50%] text-[12px] text-gray-300 py-4 ps-4">
+                Name
+              </th>
+              <th className="text-start text-[12px] text-gray-300 ">
+                Column 1
+              </th>
+              <th className="text-start text-[12px] text-gray-300 ">
+                Column 2
+              </th>
+              <th className="text-start text-[12px] text-gray-300 ">
+                Column 3
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr className="border-b border-gray-300">
+              <td className="py-3 text-[14px] font-semibold ps-4">
+                Experiment Name
+              </td>
+              <td className="text-[14px]">Cell 1</td>
+              <td className="text-[14px]">Cell 2</td>
+              <td className="text-[14px]">Cell 3</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   );
 };

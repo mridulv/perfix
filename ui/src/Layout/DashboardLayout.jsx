@@ -1,59 +1,61 @@
 import React, { useState } from "react";
 import { Link, Outlet, useLocation } from "react-router-dom";
-import { MdOutlineDashboard } from "react-icons/md";
 import { FaUserAlt } from "react-icons/fa";
-import { IoReturnUpBack } from "react-icons/io5";
-import { FaAngleLeft } from "react-icons/fa6";
 import { IoMenu } from "react-icons/io5";
+import SideBarAddButton from "../components/SideBarAddButton";
+import icon1 from "../../src/assets/icon1.png"
+import icon2 from "../../src/assets/icon2.png"
+import icon3 from "../../src/assets/icon3.png"
+import icon4 from "../../src/assets/icon4.png"
+
+const menus = [
+  {
+    name: "Dashboard",
+    link: "/",
+    icon: icon1,
+  },
+
+  {
+    name: "Database",
+    link: "/db-configuration",
+    icon: icon2,
+  },
+  {
+    name: "Datasets",
+    link: "/datasets",
+    icon: icon2
+  },
+  {
+    name: "Experiment",
+    link: "/experiment",
+    icon: icon3,
+  },
+];
+
+const userProfile = {
+  name: "John Doe",
+  profilePic: <FaUserAlt />,
+};
 
 const DashboardLayout = () => {
-  const menus = [
-    {
-      name: "Dashboard",
-      link: "/",
-      icon: <MdOutlineDashboard color="white" size={30} />,
-    },
-
-    {
-      name: "DB Configuration",
-      link: "/db-configuration",
-      icon: <MdOutlineDashboard color="white" size={30} />,
-    },
-    {
-      name: "Datasets",
-      link: "/datasets",
-      icon: <MdOutlineDashboard color="white" size={30} />,
-    },
-    {
-      name: "Experiment",
-      link: "/experiment",
-      icon: <MdOutlineDashboard color="white" size={30} />,
-    },
-  ];
   const [menuOpen, setMenuOpen] = useState(true);
   const location = useLocation();
 
-  const userProfile = {
-    name: "John Doe",
-    profilePic: <FaUserAlt />,
-  };
-
   return (
-    <div className="drawer lg:drawer-open">
+    <div className="drawer lg:drawer-open bg-[#fcf8f8]">
       <input id="my-drawer-2" type="checkbox" className="drawer-toggle" />
-      <div className="drawer-content fle">
+      <div className="drawer-content ">
         {/* Page content here */}
-        
-        <div className="flex items-center gap-3 md:hidden ps-4 py-3 bg-primary">
-        <label
-          htmlFor="my-drawer-2"
-          className=" drawer-button lg:hidden"
-          >
-          <IoMenu color="white" size={25}></IoMenu>
-        </label>
-        <h3 className="text-2xl font-bold text-white">Dashboard</h3>
+
+        <div className="flex items-center gap-3 lg:hidden ps-4 py-3 bg-primary">
+          <label htmlFor="my-drawer-2" className=" drawer-button lg:hidden">
+            <IoMenu color="white" size={25}></IoMenu>
+          </label>
+          <h3 className="text-2xl text-white">PerFix</h3>
         </div>
+        <div className="bg-white m-4 rounded-2xl min-h-screen">
           <Outlet></Outlet>
+        </div>
       </div>
       <div className="drawer-side h-screen">
         {/* <button
@@ -71,31 +73,35 @@ const DashboardLayout = () => {
         ></label>
         <div
           className={`menu p-4 ${
-            menuOpen ? "w-72" : "w-20"
-          } min-h-screen bg-gray-400 flex flex-col justify-between relative duration-300`}
+            menuOpen ? "w-[250px]" : "w-20"
+          } min-h-screen bg-[#fcf8f8]  flex flex-col justify-between relative duration-300`}
         >
           {/* Sidebar content here */}
 
-          <div className="mb-5">
+          <div className="">
             <h1
-              className={`italic text-2xl font-bold text-white ${
+              className={`mt-6 ms-4 font-medium text-[24px]   ${
                 !menuOpen && "scale-0"
               }`}
             >
-              Dashboard
+              PerFix
             </h1>
-            <div className="mt-4">
+
+            <div className="mt-8 ms-4 flex">
+              <SideBarAddButton location={location}/>
+            </div>
+            <div className="mt-5 ms-1">
               {menus.map((menu) => (
                 <Link
                   key={menu.name}
-                  className={`font-bold hover:bg-purple-300 ${
-                    location.pathname === menu.link ? "bg-purple-600" : ""
+                  className={`font-bold hover:bg-purple-300 mt-1 ${
+                    location.pathname === menu.link ? "bg-[#fdd3db]" : ""
                   }  ${
-                    menuOpen ? "w-52" : "w-12"
-                  } px-3 py-3 rounded-lg flex gap-4 items-center`}
+                    menuOpen ? "w-56" : "w-12"
+                  } px-5 py-2 rounded-3xl flex gap-4 items-center`}
                   to={`${menu.link}`}
                 >
-                  {menu.icon}
+                  <img src={menu.icon} alt="" />
                   <span
                     className={`${
                       !menuOpen && "hidden"
@@ -110,26 +116,28 @@ const DashboardLayout = () => {
           </div>
 
           <div className="flex flex-col ps-2 mb-2 border-t border-gray-600 py-5">
-            <div className="flex items-center mb-4">
+            <div className="flex items-center mb-4 ms-8">
               <span>{userProfile.profilePic}</span>
               <span
-                className={`ml-3 text-white ${
+                className={`ml-3 text-black ${
                   !menuOpen && "hidden"
                 } origin-left duration-200`}
               >
                 {userProfile.name}
               </span>
             </div>
-            <div className="mt-2">
+            <div className="mt-2 ms-4">
               <button
-                className={`bg-purple-500 text-white ${
+                className={`pb-0 text-black ${
                   menuOpen ? "px-5" : "px-2"
                 } h-[40px] py-2 flex items-center gap-3 rounded-xl origin-left duration-500`}
               >
-                <span className={`${!menuOpen && "hidden"} `}>
-                  Back to Home
+                <img src={icon4} alt="" />
+                <span
+                  className={`${!menuOpen && "hidden"} text-base font-semibold`}
+                >
+                  Setting
                 </span>
-                <IoReturnUpBack size={20} color="white" />
               </button>
             </div>
           </div>
