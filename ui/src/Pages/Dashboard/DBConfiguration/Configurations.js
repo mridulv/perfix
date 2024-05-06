@@ -19,7 +19,7 @@ const Configurations = () => {
       return data;
     },
   });
-;
+
 
   const handleSubmitInputs = async (event) => {
     event.preventDefault();

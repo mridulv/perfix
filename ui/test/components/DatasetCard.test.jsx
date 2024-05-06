@@ -23,7 +23,7 @@ describe('DatasetCard', () => {
           };
         render(<MemoryRouter><DatasetCard dataset={dataset}/></MemoryRouter>);
 
-        const heading = screen.getByRole("heading", {name: dataset.name});
+        const heading = screen.getByRole("heading", {name: `name: ${dataset.name}`});
         expect(heading).toBeInTheDocument();
     });
     it('should render the link with the correct url', () => {
