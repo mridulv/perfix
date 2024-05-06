@@ -31,6 +31,11 @@ jobs:
         distribution: 'temurin'
         cache: 'sbt'
 
+    - name: Use Node.js 21.7.1
+      uses: actions/setup-node@v2
+      with:
+        node-version: 21.7.1
+
     - name: Running Tests
       if: success()
       run: |
@@ -40,6 +45,13 @@ jobs:
         # Run the SBT tests
         sbt test
 
+    - name: Running Tests for UI
+      if: success()
+      run: |
+        cd ui
+        npm install
+        npm test
+
     - name: Log in to Docker Hub
       if: success() && github.ref == 'refs/heads/master'
       uses: docker/login-action@f4ef78c080cd8ba55a85445d5b36e214a81df20a
@@ -47,12 +59,20 @@ jobs:
         username: ${{ secrets.DOCKER_USERNAME }}
         password: ${{ secrets.DOCKER_PASSWORD }}
 
-    - name: Publish Docker Image
+    - name: Publish Docker Image for Perfix
       if: success() && github.ref == 'refs/heads/master'
       run: |
         # Build and publish the Docker image
         sbt "docker:publishLocal"
         docker push mridulverma/perfix:latest
+
+    - name: Publish Docker Image for Perfix-UI
+      if: success() && github.ref == 'refs/heads/master'
+      run: |
+        cd ui
+        npm install
+        docker build -t mridulverma/perfix-ui:latest .
+        docker push mridulverma/perfix-ui:latest
 
     - name: Run Helm Test
       if: success() && github.ref == 'refs/heads/master'
