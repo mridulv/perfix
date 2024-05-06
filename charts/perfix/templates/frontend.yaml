@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: perfix-ui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: perfix-ui
+  template:
+    metadata:
+      labels:
+        app: perfix-ui
+    spec:
+      containers:
+        - name: perfix-ui
+          image: "{{ .Values.frontend.image.repository }}:{{ .Values.frontend.image.tag }}"
+          imagePullPolicy: {{ .Values.frontend.image.pullPolicy }}
+          ports:
+            - containerPort: 3000
+          env:
+            - name: NODE_ENV
+              value: "production"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: perfix-ui-service
+spec:
+  selector:
+    app: perfix-ui
+  ports:
+    - port: 80
+      targetPort: "{{ .Values.frontend.service.port }}"
+  type: "{{ .Values.frontend.service.type }}"

@@ -1,11 +1,23 @@
-image:
-  repository: mridulverma/perfix
-  pullPolicy: Always
-  tag: "latest"
+backend:
+  image:
+    repository: mridulverma/perfix
+    pullPolicy: Always
+    tag: "latest"
 
-service:
-  type: ClusterIP
-  port: 9000
+  service:
+    type: ClusterIP
+    port: 9000
+
+frontend:
+  image:
+    repository: mridulverma/perfix-ui
+    pullPolicy: Always
+    tag: "latest"
+
+  service:
+    type: ClusterIP
+    port: 3000
+
 
 job:
   image: curlimages/curl

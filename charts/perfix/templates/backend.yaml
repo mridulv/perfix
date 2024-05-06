@@ -14,13 +14,13 @@ spec:
     spec:
       containers:
         - name: perfix
-          image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+          image: "{{ .Values.backend.image.repository }}:{{ .Values.backend.image.tag }}"
           env:
             - name: MODE
               value: "trial"
-          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          imagePullPolicy: {{ .Values.backend.image.pullPolicy }}
           ports:
-            - containerPort: {{ .Values.service.port }}
+            - containerPort: {{ .Values.backend.service.port }}
           livenessProbe:
             httpGet:
               path: /health
