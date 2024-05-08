@@ -21,15 +21,3 @@ spec:
           env:
             - name: NODE_ENV
               value: "production"
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: perfix-ui-service
-spec:
-  selector:
-    app: perfix-ui
-  ports:
-    - port: 80
-      targetPort: "{{ .Values.frontend.service.port }}"
-  type: "{{ .Values.frontend.service.type }}"
