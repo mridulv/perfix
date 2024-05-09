@@ -18,4 +18,4 @@ spec:
               service:
                 name: perfix-service
                 port:
-                  number: {{ .Values.service.port }}
+                  number: {{ .Values.backend.service.port }}
