@@ -6,10 +6,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { IoIosArrowForward } from "react-icons/io";
 import Loading from "../../../components/Loading";
 import AddDataset from "../../../components/AddDataset";
-import CommonButton from "../../../components/AddButton";
 
 const AddExperiment = () => {
-  const [activeSetup, setActiveSetup] = useState(false);
   const [activeDataset, setActiveDataset] = useState("new");
   const [columns, setColumns] = useState([{ columnName: "", columnType: "" }]);
 
@@ -17,7 +15,9 @@ const AddExperiment = () => {
   const { data: experiments, isLoading } = useQuery({
     queryKey: ["experiments"],
     queryFn: async () => {
-      const res = await axios.get("http://localhost:9000/experiment");
+      const res = await axios.get(
+        `${process.env.REACT_APP_BASE_URL}/experiment`
+      );
       const data = await res.data;
       return data;
     },
@@ -26,7 +26,7 @@ const AddExperiment = () => {
   const { data: datasets, isLoading: datasetsLoading } = useQuery({
     queryKey: ["datasets"],
     queryFn: async () => {
-      const res = await axios.get("http://localhost:9000/dataset");
+      const res = await axios.get(`${process.env.REACT_APP_BASE_URL}/dataset`);
       const data = await res.data;
       return data;
     },
@@ -61,9 +61,7 @@ const AddExperiment = () => {
       <div className="w-full bg-[#fbeaee] flex items-center gap-10">
         <div className="ps-7 py-3 ">
           <div
-            className={`h-[45px] w-[180px] ps-3  ${
-              !activeSetup && "bg-white"
-            } flex items-center gap-3 rounded-xl`}
+            className={`h-[45px] w-[180px] ps-3 bg-white  flex items-center gap-3 rounded-xl`}
           >
             <div className="h-6 w-6 rounded-full bg-black text-white flex justify-center items-center">
               <p className="text-[14px]">1</p>
@@ -73,9 +71,7 @@ const AddExperiment = () => {
         </div>
         <IoIosArrowForward size={20} />
         <div
-          className={`h-[45px] w-[180px]  ${
-            activeSetup && "bg-white"
-          }  flex items-center gap-3 rounded-xl`}
+          className={`h-[45px] w-[180px] flex items-center gap-3 rounded-xl`}
         >
           <div className="h-6 w-6 rounded-full bg-black text-white flex justify-center items-center">
             <p className="text-[14px]">2</p>
@@ -89,7 +85,7 @@ const AddExperiment = () => {
             onClick={() => setActiveDataset("existing")}
             className={`py-1 px-2 text-[12px] ${
               activeDataset === "existing" && "bg-white"
-            } font-semibold rounded`}
+            } font-semibold rounded transition ease-in-out delay-150`}
           >
             Choose existing dataset
           </button>
@@ -97,7 +93,7 @@ const AddExperiment = () => {
             onClick={() => setActiveDataset("new")}
             className={`py-1 px-2 text-[12px] ${
               activeDataset === "new" && "bg-white"
-            } font-semibold rounded`}
+            } font-semibold rounded transition ease-in-out delay-100`}
           >
             Create new dataset
           </button>
@@ -134,8 +130,16 @@ const AddExperiment = () => {
             )}
 
             <div className="mt-[50px] flex gap-3 pb-4">
-              <button className="btn bg-[#E5227A] btn-sm border border-[#E5227A] rounded text-white hover:bg-[#6b3b51d2]" type="submit">Next</button>
-              <Link to="/experiment" className="px-3 py-1 text-[14px] font-bold border-2 border-gray-300 rounded">
+              <button
+                className="btn bg-[#E5227A] btn-sm border border-[#E5227A] rounded text-white hover:bg-[#6b3b51d2]"
+                type="submit"
+              >
+                Next
+              </button>
+              <Link
+                to="/experiment"
+                className="px-3 py-1 text-[14px] font-bold border-2 border-gray-300 rounded"
+              >
                 Cancel
               </Link>
             </div>

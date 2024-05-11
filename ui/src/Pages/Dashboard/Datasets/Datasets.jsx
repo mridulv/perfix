@@ -1,11 +1,17 @@
-import React from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import { FaPlus } from "react-icons/fa6";
 import { useQuery } from "react-query";
 import toast from "react-hot-toast";
-import DatasetCard from "../../../components/DatasetCard";
 import Loading from "../../../components/Loading";
 import AddButton from "../../../components/AddButton";
+import CommonTable from "../../../components/CommonTable";
+
+const options = [
+  { value: "us", label: "United States" },
+  { value: "ca", label: "Canada" },
+  { value: "mx", label: "Mexico" },
+];
 
 const Datasets = () => {
   const {
@@ -15,7 +21,7 @@ const Datasets = () => {
   } = useQuery({
     queryKey: ["datasets"],
     queryFn: async () => {
-      const res = await axios.get("http://localhost:9000/dataset");
+      const res = await axios.get(`${process.env.REACT_APP_BASE_URL}/dataset`);
       const data = await res.data;
       console.log(data);
       return data;
@@ -24,19 +30,21 @@ const Datasets = () => {
 
   if (isLoading) return <Loading />;
   return (
-    <div className="px-3 py-4">
-      <h2 className="text-2xl text-center font-bold text-orange-600 my-3">
-        Datasets
-      </h2>
-      <div className="flex justify-end my-4 mx-8">
+    <div className="pt-7 ps-7">
+      <div>
+        <h3 className="text-2xl font-semibold">Datasets</h3>
+      </div>
+      <div className="flex justify-between me-9 mt-6 mb-3">
+        <select className="select-type w-[90px] px-2 py-2 border-2 border-gray-300 rounded-2xl text-gray-900 text-sm focus:ring-gray-500 focus:border-gray-500 ">
+          <option className="">Owner</option>
+          <option className="">Owner</option>
+          <option className="">Owner</option>
+        </select>
         <AddButton value={"New Dataset"} link={"/add-dataset"} />
       </div>
 
-      <div className="w-[90%] mx-auto grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {datasets &&
-          datasets.map((dataset) => (
-            <DatasetCard key={dataset.id.id} dataset={dataset}></DatasetCard>
-          ))}
+      <div className=" pe-9 ">
+        <CommonTable data={datasets} tableHead={"Experiment"} />
       </div>
     </div>
   );

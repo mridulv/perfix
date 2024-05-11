@@ -1,58 +1,15 @@
+import React from "react";
 import axios from "axios";
-import React, { useState } from "react";
 import toast from "react-hot-toast";
 import { useQuery } from "react-query";
-import AddExperimentModal from "../../../components/AddExperimentModal";
-import UpdateExperimentModal from "../../../components/UpdateExperimentModal";
 import Loading from "../../../components/Loading";
-import { Link } from "react-router-dom";
 import AddButton from "../../../components/AddButton";
 import CommonTable from "../../../components/CommonTable";
 
-const fields = [
-  {
-    name: "name",
-    label: "Experiment Name",
-    type: "text",
-    placeholder: "Experiment Name",
-  },
-  {
-    name: "writeBatchSize",
-    label: "Write Batch Size",
-    type: "number",
-    placeholder: "Write Batch Size",
-  },
-  {
-    name: "experimentTimeInSeconds",
-    label: "Experiment Time",
-    type: "number",
-    placeholder: "In Seconds",
-  },
-  {
-    name: "concurrentQueries",
-    label: "Concurrent Queries",
-    type: "number",
-    placeholder: "Concurrent Queries",
-  },
-];
+
 
 const Experiment = () => {
-  const { data: datasets, isLoading: datasetsLoading } = useQuery({
-    queryKey: ["datasets"],
-    queryFn: async () => {
-      const res = await axios.get("http://localhost:9000/dataset");
-      const data = await res.data;
-      return data;
-    },
-  });
-  const { data: configs, isLoading: configsLoading } = useQuery({
-    queryKey: ["configs"],
-    queryFn: async () => {
-      const res = await axios.get("http://localhost:9000/config");
-      const data = await res.data;
-      return data;
-    },
-  });
+
   const {
     data: experiments,
     isLoading: experimentsLoading,
@@ -60,7 +17,9 @@ const Experiment = () => {
   } = useQuery({
     queryKey: ["experiments"],
     queryFn: async () => {
-      const res = await axios.get("http://localhost:9000/experiment");
+      const res = await axios.get(
+        `${process.env.REACT_APP_BASE_URL}/experiment`
+      );
       const data = await res.data;
       return data;
     },
@@ -108,11 +67,15 @@ const Experiment = () => {
     console.log(data);
 
     try {
-      const res = await axios.post("http://localhost:9000/experiment", data, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+      const res = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}/experiment`,
+        data,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
       console.log(res);
       if (res.status === 200) {
         toast.success("Experiment created successfully");
@@ -126,14 +89,13 @@ const Experiment = () => {
 
   const handleStartExperiment = async (id) => {
     const res = await axios.post(
-      `http://localhost:9000/experiment/${id}/execute`,
+      `${process.env.REACT_APP_BASE_URL}/experiment/${id}/execute`,
       {}
     );
     console.log(res);
   };
 
-  if (datasetsLoading && configsLoading && experimentsLoading)
-    return <Loading />;
+  if (experimentsLoading) return <Loading />;
   return (
     <div className="">
       <div className="pt-7 ps-7">
@@ -151,7 +113,9 @@ const Experiment = () => {
           />
 
           <select className="select-type w-[90px] px-2 py-2 border-2 border-gray-300 rounded-2xl text-gray-900 text-sm focus:ring-gray-500 focus:border-gray-500 ">
-            <option>Owner</option>
+            <option className="">Owner</option>
+            <option className="">Owner</option>
+            <option className="">Owner</option>
           </select>
           <select className="select-type w-[90px] px-2 py-2 border-2 border-gray-300 rounded-2xl text-gray-900 text-sm focus:ring-gray-500 focus:border-gray-500 ">
             <option>Status</option>
@@ -169,7 +133,7 @@ const Experiment = () => {
       </div>
 
       <div className="ps-7 pe-9 ">
-        <CommonTable tableHead={"Experiment"}/>
+        <CommonTable data={experiments} tableHead={"Experiment"} />
       </div>
     </div>
   );

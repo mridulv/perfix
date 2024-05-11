@@ -1,10 +1,12 @@
 import React from "react";
 
-const CommonTable = ({tableHead}) => {
+const CommonTable = ({ data, tableHead }) => {
   return (
     <div>
       <div className="bg-[#fcf8f8] py-2 ps-3 text-[14px] font-semibold border-b-2 border-gray-300 rounded-t-lg">
-        <p>1 {tableHead}</p>
+        <p>
+          {data?.length || 0} {tableHead}
+        </p>
       </div>
       <table className="w-full ">
         <thead>
@@ -18,14 +20,22 @@ const CommonTable = ({tableHead}) => {
           </tr>
         </thead>
         <tbody>
-          <tr className="border-b border-gray-300">
-            <td className="py-3 text-[14px] font-semibold ps-4">
-              Experiment Name
-            </td>
-            <td className="text-[14px]">Cell 1</td>
-            <td className="text-[14px]">Cell 2</td>
-            <td className="text-[14px]">Cell 3</td>
-          </tr>
+          {data?.length > 0 ? (
+            data.map((d, i) => (
+              <tr key={i} className="border-b border-gray-300">
+                <td className="py-3 text-[14px] font-semibold ps-4">{d.name || tableHead}</td>
+                <td className="text-[14px]">Cell 1</td>
+                <td className="text-[14px]">Cell 2</td>
+                <td className="text-[14px]">Cell 3</td>
+              </tr>
+            ))
+          ) : (
+            <tr>
+              <td className="pt-3 text-[13px]">
+                You haven't added any data...
+              </td>
+            </tr>
+          )}
         </tbody>
       </table>
     </div>

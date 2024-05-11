@@ -16,7 +16,6 @@ const UpdateExperimentModal = ({
   buttonValue,
   setSelectedExperiment,
 }) => {
-
   const [selectedDatasetId, setSelectedDatasetId] = useState("");
   const [selectedConfigId, setSelectedConfigId] = useState("");
 
@@ -27,7 +26,6 @@ const UpdateExperimentModal = ({
     }
   }, [experiment]);
 
-
   const handleUpdateExperiment = async (e) => {
     e.preventDefault();
     const form = e.target;
@@ -35,9 +33,10 @@ const UpdateExperimentModal = ({
     const existingName = experiment.name;
     if (name !== existingName) {
       const isDuplicateName = experiments.some(
-        (existingExperiment) => existingExperiment.name.toLowerCase() === name.toLowerCase()
+        (existingExperiment) =>
+          existingExperiment.name.toLowerCase() === name.toLowerCase()
       );
-  
+
       if (isDuplicateName) {
         toast.error(`An experiment with the name "${name}" already exists.`);
         return;
@@ -71,7 +70,7 @@ const UpdateExperimentModal = ({
 
     try {
       const res = await axios.post(
-        `http://localhost:9000/experiment/${experiment?.experimentId.id}`,
+        `${process.env.REACT_APP_BASE_URL}/experiment/${experiment?.experimentId.id}`,
         data
       );
       console.log(res);

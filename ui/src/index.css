@@ -20,10 +20,15 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+.search-input{
+  font-size: 14px;
+}
 
 .search-input::placeholder{
   font-size: 14px;
 }
+
+
 /* .select-type{
   content: url(./assets/select-icon2.png);
   /* position: absolute;

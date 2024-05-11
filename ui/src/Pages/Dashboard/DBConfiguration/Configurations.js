@@ -6,20 +6,23 @@ import { useNavigate, useParams } from "react-router-dom";
 
 const Configurations = () => {
   const { id } = useParams();
-  
+
   const navigate = useNavigate();
-  
-  
- 
-  const {data: inputs, isLoading, refetch} = useQuery({
+
+  const {
+    data: inputs,
+    isLoading,
+    refetch,
+  } = useQuery({
     queryKey: ["inputs", id],
     queryFn: async () => {
-      const res = await axios.get(`http://localhost:9000/config/${id}/form`);
+      const res = await axios.get(
+        `${process.env.REACT_APP_BASE_URL}/config/${id}/form`
+      );
       const data = await res.data;
       return data;
     },
   });
-
 
   const handleSubmitInputs = async (event) => {
     event.preventDefault();
@@ -28,53 +31,59 @@ const Configurations = () => {
     let values = [];
     formData.forEach((value, inputName) => {
       const inputField = inputs.inputs[inputName];
-  
-      if (!inputField.isRequired && value === '') {
+
+      if (!inputField.isRequired && value === "") {
         return;
       }
       let answer;
       switch (inputField.dataType) {
-        case 'StringType':
+        case "StringType":
           answer = value;
           break;
-        case 'IntType':
+        case "IntType":
           answer = parseInt(value, 10);
           break;
-        case 'BooleanType':
-          answer = value === 'true';
+        case "BooleanType":
+          answer = value === "true";
           break;
         default:
           answer = value;
       }
-  
+
       values.push({ inputName, answer });
     });
 
-    
-    const res = await axios.post(`http://localhost:9000/config/${id}/form`, {values}, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    const res = await axios.post(
+      `${process.env.REACT_APP_BASE_URL}/config/${id}/form`,
+      { values },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
     console.log(res);
-    
+
     if (res.status === 200) {
       await refetch();
     }
-    if(res.data === "Completed"){
+    if (res.data === "Completed") {
       toast.success("Form Datas submitted successfully");
       navigate("/db-configuration");
     }
-   
   };
 
-  
-
-  if(isLoading) return <p>loading..</p>
+  if (isLoading) return <p>loading..</p>;
   return (
     <div className="flex flex-col items-center">
-      <h3 className="text-xl font-bold text-center my-4">Please submit all the input fields to create the configuration completely</h3>
-      <form className="max-w-[400px] mx-auto px-8 py-2 border border-gray-200 rounded shadow-md" onSubmit={handleSubmitInputs}>
+      <h3 className="text-xl font-bold text-center my-4">
+        Please submit all the input fields to create the configuration
+        completely
+      </h3>
+      <form
+        className="max-w-[400px] mx-auto px-8 py-2 border border-gray-200 rounded shadow-md"
+        onSubmit={handleSubmitInputs}
+      >
         {inputs &&
           Object.entries(inputs.inputs).map(
             ([fieldName, { dataType, isRequired }], index) => (
@@ -135,7 +144,11 @@ const Configurations = () => {
               </div>
             )
           )}
-          <input className="btn btn-md btn-primary text-white " type="submit" value={"Submit"}/>
+        <input
+          className="btn btn-md btn-primary text-white "
+          type="submit"
+          value={"Submit"}
+        />
       </form>
     </div>
   );

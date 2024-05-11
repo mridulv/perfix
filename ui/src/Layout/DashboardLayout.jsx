@@ -3,21 +3,15 @@ import { Link, Outlet, useLocation } from "react-router-dom";
 import { FaUserAlt } from "react-icons/fa";
 import { IoMenu } from "react-icons/io5";
 import SideBarAddButton from "../components/SideBarAddButton";
-import icon1 from "../../src/assets/icon1.png"
+// import icon1 from "../../src/assets/icon1.png"
 import icon2 from "../../src/assets/icon2.png"
 import icon3 from "../../src/assets/icon3.png"
 import icon4 from "../../src/assets/icon4.png"
 
 const menus = [
   {
-    name: "Dashboard",
-    link: "/",
-    icon: icon1,
-  },
-
-  {
     name: "Database",
-    link: "/db-configuration",
+    link: "/",
     icon: icon2,
   },
   {
@@ -80,16 +74,24 @@ const DashboardLayout = () => {
 
           <div className="">
             <h1
-              className={`mt-6 ms-4 font-medium text-[24px]   ${
+              className={`mt-6 ms-4 font-medium text-[24px] ${
                 !menuOpen && "scale-0"
               }`}
             >
               PerFix
             </h1>
 
-            <div className="mt-8 ms-4 flex">
-              <SideBarAddButton location={location}/>
-            </div>
+            {
+              (location.pathname === "/" || location.pathname === "/datasets" || location.pathname === "/experiment") ?
+              <div className="mt-8 ms-4 flex">
+              <SideBarAddButton value={`${location.pathname === "/" ? "Database" : location.pathname === "/datasets" ? "Datasets" : "Experiment"}`}
+                url={`${location.pathname === "/" ? "/add-database" : location.pathname === "/datasets" ? "/add-dataset" : "/add-experiment-dataset"}`}/>
+              </div>
+              : (
+                <div className="mt-8"></div>
+              )
+            
+            }
             <div className="mt-5 ms-1">
               {menus.map((menu) => (
                 <Link

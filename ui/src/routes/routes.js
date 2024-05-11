@@ -2,7 +2,6 @@
 import DashboardLayout from "../Layout/DashboardLayout"
 import AddDBConfiguration from "../Pages/Dashboard/AddDBConfiguration/AddDBConfiguration";
 import Configurations from "../Pages/Dashboard/DBConfiguration/Configurations";
-import Dashboard from "../Pages/Dashboard/Dashboard/Dashboard";
 import DBConfiguration from "../Pages/Dashboard/DBConfiguration/DBConfiguration"
 import DatasetDetails from "../Pages/Dashboard/Datasets/DatasetDetails";
 import Datasets from "../Pages/Dashboard/Datasets/Datasets";
@@ -27,10 +26,6 @@ export const router = createBrowserRouter([
         children: [
             {
                 path: "/",
-                element: <Dashboard/>
-            },
-            {
-                path: "/db-configuration",
                 element: <DBConfiguration/>
             },
             {
