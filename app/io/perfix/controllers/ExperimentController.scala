@@ -2,7 +2,7 @@ package io.perfix.controllers
 
 import controllers.AssetsFinder
 import io.perfix.manager.ExperimentManager
-import io.perfix.model.{DatabaseConfigId, ExperimentId, ExperimentParams}
+import io.perfix.model.experiment.{ExperimentId, ExperimentParams}
 import play.api.libs.json.Json
 import play.api.mvc._
 

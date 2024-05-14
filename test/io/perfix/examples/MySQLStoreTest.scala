@@ -4,7 +4,7 @@ import io.perfix.common.ExperimentExecutor
 import io.perfix.forms.AWSCloudParamsForm._
 import io.perfix.forms.Form
 import io.perfix.forms.mysql.MySQLConnectionParamsForm._
-import io.perfix.forms.mysql.MySQLLaunchForm._
+import io.perfix.forms.mysql.MySQLLauncher._
 import io.perfix.forms.mysql.MySQLTableIndicesDetailForm.SECONDARY_INDEX_COLUMNS
 import io.perfix.forms.mysql.MySQLTableParamsForm.{DBNAME, TABLENAME}
 import io.perfix.model.{ColumnDescription, Dataset, DatasetParams, ExperimentParams}

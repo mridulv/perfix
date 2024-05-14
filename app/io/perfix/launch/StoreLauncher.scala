@@ -4,25 +4,15 @@ import com.amazonaws.services.ec2.{AmazonEC2, AmazonEC2ClientBuilder}
 import com.amazonaws.services.ec2.model.{AuthorizeSecurityGroupIngressRequest, DescribeSubnetsRequest, IpPermission, IpRange}
 import com.amazonaws.services.eks.AmazonEKSClientBuilder
 import com.amazonaws.services.eks.model.DescribeClusterRequest
-import io.perfix.common.CommonConfig.IS_TRIAL_MODE
-import io.perfix.model.FormInputType
-import io.perfix.forms.Form
-import io.perfix.forms.Form.FormInputName
+import io.perfix.model.store.StoreParams
 
 import scala.jdk.CollectionConverters._
 
-trait LaunchStoreForm extends Form {
+trait StoreLauncher[Params <: StoreParams] {
 
-  val credentials: AWSCloudParams
-  val launchFormInputMapping: Map[FormInputName, FormInputType]
+  val storeParams: Params
 
-  override lazy val mapping: Map[FormInputName, FormInputType] = if (IS_TRIAL_MODE) {
-    Map.empty
-  } else {
-    launchFormInputMapping
-  }
-
-  override lazy val shouldAsk: Boolean = credentials.launchDB
+  def launch(): Unit
 
   protected def addIngressRules(storeSGId: String): Unit = {
     val eksClusterName = "new-test-cluster"

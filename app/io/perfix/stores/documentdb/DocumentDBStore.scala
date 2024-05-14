@@ -3,28 +3,26 @@ package io.perfix.stores.documentdb
 import com.mongodb.client.model.Indexes
 import com.mongodb.client.{MongoClient, MongoClients, MongoCollection, MongoDatabase}
 import io.perfix.exceptions.InvalidStateException
-import io.perfix.launch.{AWSCloudParams, LaunchStoreForm}
+import io.perfix.launch.StoreLauncher
 import io.perfix.model.DatasetParams
 import io.perfix.query.PerfixQuery
-import io.perfix.forms.documentdb.DocumentDBLaunchForm
+import io.perfix.forms.documentdb.DocumentDBLauncher
+import io.perfix.model.store.DocumentDBStoreParams
 import io.perfix.stores.DataStore
 import org.bson.Document
 
 import scala.jdk.CollectionConverters._
 
-class DocumentDBStore extends DataStore {
+class DocumentDBStore(datasetParams: DatasetParams,
+                      override val storeParams: DocumentDBStoreParams)
+  extends DataStore[DocumentDBStoreParams] {
+
   private var mongoClient: MongoClient = _
   private var mongoDatabase: MongoDatabase = _
   private val documentDBParams: DocumentDBParams = DocumentDBParams()
-  private var datasetParams: DatasetParams = _
 
-  override def launch(awsCloudParams: AWSCloudParams): Option[LaunchStoreForm] = {
-    Some(new DocumentDBLaunchForm(awsCloudParams, documentDBParams))
-  }
-
-  override def storeInputs(datasetParams: DatasetParams): DocumentDBFormSeries = {
-    this.datasetParams = datasetParams
-    DocumentDBFormSeries(this.documentDBParams)
+  override def launcher(): Option[StoreLauncher[DocumentDBStoreParams]] = {
+    Some(new DocumentDBLauncher(documentDBParams, storeParams))
   }
 
   def connectAndInitialize(): Unit = {

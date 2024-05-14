@@ -5,7 +5,6 @@ import io.perfix.exceptions.InvalidStateException
 import io.perfix.model.{Dataset, DatasetId, DatasetParams}
 import io.perfix.store.DatasetConfigStore
 
-import scala.collection.mutable
 
 @Singleton
 class DatasetManager @Inject()(datasetConfigStore: DatasetConfigStore) {
