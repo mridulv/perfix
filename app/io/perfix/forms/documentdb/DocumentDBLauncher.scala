@@ -1,52 +1,33 @@
 package io.perfix.forms.documentdb
 
-import com.amazonaws.auth.{AWSCredentials, AWSStaticCredentialsProvider, DefaultAWSCredentialsProviderChain}
+import com.amazonaws.auth.DefaultAWSCredentialsProviderChain
 import com.amazonaws.regions.Regions
 import com.amazonaws.services.docdb.{AmazonDocDB, AmazonDocDBClientBuilder}
 import com.amazonaws.services.docdb.model._
 import io.perfix.common.CommonConfig.DB_SUBNET_GROUP_NAME
-import io.perfix.launch.{AWSCloudParams, LaunchStoreForm}
-import io.perfix.model.{FormInputType, StringType}
-import io.perfix.forms.Form.FormInputName
-import io.perfix.forms.documentdb.DocumentDBConnectionParamsForm.{DATABASE, URL}
-import io.perfix.forms.documentdb.DocumentDBLaunchForm._
+import io.perfix.launch.StoreLauncher
+import io.perfix.model.store.DocumentDBStoreParams
 import io.perfix.stores.documentdb.{DocumentDBConnectionParams, DocumentDBParams, DocumentDBTableParams}
 
 import java.util.concurrent.TimeUnit
 import scala.annotation.tailrec
 import scala.util.Random
 
-class DocumentDBLaunchForm(override val credentials: AWSCloudParams,
-                           override val formParams: DocumentDBParams) extends LaunchStoreForm {
+class DocumentDBLauncher(formParams: DocumentDBParams,
+                         override val storeParams: DocumentDBStoreParams)
+  extends StoreLauncher[DocumentDBStoreParams] {
 
-  override val launchFormInputMapping: Map[FormInputName, FormInputType] = Map(
-    DATABASE -> FormInputType(StringType, isRequired = false),
-    DB_CLUSTER_IDENTIFIER -> FormInputType(StringType, isRequired = false),
-    MASTER_USERNAME -> FormInputType(StringType, isRequired = false),
-    MASTER_PASSWORD -> FormInputType(StringType, isRequired = false),
-    INSTANCE_CLASS -> FormInputType(StringType, isRequired = false),
-    URL -> FormInputType(StringType, isRequired = false)
-  )
-
-  override def setAnswers(answers: Map[FormInputName, Any]): Unit = {
+  override def launch(): Unit = {
     val userName = "user" + Random.alphanumeric.take(10).mkString("")
     val pwd = Random.alphanumeric.take(10).mkString("")
     val defaultDbName = "db-" + Random.alphanumeric.take(10).mkString("")
-    val clusterIdentifier = answers.get(DB_CLUSTER_IDENTIFIER).map(_.toString).getOrElse(defaultDbName)
-    val masterUsername = answers.get(MASTER_USERNAME).map(_.toString).getOrElse(userName)
-    val masterPassword = answers.get(MASTER_PASSWORD).map(_.toString).getOrElse(pwd)
-    val instanceClass = answers.get(INSTANCE_CLASS).map(_.toString).getOrElse("db.t3.medium")
-    val urlOpt = answers.get(URL).map(_.toString)
-    val dbName = answers.get(DATABASE).map(_.toString).getOrElse("perfix"+Random.alphanumeric.take(10).mkString(""))
+    val clusterIdentifier = defaultDbName
+    val masterUsername = userName
+    val masterPassword = pwd
+    val instanceClass = storeParams.instanceClass
+    val dbName = "perfix"+Random.alphanumeric.take(10).mkString("")
 
-    val credentialsProvider = if (credentials.useInstanceRole) {
-      DefaultAWSCredentialsProviderChain.getInstance()
-    } else {
-      new AWSStaticCredentialsProvider(new AWSCredentials {
-        override def getAWSAccessKeyId: String = credentials.accessKey.get
-        override def getAWSSecretKey: String = credentials.accessSecret.get
-      })
-    }
+    val credentialsProvider = DefaultAWSCredentialsProviderChain.getInstance()
 
     val docDBClient = AmazonDocDBClientBuilder.standard()
       .withCredentials(credentialsProvider)
@@ -88,7 +69,7 @@ class DocumentDBLaunchForm(override val credentials: AWSCloudParams,
       val documentDBURL = s"mongodb://${masterUsername}:${masterPassword}@${clusterResponse.getEndpoint}:${clusterResponse.getPort}/"
 
       val connectionParams = DocumentDBConnectionParams(
-        urlOpt.getOrElse(documentDBURL),
+        documentDBURL,
         dbName
       )
       val documentDBTableParams = DocumentDBTableParams(
@@ -135,7 +116,7 @@ class DocumentDBLaunchForm(override val credentials: AWSCloudParams,
   }
 }
 
-object DocumentDBLaunchForm {
+object DocumentDBLauncher {
   val DB_CLUSTER_IDENTIFIER = "dbClusterIdentifier"
   val MASTER_USERNAME = "masterUsername"
   val MASTER_PASSWORD = "masterPassword"

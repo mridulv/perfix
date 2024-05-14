@@ -1,40 +1,27 @@
 package io.perfix.forms.redis
 
-import com.amazonaws.auth.{AWSCredentials, AWSStaticCredentialsProvider, DefaultAWSCredentialsProviderChain}
+import com.amazonaws.auth.DefaultAWSCredentialsProviderChain
 import com.amazonaws.regions.Regions
 import com.amazonaws.services.elasticache.{AmazonElastiCache, AmazonElastiCacheClientBuilder}
 import com.amazonaws.services.elasticache.model._
 import io.perfix.common.CommonConfig.DB_SUBNET_GROUP_NAME
-import io.perfix.launch.{AWSCloudParams, LaunchStoreForm}
-import io.perfix.model.{IntType, FormInputType, StringType}
-import io.perfix.forms.Form.FormInputName
-import io.perfix.forms.redis.RedisLaunchForm._
+import io.perfix.launch.StoreLauncher
+import io.perfix.model.store.RedisStoreParams
 import io.perfix.stores.redis.{RedisConnectionParams, RedisParams}
 
 import java.util.concurrent.TimeUnit
 import scala.util.Random
 
-class RedisLaunchForm(override val credentials: AWSCloudParams,
-                      override val formParams: RedisParams) extends LaunchStoreForm {
+class RedisLauncher(redisParams: RedisParams,
+                    override val storeParams: RedisStoreParams)
+  extends StoreLauncher[RedisStoreParams] {
 
-  override val launchFormInputMapping: Map[FormInputName, FormInputType] = Map(
-    CACHE_NODE_TYPE -> FormInputType(StringType, isRequired = false),
-    NUM_CACHE_NODES -> FormInputType(IntType, isRequired = false)
-  )
-
-  override def setAnswers(answers: Map[FormInputName, Any]): Unit = {
+  override def launch(): Unit = {
     val clusterId = "cluster" + Random.alphanumeric.take(5).mkString("")
-    val cacheNodeType = answers.get(CACHE_NODE_TYPE).map(_.toString).getOrElse("cache.t3.micro")
-    val numCacheNodes = answers.get(NUM_CACHE_NODES).map(_.toString.toInt).getOrElse(1)
+    val cacheNodeType = storeParams.cacheNodeType.getOrElse("cache.t3.micro")
+    val numCacheNodes = storeParams.numCacheNodes.getOrElse(1)
 
-    val credentialsProvider = if (credentials.useInstanceRole) {
-      DefaultAWSCredentialsProviderChain.getInstance()
-    } else {
-      new AWSStaticCredentialsProvider(new AWSCredentials {
-        override def getAWSAccessKeyId: String = credentials.accessKey.get
-        override def getAWSSecretKey: String = credentials.accessSecret.get
-      })
-    }
+    val credentialsProvider = DefaultAWSCredentialsProviderChain.getInstance()
 
     val elasticacheClient = AmazonElastiCacheClientBuilder.standard()
       .withCredentials(credentialsProvider)
@@ -60,7 +47,7 @@ class RedisLaunchForm(override val credentials: AWSCloudParams,
       val cacheNode = describeResponse.getCacheClusters.get(0).getCacheNodes.get(0)
       val endpoint = cacheNode.getEndpoint
 
-      formParams.redisConnectionParams = Some(RedisConnectionParams(endpoint.getAddress, endpoint.getPort))
+      redisParams.redisConnectionParams = Some(RedisConnectionParams(endpoint.getAddress, endpoint.getPort))
 
       println(s"Redis cluster creation initiated: ${describeResponse.getCacheClusters.get(0).getCacheClusterId}")
     } catch {
@@ -96,7 +83,7 @@ class RedisLaunchForm(override val credentials: AWSCloudParams,
   }
 }
 
-object RedisLaunchForm {
+object RedisLauncher {
   val CLUSTER_ID = "clusterId"
   val CACHE_NODE_TYPE = "cacheNodeType"
   val NUM_CACHE_NODES = "numCacheNodes"
