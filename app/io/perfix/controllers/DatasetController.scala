@@ -2,7 +2,7 @@ package io.perfix.controllers
 
 import com.google.inject.Inject
 import io.perfix.manager.DatasetManager
-import io.perfix.model.{DatasetId, DatasetParams}
+import io.perfix.model.{DatasetId, DatasetParams, EntityFilter}
 import play.api.libs.json.Json
 import play.api.mvc.{BaseController, ControllerComponents, Results}
 
@@ -28,7 +28,12 @@ class DatasetController @Inject()(val controllerComponents: ControllerComponents
   }
 
   def all = Action { request =>
-    Results.Ok(Json.toJson(datasetManager.all()))
+    Results.Ok(Json.toJson(datasetManager.all(Seq.empty)))
+  }
+
+  def filteredDatasets = Action(parse.json) { request =>
+    val filters = request.body.as[Seq[EntityFilter]]
+    Results.Ok(Json.toJson(datasetManager.all(filters)))
   }
 
   def delete(datasetId: Int) = Action { request =>
