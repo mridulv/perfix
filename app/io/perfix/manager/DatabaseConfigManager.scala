@@ -6,7 +6,8 @@ import io.perfix.model._
 import io.perfix.store.DatabaseConfigStore
 
 @Singleton
-class DatabaseConfigManager @Inject()(databaseConfigStore: DatabaseConfigStore) {
+class DatabaseConfigManager @Inject()(databaseConfigStore: DatabaseConfigStore,
+                                      datasetManager: DatasetManager) {
 
   def create(databaseConfigParams: DatabaseConfigParams): DatabaseConfigId = {
     val databaseConfigId = databaseConfigStore.create(databaseConfigParams)
@@ -37,8 +38,22 @@ class DatabaseConfigManager @Inject()(databaseConfigStore: DatabaseConfigStore) 
     updatedParams
   }
 
-  def all(): Seq[DatabaseConfigParams] = {
-    databaseConfigStore.list()
+  def all(entityFilters: Seq[EntityFilter]): Seq[DatabaseConfigParams] = {
+    val allDatabaseConfigs = databaseConfigStore.list()
+    val allDatasets = datasetManager.all(Seq.empty)
+    allDatabaseConfigs.filter { databaseConfig =>
+      val relevantDataset = allDatasets.find(_.id.get == databaseConfig.datasetId).get
+
+      val datasetFilters = entityFilters.collect {
+        case df: DatasetFilter => df
+      }
+      val databaseConfigFilters = entityFilters.collect {
+        case df: DatabaseConfigFilter => df
+      }
+      val cond1 = datasetFilters.forall(df => df.filterDataset(relevantDataset.dataset))
+      val cond2 = databaseConfigFilters.forall(df => df.filterDatabaseConfig(databaseConfig))
+      cond1 && cond2
+    }
   }
 
   def delete(databaseConfigId: DatabaseConfigId): Unit = {

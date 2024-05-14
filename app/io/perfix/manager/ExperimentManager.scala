@@ -3,6 +3,7 @@ package io.perfix.manager
 import com.google.inject.Inject
 import io.perfix.common.ExperimentExecutor
 import io.perfix.exceptions.InvalidStateException
+import io.perfix.model.{DatabaseConfigFilter, DatabaseConfigParams, DatasetFilter, EntityFilter, ExperimentFilter}
 import io.perfix.model.experiment.{ExperimentId, ExperimentParams}
 import io.perfix.store.ExperimentStore
 
@@ -24,8 +25,30 @@ class ExperimentManager @Inject()(datasetManager: DatasetManager,
     experimentStore.get(experimentId).getOrElse(throw InvalidStateException(s"Invalid ExperimentId ${experimentId}"))
   }
 
-  def all: Seq[ExperimentParams] = {
-    experimentStore.list()
+  def all(entityFilters: Seq[EntityFilter]): Seq[ExperimentParams] = {
+    val allExperiments = experimentStore.list()
+    val allDatasets = datasetManager.all(Seq.empty)
+    val allDatabaseConfigs = databaseConfigManager.all(Seq.empty)
+
+    allExperiments.filter { experiment =>
+      val relevantDatabaseConfig = allDatabaseConfigs.find(_.databaseConfigId.get == experiment.databaseConfigId).get
+      val relevantDataset = allDatasets.find(_.id.get == relevantDatabaseConfig.datasetId).get
+
+      val datasetFilters = entityFilters.collect {
+        case df: DatasetFilter => df
+      }
+      val databaseConfigFilters = entityFilters.collect {
+        case df: DatabaseConfigFilter => df
+      }
+      val experimentFilters = entityFilters.collect {
+        case df: ExperimentFilter => df
+      }
+
+      val cond1 = datasetFilters.forall(df => df.filterDataset(relevantDataset.dataset))
+      val cond2 = databaseConfigFilters.forall(df => df.filterDatabaseConfig(relevantDatabaseConfig))
+      val cond3 = experimentFilters.forall(df => df.filterExperiment(experiment))
+      cond1 && cond2 && cond3
+    }
   }
 
   def update(experimentId: ExperimentId, experimentParams: ExperimentParams): ExperimentParams = {
