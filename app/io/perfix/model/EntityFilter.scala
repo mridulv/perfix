@@ -37,9 +37,9 @@ case class DatabaseTypeFilter(store: String) extends DatabaseConfigFilter {
   }
 }
 
-case class DatasetFilter(name: String) extends DatasetFilter {
+case class DatasetNameFilter(name: String) extends EntityFilter {
 
-  override def filterDataset(dataset: Dataset): Boolean = {
+  def filterDataset(dataset: Dataset): Boolean = {
     dataset.params.name == name
   }
 
@@ -56,15 +56,15 @@ case class ExperimentState(name: String) extends ExperimentFilter {
 object EntityFilter {
   implicit val textFilterFormat: Format[TextFilter] = Json.format[TextFilter]
   implicit val databaseTypeFilterFormat: Format[DatabaseTypeFilter] = Json.format[DatabaseTypeFilter]
-  implicit val datasetFilterFormat: Format[DatasetFilter] = Json.format[DatasetFilter]
+  implicit val datasetNameFilterFormat: Format[DatasetNameFilter] = Json.format[DatasetNameFilter]
   implicit val experimentStateFormat: Format[ExperimentState] = Json.format[ExperimentState]
 
   implicit val filtersReads: Reads[EntityFilter] = (json: JsValue) => {
     (json \ "type").validate[String].flatMap {
       case "TextFilter"         => json.validate[TextFilter]
       case "DatabaseTypeFilter" => json.validate[DatabaseTypeFilter]
-      case "DatasetFilter"      => json.validate[DatasetFilter]
       case "ExperimentState"    => json.validate[ExperimentState]
+      case "DatasetFilter"      => json.validate[DatasetNameFilter]
       case other                => JsError(s"Unknown type: $other")
     }
   }
@@ -72,7 +72,7 @@ object EntityFilter {
   implicit val filtersWrites: Writes[EntityFilter] = {
     case filter: TextFilter          => Json.toJson(filter)(textFilterFormat).as[JsObject] + ("type" -> JsString("TextFilter"))
     case filter: DatabaseTypeFilter  => Json.toJson(filter)(databaseTypeFilterFormat).as[JsObject] + ("type" -> JsString("DatabaseTypeFilter"))
-    case filter: DatasetFilter       => Json.toJson(filter)(datasetFilterFormat).as[JsObject] + ("type" -> JsString("DatasetFilter"))
+    case filter: DatasetNameFilter   => Json.toJson(filter)(datasetNameFilterFormat).as[JsObject] + ("type" -> JsString("DatasetNameFilter"))
     case filter: ExperimentState     => Json.toJson(filter)(experimentStateFormat).as[JsObject] + ("type" -> JsString("ExperimentState"))
   }
 
