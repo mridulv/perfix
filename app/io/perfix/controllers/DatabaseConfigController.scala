@@ -2,7 +2,7 @@ package io.perfix.controllers
 
 import com.google.inject.{Inject, Singleton}
 import io.perfix.manager.DatabaseConfigManager
-import io.perfix.model.{DatabaseConfigId, DatabaseConfigParams}
+import io.perfix.model.{DatabaseConfigId, DatabaseConfigParams, EntityFilter}
 import io.perfix.model.DatabaseConfigId._
 import io.perfix.model.DatabaseConfigParams._
 import play.api.libs.json.Json
@@ -33,7 +33,12 @@ class DatabaseConfigController @Inject()(val controllerComponents: ControllerCom
   }
 
   def all = Action { request =>
-    Results.Ok(Json.toJson(databaseConfigManager.all()))
+    Results.Ok(Json.toJson(databaseConfigManager.all(Seq.empty)))
+  }
+
+  def filteredDatabaseConfigs = Action(parse.json) { request =>
+    val filters = request.body.as[Seq[EntityFilter]]
+    Results.Ok(Json.toJson(databaseConfigManager.all(filters)))
   }
 
   def delete(databaseConfigId: Int) = Action { request =>
