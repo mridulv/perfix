@@ -17,6 +17,21 @@ class MySQLLauncher(formParams: MySQLParams,
   extends StoreLauncher[MySQLStoreParams] {
 
   override def launch(): Unit = {
+    val useLocalDB = sys.env.get("USE_LOCAL_DB").map(_.toBoolean).getOrElse(false)
+    if (useLocalDB) {
+      val connectUrl = "jdbc:h2:mem:testdb;MODE=MySQL;DB_CLOSE_DELAY=-1"
+      val username = "sa"
+      val password = ""
+      val dbName = "testdb"
+      val tableName = "test"
+      formParams.mySQLConnectionParams = Some(MySQLConnectionParams(connectUrl, username, password))
+      formParams.mySQLTableParams = Some(MySQLTableParams(dbName, tableName))
+    } else {
+      actualLaunch()
+    }
+  }
+
+  def actualLaunch(): Unit = {
     val userName = "user" + Random.alphanumeric.take(10).mkString("")
     val defaultDbName = "db" + Random.alphanumeric.take(5).mkString("")
     val instanceName = "instance" + Random.alphanumeric.take(5).mkString("")
