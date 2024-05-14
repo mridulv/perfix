@@ -5,7 +5,7 @@ import io.perfix.forms.AWSCloudParamsForm.{AWS_ACCESS_KEY, AWS_ACCESS_SECRET, LA
 import io.perfix.forms.Form
 import io.perfix.forms.documentdb.DocumentDBConnectionParamsForm._
 import io.perfix.forms.documentdb.DocumentDBIndicesParamsForm.INDICES_COLUMNS
-import io.perfix.forms.documentdb.DocumentDBLaunchForm.{DB_CLUSTER_IDENTIFIER, INSTANCE_CLASS, MASTER_PASSWORD, MASTER_USERNAME}
+import io.perfix.forms.documentdb.DocumentDBLauncher.{DB_CLUSTER_IDENTIFIER, INSTANCE_CLASS, MASTER_PASSWORD, MASTER_USERNAME}
 import io.perfix.forms.documentdb.DocumentDBTableParamsForm.COLLECTION_NAME
 import io.perfix.model.{Dataset, ExperimentParams}
 

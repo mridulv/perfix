@@ -2,10 +2,10 @@ package io.perfix.manager
 
 import io.perfix.forms.AWSCloudParamsForm.{AWS_ACCESS_KEY, AWS_ACCESS_SECRET, LAUNCH_DB}
 import io.perfix.forms.mysql.MySQLConnectionParamsForm.{PASSWORD, URL, USERNAME}
-import io.perfix.forms.mysql.MySQLLaunchForm.{INSTANCE_IDENTIFIER, INSTANCE_TYPE}
+import io.perfix.forms.mysql.MySQLLauncher.{INSTANCE_IDENTIFIER, INSTANCE_TYPE}
 import io.perfix.forms.mysql.MySQLTableIndicesDetailForm.SECONDARY_INDEX_COLUMNS
 import io.perfix.forms.mysql.MySQLTableParamsForm.{DBNAME, TABLENAME}
-import io.perfix.forms.redis.RedisLaunchForm.CLUSTER_ID
+import io.perfix.forms.redis.RedisLauncher.CLUSTER_ID
 import io.perfix.model.{Completed, DatabaseConfigParams, FormInputValue, FormInputValues, FormInputs, InComplete, Updating}
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers

@@ -1,5 +1,6 @@
 package io.perfix.experiment
-import io.perfix.model.ExperimentResult
+
+import io.perfix.model.experiment.ExperimentResult
 
 class MultiContainerPerformanceExperiment extends Experiment {
 

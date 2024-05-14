@@ -1,6 +1,6 @@
 package io.perfix.store.tables
 
-import io.perfix.model.{ExperimentId, ExperimentParams}
+import io.perfix.model.experiment.{ExperimentId, ExperimentParams}
 import play.api.libs.json.Json
 import slick.jdbc.PostgresProfile.api._
 

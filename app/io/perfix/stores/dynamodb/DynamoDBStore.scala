@@ -1,12 +1,13 @@
 package io.perfix.stores.dynamodb
 
-import com.amazonaws.auth.{AWSCredentials, AWSStaticCredentialsProvider, DefaultAWSCredentialsProviderChain}
+import com.amazonaws.auth.DefaultAWSCredentialsProviderChain
 import com.amazonaws.client.builder.AwsClientBuilder
 import com.amazonaws.services.dynamodbv2.{AmazonDynamoDB, AmazonDynamoDBClientBuilder}
 import com.amazonaws.services.dynamodbv2.model._
 import io.perfix.exceptions.InvalidStateException
-import io.perfix.launch.{AWSCloudParams, LaunchStoreForm}
+import io.perfix.launch.StoreLauncher
 import io.perfix.model.ColumnType.toDynamoDBType
+import io.perfix.model.store.DynamoDBStoreParams
 import io.perfix.model.{ColumnDescription, DatasetParams}
 import io.perfix.stores.DataStore
 import io.perfix.query.PerfixQuery
@@ -15,28 +16,21 @@ import io.perfix.stores.dynamodb.model.DynamoDBGSIMetadataParams
 import scala.jdk.CollectionConverters._
 import scala.util.control.Breaks.{break, breakable}
 
-class DynamoDBStore extends DataStore {
+class DynamoDBStore(datasetParams: DatasetParams,
+                    override val storeParams: DynamoDBStoreParams)
+  extends DataStore[DynamoDBStoreParams] {
+
   private var client: AmazonDynamoDB = _
-  private var datasetParams: DatasetParams = _
   private val dynamoDBParams: DynamoDBParams = DynamoDBParams()
   private var tableParams: DynamoDBTableParams = _
-  private var awsCloudCredentials: AWSCloudParams = _
 
-  override def launch(awsCloudParams: AWSCloudParams): Option[LaunchStoreForm] = {
-    awsCloudCredentials = awsCloudParams
+  override def launcher(): Option[StoreLauncher[DynamoDBStoreParams]] = {
     None
-  }
-
-  override def storeInputs(datasetParams: DatasetParams): DynamoDBFormSeries = {
-    this.datasetParams = datasetParams
-    DynamoDBFormSeries(dynamoDBParams)
   }
 
   def connectAndInitialize(): Unit = {
     tableParams = dynamoDBParams.dynamoDBTableParams.getOrElse(throw InvalidStateException("Table Params should have been defined"))
     val capacityParams = dynamoDBParams.dynamoDBCapacityParams.getOrElse(throw InvalidStateException("Capacity Params should have been defined"))
-    val accessKey = awsCloudCredentials.accessKey.getOrElse(throw InvalidStateException("Access Key should have been defined"))
-    val accessSecret = awsCloudCredentials.accessSecret.getOrElse(throw InvalidStateException("Access Secret should have been defined"))
 
     val keySchemaElements = getKeySchemaElements(
       tableParams.partitionKey,
@@ -44,14 +38,7 @@ class DynamoDBStore extends DataStore {
     )
     val attributeDefinitions = getAttributeDefinitions(datasetParams.columns)
 
-    val credentialsProvider = if (awsCloudCredentials.useInstanceRole) {
-      DefaultAWSCredentialsProviderChain.getInstance()
-    } else {
-      new AWSStaticCredentialsProvider(new AWSCredentials {
-        override def getAWSAccessKeyId: String = accessKey
-        override def getAWSSecretKey: String = accessSecret
-      })
-    }
+    val credentialsProvider = DefaultAWSCredentialsProviderChain.getInstance()
 
     client = tableParams.urlOpt match {
       case Some(url) => AmazonDynamoDBClientBuilder

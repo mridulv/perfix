@@ -1,36 +1,19 @@
 package io.perfix.experiment
 
-import io.perfix.model.{Dataset, ExperimentParams, ExperimentResult}
-import io.perfix.forms.{AWSCloudParamsForm, Form, FormSeries}
-import io.perfix.launch.AWSCloudParams
+import io.perfix.model.Dataset
+import io.perfix.model.experiment.{ExperimentParams, ExperimentResult}
+import io.perfix.model.store.StoreParams
 import io.perfix.stores.DataStore
 import io.perfix.util.BenchmarkUtil
 
 import scala.collection.mutable.ListBuffer
 
-class SimplePerformanceExperiment(dataStore: DataStore,
-                                  experimentParams: ExperimentParams,
-                                  dataset: Dataset) extends Experiment {
-
-  def formSeries(): FormSeries = {
-    new FormSeries {
-      override val forms: Iterator[Form] = {
-        val cloudParams = new AWSCloudParams
-        val credentialsForm = new AWSCloudParamsForm(cloudParams)
-
-        val launchStoreForm = dataStore.launch(cloudParams) match {
-          case Some(launchForm) => Iterator(credentialsForm) ++ Iterator(launchForm)
-          case None => Iterator(credentialsForm)
-        }
-
-        val nextSet = dataStore.storeInputs(dataset.params).forms
-
-        launchStoreForm ++ nextSet
-      }
-    }
-  }
+class SimplePerformanceExperiment[T <: StoreParams](dataStore: DataStore[T],
+                                                    experimentParams: ExperimentParams,
+                                                    dataset: Dataset) extends Experiment {
 
   def init(): Unit = {
+    dataStore.launcher().foreach(_.launch())
     dataStore.connectAndInitialize()
   }
 
