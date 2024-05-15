@@ -7,7 +7,7 @@ import com.amazonaws.services.elasticache.model._
 import io.perfix.common.CommonConfig.DB_SUBNET_GROUP_NAME
 import io.perfix.launch.StoreLauncher
 import io.perfix.model.store.RedisStoreParams
-import io.perfix.stores.redis.{RedisConnectionParams, RedisParams}
+import io.perfix.stores.redis.{RedisConnectionParams, RedisParams, RedisTableParams}
 
 import java.util.concurrent.TimeUnit
 import scala.util.Random
@@ -48,6 +48,7 @@ class RedisLauncher(redisParams: RedisParams,
       val endpoint = cacheNode.getEndpoint
 
       redisParams.redisConnectionParams = Some(RedisConnectionParams(endpoint.getAddress, endpoint.getPort))
+      redisParams.redisTableParams = Some(RedisTableParams(storeParams.keyColumn))
 
       println(s"Redis cluster creation initiated: ${describeResponse.getCacheClusters.get(0).getCacheClusterId}")
     } catch {
