@@ -3,7 +3,7 @@ package io.perfix.examples
 import io.perfix.common.ExperimentExecutor
 import io.perfix.forms.AWSCloudParamsForm.{AWS_ACCESS_KEY, AWS_ACCESS_SECRET}
 import io.perfix.forms.Form
-import io.perfix.forms.redis.RedisLaunchForm.{CACHE_NODE_TYPE, CLUSTER_ID}
+import io.perfix.forms.redis.RedisLauncher.{CACHE_NODE_TYPE, CLUSTER_ID}
 import io.perfix.forms.redis.RedisConnectionParametersForm.{PORT, URL}
 import io.perfix.forms.redis.RedisTableParamsForm.KEY_COLUMN
 import io.perfix.model.{Dataset, ExperimentParams}

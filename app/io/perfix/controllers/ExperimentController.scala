@@ -2,7 +2,8 @@ package io.perfix.controllers
 
 import controllers.AssetsFinder
 import io.perfix.manager.ExperimentManager
-import io.perfix.model.{DatabaseConfigId, ExperimentId, ExperimentParams}
+import io.perfix.model.EntityFilter
+import io.perfix.model.experiment.{ExperimentId, ExperimentParams}
 import play.api.libs.json.Json
 import play.api.mvc._
 
@@ -27,8 +28,9 @@ class ExperimentController @Inject()(cc: ControllerComponents,
     Results.Ok(Json.toJson(experimentManager.update(ExperimentId(experimentId), experimentParams)))
   }
 
-  def all = Action { request =>
-    Results.Ok(Json.toJson(experimentManager.all))
+  def all = Action(parse.json) { request =>
+    val filters = request.body.as[Seq[EntityFilter]]
+    Results.Ok(Json.toJson(experimentManager.all(filters)))
   }
 
   def executeExperiment(experimentId: Int) = Action(parse.json) { request =>

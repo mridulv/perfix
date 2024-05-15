@@ -1,6 +1,6 @@
 package io.perfix.util
 
-import io.perfix.model.{PercentileLatency, ExperimentResult}
+import io.perfix.model.experiment.{ExperimentResult, PercentileLatency}
 
 import java.util.concurrent.{Callable, Executors, Future, TimeUnit}
 import scala.collection.mutable.ListBuffer

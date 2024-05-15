@@ -20,7 +20,9 @@ class DatasetConfigStore @Inject()(dbConfigProvider: DatabaseConfigProvider)(imp
 
   def create(datasetParams: DatasetParams): DatasetParams = unwrapFuture {
     db.run {
-      val datasetConfigRow = datasetParams.toDatasetConfigParams
+      val datasetConfigRow = datasetParams
+        .copy(createdAt = Some(System.currentTimeMillis()))
+        .toDatasetConfigParams
       (datasetConfigTable returning datasetConfigTable.map(_.id)
         into ((datasetParams, id) => datasetParams.copy(id=id))
         ) += datasetConfigRow

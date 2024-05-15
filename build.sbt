@@ -14,6 +14,9 @@ dockerRepository := Some("mridulverma")
 dockerUpdateLatest := true
 dockerBuildxPlatforms := Seq("linux/arm64/v8", "linux/amd64")
 
+fork in Test := true
+envVars in Test := Map("USE_LOCAL_DB" -> "true")
+
 lazy val root = (project in file("."))
   .enablePlugins(PlayJava)
   .enablePlugins(DockerPlugin)

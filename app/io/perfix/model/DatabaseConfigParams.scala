@@ -1,19 +1,16 @@
 package io.perfix.model
 
-import io.perfix.common.ExperimentExecutor
-import io.perfix.launch.AWSCloudParams
-import io.perfix.forms.{AWSCloudParamsForm, FormSeries}
-import io.perfix.store.tables.{DatabaseConfigRow, ExperimentRow}
+import io.perfix.model.store.{StoreType, StoreParams}
+import io.perfix.store.tables.DatabaseConfigRow
 import play.api.libs.json.{Format, Json}
 
 case class DatabaseConfigParams(databaseConfigId: Option[DatabaseConfigId] = None,
                                 name: String,
                                 storeName: String,
-                                formDetails: Option[FormDetails] = None) {
-
-  def inputValues(): Option[Seq[FormInputValue]] = {
-    formDetails.map(_.values.values)
-  }
+                                storeParams: StoreParams,
+                                dataStore: StoreType,
+                                createdAt: Option[Long],
+                                datasetId: DatasetId) {
 
   def toDatabaseConfigRow: DatabaseConfigRow = {
     databaseConfigId match {

@@ -1,7 +1,7 @@
 package io.perfix.store
 
 import com.google.inject.{Inject, Singleton}
-import io.perfix.model.{ExperimentId, ExperimentParams}
+import io.perfix.model.experiment.{ExperimentId, ExperimentParams}
 import io.perfix.store.tables.ExperimentTable
 import play.api.db.slick.DatabaseConfigProvider
 import slick.jdbc.JdbcProfile
@@ -20,7 +20,9 @@ class ExperimentStore @Inject()(dbConfigProvider: DatabaseConfigProvider)(implic
 
   def create(experimentParams: ExperimentParams): ExperimentParams = unwrapFuture {
     db.run {
-      val experimentRow = experimentParams.toExperimentRow
+      val experimentRow = experimentParams
+        .copy(createdAt = Some(System.currentTimeMillis()))
+        .toExperimentRow
       (experiments returning experiments.map(_.id)
         into ((experiment, id) => experiment.copy(id=id))
         ) += experimentRow

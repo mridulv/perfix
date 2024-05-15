@@ -4,7 +4,7 @@ import io.perfix.common.ExperimentExecutor
 import io.perfix.forms.AWSCloudParamsForm.{AWS_ACCESS_KEY, AWS_ACCESS_SECRET, LAUNCH_DB}
 import io.perfix.forms.Form
 import io.perfix.forms.mysql.MySQLConnectionParamsForm.{PASSWORD, URL, USERNAME}
-import io.perfix.forms.mysql.MySQLLaunchForm.{INSTANCE_IDENTIFIER, INSTANCE_TYPE}
+import io.perfix.forms.mysql.MySQLLauncher.{INSTANCE_IDENTIFIER, INSTANCE_TYPE}
 import io.perfix.forms.mysql.MySQLTableParamsForm.{DBNAME, TABLENAME}
 import io.perfix.model.{ColumnDescription, DatabaseConfigId, Dataset, DatasetId, DatasetParams, ExperimentParams, FormInputValue, FormInputValues}
 import io.perfix.query.PerfixQuery

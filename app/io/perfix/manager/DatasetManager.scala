@@ -2,10 +2,9 @@ package io.perfix.manager
 
 import com.google.inject.{Inject, Singleton}
 import io.perfix.exceptions.InvalidStateException
-import io.perfix.model.{Dataset, DatasetId, DatasetParams}
+import io.perfix.model.{Dataset, DatasetFilter, DatasetId, DatasetParams, EntityFilter}
 import io.perfix.store.DatasetConfigStore
 
-import scala.collection.mutable
 
 @Singleton
 class DatasetManager @Inject()(datasetConfigStore: DatasetConfigStore) {
@@ -34,8 +33,14 @@ class DatasetManager @Inject()(datasetConfigStore: DatasetConfigStore) {
       .getOrElse(throw InvalidStateException("Invalid Dataset"))
   }
 
-  def all(): Seq[DatasetParams] = {
-    datasetConfigStore.list()
+  def all(entityFilters: Seq[EntityFilter]): Seq[DatasetParams] = {
+    val allDatasets = datasetConfigStore.list()
+    allDatasets.filter { dataset =>
+      val datasetFilters = entityFilters.collect {
+        case df: DatasetFilter => df
+      }
+      datasetFilters.forall(df => df.filterDataset(dataset.dataset))
+    }
   }
 
   def delete(datasetId: DatasetId): Unit = {

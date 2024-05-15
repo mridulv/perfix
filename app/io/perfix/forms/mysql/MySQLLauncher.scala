@@ -1,51 +1,49 @@
 package io.perfix.forms.mysql
 
-import com.amazonaws.auth.{AWSCredentials, AWSStaticCredentialsProvider, DefaultAWSCredentialsProviderChain}
+import com.amazonaws.auth.DefaultAWSCredentialsProviderChain
 import com.amazonaws.regions.Regions
 import com.amazonaws.services.rds.{AmazonRDS, AmazonRDSClientBuilder}
 import com.amazonaws.services.rds.model.{CreateDBInstanceRequest, DBInstance, DescribeDBInstancesRequest}
 import io.perfix.common.CommonConfig.DB_SUBNET_GROUP_NAME
-import io.perfix.launch.{AWSCloudParams, LaunchStoreForm}
-import io.perfix.model.{FormInputType, StringType}
-import io.perfix.forms.Form.FormInputName
-import io.perfix.forms.mysql.MySQLConnectionParamsForm.{PASSWORD, USERNAME}
-import io.perfix.forms.mysql.MySQLLaunchForm._
-import io.perfix.forms.mysql.MySQLTableParamsForm.DBNAME
+import io.perfix.launch.StoreLauncher
+import io.perfix.model.store.MySQLStoreParams
 import io.perfix.stores.mysql.{MySQLConnectionParams, MySQLParams, MySQLTableParams}
 
 import java.util.concurrent.TimeUnit
 import scala.util.Random
 
-class MySQLLaunchForm(override val credentials: AWSCloudParams,
-                      override val formParams: MySQLParams) extends LaunchStoreForm {
+class MySQLLauncher(formParams: MySQLParams,
+                    override val storeParams: MySQLStoreParams)
+  extends StoreLauncher[MySQLStoreParams] {
 
-  override val launchFormInputMapping: Map[FormInputName, FormInputType] = Map(
-    DBNAME -> FormInputType(StringType, isRequired = false),
-    USERNAME -> FormInputType(StringType, isRequired = false),
-    PASSWORD -> FormInputType(StringType, isRequired = false),
-    INSTANCE_IDENTIFIER -> FormInputType(StringType, isRequired = false),
-    INSTANCE_TYPE -> FormInputType(StringType, isRequired = false)
-  )
+  override def launch(): Unit = {
+    val useLocalDB = sys.env.get("USE_LOCAL_DB").map(_.toBoolean).getOrElse(false)
+    if (useLocalDB) {
+      val connectUrl = "jdbc:h2:mem:testdb;MODE=MySQL;DB_CLOSE_DELAY=-1"
+      val username = "sa"
+      val password = ""
+      val dbName = "testdb"
+      val tableName = "test"
+      formParams.mySQLConnectionParams = Some(MySQLConnectionParams(connectUrl, username, password))
+      formParams.mySQLTableParams = Some(MySQLTableParams(dbName, tableName))
+    } else {
+      actualLaunch()
+    }
+  }
 
-  override def setAnswers(answers: Map[FormInputName, Any]): Unit = {
+  def actualLaunch(): Unit = {
     val userName = "user" + Random.alphanumeric.take(10).mkString("")
     val defaultDbName = "db" + Random.alphanumeric.take(5).mkString("")
     val instanceName = "instance" + Random.alphanumeric.take(5).mkString("")
     val pwd = Random.alphanumeric.take(10).mkString("")
-    val dbName = answers.get(DBNAME).map(_.toString).getOrElse(defaultDbName)
-    val username = answers.get(USERNAME).map(_.toString).getOrElse(userName)
-    val password = answers.get(PASSWORD).map(_.toString).getOrElse(pwd)
-    val instanceIdentifier = answers.get(INSTANCE_IDENTIFIER).map(_.toString).getOrElse(instanceName)
-    val instanceType = answers.get(INSTANCE_TYPE).map(_.toString).getOrElse("db.t3.medium")
+    val dbName = defaultDbName
+    val username = userName
+    val password = pwd
+    val instanceIdentifier = instanceName
+    val instanceType = storeParams.instanceType
+    val tableName = storeParams.tableName
 
-    val credentialsProvider = if (credentials.useInstanceRole) {
-      DefaultAWSCredentialsProviderChain.getInstance()
-    } else {
-      new AWSStaticCredentialsProvider(new AWSCredentials {
-        override def getAWSAccessKeyId: String = credentials.accessKey.get
-        override def getAWSSecretKey: String = credentials.accessSecret.get
-      })
-    }
+    val credentialsProvider = DefaultAWSCredentialsProviderChain.getInstance()
 
     val rdsClient = AmazonRDSClientBuilder.standard()
       .withCredentials(credentialsProvider)
@@ -76,7 +74,7 @@ class MySQLLaunchForm(override val credentials: AWSCloudParams,
       println("Response is: " + response.getEndpoint)
       val connectUrl = s"jdbc:mysql://${response.getEndpoint.getAddress}:${response.getEndpoint.getPort}/${response.getDBName}?user=${username}&password=${password}"
       formParams.mySQLConnectionParams = Some(MySQLConnectionParams(connectUrl, username, password))
-      formParams.mySQLTableParams = Some(MySQLTableParams(dbName, s"test${Random.alphanumeric.take(5).mkString("")}"))
+      formParams.mySQLTableParams = Some(MySQLTableParams(dbName, tableName))
       println(s"RDS instance creation initiated: ${response.getDBInstanceIdentifier}")
     } catch {
       case ex: Exception =>
@@ -113,7 +111,7 @@ class MySQLLaunchForm(override val credentials: AWSCloudParams,
   }
 }
 
-object MySQLLaunchForm {
+object MySQLLauncher {
   val INSTANCE_IDENTIFIER = "instanceIdentifier"
   val INSTANCE_TYPE = "instanceType"
 }

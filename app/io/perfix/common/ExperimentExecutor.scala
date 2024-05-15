@@ -1,8 +1,9 @@
 package io.perfix.common
 
 import io.perfix.experiment.SimplePerformanceExperiment
-import io.perfix.model.{Dataset, DatasetParams, ExperimentParams, ExperimentResult}
-import io.perfix.stores.DataStore
+import io.perfix.model.experiment.{ExperimentParams, ExperimentResult}
+import io.perfix.model.store.{DocumentDBStoreParams, DynamoDBStoreParams, MySQLStoreParams, RedisStoreParams}
+import io.perfix.model.{DatabaseConfigParams, Dataset}
 import io.perfix.stores.documentdb.DocumentDBStore
 import io.perfix.stores.dynamodb.DynamoDBStore
 import io.perfix.stores.mysql.MySQLStore
@@ -10,15 +11,20 @@ import io.perfix.stores.redis.RedisStore
 
 class ExperimentExecutor(storeName: String,
                          experimentParams: ExperimentParams,
+                         databaseConfigParams: DatabaseConfigParams,
                          dataset: Dataset) {
 
-  private val dataStore = ExperimentExecutor.getDataStore(storeName)
-  private val experiment = new SimplePerformanceExperiment(dataStore, experimentParams, dataset)
-  private val formSeriesEvaluator = new FormSeriesEvaluator(experiment.formSeries())
-
-  def getFormSeriesEvaluator: FormSeriesEvaluator = {
-    formSeriesEvaluator
+  private val dataStore = databaseConfigParams.storeParams match {
+    case storeParams: MySQLStoreParams => new MySQLStore(dataset.params, storeParams)
+    case storeParams: DynamoDBStoreParams => new DynamoDBStore(dataset.params, storeParams)
+    case storeParams: DocumentDBStoreParams => new DocumentDBStore(dataset.params, storeParams)
+    case storeParams: RedisStoreParams => new RedisStore(dataset.params, storeParams)
   }
+
+  private val experiment = new SimplePerformanceExperiment(dataStore,
+    experimentParams,
+    dataset
+  )
 
   def runExperiment(): ExperimentResult = {
     experiment.init()
@@ -31,13 +37,3 @@ class ExperimentExecutor(storeName: String,
 
 }
 
-object ExperimentExecutor {
-  def getDataStore(storeName: String): DataStore = {
-    DataStore.withName(storeName) match {
-      case DataStore.DynamoDBStore => new DynamoDBStore
-      case DataStore.MySQLStore => new MySQLStore
-      case DataStore.RedisStore => new RedisStore
-      case DataStore.MongoDBStore => new DocumentDBStore
-    }
-  }
-}

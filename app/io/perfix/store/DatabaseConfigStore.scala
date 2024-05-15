@@ -20,7 +20,9 @@ class DatabaseConfigStore @Inject()(dbConfigProvider: DatabaseConfigProvider)(im
 
   def create(databaseConfigParams: DatabaseConfigParams): DatabaseConfigParams = unwrapFuture {
     db.run {
-      val databaseConfigRow = databaseConfigParams.toDatabaseConfigRow
+      val databaseConfigRow = databaseConfigParams
+        .copy(createdAt = Some(System.currentTimeMillis()))
+        .toDatabaseConfigRow
       (databaseConfigTable returning databaseConfigTable.map(_.id)
         into ((databaseConfigRow, id) => databaseConfigRow.copy(id=id))
         ) += databaseConfigRow
