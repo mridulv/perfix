@@ -20,7 +20,9 @@ class ExperimentStore @Inject()(dbConfigProvider: DatabaseConfigProvider)(implic
 
   def create(experimentParams: ExperimentParams): ExperimentParams = unwrapFuture {
     db.run {
-      val experimentRow = experimentParams.toExperimentRow
+      val experimentRow = experimentParams
+        .copy(createdAt = Some(System.currentTimeMillis()))
+        .toExperimentRow
       (experiments returning experiments.map(_.id)
         into ((experiment, id) => experiment.copy(id=id))
         ) += experimentRow
