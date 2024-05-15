@@ -29,7 +29,7 @@ class DatasetController @Inject()(val controllerComponents: ControllerComponents
 
   def all = Action(parse.json) { request =>
     val filters = request.body.as[Seq[EntityFilter]]
-    Results.Ok(Json.toJson(datasetManager.all(Seq.empty)))
+    Results.Ok(Json.toJson(datasetManager.all(filters)))
   }
 
   def delete(datasetId: Int) = Action { request =>

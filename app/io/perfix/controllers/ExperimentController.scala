@@ -30,7 +30,7 @@ class ExperimentController @Inject()(cc: ControllerComponents,
 
   def all = Action(parse.json) { request =>
     val filters = request.body.as[Seq[EntityFilter]]
-    Results.Ok(Json.toJson(experimentManager.all(Seq.empty)))
+    Results.Ok(Json.toJson(experimentManager.all(filters)))
   }
 
   def executeExperiment(experimentId: Int) = Action(parse.json) { request =>

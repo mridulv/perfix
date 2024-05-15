@@ -34,7 +34,7 @@ class DatabaseConfigController @Inject()(val controllerComponents: ControllerCom
 
   def all = Action(parse.json) { request =>
     val filters = request.body.as[Seq[EntityFilter]]
-    Results.Ok(Json.toJson(databaseConfigManager.all(Seq.empty)))
+    Results.Ok(Json.toJson(databaseConfigManager.all(filters)))
   }
 
   def delete(databaseConfigId: Int) = Action { request =>
