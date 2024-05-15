@@ -30,7 +30,6 @@ class DatabaseConfigManager @Inject()(databaseConfigStore: DatabaseConfigStore,
     val updatedParams = exitingParams
       .copy(
         name = databaseConfigParams.name,
-        storeName = databaseConfigParams.storeName,
         storeParams = databaseConfigParams.storeParams,
         dataStore = databaseConfigParams.dataStore
       )
