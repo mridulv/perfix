@@ -4,22 +4,22 @@
 
 GET      /health                                       io.perfix.controllers.HealthCheckController.health
 
-POST     /experiment                                   io.perfix.controllers.ExperimentController.create
+POST     /experiment/create                            io.perfix.controllers.ExperimentController.create
 POST     /experiment/:id                               io.perfix.controllers.ExperimentController.update(id: Int)
 POST     /experiment/:id/execute                       io.perfix.controllers.ExperimentController.executeExperiment(id: Int)
 GET      /experiment/:id                               io.perfix.controllers.ExperimentController.get(id: Int)
-GET      /experiment                                   io.perfix.controllers.ExperimentController.all
+POST     /experiment                                   io.perfix.controllers.ExperimentController.all
 DELETE   /experiment/:id                               io.perfix.controllers.ExperimentController.delete(id: Int)
 
-POST     /dataset                                      io.perfix.controllers.DatasetController.create
-GET      /dataset                                      io.perfix.controllers.DatasetController.all
+POST     /dataset/create                               io.perfix.controllers.DatasetController.create
+POST     /dataset                                      io.perfix.controllers.DatasetController.all
 GET      /dataset/:id                                  io.perfix.controllers.DatasetController.get(id: Int)
 GET      /dataset/:id/data                             io.perfix.controllers.DatasetController.data(id: Int)
 POST     /dataset/:id                                  io.perfix.controllers.DatasetController.update(id: Int)
 DELETE   /dataset/:id                                  io.perfix.controllers.DatasetController.delete(id: Int)
 
-POST     /config                                       io.perfix.controllers.DatabaseConfigController.create
-GET      /config                                       io.perfix.controllers.DatabaseConfigController.all
+POST     /config/create                                io.perfix.controllers.DatabaseConfigController.create
+POST     /config                                       io.perfix.controllers.DatabaseConfigController.all
 GET      /config/:id                                   io.perfix.controllers.DatabaseConfigController.get(id: Int)
 POST     /config/:id                                   io.perfix.controllers.DatabaseConfigController.update(id: Int)
 DELETE   /config/:id                                   io.perfix.controllers.DatabaseConfigController.delete(id: Int)
