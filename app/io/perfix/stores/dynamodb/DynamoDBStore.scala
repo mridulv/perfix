@@ -27,6 +27,7 @@ class DynamoDBStore(datasetParams: DatasetParams,
     dynamoDBParams.dynamoDBTableParams = DynamoDBTableParams(None, storeParams.tableName, storeParams.partitionKey, storeParams.sortKey)
     dynamoDBParams.dynamoDBCapacityParams = DynamoDBCapacityParams(storeParams.rcu, storeParams.wcu)
     dynamoDBParams.dynamoDBGSIMetadataParams = DynamoDBGSIMetadataParams(storeParams.gsiParams)
+    None
   }
 
   def connectAndInitialize(): Unit = {
