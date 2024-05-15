@@ -7,6 +7,7 @@ import com.amazonaws.services.docdb.model._
 import io.perfix.common.CommonConfig.DB_SUBNET_GROUP_NAME
 import io.perfix.launch.StoreLauncher
 import io.perfix.model.store.DocumentDBStoreParams
+import io.perfix.stores.documentdb.model.DocumentDBIndicesParams
 import io.perfix.stores.documentdb.{DocumentDBConnectionParams, DocumentDBParams, DocumentDBTableParams}
 
 import java.util.concurrent.TimeUnit
@@ -78,6 +79,7 @@ class DocumentDBLauncher(formParams: DocumentDBParams,
 
       formParams.documentDBConnectionParams = Some(connectionParams)
       formParams.documentDBTableParams = Some(documentDBTableParams)
+      formParams.documentDBIndicesParams = Some(DocumentDBIndicesParams(storeParams.indices))
 
       println(s"DocumentDB cluster creation initiated: ${clusterResponse.getDBClusterIdentifier}")
       println(s"DocumentDB instance creation initiated: ${instanceResponse.getDBInstanceIdentifier}")

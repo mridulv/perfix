@@ -23,9 +23,10 @@ class DynamoDBStore(datasetParams: DatasetParams,
   private var client: AmazonDynamoDB = _
   private val dynamoDBParams: DynamoDBParams = DynamoDBParams()
   private var tableParams: DynamoDBTableParams = _
-
   override def launcher(): Option[StoreLauncher[DynamoDBStoreParams]] = {
-    None
+    dynamoDBParams.dynamoDBTableParams = DynamoDBTableParams(None, storeParams.tableName, storeParams.partitionKey, storeParams.sortKey)
+    dynamoDBParams.dynamoDBCapacityParams = DynamoDBCapacityParams(storeParams.rcu, storeParams.wcu)
+    dynamoDBParams.dynamoDBGSIMetadataParams = DynamoDBGSIMetadataParams(storeParams.gsiParams)
   }
 
   def connectAndInitialize(): Unit = {

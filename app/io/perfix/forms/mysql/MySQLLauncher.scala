@@ -29,6 +29,7 @@ class MySQLLauncher(formParams: MySQLParams,
       val tableName = "test"
       formParams.mySQLConnectionParams = Some(MySQLConnectionParams(connectUrl, username, password))
       formParams.mySQLTableParams = Some(MySQLTableParams(dbName, tableName))
+      formParams.mySQLTableIndexesParams = Some(MySQLTableIndexesParams(storeParams.primaryIndexColumn, storeParams.secondaryIndexesColumn))
     } else {
       actualLaunch()
     }
@@ -78,6 +79,7 @@ class MySQLLauncher(formParams: MySQLParams,
       val connectUrl = s"jdbc:mysql://${response.getEndpoint.getAddress}:${response.getEndpoint.getPort}/${response.getDBName}?user=${username}&password=${password}"
       formParams.mySQLConnectionParams = Some(MySQLConnectionParams(connectUrl, username, password))
       formParams.mySQLTableParams = Some(MySQLTableParams(dbName, tableName))
+      formParams.mySQLTableIndexesParams = Some(MySQLTableIndexesParams(storeParams.primaryIndexColumn, storeParams.secondaryIndexesColumn))
       println(s"RDS instance creation initiated: ${response.getDBInstanceIdentifier}")
     } catch {
       case ex: Exception =>
