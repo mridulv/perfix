@@ -5,7 +5,6 @@
 GET      /health                                       io.perfix.controllers.HealthCheckController.health
 
 POST     /experiment                                   io.perfix.controllers.ExperimentController.create
-GET      /experiment/filter                            io.perfix.controllers.ExperimentController.filteredExperiments
 POST     /experiment/:id                               io.perfix.controllers.ExperimentController.update(id: Int)
 POST     /experiment/:id/execute                       io.perfix.controllers.ExperimentController.executeExperiment(id: Int)
 GET      /experiment/:id                               io.perfix.controllers.ExperimentController.get(id: Int)
@@ -14,7 +13,6 @@ DELETE   /experiment/:id                               io.perfix.controllers.Exp
 
 POST     /dataset                                      io.perfix.controllers.DatasetController.create
 GET      /dataset                                      io.perfix.controllers.DatasetController.all
-GET      /dataset/filter                               io.perfix.controllers.DatasetController.filteredDatasets
 GET      /dataset/:id                                  io.perfix.controllers.DatasetController.get(id: Int)
 GET      /dataset/:id/data                             io.perfix.controllers.DatasetController.data(id: Int)
 POST     /dataset/:id                                  io.perfix.controllers.DatasetController.update(id: Int)
@@ -22,7 +20,6 @@ DELETE   /dataset/:id                                  io.perfix.controllers.Dat
 
 POST     /config                                       io.perfix.controllers.DatabaseConfigController.create
 GET      /config                                       io.perfix.controllers.DatabaseConfigController.all
-GET      /config/filter                                io.perfix.controllers.DatabaseConfigController.filteredDatabaseConfigs
 GET      /config/:id                                   io.perfix.controllers.DatabaseConfigController.get(id: Int)
 POST     /config/:id                                   io.perfix.controllers.DatabaseConfigController.update(id: Int)
 DELETE   /config/:id                                   io.perfix.controllers.DatabaseConfigController.delete(id: Int)

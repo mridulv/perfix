@@ -28,13 +28,9 @@ class ExperimentController @Inject()(cc: ControllerComponents,
     Results.Ok(Json.toJson(experimentManager.update(ExperimentId(experimentId), experimentParams)))
   }
 
-  def all = Action { request =>
-    Results.Ok(Json.toJson(experimentManager.all(Seq.empty)))
-  }
-
-  def filteredExperiments = Action(parse.json) { request =>
+  def all = Action(parse.json) { request =>
     val filters = request.body.as[Seq[EntityFilter]]
-    Results.Ok(Json.toJson(experimentManager.all(Seq.empty)))
+    Results.Ok(Json.toJson(experimentManager.all(filters)))
   }
 
   def executeExperiment(experimentId: Int) = Action(parse.json) { request =>

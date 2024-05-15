@@ -13,7 +13,8 @@ case class ExperimentParams(experimentId: Option[ExperimentId],
                             query: PerfixQuery,
                             databaseConfigId: DatabaseConfigId,
                             experimentState: ExperimentState,
-                            experimentResult: Option[ExperimentResult]) {
+                            experimentResult: Option[ExperimentResult],
+                            createdAt: Option[Long] = None) {
 
   def toExperimentRow: ExperimentRow = {
     experimentId match {
