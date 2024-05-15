@@ -4,8 +4,8 @@ import io.perfix.stores.dynamodb.model.DynamoDBGSIParam
 import play.api.libs.json.{Format, Json}
 
 case class DynamoDBStoreParams(tableName: String,
-                               rcu: Int,
-                               wcu: Int,
+                               rcu: Long,
+                               wcu: Long,
                                partitionKey: String,
                                sortKey: String,
                                gsiParams: Seq[DynamoDBGSIParam]) extends StoreParams
