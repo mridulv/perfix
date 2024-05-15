@@ -8,6 +8,7 @@ import scala.util.Random
 
 case class DatasetParams(id: Option[DatasetId],
                          name: String,
+                         description: String,
                          rows: Int,
                          columns: Seq[ColumnDescription],
                          createdAt: Option[Long]) {
@@ -30,6 +31,13 @@ object DatasetParams {
   implicit val DatasetParamsFormatter: Format[DatasetParams] = Json.format[DatasetParams]
 
   def empty(): DatasetParams = {
-    DatasetParams(None, name = s"dataset-${Random.nextInt()}", 0, columns = Seq.empty, createdAt = Some(System.currentTimeMillis()))
+    DatasetParams(
+      None,
+      name = s"dataset-${Random.nextInt()}",
+      description = "Empty Dataset",
+      0,
+      columns = Seq.empty,
+      createdAt = Some(System.currentTimeMillis())
+    )
   }
 }
