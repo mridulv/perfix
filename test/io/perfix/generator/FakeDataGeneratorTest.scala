@@ -8,8 +8,10 @@ import scala.util.Random
 
 class FakeDataGeneratorTest extends AnyFlatSpec with Matchers {
   "FakeDataGenerator" should "generate fake data with specified number of rows and columns" in {
-    val datasetParams = DatasetParams(None,
+    val datasetParams = DatasetParams(
+      None,
       name = s"dataset-${Random.nextInt()}",
+      description = "desc",
       5,
       Seq(ColumnDescription("name", NameType(isUnique = true)), ColumnDescription("age", NumericType(None)))
     )
@@ -26,6 +28,7 @@ class FakeDataGeneratorTest extends AnyFlatSpec with Matchers {
     val datasetParams = DatasetParams(
       None,
       name = s"dataset-${Random.nextInt()}",
+      description = "desc",
       10,
       Seq(ColumnDescription("id", TextType(isUnique = true)))
     )
@@ -41,6 +44,7 @@ class FakeDataGeneratorTest extends AnyFlatSpec with Matchers {
     val datasetParams = DatasetParams(
       None,
       name = s"dataset-${Random.nextInt()}",
+      description = "desc",
       5,
       Seq(
         ColumnDescription("name", NameType(isUnique = true)),

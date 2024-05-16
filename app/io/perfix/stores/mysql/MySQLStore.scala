@@ -16,7 +16,7 @@ class MySQLStore(datasetParams: DatasetParams,
   extends DataStore[MySQLStoreParams] {
 
   private[stores] var connection: Connection = _
-  private val mySQLParams: MySQLParams = MySQLParams()
+  private[stores] val mySQLParams: MySQLParams = MySQLParams()
 
   override def launcher(): Option[StoreLauncher[MySQLStoreParams]] = {
     Some(new MySQLLauncher(mySQLParams, storeParams))
