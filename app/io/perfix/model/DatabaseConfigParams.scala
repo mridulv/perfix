@@ -6,10 +6,9 @@ import play.api.libs.json.{Format, Json}
 
 case class DatabaseConfigParams(databaseConfigId: Option[DatabaseConfigId] = None,
                                 name: String,
-                                storeName: String,
                                 storeParams: StoreParams,
                                 dataStore: StoreType,
-                                createdAt: Option[Long],
+                                createdAt: Option[Long] = None,
                                 datasetId: DatasetId) {
 
   def toDatabaseConfigRow: DatabaseConfigRow = {

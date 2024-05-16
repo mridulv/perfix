@@ -7,7 +7,7 @@ import com.amazonaws.services.rds.model.{CreateDBInstanceRequest, DBInstance, De
 import io.perfix.common.CommonConfig.DB_SUBNET_GROUP_NAME
 import io.perfix.launch.StoreLauncher
 import io.perfix.model.store.MySQLStoreParams
-import io.perfix.stores.mysql.{MySQLConnectionParams, MySQLParams, MySQLTableParams}
+import io.perfix.stores.mysql.{MySQLConnectionParams, MySQLParams, MySQLTableIndexesParams, MySQLTableParams}
 
 import java.util.concurrent.TimeUnit
 import scala.util.Random
@@ -16,16 +16,20 @@ class MySQLLauncher(formParams: MySQLParams,
                     override val storeParams: MySQLStoreParams)
   extends StoreLauncher[MySQLStoreParams] {
 
+  import com.typesafe.config.ConfigFactory
+  private val restConfig = ConfigFactory.load("application.conf")
+  private val useLocalDB = restConfig.getBoolean("use.local.db")
+
   override def launch(): Unit = {
-    val useLocalDB = sys.env.get("USE_LOCAL_DB").map(_.toBoolean).getOrElse(false)
     if (useLocalDB) {
-      val connectUrl = "jdbc:h2:mem:testdb;MODE=MySQL;DB_CLOSE_DELAY=-1"
-      val username = "sa"
-      val password = ""
-      val dbName = "testdb"
+      val connectUrl = "jdbc:mysql://localhost:3306/perfix"
+      val username = "root"
+      val password = "test12345"
+      val dbName = "perfix"
       val tableName = "test"
       formParams.mySQLConnectionParams = Some(MySQLConnectionParams(connectUrl, username, password))
       formParams.mySQLTableParams = Some(MySQLTableParams(dbName, tableName))
+      formParams.mySQLTableIndexesParams = Some(MySQLTableIndexesParams(storeParams.primaryIndexColumn, storeParams.secondaryIndexesColumn))
     } else {
       actualLaunch()
     }
@@ -75,6 +79,7 @@ class MySQLLauncher(formParams: MySQLParams,
       val connectUrl = s"jdbc:mysql://${response.getEndpoint.getAddress}:${response.getEndpoint.getPort}/${response.getDBName}?user=${username}&password=${password}"
       formParams.mySQLConnectionParams = Some(MySQLConnectionParams(connectUrl, username, password))
       formParams.mySQLTableParams = Some(MySQLTableParams(dbName, tableName))
+      formParams.mySQLTableIndexesParams = Some(MySQLTableIndexesParams(storeParams.primaryIndexColumn, storeParams.secondaryIndexesColumn))
       println(s"RDS instance creation initiated: ${response.getDBInstanceIdentifier}")
     } catch {
       case ex: Exception =>
