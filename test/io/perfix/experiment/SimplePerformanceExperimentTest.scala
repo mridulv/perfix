@@ -1,8 +1,10 @@
 package io.perfix.experiment
 
-import io.perfix.model.{Dataset, ExperimentParams}
+import io.perfix.model.{DatabaseConfigId, Dataset}
+import io.perfix.model.experiment.{ExperimentParams, ExperimentState}
 import io.perfix.query.{PerfixQuery, PerfixQueryFilter}
 import io.perfix.stores.DataStore
+import io.perfix.stores.mysql.MySQLStore
 import org.mockito.Mockito
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
@@ -10,10 +12,12 @@ import org.mockito.Mockito._
 import org.mockito.invocation.InvocationOnMock
 import org.mockito.stubbing.Answer
 
+import scala.util.Random
+
 class SimplePerformanceExperimentTest extends AnyFlatSpec with Matchers {
   "SimplePerformanceExperiment" should  "initialize, run, and clean up the experiment" ignore {
     // Create a mock DataStore
-    val dataStore = mock(classOf[DataStore])
+    val dataStore = mock(classOf[MySQLStore])
 
     // Create a mock PerfixQuery
     val perfixQuery = PerfixQuery(
@@ -22,7 +26,17 @@ class SimplePerformanceExperimentTest extends AnyFlatSpec with Matchers {
       limitOpt = Some(10)
     )
 
-    val experimentParams = ExperimentParams.experimentParamsForTesting
+    val experimentParams = ExperimentParams(
+      None,
+      name = s"exp-${Random.nextInt()}",
+      concurrentQueries = 10,
+      experimentTimeInSeconds = 5,
+      query = PerfixQuery(limitOpt = Some(100)),
+      databaseConfigId = DatabaseConfigId(-1),
+      experimentResult = None,
+      createdAt = Some(System.currentTimeMillis()),
+      experimentState = ExperimentState.Created
+    )
     val experiment = new SimplePerformanceExperiment(dataStore, experimentParams, Dataset.datasetForTesting)
 
     // Initialize the experiment

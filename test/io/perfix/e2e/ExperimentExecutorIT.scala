@@ -1,13 +1,11 @@
 package io.perfix.e2e
 
-import io.perfix.common.ExperimentExecutor
-import io.perfix.forms.AWSCloudParamsForm.{AWS_ACCESS_KEY, AWS_ACCESS_SECRET, LAUNCH_DB}
-import io.perfix.forms.Form
-import io.perfix.forms.mysql.MySQLConnectionParamsForm.{PASSWORD, URL, USERNAME}
-import io.perfix.forms.mysql.MySQLLauncher.{INSTANCE_IDENTIFIER, INSTANCE_TYPE}
-import io.perfix.forms.mysql.MySQLTableParamsForm.{DBNAME, TABLENAME}
-import io.perfix.model.{ColumnDescription, DatabaseConfigId, Dataset, DatasetId, DatasetParams, ExperimentParams, FormInputValue, FormInputValues}
+import io.perfix.experiment.SimplePerformanceExperiment
+import io.perfix.model.experiment.{ExperimentParams, ExperimentState}
+import io.perfix.model.store.{MySQLStoreParams, StoreType}
+import io.perfix.model.{ColumnDescription, DatabaseConfigId, DatabaseConfigParams, DatasetId, DatasetParams}
 import io.perfix.query.PerfixQuery
+import io.perfix.stores.mysql.MySQLStore
 import org.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.flatspec.AnyFlatSpec
@@ -33,18 +31,6 @@ class ExperimentExecutorIT extends AnyFlatSpec with Matchers with MockitoSugar w
   }
 
   it should "connect and initialize database correctly" in {
-    val mappedVariables: Map[String, Any] = Map(
-      USERNAME -> username,
-      URL -> url,
-      PASSWORD -> password,
-      DBNAME -> "testdb",
-      TABLENAME -> "test",
-      INSTANCE_IDENTIFIER -> "dbinstance",
-      INSTANCE_TYPE -> "*******",
-      AWS_ACCESS_KEY -> "************",
-      AWS_ACCESS_SECRET -> "**********",
-      LAUNCH_DB -> false
-    )
     val cols = Json.parse("[{\"columnName\":\"student_name\",\"columnType\":{\"type\":\"NameType\",\"isUnique\":true},\"columnValueDistribution\":{\"value\":\"John\",\"probability\":0.1}},{\"columnName\":\"student_address\",\"columnType\":{\"type\":\"AddressType\",\"isUnique\":false}}]").as[Seq[ColumnDescription]]
     val experimentParams = ExperimentParams(
       None,
@@ -52,33 +38,39 @@ class ExperimentExecutorIT extends AnyFlatSpec with Matchers with MockitoSugar w
       concurrentQueries = 10,
       experimentTimeInSeconds = 5,
       query = PerfixQuery(limitOpt = Some(100)),
-      datasetId = DatasetId(-1),
       databaseConfigId = DatabaseConfigId(-1),
-      experimentResult = None
+      experimentResult = None,
+      createdAt = Some(System.currentTimeMillis()),
+      experimentState = ExperimentState.Created
     )
     val datasetParams = DatasetParams(
       id = None,
       name = s"dataset-${Random.nextInt()}",
+      description = "some desc",
       rows = 100,
       columns = cols
     )
+    val mysqlStoreParams = MySQLStoreParams(
+      instanceType = "db.t3.medium",
+      tableName = "test",
+      primaryIndexColumn = Some("student_name"),
+      secondaryIndexesColumn = None
+    )
+    val databaseConfig = DatabaseConfigParams(
+      name = "mysql-config",
+      dataStore = StoreType.MySQLStoreType,
+      datasetId = DatasetId(-1),
+      storeParams = mysqlStoreParams
+    )
+    val experimentExecutor = new SimplePerformanceExperiment[MySQLStoreParams](
+      new MySQLStore(datasetParams, mysqlStoreParams),
+      experimentParams,
+      dataset = datasetParams.dataset
+    )
 
-    val experimentExecutor = new ExperimentExecutor("mysql", experimentParams, dataset = datasetParams.dataset)
-    while (experimentExecutor.getFormSeriesEvaluator.hasNext) {
-      val form = experimentExecutor.getFormSeriesEvaluator.next()
-      val answerMapping = form.map { case (k, formInputType) =>
-        val mappedValue = if (formInputType.isRequired) {
-          Some(mappedVariables(k))
-        } else {
-          mappedVariables.get(k)
-        }
-        k -> mappedValue
-      }
-      experimentExecutor.getFormSeriesEvaluator.submit(Form.filteredAnswers(answerMapping))
-    }
-
-    val result = experimentExecutor.runExperiment()
-    experimentExecutor.cleanUp()
+    experimentExecutor.init()
+    val result = experimentExecutor.run()
+    experimentExecutor.cleanup()
     result.overallQueryTime should be (5)
     result.writeLatencies.length should be (8)
     result.queryLatencies.length should be (8)
