@@ -1,5 +1,6 @@
 package io.perfix.stores
 
+import io.perfix.model.store.MySQLStoreParams
 import io.perfix.model.{ColumnDescription, DatasetParams, NameType}
 import io.perfix.query.PerfixQuery
 import io.perfix.stores.mysql._
@@ -47,21 +48,27 @@ class MySQLStoreTest extends AnyFlatSpec with Matchers with MockitoSugar with Be
   }
 
   def setupDatabase(): Unit = {
-    mySQLStore = new MySQLStore()
-    connection = DriverManager.getConnection(url, username, password)
-    initializeDatabase(connection)
-
     val datasetParams = DatasetParams(
       id = None,
       name = s"dataset-${Random.nextInt()}",
+      description = "desc",
       rows = 100,
       columns = Seq(ColumnDescription("name", NameType()))
     )
-    val formSeries = mySQLStore.storeInputs(datasetParams)
+    val mysqlStoreParams = MySQLStoreParams(
+      instanceType = "db.t3.medium",
+      tableName = "test",
+      primaryIndexColumn = Some("student_name"),
+      secondaryIndexesColumn = None
+    )
 
-    formSeries.mySQLParams.mySQLConnectionParams = Some(MySQLConnectionParams(url, username, password))
-    formSeries.mySQLParams.mySQLTableParams = Some(MySQLTableParams("testdb", "testTable"))
-    formSeries.mySQLParams.mySQLTableIndexesParams = Some(MySQLTableIndexesParams(None, None))
+    mySQLStore = new MySQLStore(datasetParams, mysqlStoreParams)
+    connection = DriverManager.getConnection(url, username, password)
+    initializeDatabase(connection)
+
+    mySQLStore.mySQLParams.mySQLConnectionParams = Some(MySQLConnectionParams(url, username, password))
+    mySQLStore.mySQLParams.mySQLTableParams = Some(MySQLTableParams("testdb", "testTable"))
+    mySQLStore.mySQLParams.mySQLTableIndexesParams = Some(MySQLTableIndexesParams(None, None))
 
     mySQLStore.connectAndInitialize()
   }

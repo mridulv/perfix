@@ -13,7 +13,13 @@ class DatasetManagerTest extends AnyFlatSpec with MockitoSugar {
   "DatasetManager" should "create a new dataset with unique ID" in {
     val datasetManager = new DatasetManager(new InMemoryDatasetConfigStore)
 
-    val datasetParams = DatasetParams(id = None, name = s"dataset-${Random.nextInt()}", rows = 100, columns = Seq.empty)
+    val datasetParams = DatasetParams(
+      id = None,
+      name = s"dataset-${Random.nextInt()}",
+      description = "test desc",
+      rows = 100,
+      columns = Seq.empty
+    )
     val datasetId = datasetManager.create(datasetParams)
 
     datasetManager.get(datasetId).dataset.params.copy(id = None) shouldBe datasetParams
@@ -21,7 +27,13 @@ class DatasetManagerTest extends AnyFlatSpec with MockitoSugar {
 
   "DatasetManager" should "retrieve a dataset by ID" in {
     val datasetManager = new DatasetManager(new InMemoryDatasetConfigStore)
-    val datasetParams = DatasetParams(id = None, name = s"dataset-${Random.nextInt()}", rows = 100, columns = Seq.empty)
+    val datasetParams = DatasetParams(
+      id = None,
+      name = s"dataset-${Random.nextInt()}",
+      description = "desc",
+      rows = 100,
+      columns = Seq.empty
+    )
     val datasetId = datasetManager.create(datasetParams)
 
     val retrievedDataset = datasetManager.get(datasetId)
@@ -32,13 +44,13 @@ class DatasetManagerTest extends AnyFlatSpec with MockitoSugar {
 
   "DatasetManager" should "retrieve all datasets" in {
     val datasetManager = new DatasetManager(new InMemoryDatasetConfigStore)
-    val datasetParams1 = DatasetParams(id = None, name = s"dataset-${Random.nextInt()}", rows = 100, columns = Seq.empty)
-    val datasetParams2 = DatasetParams(id = None, name = s"dataset-${Random.nextInt()}", rows = 200, columns = Seq.empty)
+    val datasetParams1 = DatasetParams(id = None, name = s"dataset-${Random.nextInt()}", description = "desc", rows = 100, columns = Seq.empty)
+    val datasetParams2 = DatasetParams(id = None, name = s"dataset-${Random.nextInt()}", description = "desc", rows = 200, columns = Seq.empty)
 
     datasetManager.create(datasetParams1)
     datasetManager.create(datasetParams2)
 
-    val allDatasets = datasetManager.all().map(e => e.copy(id = None))
+    val allDatasets = datasetManager.all(Seq.empty).map(e => e.copy(id = None))
 
     allDatasets.size shouldBe 2
     allDatasets.contains(datasetParams1) shouldBe true
