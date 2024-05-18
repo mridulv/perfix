@@ -1,6 +1,6 @@
 package io.perfix.model
 
-import io.perfix.model.experiment.ExperimentParams
+import io.perfix.model.experiment.{ExperimentParams, ExperimentState}
 import play.api.libs.json.{Format, JsError, JsObject, JsString, JsValue, Json, Reads, Writes}
 
 trait EntityFilter
@@ -48,7 +48,7 @@ case class DatasetNameFilter(name: String) extends EntityFilter {
 case class ExperimentStateFilter(name: String) extends ExperimentFilter {
 
   override def filterExperiment(experimentParams: ExperimentParams): Boolean = {
-    experimentParams.experimentState.name == name
+    experimentParams.experimentState.getOrElse(ExperimentState.Created).name == name
   }
 
 }
