@@ -3,6 +3,7 @@ package io.perfix.manager
 import com.google.inject.Inject
 import io.perfix.common.ExperimentExecutor
 import io.perfix.exceptions.InvalidStateException
+import io.perfix.model.experiment.ExperimentResult.TestExperimentResult
 import io.perfix.model.{DatabaseConfigFilter, DatasetFilter, EntityFilter, ExperimentFilter}
 import io.perfix.model.experiment.{ExperimentId, ExperimentParams}
 import io.perfix.store.ExperimentStore
@@ -22,7 +23,10 @@ class ExperimentManager @Inject()(datasetManager: DatasetManager,
   }
 
   def get(experimentId: ExperimentId): ExperimentParams = {
-    experimentStore.get(experimentId).getOrElse(throw InvalidStateException(s"Invalid ExperimentId ${experimentId}"))
+    experimentStore
+      .get(experimentId)
+      .getOrElse(throw InvalidStateException(s"Invalid ExperimentId ${experimentId}"))
+      .copy(experimentResult = Some(TestExperimentResult))
   }
 
   def all(entityFilters: Seq[EntityFilter]): Seq[ExperimentParams] = {
@@ -48,7 +52,7 @@ class ExperimentManager @Inject()(datasetManager: DatasetManager,
       val cond2 = databaseConfigFilters.forall(df => df.filterDatabaseConfig(relevantDatabaseConfig))
       val cond3 = experimentFilters.forall(df => df.filterExperiment(experiment))
       cond1 && cond2 && cond3
-    }
+    }.map(_.copy(experimentResult = Some(TestExperimentResult)))
   }
 
   def update(experimentId: ExperimentId, experimentParams: ExperimentParams): ExperimentParams = {
