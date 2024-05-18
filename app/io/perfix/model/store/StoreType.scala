@@ -8,19 +8,19 @@ sealed trait StoreType {
 
 object StoreType {
   case object MySQLStoreType extends StoreType {
-    val name = "mysql"
+    val name = "MySQL"
   }
 
   case object RedisStoreType extends StoreType {
-    val name = "redis"
+    val name = "DynamoDB"
   }
 
   case object DynamoDBStoreType extends StoreType {
-    val name = "dynamodb"
+    val name = "Redis"
   }
 
   case object MongoDBStoreType extends StoreType {
-    val name = "mongodb"
+    val name = "DocumentDB"
   }
 
   implicit val StoreTypeReads: Reads[StoreType] = Reads {

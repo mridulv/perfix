@@ -33,7 +33,7 @@ case class TextFilter(text: String) extends DatasetFilter with DatabaseConfigFil
 
 case class DatabaseTypeFilter(store: String) extends DatabaseConfigFilter {
   override def filterDatabaseConfig(databaseConfigParams: DatabaseConfigParams): Boolean = {
-    databaseConfigParams.dataStore.name == store
+    databaseConfigParams.dataStore.name.toLowerCase == store.toLowerCase()
   }
 }
 

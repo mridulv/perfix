@@ -12,7 +12,7 @@ case class ExperimentParams(experimentId: Option[ExperimentId],
                             concurrentQueries: Int = 1,
                             query: PerfixQuery,
                             databaseConfigId: DatabaseConfigId,
-                            experimentState: ExperimentState,
+                            experimentState: ExperimentState = ExperimentState.Created,
                             experimentResult: Option[ExperimentResult],
                             createdAt: Option[Long] = None) {
 
