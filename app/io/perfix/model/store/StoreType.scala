@@ -12,11 +12,11 @@ object StoreType {
   }
 
   case object RedisStoreType extends StoreType {
-    val name = "DynamoDB"
+    val name = "Redis"
   }
 
   case object DynamoDBStoreType extends StoreType {
-    val name = "Redis"
+    val name = "DynamoDB"
   }
 
   case object MongoDBStoreType extends StoreType {
