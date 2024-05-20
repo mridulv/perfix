@@ -18,6 +18,11 @@ frontend:
     type: ClusterIP
     port: 3000
 
+nginx:
+  hostname: "https://trials.perfix.com"
+
+postgres:
+  port: 5432
 
 job:
   image: curlimages/curl

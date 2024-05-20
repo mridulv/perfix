@@ -18,6 +18,8 @@ spec:
           env:
             - name: MODE
               value: "trial"
+            - name: JDBC_POSTGRES_URL
+              value: "jdbc:postgresql://postgres-service:{{ .Values.postgres.port }}/mydb"
           imagePullPolicy: {{ .Values.backend.image.pullPolicy }}
           ports:
             - containerPort: {{ .Values.backend.service.port }}
