@@ -35,7 +35,7 @@ class SimplePerformanceExperimentTest extends AnyFlatSpec with Matchers {
       databaseConfigId = DatabaseConfigId(-1),
       experimentResult = None,
       createdAt = Some(System.currentTimeMillis()),
-      experimentState = ExperimentState.Created
+      experimentState = Some(ExperimentState.Created)
     )
     val experiment = new SimplePerformanceExperiment(dataStore, experimentParams, Dataset.datasetForTesting)
 

@@ -41,7 +41,7 @@ class ExperimentExecutorIT extends AnyFlatSpec with Matchers with MockitoSugar w
       databaseConfigId = DatabaseConfigId(-1),
       experimentResult = None,
       createdAt = Some(System.currentTimeMillis()),
-      experimentState = ExperimentState.Created
+      experimentState = Some(ExperimentState.Created)
     )
     val datasetParams = DatasetParams(
       id = None,
