@@ -19,9 +19,7 @@ spec:
               value: mydb
             - name: POSTGRES_USER
               value: myuser
-            - name: JDBC_POSTGRES_URL
-              value: "jdbc:postgresql://postgres-service:5432/mydb"
             - name: POSTGRES_PASSWORD
               value: mypassword
           ports:
-            - containerPort: 5432
+            - containerPort: {{ .Values.postgres.port }}
