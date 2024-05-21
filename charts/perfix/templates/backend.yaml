@@ -20,6 +20,12 @@ spec:
               value: "trial"
             - name: JDBC_POSTGRES_URL
               value: "jdbc:postgresql://postgres-service:{{ .Values.postgres.port }}/mydb"
+            - name: PAC4J_BASEURL
+              value: "{{ .Values.nginx.hostname }}/api"
+            - name: PAC4J_GOOGLECLIENT_CLIENTID
+              value: {{ .Values.backend.oauth.google.clientId }}
+            - name: PAC4J_GOOGLECLIENT_SECRET
+              value: {{ .Values.backend.oauth.google.secret }}
           imagePullPolicy: {{ .Values.backend.image.pullPolicy }}
           ports:
             - containerPort: {{ .Values.backend.service.port }}
