@@ -6,16 +6,14 @@ ThisBuild / scalaVersion     := "2.13.12"
 ThisBuild / organization     := "com.perfix"
 ThisBuild / organizationName := "perfix"
 
-resolvers += "Typesafe repo" at "https://repo.typesafe.com/typesafe/releases/"
-
 version := sys.env.get("TAG").filter(_.nonEmpty).getOrElse("latest")
 
 dockerRepository := Some("mridulverma")
 dockerUpdateLatest := true
 dockerBuildxPlatforms := Seq("linux/arm64/v8", "linux/amd64")
 
-fork in Test := true
-envVars in Test := Map("USE_LOCAL_DB" -> "true")
+val playPac4jVersion = "11.1.0-PLAY2.8"
+val pac4jVersion = "5.7.0"
 
 lazy val root = (project in file("."))
   .enablePlugins(PlayJava)
@@ -41,7 +39,12 @@ lazy val root = (project in file("."))
     libraryDependencies += "org.postgresql" % "postgresql" % "42.3.1",
     libraryDependencies += "org.playframework" %% "play-slick" % "6.1.0",
     libraryDependencies += "org.playframework" %% "play-slick-evolutions" % "6.1.0",
-    dockerBaseImage := "openjdk:11-jre-slim",
+    libraryDependencies += "org.pac4j" %% "play-pac4j" % playPac4jVersion,
+    libraryDependencies += "org.pac4j" % "pac4j-oauth" % pac4jVersion,
+    libraryDependencies += "com.typesafe.play" %% "play-cache" % "2.8.18",
+    dependencyOverrides += "org.scala-lang.modules" %% "scala-xml" % "1.2.0",
+      libraryDependencies += "org.apache.shiro" % "shiro-crypto-cipher" % "1.13.0",
+        dockerBaseImage := "openjdk:11-jre-slim",
     semanticdbEnabled := true,
     scalacOptions += "-Wunused:imports"
   )
