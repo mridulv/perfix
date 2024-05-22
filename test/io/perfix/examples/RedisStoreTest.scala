@@ -1,13 +1,5 @@
 package io.perfix.examples
 
-import io.perfix.common.ExperimentExecutor
-import io.perfix.forms.Form
-import io.perfix.forms.redis.RedisLauncher.{CACHE_NODE_TYPE, CLUSTER_ID}
-import io.perfix.forms.redis.RedisConnectionParametersForm.{PORT, URL}
-import io.perfix.forms.redis.RedisTableParamsForm.KEY_COLUMN
-import io.perfix.model.{Dataset}
-import io.perfix.model.experiment.ExperimentParams
-
 object RedisStoreTest {
 
   def main(args: Array[String]): Unit = {

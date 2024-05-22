@@ -1,6 +1,6 @@
 package io.perfix.model
 
-import io.perfix.model.store.{StoreType, StoreParams}
+import io.perfix.model.store.{StoreParams, StoreType}
 import io.perfix.store.tables.DatabaseConfigRow
 import play.api.libs.json.{Format, Json}
 

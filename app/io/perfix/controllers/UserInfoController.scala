@@ -3,11 +3,11 @@ package io.perfix.controllers
 import com.google.inject.{Inject, Singleton}
 import io.perfix.model.UserInfo
 import org.pac4j.core.context.session.SessionStore
-import org.pac4j.core.profile.{ProfileManager, UserProfile}
+import org.pac4j.core.profile.ProfileManager
 import org.pac4j.play.PlayWebContext
-import org.pac4j.play.scala.{DefaultSecurityComponents, Security, SecurityComponents}
+import org.pac4j.play.scala.DefaultSecurityComponents
 import play.api.libs.json.Json
-import play.api.mvc.{Action, AnyContent, BaseController, Request, Results}
+import play.api.mvc._
 
 import scala.jdk.CollectionConverters._
 

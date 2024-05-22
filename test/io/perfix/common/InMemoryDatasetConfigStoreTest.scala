@@ -3,13 +3,10 @@ package io.perfix.common
 import io.perfix.model.{DatasetId, DatasetParams}
 import io.perfix.store.DatasetConfigStore
 import org.mockito.Mockito
+import play.api.db.slick.DatabaseConfigProvider
 
 import scala.collection.mutable
-import scala.concurrent.{ExecutionContext, Future}
-import javax.inject.Inject
-import play.api.db.slick.DatabaseConfigProvider
-import slick.jdbc.JdbcProfile
-
+import scala.concurrent.ExecutionContext
 import scala.util.Random
 
 class InMemoryDatasetConfigStore extends DatasetConfigStore(Mockito.mock(classOf[DatabaseConfigProvider]))(ExecutionContext.global)  {

@@ -1,6 +1,6 @@
 package io.perfix.model
 
-import play.api.libs.json.{Format, JsBoolean, JsError, JsNumber, JsString, JsSuccess, Json, Reads, Writes}
+import play.api.libs.json._
 
 case class Dataset(params: DatasetParams, data: Seq[Map[String, Any]]) {
 

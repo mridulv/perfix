@@ -1,12 +1,5 @@
 package io.perfix.examples
 
-import io.perfix.common.ExperimentExecutor
-import io.perfix.forms.Form
-import io.perfix.forms.dynamodb.DynamoDBGSIParamsForm.GSI
-import io.perfix.forms.dynamodb.DynamoDBTableParamsForm._
-import io.perfix.model.{Dataset}
-import io.perfix.model.experiment.ExperimentParams
-
 object DynamoDBStoreTest {
 
   def main(args: Array[String]): Unit = {

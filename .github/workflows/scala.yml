@@ -14,6 +14,11 @@ on:
 permissions:
   contents: write
 
+env:
+  PAC4J_BASEURL: "http://localhost:9000"
+  PAC4J_GOOGLECLIENT_CLIENTID: "*********clientId******"
+  PAC4J_GOOGLECLIENT_SECRET: "*********secret******"
+
 jobs:
   build:
     runs-on: ubuntu-latest

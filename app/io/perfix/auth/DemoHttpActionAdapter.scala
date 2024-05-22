@@ -4,8 +4,7 @@ import org.pac4j.core.context.{HttpConstants, WebContext}
 import org.pac4j.core.exception.http.HttpAction
 import org.pac4j.play.PlayWebContext
 import org.pac4j.play.http.PlayHttpActionAdapter
-import play.mvc.Results
-import play.mvc.Result
+import play.mvc.{Result, Results}
 
 class DemoHttpActionAdapter extends PlayHttpActionAdapter {
 

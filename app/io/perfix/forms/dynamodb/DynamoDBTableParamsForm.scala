@@ -1,10 +1,10 @@
 package io.perfix.forms.dynamodb
 
-import DynamoDBTableParamsForm.{CONNECTION_URL, PARTITION_KEY, SORT_KEY, TABLE_NAME}
 import io.perfix.exceptions.ParamsAlreadyDefinedException
-import io.perfix.model._
 import io.perfix.forms.Form
 import io.perfix.forms.Form.FormInputName
+import io.perfix.forms.dynamodb.DynamoDBTableParamsForm.{CONNECTION_URL, PARTITION_KEY, SORT_KEY, TABLE_NAME}
+import io.perfix.model._
 import io.perfix.stores.dynamodb.{DynamoDBParams, DynamoDBTableParams}
 
 class DynamoDBTableParamsForm(override val formParams: DynamoDBParams) extends Form {

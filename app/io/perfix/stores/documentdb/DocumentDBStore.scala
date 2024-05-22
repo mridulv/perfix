@@ -3,11 +3,11 @@ package io.perfix.stores.documentdb
 import com.mongodb.client.model.Indexes
 import com.mongodb.client.{MongoClient, MongoClients, MongoCollection, MongoDatabase}
 import io.perfix.exceptions.InvalidStateException
+import io.perfix.forms.documentdb.DocumentDBLauncher
 import io.perfix.launch.StoreLauncher
 import io.perfix.model.DatasetParams
-import io.perfix.query.PerfixQuery
-import io.perfix.forms.documentdb.DocumentDBLauncher
 import io.perfix.model.store.DocumentDBStoreParams
+import io.perfix.query.PerfixQuery
 import io.perfix.stores.DataStore
 import org.bson.Document
 
@@ -67,8 +67,7 @@ class DocumentDBStore(datasetParams: DatasetParams,
       throw InvalidStateException("Table parameters should have been defined.")
     )
 
-    import com.mongodb.client.model.Filters
-    import com.mongodb.client.model.Projections
+    import com.mongodb.client.model.{Filters, Projections}
 
     val filter = perfixQuery.filtersOpt match {
       case Some(filter) => Filters.and(filter.map(filter => Filters.eq(filter.field, filter.fieldValue)).asJavaCollection)

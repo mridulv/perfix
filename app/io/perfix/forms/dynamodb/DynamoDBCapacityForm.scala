@@ -1,10 +1,10 @@
 package io.perfix.forms.dynamodb
 
 import io.perfix.exceptions.ParamsAlreadyDefinedException
-import io.perfix.model.{IntType, FormInputType}
 import io.perfix.forms.Form
 import io.perfix.forms.Form.FormInputName
 import io.perfix.forms.dynamodb.DynamoDBCapacityForm.{READ_CAPACITY, WRITE_CAPACITY}
+import io.perfix.model.{FormInputType, IntType}
 import io.perfix.stores.dynamodb.{DynamoDBCapacityParams, DynamoDBParams}
 
 class DynamoDBCapacityForm(override val formParams: DynamoDBParams) extends Form {

@@ -1,6 +1,5 @@
 import Dependencies.*
 import sbt.Keys.{scalacOptions, *}
-import play.sbt.PlaySettings
 
 ThisBuild / scalaVersion     := "2.13.12"
 ThisBuild / organization     := "com.perfix"

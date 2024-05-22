@@ -1,13 +1,13 @@
 package io.perfix.stores.mysql
 
 import io.perfix.exceptions.InvalidStateException
+import io.perfix.forms.mysql.MySQLLauncher
 import io.perfix.launch.StoreLauncher
 import io.perfix.model.ColumnType.toSqlType
-import io.perfix.model.{ColumnDescription, DatasetParams}
-import io.perfix.stores.DataStore
-import io.perfix.query.PerfixQuery
-import io.perfix.forms.mysql.MySQLLauncher
 import io.perfix.model.store.MySQLStoreParams
+import io.perfix.model.{ColumnDescription, DatasetParams}
+import io.perfix.query.PerfixQuery
+import io.perfix.stores.DataStore
 
 import java.sql.{Connection, DriverManager, ResultSet}
 

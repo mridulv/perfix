@@ -1,8 +1,8 @@
 package io.perfix.stores
 
 import io.perfix.launch.StoreLauncher
-import io.perfix.query.PerfixQuery
 import io.perfix.model.store.StoreParams
+import io.perfix.query.PerfixQuery
 
 trait DataStore[T <: StoreParams] {
 

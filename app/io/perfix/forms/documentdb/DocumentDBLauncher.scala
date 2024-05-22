@@ -2,8 +2,8 @@ package io.perfix.forms.documentdb
 
 import com.amazonaws.auth.DefaultAWSCredentialsProviderChain
 import com.amazonaws.regions.Regions
-import com.amazonaws.services.docdb.{AmazonDocDB, AmazonDocDBClientBuilder}
 import com.amazonaws.services.docdb.model._
+import com.amazonaws.services.docdb.{AmazonDocDB, AmazonDocDBClientBuilder}
 import io.perfix.common.CommonConfig.DB_SUBNET_GROUP_NAME
 import io.perfix.launch.StoreLauncher
 import io.perfix.model.store.DocumentDBStoreParams

@@ -1,7 +1,7 @@
 package io.perfix.model
 
 import io.perfix.forms.Form.FormInputName
-import play.api.libs.json.{JsBoolean, JsError, JsNumber, JsString, JsSuccess, Json, Reads, Writes}
+import play.api.libs.json._
 
 case class FormInputValue(inputName: FormInputName, answer: Any)
 

@@ -2,9 +2,8 @@ package io.perfix
 
 import org.apache.pekko.stream.Materializer
 import play.api.mvc.{Filter, RequestHeader, Result}
-import javax.inject.Inject
-import javax.inject.Singleton
 
+import javax.inject.{Inject, Singleton}
 import scala.concurrent.{ExecutionContext, Future}
 
 @Singleton

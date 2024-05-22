@@ -1,12 +1,12 @@
 package io.perfix.forms.dynamodb
 
 import io.perfix.exceptions.ParamsAlreadyDefinedException
-import io.perfix.model.{FormInputType, StringType}
 import io.perfix.forms.Form
 import io.perfix.forms.Form.FormInputName
 import io.perfix.forms.dynamodb.DynamoDBGSIParamsForm.GSI
-import io.perfix.stores.dynamodb.model.DynamoDBGSIMetadataParams
+import io.perfix.model.{FormInputType, StringType}
 import io.perfix.stores.dynamodb.DynamoDBParams
+import io.perfix.stores.dynamodb.model.DynamoDBGSIMetadataParams
 import play.api.libs.json.Json
 
 case class DynamoDBGSIParamsForm(override val formParams: DynamoDBParams) extends Form {

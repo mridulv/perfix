@@ -2,8 +2,8 @@ package io.perfix.forms.redis
 
 import com.amazonaws.auth.DefaultAWSCredentialsProviderChain
 import com.amazonaws.regions.Regions
-import com.amazonaws.services.elasticache.{AmazonElastiCache, AmazonElastiCacheClientBuilder}
 import com.amazonaws.services.elasticache.model._
+import com.amazonaws.services.elasticache.{AmazonElastiCache, AmazonElastiCacheClientBuilder}
 import io.perfix.common.CommonConfig.DB_SUBNET_GROUP_NAME
 import io.perfix.launch.StoreLauncher
 import io.perfix.model.store.RedisStoreParams
