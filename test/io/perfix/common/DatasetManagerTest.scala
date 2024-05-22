@@ -1,7 +1,7 @@
 package io.perfix.common
 
 import io.perfix.manager.DatasetManager
-import io.perfix.model.{DatasetId, DatasetParams}
+import io.perfix.model.DatasetParams
 import org.mockito.MockitoSugar
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper

@@ -6,7 +6,7 @@ import io.perfix.model.{DatasetId, DatasetParams, EntityFilter}
 import org.pac4j.core.profile.UserProfile
 import org.pac4j.play.scala.{Security, SecurityComponents}
 import play.api.libs.json.Json
-import play.api.mvc.{BaseController, ControllerComponents, Results}
+import play.api.mvc.Results
 
 @Inject
 class DatasetController @Inject()(val controllerComponents: SecurityComponents,

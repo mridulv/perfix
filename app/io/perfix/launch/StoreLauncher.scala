@@ -1,7 +1,7 @@
 package io.perfix.launch
 
-import com.amazonaws.services.ec2.{AmazonEC2, AmazonEC2ClientBuilder}
 import com.amazonaws.services.ec2.model.{AuthorizeSecurityGroupIngressRequest, DescribeSubnetsRequest, IpPermission, IpRange}
+import com.amazonaws.services.ec2.{AmazonEC2, AmazonEC2ClientBuilder}
 import com.amazonaws.services.eks.AmazonEKSClientBuilder
 import com.amazonaws.services.eks.model.DescribeClusterRequest
 import io.perfix.model.store.StoreParams

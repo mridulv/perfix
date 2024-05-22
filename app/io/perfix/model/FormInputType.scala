@@ -1,6 +1,6 @@
 package io.perfix.model
 
-import play.api.libs.json.{JsBoolean, JsError, JsNumber, JsString, JsSuccess, Json, Reads, Writes}
+import play.api.libs.json._
 
 case class FormInputType(dataType: DataType, isRequired: Boolean = true, defaultValue: Option[Any] = None)
 

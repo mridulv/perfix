@@ -5,10 +5,10 @@ import play.api.libs.json._
 trait StoreParams
 
 object StoreParams {
-  import RedisStoreParams._
   import DocumentDBStoreParams._
-  import MySQLStoreParams._
   import DynamoDBStoreParams._
+  import MySQLStoreParams._
+  import RedisStoreParams._
 
   implicit val storeParamsReads: Reads[StoreParams] = (json: JsValue) => {
     (json \ "type").validate[String].flatMap {

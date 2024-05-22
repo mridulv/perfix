@@ -7,8 +7,8 @@ import play.api.db.slick.DatabaseConfigProvider
 import slick.jdbc.JdbcProfile
 import slick.lifted.TableQuery
 
-import scala.concurrent.{Await, ExecutionContext, Future}
 import scala.concurrent.duration.Duration
+import scala.concurrent.{Await, ExecutionContext, Future}
 
 @Singleton
 class DatasetConfigStore @Inject()(dbConfigProvider: DatabaseConfigProvider)(implicit ec: ExecutionContext) {

@@ -1,6 +1,6 @@
 package io.perfix.model.experiment
 
-import play.api.libs.json.{Format, JsError, JsString, JsSuccess, Reads, Writes}
+import play.api.libs.json._
 
 sealed trait ExperimentState {
   def name: String

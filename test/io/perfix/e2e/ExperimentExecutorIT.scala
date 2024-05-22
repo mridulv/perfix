@@ -3,7 +3,7 @@ package io.perfix.e2e
 import io.perfix.experiment.SimplePerformanceExperiment
 import io.perfix.model.experiment.{ExperimentParams, ExperimentState}
 import io.perfix.model.store.{MySQLStoreParams, StoreType}
-import io.perfix.model.{ColumnDescription, DatabaseConfigId, DatabaseConfigParams, DatasetId, DatasetParams}
+import io.perfix.model._
 import io.perfix.query.PerfixQuery
 import io.perfix.stores.mysql.MySQLStore
 import org.mockito.MockitoSugar
