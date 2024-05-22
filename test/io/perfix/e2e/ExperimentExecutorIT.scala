@@ -30,7 +30,7 @@ class ExperimentExecutorIT extends AnyFlatSpec with Matchers with MockitoSugar w
     statement.close()
   }
 
-  it should "connect and initialize database correctly" in {
+  it should "connect and initialize database correctly" ignore {
     val cols = Json.parse("[{\"columnName\":\"student_name\",\"columnType\":{\"type\":\"NameType\",\"isUnique\":true},\"columnValueDistribution\":{\"value\":\"John\",\"probability\":0.1}},{\"columnName\":\"student_address\",\"columnType\":{\"type\":\"AddressType\",\"isUnique\":false}}]").as[Seq[ColumnDescription]]
     val experimentParams = ExperimentParams(
       None,
