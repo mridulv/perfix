@@ -1,19 +1,26 @@
 package io.perfix.controllers
 
 import com.google.inject.{Inject, Singleton}
-import io.perfix.model.UserInfo
+import io.perfix.model.{DatasetId, DatasetParams, UserInfo}
 import org.pac4j.core.context.session.SessionStore
-import org.pac4j.core.profile.ProfileManager
+import org.pac4j.core.profile.{ProfileManager, UserProfile}
 import org.pac4j.play.PlayWebContext
-import org.pac4j.play.scala.DefaultSecurityComponents
+import org.pac4j.play.scala.{DefaultSecurityComponents, SecureAction, Security, SecurityComponents}
 import play.api.libs.json.Json
 import play.api.mvc._
 
 import scala.jdk.CollectionConverters._
 
 @Singleton
-class UserInfoController @Inject()(val controllerComponents: DefaultSecurityComponents,
-                                   sessionStore: SessionStore) extends BaseController {
+class UserInfoController @Inject()(val controllerComponents: SecurityComponents,
+                                   sessionStore: SessionStore) extends Security[UserProfile] {
+
+  def login: Action[AnyContent] = Secure("Google2Client") {
+    Action(parse.json) { request =>
+      Ok
+    }
+  }
+
   def me: Action[AnyContent] = Action { implicit request: Request[AnyContent] =>
     val webContext = new PlayWebContext(request)
     val profileManager = new ProfileManager(webContext, sessionStore)
