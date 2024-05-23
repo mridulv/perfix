@@ -1,23 +1,23 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { FaUserAlt } from "react-icons/fa";
 import { IoMenu } from "react-icons/io5";
 import SideBarAddButton from "../components/SideBarAddButton";
-// import icon1 from "../../src/assets/icon1.png"
-import icon2 from "../../src/assets/icon2.png"
-import icon3 from "../../src/assets/icon3.png"
-import icon4 from "../../src/assets/icon4.png"
+import icon2 from "../../src/assets/icon2.png";
+import icon3 from "../../src/assets/icon3.png";
+import { AuthContext } from "../contexts/AuthProvider";
+import { FiLogOut } from "react-icons/fi";
 
 const menus = [
   {
-    name: "Database",
+    name: "Datasets",
     link: "/",
     icon: icon2,
   },
   {
-    name: "Datasets",
-    link: "/datasets",
-    icon: icon2
+    name: "Database Configuration",
+    link: "/database",
+    icon: icon2,
   },
   {
     name: "Experiment",
@@ -26,14 +26,16 @@ const menus = [
   },
 ];
 
-const userProfile = {
-  name: "John Doe",
-  profilePic: <FaUserAlt />,
-};
-
 const DashboardLayout = () => {
+  const { user } = useContext(AuthContext);
   const [menuOpen, setMenuOpen] = useState(true);
   const location = useLocation();
+
+  const userProfile = {
+    name: user.name,
+    email: user.email,
+    profilePic: <FaUserAlt />,
+  };
 
   return (
     <div className="drawer lg:drawer-open bg-[#fcf8f8]">
@@ -81,17 +83,30 @@ const DashboardLayout = () => {
               PerFix
             </h1>
 
-            {
-              (location.pathname === "/" || location.pathname === "/datasets" || location.pathname === "/experiment") ?
+            {location.pathname === "/" ||
+            location.pathname === "/database" ||
+            location.pathname === "/experiment" ? (
               <div className="mt-8 ms-4 flex">
-              <SideBarAddButton value={`${location.pathname === "/" ? "Database" : location.pathname === "/datasets" ? "Datasets" : "Experiment"}`}
-                url={`${location.pathname === "/" ? "/add-database" : location.pathname === "/datasets" ? "/add-dataset" : "/add-experiment-dataset"}`}/>
+                <SideBarAddButton
+                  value={`${
+                    location.pathname === "/"
+                      ? "Dataset"
+                      : location.pathname === "/database"
+                      ? "Database"
+                      : "Experiment"
+                  }`}
+                  url={`${
+                    location.pathname === "/"
+                      ? "/add-dataset"
+                      : location.pathname === "/database"
+                      ? "/add-database"
+                      : "/add-experiment-dataset"
+                  }`}
+                />
               </div>
-              : (
-                <div className="mt-8"></div>
-              )
-            
-            }
+            ) : (
+              <div className="mt-8"></div>
+            )}
             <div className="mt-5 ms-1">
               {menus.map((menu) => (
                 <Link
@@ -100,7 +115,7 @@ const DashboardLayout = () => {
                     location.pathname === menu.link ? "bg-[#fdd3db]" : ""
                   }  ${
                     menuOpen ? "w-56" : "w-12"
-                  } px-5 py-2 rounded-3xl flex gap-4 items-center`}
+                  } px-3 py-2 rounded-3xl flex gap-4 items-center`}
                   to={`${menu.link}`}
                 >
                   <img src={menu.icon} alt="" />
@@ -118,15 +133,18 @@ const DashboardLayout = () => {
           </div>
 
           <div className="flex flex-col ps-2 mb-2 border-t border-gray-600 py-5">
-            <div className="flex items-center mb-4 ms-8">
-              <span>{userProfile.profilePic}</span>
-              <span
-                className={`ml-3 text-black ${
-                  !menuOpen && "hidden"
-                } origin-left duration-200`}
-              >
-                {userProfile.name}
-              </span>
+            <div className="flex items-center mb-4 ms-5">
+              <span className="p-3 bg-gray-300 rounded-full">{userProfile.profilePic}</span>
+              <div className="ml-3 flex flex-col">
+                <span
+                  className={` text-black ${
+                    !menuOpen && "hidden"
+                  } origin-left duration-200`}
+                >
+                  {userProfile.name}
+                </span>
+                <span className="text-black">{user.email}</span>
+              </div>
             </div>
             <div className="mt-2 ms-4">
               <button
@@ -134,11 +152,11 @@ const DashboardLayout = () => {
                   menuOpen ? "px-5" : "px-2"
                 } h-[40px] py-2 flex items-center gap-3 rounded-xl origin-left duration-500`}
               >
-                <img src={icon4} alt="" />
+                <FiLogOut/>
                 <span
                   className={`${!menuOpen && "hidden"} text-base font-semibold`}
                 >
-                  Setting
+                  Logout
                 </span>
               </button>
             </div>

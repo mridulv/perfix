@@ -2,7 +2,7 @@ import React from "react";
 import { FaPlus } from "react-icons/fa6";
 
 const AddDataset = ({ columns, handleAddColumn }) => {
-  
+    
   return (
     <>
       <div className="flex flex-col mb-6">
@@ -12,6 +12,7 @@ const AddDataset = ({ columns, handleAddColumn }) => {
           type="text"
           placeholder="Enter Name"
           name="datasetName"
+          required
         />
       </div>
       <div className="flex flex-col mb-5">
@@ -22,6 +23,7 @@ const AddDataset = ({ columns, handleAddColumn }) => {
           placeholder="Enter Name"
           rows={2}
           name="description"
+          required
         />
       </div>
       <div>
@@ -41,12 +43,14 @@ const AddDataset = ({ columns, handleAddColumn }) => {
                   type="text"
                   name={`columnName${i}`}
                   id={`columnName${i}`}
+                  required
                 />
               </div>
               <div className="flex flex-col mb-3">
                 <label className="text-[12px] font-bold">
                   {i + 1}. Column Type:
                 </label>
+                
                 <select
                   name={`columnType${i}`}
                   id={`columnType${i}`}

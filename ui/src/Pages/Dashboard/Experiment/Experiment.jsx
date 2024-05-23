@@ -1,25 +1,26 @@
-import React from "react";
+import React, { useState } from "react";
 import axios from "axios";
-import toast from "react-hot-toast";
 import { useQuery } from "react-query";
 import Loading from "../../../components/Loading";
 import AddButton from "../../../components/AddButton";
 import CommonTable from "../../../components/CommonTable";
 
 
+const columnHeads = ["Experiment Name", "Database Config Name", "Created At", "Experiment State", "Run"];
+
 
 const Experiment = () => {
+  const [isRunStart, setIsRunStart] = useState(false);
 
-  const {
-    data: experiments,
-    isLoading: experimentsLoading,
-    refetch,
-  } = useQuery({
+  const {data: experiments,isLoading: experimentsLoading} = useQuery({
     queryKey: ["experiments"],
     queryFn: async () => {
-      const res = await axios.get(
-        `${process.env.REACT_APP_BASE_URL}/experiment`
-      );
+      const values = []
+      const res = await axios.post(`${process.env.REACT_APP_BASE_URL}/experiment`, values, {
+        headers: {
+          "Content-Type": "application/json"
+        }
+      });
       const data = await res.data;
       return data;
     },
@@ -27,73 +28,43 @@ const Experiment = () => {
 
   console.log(experiments);
 
-  const handleAddExperiment = async (e) => {
-    e.preventDefault();
-    const form = e.target;
-    const name = form.name.value;
-
-    const isDuplicateName = experiments.some(
-      (existingExperiment) =>
-        existingExperiment.name.toLowerCase() === name.toLowerCase()
-    );
-
-    if (isDuplicateName) {
-      toast.error(`An experiment with the name "${name}" already exists.`);
-      return;
+  const dataForTable = experiments?.map(experiment => (
+    {
+      experimentName: experiment.name,
+      databaseConfigName: "Pending",
+      createdAt: new Date(experiment.createdAt).toLocaleDateString(),
+      experimentState: experiment.experimentState,
+      isRunStart,
+      setIsRunStart
     }
+  ));
 
-    const writeBatchSize = Number(form.writeBatchSize.value);
-    const experimentTimeInSeconds = Number(form.experimentTimeInSeconds.value);
-    const concurrentQueries = Number(form.concurrentQueries.value);
-    const limitOpt = Number(form.limitOpt.value);
-    const datasetId = Number(form.datasetId.value);
-    const databaseConfigId = Number(form.databaseConfigId.value);
-
-    const data = {
-      name,
-      writeBatchSize,
-      experimentTimeInSeconds,
-      concurrentQueries,
-      query: {
-        limitOpt,
-      },
-      datasetId: {
-        id: datasetId,
-      },
-      databaseConfigId: {
-        id: databaseConfigId,
-      },
-    };
-    console.log(data);
-
-    try {
-      const res = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}/experiment`,
-        data,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-      console.log(res);
-      if (res.status === 200) {
-        toast.success("Experiment created successfully");
-        refetch();
-        form.reset();
-      }
-    } catch (err) {
-      console.log(err);
-    }
+  const dataForRun = {
+    overallQueryTime: 5,
+    overallWriteTimeTaken: 39,
+    numberOfCalls: 13522,
+    queryLatencies: [
+      { percentile: 5, latency: 1 },
+      { percentile: 10, latency: 2 },
+      { percentile: 25, latency: 3 },
+      { percentile: 50, latency: 3 },
+      { percentile: 75, latency: 5 },
+      { percentile: 90, latency: 6 },
+      { percentile: 95, latency: 7 },
+      { percentile: 99, latency: 9 },
+    ],
+    writeLatencies: [
+      { percentile: 5, latency: 39 },
+      { percentile: 10, latency: 39 },
+      { percentile: 25, latency: 39 },
+      { percentile: 50, latency: 39 },
+      { percentile: 75, latency: 39 },
+      { percentile: 90, latency: 39 },
+      { percentile: 95, latency: 39 },
+      { percentile: 99, latency: 39 },
+    ],
   };
 
-  const handleStartExperiment = async (id) => {
-    const res = await axios.post(
-      `${process.env.REACT_APP_BASE_URL}/experiment/${id}/execute`,
-      {}
-    );
-    console.log(res);
-  };
 
   if (experimentsLoading) return <Loading />;
   return (
@@ -114,8 +85,8 @@ const Experiment = () => {
 
           <select className="select-type w-[90px] px-2 py-2 border-2 border-gray-300 rounded-2xl text-gray-900 text-sm focus:ring-gray-500 focus:border-gray-500 ">
             <option className="">Owner</option>
-            <option className="">Owner</option>
-            <option className="">Owner</option>
+            <option className="">Owner1</option>
+            <option className="">Owner2</option>
           </select>
           <select className="select-type w-[90px] px-2 py-2 border-2 border-gray-300 rounded-2xl text-gray-900 text-sm focus:ring-gray-500 focus:border-gray-500 ">
             <option>Status</option>
@@ -133,7 +104,7 @@ const Experiment = () => {
       </div>
 
       <div className="ps-7 pe-9 ">
-        <CommonTable data={experiments} tableHead={"Experiment"} />
+        <CommonTable data={dataForTable} tableHead={"Experiment"} columnHeads={columnHeads} dataForRun={dataForRun}/>
       </div>
     </div>
   );
