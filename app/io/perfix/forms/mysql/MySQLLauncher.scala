@@ -2,8 +2,8 @@ package io.perfix.forms.mysql
 
 import com.amazonaws.auth.DefaultAWSCredentialsProviderChain
 import com.amazonaws.regions.Regions
-import com.amazonaws.services.rds.{AmazonRDS, AmazonRDSClientBuilder}
 import com.amazonaws.services.rds.model.{CreateDBInstanceRequest, DBInstance, DescribeDBInstancesRequest}
+import com.amazonaws.services.rds.{AmazonRDS, AmazonRDSClientBuilder}
 import io.perfix.common.CommonConfig.DB_SUBNET_GROUP_NAME
 import io.perfix.launch.StoreLauncher
 import io.perfix.model.store.MySQLStoreParams

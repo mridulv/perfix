@@ -1,7 +1,7 @@
 package io.perfix.model
 
 import io.perfix.model.experiment.{ExperimentParams, ExperimentState}
-import play.api.libs.json.{Format, JsError, JsObject, JsString, JsValue, Json, Reads, Writes}
+import play.api.libs.json._
 
 trait EntityFilter
 

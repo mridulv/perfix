@@ -8,6 +8,11 @@ backend:
     type: ClusterIP
     port: 9000
 
+  oauth:
+    google:
+      clientId: "clientId"
+      secret: "secret"
+
 frontend:
   image:
     repository: mridulverma/perfix-ui
@@ -18,6 +23,11 @@ frontend:
     type: ClusterIP
     port: 3000
 
+nginx:
+  hostname: "https://trials.perfix.com"
+
+postgres:
+  port: 5432
 
 job:
   image: curlimages/curl

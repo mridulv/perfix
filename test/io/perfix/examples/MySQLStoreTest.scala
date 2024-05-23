@@ -1,15 +1,5 @@
 package io.perfix.examples
 
-import io.perfix.common.ExperimentExecutor
-import io.perfix.forms.Form
-import io.perfix.forms.mysql.MySQLConnectionParamsForm._
-import io.perfix.forms.mysql.MySQLLauncher._
-import io.perfix.forms.mysql.MySQLTableIndicesDetailForm.SECONDARY_INDEX_COLUMNS
-import io.perfix.forms.mysql.MySQLTableParamsForm.{DBNAME, TABLENAME}
-import io.perfix.model.experiment.ExperimentParams
-import io.perfix.model.{ColumnDescription, Dataset, DatasetParams}
-import play.api.libs.json.Json
-
 
 object MySQLStoreTest {
 

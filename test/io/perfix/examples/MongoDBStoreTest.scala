@@ -1,14 +1,5 @@
 package io.perfix.examples
 
-import io.perfix.common.ExperimentExecutor
-import io.perfix.forms.Form
-import io.perfix.forms.documentdb.DocumentDBConnectionParamsForm._
-import io.perfix.forms.documentdb.DocumentDBIndicesParamsForm.INDICES_COLUMNS
-import io.perfix.forms.documentdb.DocumentDBLauncher.{DB_CLUSTER_IDENTIFIER, INSTANCE_CLASS, MASTER_PASSWORD, MASTER_USERNAME}
-import io.perfix.forms.documentdb.DocumentDBTableParamsForm.COLLECTION_NAME
-import io.perfix.model.{Dataset}
-import io.perfix.model.experiment.ExperimentParams
-
 object MongoDBStoreTest {
 
   def main(args: Array[String]): Unit = {

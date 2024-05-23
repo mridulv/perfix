@@ -9,13 +9,20 @@ metadata:
 spec:
   ingressClassName: nginx
   rules:
-    - host: "*.us-west-2.elb.amazonaws.com"
+    - host: {{ .Values.nginx.hostname }}
       http:
         paths:
-          - path: /
+          - path: /api
             pathType: Prefix
             backend:
               service:
                 name: perfix-service
                 port:
                   number: {{ .Values.backend.service.port }}
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: perfix-ui-service
+                port:
+                  number: {{ .Values.frontend.service.port }}

@@ -2,15 +2,15 @@ package io.perfix.stores.dynamodb
 
 import com.amazonaws.auth.DefaultAWSCredentialsProviderChain
 import com.amazonaws.client.builder.AwsClientBuilder
-import com.amazonaws.services.dynamodbv2.{AmazonDynamoDB, AmazonDynamoDBClientBuilder}
 import com.amazonaws.services.dynamodbv2.model._
+import com.amazonaws.services.dynamodbv2.{AmazonDynamoDB, AmazonDynamoDBClientBuilder}
 import io.perfix.exceptions.InvalidStateException
 import io.perfix.launch.StoreLauncher
 import io.perfix.model.ColumnType.toDynamoDBType
 import io.perfix.model.store.DynamoDBStoreParams
 import io.perfix.model.{ColumnDescription, DatasetParams}
-import io.perfix.stores.DataStore
 import io.perfix.query.PerfixQuery
+import io.perfix.stores.DataStore
 import io.perfix.stores.dynamodb.model.DynamoDBGSIMetadataParams
 
 import scala.jdk.CollectionConverters._

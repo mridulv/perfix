@@ -1,6 +1,6 @@
 package io.perfix.model.store
 
-import play.api.libs.json.{Format, JsError, JsString, JsSuccess, Reads, Writes}
+import play.api.libs.json._
 
 sealed trait StoreType {
   def name: String

@@ -1,16 +1,14 @@
 package io.perfix.experiment
 
-import io.perfix.model.{DatabaseConfigId, Dataset}
 import io.perfix.model.experiment.{ExperimentParams, ExperimentState}
+import io.perfix.model.{DatabaseConfigId, Dataset}
 import io.perfix.query.{PerfixQuery, PerfixQueryFilter}
-import io.perfix.stores.DataStore
 import io.perfix.stores.mysql.MySQLStore
-import org.mockito.Mockito
-import org.scalatest.flatspec.AnyFlatSpec
-import org.scalatest.matchers.should.Matchers
 import org.mockito.Mockito._
 import org.mockito.invocation.InvocationOnMock
 import org.mockito.stubbing.Answer
+import org.scalatest.flatspec.AnyFlatSpec
+import org.scalatest.matchers.should.Matchers
 
 import scala.util.Random
 
@@ -35,7 +33,7 @@ class SimplePerformanceExperimentTest extends AnyFlatSpec with Matchers {
       databaseConfigId = DatabaseConfigId(-1),
       experimentResult = None,
       createdAt = Some(System.currentTimeMillis()),
-      experimentState = ExperimentState.Created
+      experimentState = Some(ExperimentState.Created)
     )
     val experiment = new SimplePerformanceExperiment(dataStore, experimentParams, Dataset.datasetForTesting)
 

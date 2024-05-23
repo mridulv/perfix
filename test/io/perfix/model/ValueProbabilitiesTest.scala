@@ -1,10 +1,7 @@
 package io.perfix.model
 
 import org.scalatest.flatspec.AnyFlatSpec
-import org.scalatest.funsuite.AnyFunSuite
 import org.scalatest.matchers.should.Matchers
-
-import scala.util.Random
 
 class ValueProbabilitiesTest extends AnyFlatSpec with Matchers  {
 

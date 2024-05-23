@@ -1,10 +1,10 @@
 package io.perfix.forms.mysql
 
 import io.perfix.exceptions.ParamsAlreadyDefinedException
-import io.perfix.model.{FormInputType, StringType}
 import io.perfix.forms.Form
 import io.perfix.forms.Form.FormInputName
 import io.perfix.forms.mysql.MySQLTableIndicesDetailForm.{PRIMARY_INDEX_COLUMN, SECONDARY_INDEX_COLUMNS}
+import io.perfix.model.{FormInputType, StringType}
 import io.perfix.stores.mysql.{MySQLParams, MySQLTableIndexesParams}
 
 class MySQLTableIndicesDetailForm(override val formParams: MySQLParams) extends Form {

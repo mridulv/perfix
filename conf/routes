@@ -23,3 +23,12 @@ POST     /config                                       io.perfix.controllers.Dat
 GET      /config/:id                                   io.perfix.controllers.DatabaseConfigController.get(id: Int)
 POST     /config/:id                                   io.perfix.controllers.DatabaseConfigController.update(id: Int)
 DELETE   /config/:id                                   io.perfix.controllers.DatabaseConfigController.delete(id: Int)
+
+GET         /callback                                  @org.pac4j.play.CallbackController.callback(request: Request)
+POST        /callback                                  @org.pac4j.play.CallbackController.callback(request: Request)
+GET         /casProxyCallback                          @org.pac4j.play.CallbackController.callback(request: Request)
+POST        /casProxyCallback                          @org.pac4j.play.CallbackController.callback(request: Request)
+GET         /logout                                    @org.pac4j.play.LogoutController.logout(request: Request)
+
+GET         /me                                        io.perfix.controllers.UserInfoController.me
+

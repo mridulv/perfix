@@ -1,7 +1,7 @@
 package io.perfix.stores.mysql
 
-import io.perfix.forms.{Form, FormSeries}
 import io.perfix.forms.mysql.{MySQLConnectionParamsForm, MySQLTableIndicesDetailForm, MySQLTableParamsForm}
+import io.perfix.forms.{Form, FormSeries}
 
 case class MySQLFormSeries(mySQLParams: MySQLParams) extends FormSeries {
   

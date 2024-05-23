@@ -3,8 +3,8 @@ package io.perfix.manager
 import com.google.inject.Inject
 import io.perfix.common.ExperimentExecutor
 import io.perfix.exceptions.InvalidStateException
-import io.perfix.model.{DatabaseConfigFilter, DatasetFilter, EntityFilter, ExperimentFilter}
 import io.perfix.model.experiment.{ExperimentId, ExperimentParams}
+import io.perfix.model.{DatabaseConfigFilter, DatasetFilter, EntityFilter, ExperimentFilter}
 import io.perfix.store.ExperimentStore
 
 import javax.inject.Singleton
