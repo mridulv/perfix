@@ -15,7 +15,7 @@ import scala.jdk.CollectionConverters._
 class UserInfoController @Inject()(val controllerComponents: SecurityComponents,
                                    sessionStore: SessionStore) extends Security[UserProfile] {
 
-  def login: Action[AnyContent] = Secure("Google2Client") {
+  def login = Secure("Google2Client") {
     Action(parse.json) { request =>
       Ok
     }
