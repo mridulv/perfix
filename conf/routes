@@ -30,5 +30,6 @@ GET         /casProxyCallback                          @org.pac4j.play.CallbackC
 POST        /casProxyCallback                          @org.pac4j.play.CallbackController.callback(request: Request)
 GET         /logout                                    @org.pac4j.play.LogoutController.logout(request: Request)
 
+POST        /login                                     io.perfix.controllers.UserInfoController.login
 GET         /me                                        io.perfix.controllers.UserInfoController.me
 
