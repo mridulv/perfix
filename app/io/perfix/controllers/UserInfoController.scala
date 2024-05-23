@@ -34,7 +34,7 @@ class UserInfoController @Inject()(val controllerComponents: SecurityComponents,
 
       Ok(Json.toJson(userInfo))
     } else {
-      Results.Forbidden
+      Ok(Json.parse("{}"))
     }
   }
 }
