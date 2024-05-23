@@ -20,15 +20,8 @@ const Authentication = () => {
 
 
 
-    const handleUser = async() => {
-        try{
-            const value = {}
-            const res = axios.post(`http://localhost:9001/login`, value)
-            console.log(res);
-        }catch(err){
-            console.log(err);
-        }
-        
+    const handleUser = () => {
+        window.location.href = 'http://localhost:9001/login';
     }
    
     if(user && Object.keys(user).length > 0){
