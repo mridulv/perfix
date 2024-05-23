@@ -16,8 +16,8 @@ class UserInfoController @Inject()(val controllerComponents: SecurityComponents,
                                    sessionStore: SessionStore) extends Security[UserProfile] {
 
   def login = Secure("Google2Client") {
-    Action(parse.json) { request =>
-      Ok
+    Action { implicit request =>
+      Redirect("http://localhost:3000")
     }
   }
 
