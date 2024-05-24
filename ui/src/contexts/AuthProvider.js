@@ -10,7 +10,7 @@ const AuthProvider = ({children}) => {
     useEffect(() => {
         setUserLoading(true)
         const getUser = async() => {
-            const res = await axios.get(`http://localhost:9001/me`);
+            const res = await axios.get(`http://localhost:9001/me`,{ withCredentials: true });
             const userData = await res.data;
             setUser(userData);
             setUserLoading(false);
