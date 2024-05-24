@@ -15,7 +15,7 @@ class Filters @Inject()(implicit override val mat: Materializer,
     nextFilter(requestHeader).map { result =>
       println("Headers " + result)
       result.withHeaders(
-        "Access-Control-Allow-Origin" -> "*"
+        "Access-Control-Allow-Origin" -> "http://localhost:3000"
         , "Access-Control-Allow-Methods" -> "OPTIONS, GET, POST, PUT, DELETE, HEAD"
         , "Access-Control-Allow-Headers" -> "Accept, Content-Type, Origin, X-Json, X-Prototype-Version, X-Requested-With"
         , "Access-Control-Allow-Credentials" -> "true"
