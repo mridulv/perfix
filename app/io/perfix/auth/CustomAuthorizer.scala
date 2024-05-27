@@ -16,7 +16,7 @@ class CustomAuthorizer extends ProfileAuthorizer {
     if (profile == null) {
       false
     } else {
-      StringUtils.startsWith (profile.getUsername, "jle")
+      true
     }
   }
 }
