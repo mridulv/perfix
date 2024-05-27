@@ -1,6 +1,7 @@
 package io.perfix.controllers
 
 import com.google.inject.{Inject, Singleton}
+import io.perfix.auth.AuthenticationAction
 import io.perfix.manager.DatabaseConfigManager
 import io.perfix.model.DatabaseConfigId._
 import io.perfix.model.DatabaseConfigParams._
@@ -12,22 +13,18 @@ import play.api.mvc.Results
 
 @Singleton
 class DatabaseConfigController @Inject()(val controllerComponents: SecurityComponents,
+                                         authenticationAction: AuthenticationAction,
                                          databaseConfigManager: DatabaseConfigManager) extends Security[UserProfile] {
-  def create = Secure("Google2Client") {
-    Action(parse.json) { request =>
+  def create = authenticationAction(parse.json) { request =>
       val databaseConfigParams = request.body.as[DatabaseConfigParams]
       Results.Ok(Json.toJson(databaseConfigManager.create(databaseConfigParams)))
-    }
   }
 
-  def get(databaseConfigId: Int) = Secure("Google2Client") {
-    Action { request =>
+  def get(databaseConfigId: Int) = authenticationAction { request =>
       Results.Ok(Json.toJson(databaseConfigManager.get(DatabaseConfigId(databaseConfigId))))
-    }
   }
 
-  def update(databaseConfigId: Int) = Secure("Google2Client"){
-    Action(parse.json) { request =>
+  def update(databaseConfigId: Int) = authenticationAction(parse.json) { request =>
       val databaseConfigParams = request.body.as[DatabaseConfigParams]
       Results.Ok(
         Json.toJson(
@@ -37,20 +34,15 @@ class DatabaseConfigController @Inject()(val controllerComponents: SecurityCompo
           )
         )
       )
-    }
   }
 
-  def all = Secure("Google2Client") {
-    Action(parse.json) { request =>
+  def all = authenticationAction(parse.json) { request =>
       val filters = request.body.as[Seq[EntityFilter]]
       Results.Ok(Json.toJson(databaseConfigManager.all(filters)))
-    }
   }
 
-  def delete(databaseConfigId: Int) = Secure("Google2Client") {
-    Action { request =>
+  def delete(databaseConfigId: Int) = authenticationAction { request =>
       databaseConfigManager.delete(DatabaseConfigId(databaseConfigId))
       Results.Ok
-    }
   }
 }
