@@ -5,3 +5,4 @@ project/target/
 project/project/
 logs/
 ui/node_modules/
+ui/.env.local

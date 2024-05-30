@@ -1,42 +1,83 @@
-import React from "react";
+import React, { useState } from "react";
 import axios from "axios";
-import { FaPlus } from "react-icons/fa6";
 import { useQuery } from "react-query";
-import toast from "react-hot-toast";
-import DatasetCard from "../../../components/DatasetCard";
 import Loading from "../../../components/Loading";
 import AddButton from "../../../components/AddButton";
+import CommonTable from "../../../components/CommonTable";
 
+const columnHeads = ["Dataset Name", "Number of Columns", "Created At", "Rows"];
+
+// const typeOptions = ["first", "second", "third"];
+
+// [{"text":"as","type":"TextFilter"},{"store":"mysql","type":"DatabaseTypeFilter"},{"name":"da1","type":"DatasetNameFilter"},{"name":"Created","type":"ExperimentStateFilter"}]'
 const Datasets = () => {
-  const {
-    data: datasets,
-    isLoading,
-    refetch,
-  } = useQuery({
+  const [searchText, setSearchText] = useState("");
+
+  // const handleSetSearchText = (value) => {
+  //   setTimeout(() => {
+  //     setSearchText(value);
+  //   }, 200)
+  // }
+  const handleSetSearchText = (value) => {
+    setSearchText(value)
+  }
+ console.log(searchText);
+  const { data: datasets, isLoading } = useQuery({
     queryKey: ["datasets"],
     queryFn: async () => {
-      const res = await axios.get("http://localhost:9000/dataset");
+      let values = [];
+      if(searchText){
+        values = [{text: searchText, type: "TextFilter"}]
+      }else{
+        values = [];
+      }
+      const res = await axios.post(`${process.env.REACT_APP_BASE_URL}/dataset`, values, {
+        headers: {
+          "Content-Type": "application/json"
+        },
+      });
       const data = await res.data;
-      console.log(data);
       return data;
     },
   });
 
+  const dataForTable = datasets?.map(dataset => ({
+    datasetName: dataset.name,
+    numberOfColumns: dataset.columns.length,
+    createdAt: new Date(dataset.createdAt).toLocaleDateString(), // Format date if necessary
+    rows: dataset.rows
+  }));
+
+
   if (isLoading) return <Loading />;
   return (
-    <div className="px-3 py-4">
-      <h2 className="text-2xl text-center font-bold text-orange-600 my-3">
-        Datasets
-      </h2>
-      <div className="flex justify-end my-4 mx-8">
-        <AddButton value={"New Dataset"} link={"/add-dataset"} />
+    <div className="pt-7 ps-7">
+      <div>
+        <h3 className="text-2xl font-semibold">Datasets</h3>
+      </div>
+      <div className="w-[95%] h-[1px] bg-[#fcf8f8] my-6"></div>
+      <div className="flex justify-between me-9 mt-6 mb-5">
+        <div className="flex gap-x-4">
+          <input
+            className="w-[200px] px-1 py-[6px]  border-2 border-gray-200 rounded search-input"
+            type="text"
+            name=""
+            id=""
+            placeholder="Search"
+            onChange={(e) => handleSetSearchText(e.target.value)}
+          />
+        </div>
+        <div>
+          <AddButton value={"New Dataset"} link={"/add-dataset"} />
+        </div>
       </div>
 
-      <div className="w-[90%] mx-auto grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {datasets &&
-          datasets.map((dataset) => (
-            <DatasetCard key={dataset.id.id} dataset={dataset}></DatasetCard>
-          ))}
+      <div className="pe-9 ">
+        <CommonTable
+          data={dataForTable}
+          tableHead={"Experiment"}
+          columnHeads={columnHeads}
+        />
       </div>
     </div>
   );

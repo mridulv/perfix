@@ -1,117 +1,83 @@
-import axios from "axios";
-import React, { useState } from "react";
-import { useQuery } from "react-query";
-import { Link } from "react-router-dom";
-import { SlOptionsVertical } from "react-icons/sl";
-import Loading from "../../../components/Loading";
-import ConfirmationModal from "../../../components/ConfirmationModal";
-import toast from "react-hot-toast";
+import React, {  useState } from 'react';
+import AddButton from '../../../components/AddButton';
+import CommonTable from '../../../components/CommonTable';
+import { useQuery } from 'react-query';
+import axios from 'axios';
+import Loading from '../../../components/Loading';
+import CustomSelect from '../../../components/CustomSelect';
+
+const columnHeads = ["Database Name", "Database Type", "Dataset Name", "Created At"];
+const databaseTypeOptions = ["MySQL", "DynamoDB", "Redis", "DocumentDB"];
 
 const DBConfiguration = () => {
-  const [showOptions, setShowOptions] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selectedConfig, setSelectedConfig] = useState(null);
+  const [selectedDatabaseType, setSelectedDatabaseType] = useState("Choose Type");
 
-  const {
-    data: configs,
-    refetch,
-    isLoading,
-  } = useQuery({
-    queryKey: ["configs"],
+  const { data: databases, isLoading } = useQuery({
+    queryKey: ["databases", selectedDatabaseType],
     queryFn: async () => {
-      const res = await axios.get("http://localhost:9000/config");
+      let values = [];
+  
+      if (selectedDatabaseType !== "Choose Type") {
+        values = [{ store: selectedDatabaseType, type: "DatabaseTypeFilter" }];
+      }
+  
+      const res = await axios.post(`${process.env.REACT_APP_BASE_URL}/config`, values, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+  
       const data = await res.data;
-
       return data;
     },
   });
 
-  const handleShowOptions = (config) => {
-    setShowOptions(showOptions === config ? null : config);
-    setSelectedConfig(config);
-  };
-
-  const handleDeleteConfig = async (id) => {
-    const res = await axios.delete(`http://localhost:9000/config/${id}`);
-    console.log(res);
-    if (res.status === 200) {
-      toast.success("Config successfully deleted.");
-      refetch();
-      setIsModalOpen(false);
+  
+  const  dataForTable = databases?.map(database => (
+    {
+      databaseName: database.name,
+      databaseType: database.storeParams.type,
+      datasetName: "Pending",
+      createdAt: new Date(database.createdAt).toLocaleDateString()
     }
-  };
+  ))
+ 
 
-  if (isLoading) return <Loading />;
+
+  if(isLoading) return <Loading/>
   return (
-    <div>
-      <h3 className="text-lg font-bold text-center">Configurations</h3>
-      <div className="flex justify-end pe-12">
-        <Link
-          className="btn btn-primary btn-md text-white my-4"
-          to="/add-db-configuration"
-        >
-          Add Configuration
-        </Link>
+    <div className='ps-7 pt-7'>
+       <div>
+        <h3 className="text-2xl font-semibold">Database</h3>
       </div>
-      <div className="mt-4">
-        <div className="w-[90%] mx-auto grid grid-cols-3 gap-3">
-          {configs.map((config) => (
-            <div
-              className="p-4 border border-gray-400 shadow-md my-3"
-              key={config.databaseConfigId.id}
-            >
-              <p>Configuration Name: {config.name}</p>
-              <p> store name: {config.storeName}</p>
-
-              {config.formDetails &&
-              config.formDetails.formStatus === "Completed" ? (
-                <div className="flex justify-end my-2 relative">
-                  <button onClick={() => handleShowOptions(config)}>
-                    <SlOptionsVertical />
-                  </button>
-                  {showOptions === config && (
-                    <div className="flex flex-col gap-2 absolute top-5 right-0 bg-gray-100 px-8 py-4 rounded-lg">
-                      <Link
-                        to={`/update-db-configuration/${config.databaseConfigId.id}`}
-                        className="btn btn-sm btn-accent text-white"
-                      >
-                        Update
-                      </Link>
-                      <button
-                        onClick={() => setIsModalOpen(true)}
-                        className="btn btn-sm btn-error text-white"
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  )}
-                </div>
-              ) : config.formDetails &&
-                config.formDetails.formStatus === "Updating" ? (
-                <Link
-                  className="btn btn-primary btn-sm text-white my-4"
-                  to={`/update-input-configuration/${config.databaseConfigId.id}`}
-                >
-                  Complete Update
-                </Link>
-              ) : (
-                <Link
-                  className="btn btn-error btn-sm text-white my-4"
-                  to={`/input-configuration/${config.databaseConfigId.id}`}
-                >
-                  Submit inputs
-                </Link>
-              )}
-            </div>
-          ))}
-          <ConfirmationModal
-            open={isModalOpen}
-            onClose={() => setIsModalOpen(false)}
-            data={selectedConfig}
-            action={handleDeleteConfig}
-            actionText={"Are you sure you want to delete this"}
+      <div className="w-[95%] h-[1px] bg-[#fcf8f8] my-6"></div>
+      <div className="flex justify-between me-9 mt-6 mb-3">
+      <div className="flex gap-x-4">
+          <input
+            className="w-[200px] px-1 py-[6px]  border-2 border-gray-200 rounded search-input"
+            type="text"
+            name=""
+            id=""
+            placeholder="Search"
           />
+          <div className='ms-3'>
+            <label className='text-15px'>Filter: </label>
+            {/* <select className="select-type w-[90px] px-2 py-2 border-2 border-gray-300 rounded-2xl text-gray-900 text-sm focus:ring-gray-500 focus:border-gray-500 ">
+              <option className="">All</option>
+              <option className="">All</option>
+              <option className="">All</option>
+            </select> */}
+            <CustomSelect selected={selectedDatabaseType} setSelected={setSelectedDatabaseType} options={databaseTypeOptions}/>
+          </div>
         </div>
+        <div>
+        <AddButton value={"New Database"} link={"/add-database"} />
+        </div>
+      </div>
+      <div className='me-9'>
+      <div className="">
+        <CommonTable data={dataForTable} tableHead={"Database"} columnHeads={columnHeads} />
+      </div>
       </div>
     </div>
   );
