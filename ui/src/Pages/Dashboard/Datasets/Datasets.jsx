@@ -1,42 +1,103 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { FaPlus } from "react-icons/fa6";
-import { useQuery } from "react-query";
-import toast from "react-hot-toast";
-import DatasetCard from "../../../components/DatasetCard";
 import Loading from "../../../components/Loading";
-import AddButton from "../../../components/AddButton";
+import CommonTable from "../../../components/CommonTable";
+import AddDatasetModal from "../../../components/AddDatasetModal";
 
+const columnHeads = ["Dataset Name", "Number of Columns", "Created At", "Rows"];
+
+// const typeOptions = ["first", "second", "third"];
+
+// [{"text":"as","type":"TextFilter"},{"store":"mysql","type":"DatabaseTypeFilter"},{"name":"da1","type":"DatasetNameFilter"},{"name":"Created","type":"ExperimentStateFilter"}]'
 const Datasets = () => {
-  const {
-    data: datasets,
-    isLoading,
-    refetch,
-  } = useQuery({
-    queryKey: ["datasets"],
-    queryFn: async () => {
-      const res = await axios.get("http://localhost:9000/dataset");
-      const data = await res.data;
-      console.log(data);
-      return data;
-    },
-  });
+  const [datasets, setDatasets] = useState([]);
+  const [datasetsLoading, setDatasetsLoading] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [searchText, setSearchText] = useState("");
 
-  if (isLoading) return <Loading />;
+  const handleSetSearchText = (value) => {
+    setTimeout(() => {
+      setSearchText(value);
+    }, 500);
+  };
+
+  // const {data: datasets, isLoading} = useQuery({
+  //   queryKey: ["datasets"],
+  //   queryFn: async() => {
+  //     let value = [];
+  //     const res = await axios.post(`${process.env.REACT_APP_BASE_URL}/dataset`, value, {
+  //       headers: {
+  //         "Content-Type": "application/json"
+  //       },
+  //       withCredentials: true
+  //     });
+  //     const data = await res.data;
+  //     return data;
+  //   }
+  // })
+
+  useEffect(() => {
+    let value = [];
+    if (searchText) {
+      value = [{ text: searchText, type: "TextFilter" }];
+    }
+    setDatasetsLoading(true);
+    const fetchDatasets = async () => {
+      const res = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}/dataset`,
+        value,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
+      if (res.status === 200) {
+        setDatasets(res.data);
+        setDatasetsLoading(false);
+      }
+    };
+    fetchDatasets();
+  }, [searchText]);
+
+  if (datasetsLoading) return <Loading />;
   return (
-    <div className="px-3 py-4">
-      <h2 className="text-2xl text-center font-bold text-orange-600 my-3">
-        Datasets
-      </h2>
-      <div className="flex justify-end my-4 mx-8">
-        <AddButton value={"New Dataset"} link={"/add-dataset"} />
+    <div className="pt-7 ps-7">
+      <div>
+        <h3 className="text-2xl font-semibold">Datasets</h3>
       </div>
+      <div className="w-[95%] h-[1px] bg-accent my-6"></div>
+      <div className="flex justify-between me-9 mt-6 mb-5">
+        <div className="flex gap-x-4">
+          <input
+            className="w-[200px] px-1 py-[6px]  border-2 border-gray-200 rounded search-input"
+            type="text"
+            name=""
+            id=""
+            placeholder="Search"
+            onChange={(e) => handleSetSearchText(e.target.value)}
+          />
+        </div>
+        <div>
+          <button
+            onClick={() => setOpen(true)}
+            className="btn bg-primary btn-sm border border-primary rounded text-white hover:bg-[#57B1FF]"
+          >
+            Add Dataset
+          </button>
+        </div>
+      </div>
+      <>
+        <AddDatasetModal open={open} onClose={() => setOpen(false)} />
+      </>
 
-      <div className="w-[90%] mx-auto grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-4">
-        {datasets &&
-          datasets.map((dataset) => (
-            <DatasetCard key={dataset.id.id} dataset={dataset}></DatasetCard>
-          ))}
+      <div className="pe-9 ">
+        <CommonTable
+          data={datasets}
+          tableHead={"Experiment"}
+          columnHeads={columnHeads}
+        />
       </div>
     </div>
   );

@@ -1,48 +1,57 @@
-import React, { useState } from "react";
+import React, { useContext } from "react";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { FaUserAlt } from "react-icons/fa";
 import { IoMenu } from "react-icons/io5";
 import SideBarAddButton from "../components/SideBarAddButton";
-import icon1 from "../../src/assets/icon1.png"
-import icon2 from "../../src/assets/icon2.png"
-import icon3 from "../../src/assets/icon3.png"
-import icon4 from "../../src/assets/icon4.png"
+import { AiOutlineExperiment } from "react-icons/ai";
+import { GoDatabase } from "react-icons/go";
+import { AuthContext } from "../contexts/AuthProvider";
+import { FiLogOut } from "react-icons/fi";
+import axios from "axios";
+import toast from "react-hot-toast";
 
 const menus = [
   {
-    name: "Dashboard",
-    link: "/",
-    icon: icon1,
-  },
-
-  {
-    name: "Database",
-    link: "/db-configuration",
-    icon: icon2,
-  },
-  {
     name: "Datasets",
-    link: "/datasets",
-    icon: icon2
+    link: "/",
+    icon: <GoDatabase />,
+  },
+  {
+    name: "Database Configuration",
+    link: "/database",
+    icon: <GoDatabase size={18} />,
   },
   {
     name: "Experiment",
     link: "/experiment",
-    icon: icon3,
+    icon: <AiOutlineExperiment size={18} />,
   },
 ];
 
-const userProfile = {
-  name: "John Doe",
-  profilePic: <FaUserAlt />,
-};
-
 const DashboardLayout = () => {
-  const [menuOpen, setMenuOpen] = useState(true);
+  const { user, setUser } = useContext(AuthContext);
   const location = useLocation();
 
+  const userProfile = {
+    name: user?.name,
+    email: user?.email,
+    profilePic: <FaUserAlt />,
+  };
+
+  const handleLogout = async () => {
+    const res = await axios.get(`${process.env.REACT_APP_BASE_URL}/logout`, {
+      withCredentials: true,
+    });
+    console.log(res);
+    if (res.status === 200) {
+      toast.success("Logged out successfully!");
+      setUser({});
+    }
+  };
+
   return (
-    <div className="drawer lg:drawer-open bg-[#fcf8f8]">
+    //bg-[#fcf8f8]
+    <div className="drawer lg:drawer-open bg-accent">
       <input id="my-drawer-2" type="checkbox" className="drawer-toggle" />
       <div className="drawer-content ">
         {/* Page content here */}
@@ -58,86 +67,80 @@ const DashboardLayout = () => {
         </div>
       </div>
       <div className="drawer-side h-screen">
-        {/* <button
-            className={`bg-blue-500 hidden md:block rounded-full px-2 py-2 cursor-pointer absolute top-7 -right-3 z-50  ${
-              !menuOpen && "rotate-180"
-            }`}
-            onClick={() => setMenuOpen(!menuOpen)}
-          >
-            <FaAngleLeft color="white" />
-          </button> */}
         <label
           htmlFor="my-drawer-2"
           aria-label="close sidebar"
           className="drawer-overlay"
         ></label>
         <div
-          className={`menu p-4 ${
-            menuOpen ? "w-[250px]" : "w-20"
-          } min-h-screen bg-[#fcf8f8]  flex flex-col justify-between relative duration-300`}
+          className={`menu p-4 w-[250px] min-h-screen bg-accent  flex flex-col justify-between relative duration-300`}
         >
           {/* Sidebar content here */}
 
           <div className="">
-            <h1
-              className={`mt-6 ms-4 font-medium text-[24px]   ${
-                !menuOpen && "scale-0"
-              }`}
-            >
-              PerFix
-            </h1>
+            <h1 className={`mt-6 ms-4 font-medium text-[24px]`}>PerFix</h1>
 
-            <div className="mt-8 ms-4 flex">
-              <SideBarAddButton location={location}/>
-            </div>
+            {location.pathname === "/" ||
+            location.pathname === "/database" ||
+            location.pathname === "/experiment" ? (
+              <div className="mt-8 ms-4 flex">
+                <SideBarAddButton
+                  value={`${
+                    location.pathname === "/"
+                      ? "Dataset"
+                      : location.pathname === "/database"
+                      ? "Database"
+                      : "Experiment"
+                  }`}
+                  url={`${
+                    location.pathname === "/"
+                      ? "/add-dataset"
+                      : location.pathname === "/database"
+                      ? "/add-database"
+                      : "/add-experiment-dataset"
+                  }`}
+                />
+              </div>
+            ) : (
+              <div className="mt-8"></div>
+            )}
             <div className="mt-5 ms-1">
               {menus.map((menu) => (
                 <Link
+                  //bg-[#fdd3db]
                   key={menu.name}
-                  className={`font-bold hover:bg-purple-300 mt-1 ${
-                    location.pathname === menu.link ? "bg-[#fdd3db]" : ""
-                  }  ${
-                    menuOpen ? "w-56" : "w-12"
-                  } px-5 py-2 rounded-3xl flex gap-4 items-center`}
+                  className={`w-56 px-3 py-2  mt-1 flex gap-4 items-center ${
+                    location.pathname === menu.link && " bg-[#A3D4FF]"
+                  } hover:bg-[#57B1FF] font-bold rounded-3xl `}
                   to={`${menu.link}`}
                 >
-                  <img src={menu.icon} alt="" />
-                  <span
-                    className={`${
-                      !menuOpen && "hidden"
-                    } origin-left duration-200`}
-                  >
-                    {" "}
-                    {menu.name}
-                  </span>
+                  {menu.icon}
+                  <span> {menu.name}</span>
                 </Link>
               ))}
             </div>
           </div>
 
-          <div className="flex flex-col ps-2 mb-2 border-t border-gray-600 py-5">
-            <div className="flex items-center mb-4 ms-8">
-              <span>{userProfile.profilePic}</span>
-              <span
-                className={`ml-3 text-black ${
-                  !menuOpen && "hidden"
-                } origin-left duration-200`}
-              >
-                {userProfile.name}
+          <div className="flex flex-col  mb-2 border-t border-gray-600 py-5">
+            <div className="flex items-center mb-4 ">
+              <span className="p-3 bg-gray-300 rounded-full">
+                {userProfile.profilePic}
               </span>
+              <div className="ml-3 flex flex-col">
+                <span className={`text-[12px] text-black`}>
+                  {userProfile.name}
+                </span>
+                <span className="text-[12px] text-black">{user?.email}</span>
+              </div>
             </div>
             <div className="mt-2 ms-4">
               <button
-                className={`pb-0 text-black ${
-                  menuOpen ? "px-5" : "px-2"
-                } h-[40px] py-2 flex items-center gap-3 rounded-xl origin-left duration-500`}
+                onClick={handleLogout}
+                className={`btn btn-sm h-[40px] bg-primary hover:bg-[#57B1FF] pb-0 px-5 flex items-center gap-3 
+                 border border-primary rounded text-base font-semibold  text-white`}
               >
-                <img src={icon4} alt="" />
-                <span
-                  className={`${!menuOpen && "hidden"} text-base font-semibold`}
-                >
-                  Setting
-                </span>
+                <FiLogOut />
+                Logout
               </button>
             </div>
           </div>
