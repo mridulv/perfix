@@ -19,7 +19,7 @@ spec:
     app: perfix-ui
   ports:
     - port: 80
-      targetPort: "{{ .Values.frontend.service.port }}"
+      targetPort: {{ .Values.frontend.service.port }}
   type: "{{ .Values.frontend.service.type }}"
 ---
 apiVersion: v1
