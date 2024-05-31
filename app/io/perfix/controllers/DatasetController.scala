@@ -40,7 +40,7 @@ class DatasetController @Inject()(val controllerComponents: SecurityComponents,
       Results.Ok(Json.toJson(datasetManager.all(filters)))
   }
 
-  def delete(datasetId: Int) = authenticationAction(parse.json) { request =>
+  def delete(datasetId: Int) = authenticationAction { request =>
       datasetManager.delete(DatasetId(datasetId))
       Results.Ok
   }
