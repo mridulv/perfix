@@ -26,7 +26,7 @@ const AddDatabaseModal = ({ open, onClose, datasets, refetch }) => {
     setSelectedDatasetOption({ option: "Choose Dataset", value: "choose" });
     setSelectedDatasetValue(null);
     setCurrentAddStep(1);
-    setSelectedDataset(null)
+    setSelectedDataset(null);
   };
 
   // choosing dataset or creating new dataset
@@ -105,7 +105,8 @@ const AddDatabaseModal = ({ open, onClose, datasets, refetch }) => {
     if (selectedDatasetValue) {
       const fetchDataset = async () => {
         const res = await axios.get(
-          `${process.env.REACT_APP_BASE_URL}/dataset/${selectedDatasetValue}`, {
+          `${process.env.REACT_APP_BASE_URL}/dataset/${selectedDatasetValue}`,
+          {
             withCredentials: true,
           }
         );
@@ -142,8 +143,12 @@ const AddDatabaseModal = ({ open, onClose, datasets, refetch }) => {
           <div className="mb-5 ms-6">
             <p className="text-xl font-semibold">Create new database</p>
           </div>
-          <div className="w-full bg-[#FBEAEE] mb-9 ps-6 py-3 flex items-center gap-8">
-            <div className={`w-11 ${currentAddStep === 1 && "bg-white"}  p-[10px] rounded-xl`}>
+          <div className="w-full bg-secondary mb-9 ps-6 py-3 flex items-center gap-8">
+            <div
+              className={`w-11 ${
+                currentAddStep === 1 && "bg-white"
+              }  p-[10px] rounded-xl`}
+            >
               <p className="w-6 h-6 bg-black rounded-full grid place-content-center text-sm text-white ">
                 1
               </p>
@@ -151,7 +156,11 @@ const AddDatabaseModal = ({ open, onClose, datasets, refetch }) => {
             <div>
               <IoIosArrowForward size={20} />
             </div>
-            <div className={`w-11 ${currentAddStep === 2 && "bg-white"}  p-[10px] rounded-xl`}>
+            <div
+              className={`w-11 ${
+                currentAddStep === 2 && "bg-white"
+              }  p-[10px] rounded-xl`}
+            >
               <p className="w-6 h-6 bg-black rounded-full grid place-content-center text-sm text-white ">
                 2
               </p>
@@ -170,11 +179,18 @@ const AddDatabaseModal = ({ open, onClose, datasets, refetch }) => {
             ></ChooseDatasetComponent>
           )}
 
-          {(currentAddStep === 2 && selectedDatasetValue !== null && selectedDataset !== null) && (
-            <div className="">
-              <AddDatabase dataset={selectedDataset} onClose={handleCloseModal} refetch={refetch} valueFor={"modal"}/>
-            </div>
-          )}
+          {currentAddStep === 2 &&
+            selectedDatasetValue !== null &&
+            selectedDataset !== null && (
+              <div className="">
+                <AddDatabase
+                  dataset={selectedDataset}
+                  onClose={handleCloseModal}
+                  refetch={refetch}
+                  valueFor={"modal"}
+                />
+              </div>
+            )}
         </div>
       </div>
     </div>

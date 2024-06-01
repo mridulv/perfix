@@ -1,45 +1,48 @@
 import React from "react";
-import { render, screen, waitFor } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "react-query";
-import DBConfiguration from "../../src/Pages/Dashboard/DBConfiguration/DBConfiguration";
-import { expect } from "vitest";
-import userEvent from "@testing-library/user-event";
+import { MemoryRouter } from "react-router-dom";
+import DBConfiguration from "../../src/Pages/Dashboard/DBConfiguration/DBConfiguration"
+import axios from "axios";
+import { vi } from "vitest";
 
-describe("DBConfiguration", () => {
+// Mock axios
+vi.mock("axios");
+
+describe("Databases Configuration", () => {
+  beforeEach(() => {
+    // Mock the axios.post to resolve immediately with an empty array
+    axios.post.mockResolvedValue({
+      status: 200,
+      data: [],
+    });
+  });
+
   const renderComponent = () => {
     const client = new QueryClient();
 
     render(
-      <QueryClientProvider client={client}>
-        <DBConfiguration />
-      </QueryClientProvider>
+      <MemoryRouter>
+        <QueryClientProvider client={client}>
+          <DBConfiguration />
+        </QueryClientProvider>
+      </MemoryRouter>
     );
   };
-  it("should render the  database configurations page", () => {
+
+  it("should render the database page", async () => {
     renderComponent();
 
-    waitFor(() => {
-      const heading = screen.getByRole("heading");
+    const headings = await screen.findAllByText(/Database/i);
+    headings.forEach((heading) => {
       expect(heading).toBeInTheDocument();
     });
   });
-  it("should display configurations if present", async () => {
-    renderComponent();
-    waitFor(() => {
-      const configurationElements = screen.getAllByText(/Configuration Name:/);
-      expect(configurationElements).toBeTruthy();
-    });
-  });
 
-  it("should navigate to the add configuration page when add configuration button is clicked", async () => {
+  it("should render CommonTable component", async () => {
     renderComponent();
-    const user = userEvent.setup();
-     waitFor(async() => {
-      const addConfigurationButton = screen.getByRole("link", {
-        name: /Add Configuration/i,
-      });
-      await user.click(addConfigurationButton)
-      expect(window.location.pathname).toBe("/add-db-configuration");
-    });
+
+    const commonTable = await screen.findByRole("table");
+    expect(commonTable).toBeInTheDocument();
   });
 });

@@ -27,28 +27,36 @@ const DBConfiguration = () => {
   const [open, setOpen] = useState(false);
   const [datasets, setDatasets] = useState([]);
   const [datasetsLoading, setDatasetsLoading] = useState(false);
+  const [searchText, setSearchText] = useState("");
+
+  const handleSearchText = (e) => {
+    setSearchText(e.target.value);
+  };
+
+  console.log(searchText);
 
   const { data: databases, isLoading } = useQuery({
-    queryKey: ["databases", selectedDatabaseType],
+    queryKey: ["databases", selectedDatabaseType, searchText],
     queryFn: async () => {
       let values = [];
 
       if (selectedDatabaseType.value !== "choose") {
         values = [
+          ...values,
           { store: selectedDatabaseType.value, type: "DatabaseTypeFilter" },
         ];
       }
 
-      const res = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}/config`,
-        values,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          withCredentials: true,
-        }
-      );
+      if (searchText) {
+        values = [{ text: searchText, type: "TextFilter" }];
+      }
+
+      const res = await axios.post(`${process.env.REACT_APP_BASE_URL}/config`, values, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        withCredentials: true,
+      });
 
       const data = await res.data;
       return data;
@@ -59,16 +67,12 @@ const DBConfiguration = () => {
     const value = [];
     setDatasetsLoading(true);
     const fetchDatasets = async () => {
-      const res = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}/dataset`,
-        value,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          withCredentials: true,
-        }
-      );
+      const res = await axios.post(`${process.env.REACT_APP_BASE_URL}/dataset`, value, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        withCredentials: true,
+      });
       if (res.status === 200) {
         setDatasets(res.data);
         setDatasetsLoading(false);
@@ -99,6 +103,7 @@ const DBConfiguration = () => {
             name=""
             id=""
             placeholder="Search"
+            onChange={(e) => handleSearchText(e)}
           />
           <div className="ms-3">
             <label className="text-15px">Filter: </label>
@@ -118,21 +123,27 @@ const DBConfiguration = () => {
             Add Database
           </button>
         </div>
-        <AddDatabaseModal
-          open={open}
-          onClose={() => setOpen(false)}
-          datasets={datasets}
-        />
       </div>
-      <div className="me-9">
-        <div className="">
-          <CommonTable
-            data={dataForTable}
-            tableHead={"Database"}
-            columnHeads={columnHeads}
+      {isLoading && datasetsLoading ? (
+        <Loading />
+      ) : (
+        <div>
+          <AddDatabaseModal
+            open={open}
+            onClose={() => setOpen(false)}
+            datasets={datasets}
           />
+          <div className="me-9">
+            <div className="">
+              <CommonTable
+                data={dataForTable}
+                tableHead={"Database"}
+                columnHeads={columnHeads}
+              />
+            </div>
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

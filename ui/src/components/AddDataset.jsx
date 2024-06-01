@@ -65,7 +65,7 @@ const AddDataset = ({ columns, handleAddColumn }) => {
         <div className="flex mt-3">
           <button
             onClick={handleAddColumn}
-            className="text-[#e83f8c]  text-[12px] font-semibold flex items-center gap-3"
+            className="text-primary  text-[12px] font-semibold flex items-center gap-3"
             type="button"
           >
             <FaPlus size={12} />

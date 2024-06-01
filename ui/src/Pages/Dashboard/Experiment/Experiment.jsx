@@ -14,30 +14,48 @@ const columnHeads = [
   "Run",
 ];
 
-const demoOptions = ["Owner1", "Owner2", "Owner3"];
-const demoOptions2 = ["Status1", "Status2", "Status3"];
-const demoOptions3 = ["Visible1", "Visible2", "Visible3"];
+const demoOptions = [
+  { option: "Owner1", value: "Owner1" },
+  { option: "Owner2", value: "Owner2" },
+  { option: "Owner3", value: "Owner3" },
+];
+const demoOptions2 = [
+  { option: "Status1", value: "Status1" },
+  { option: "Status2", value: "Status2" },
+  { option: "Status3", value: "Status3" },
+];
+
+const demoOptions3 = [
+  { option: "Visible1", value: "Visible1" },
+  { option: "Visible2", value: "Visible2" },
+  { option: "Visible3", value: "Visible3" },
+];
 
 const Experiment = () => {
   const [isRunStart, setIsRunStart] = useState(false);
-  const [selectOwner, setSelectOwner] = useState("Choose");
-  const [selectStatus, setSelectStatus] = useState("Choose");
-  const [selectVisible, setSelectVisible] = useState("Choose");
+  const [selectOwner, setSelectOwner] = useState({
+    option: "Choose",
+    value: "choose",
+  });
+  const [selectStatus, setSelectStatus] = useState({
+    option: "Choose",
+    value: "choose",
+  });
+  const [selectVisible, setSelectVisible] = useState({
+    option: "Choose",
+    value: "choose",
+  });
 
   const { data: experiments, isLoading: experimentsLoading } = useQuery({
     queryKey: ["experiments"],
     queryFn: async () => {
       const values = [];
-      const res = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}/experiment`,
-        values,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          withCredentials: true,
-        }
-      );
+      const res = await axios.post(`${process.env.REACT_APP_BASE_URL}/experiment`, values, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        withCredentials: true,
+      });
       const data = await res.data;
       return data;
     },

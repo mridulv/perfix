@@ -6,8 +6,6 @@ import AddDatasetModal from "../../../components/AddDatasetModal";
 
 const columnHeads = ["Dataset Name", "Number of Columns", "Created At", "Rows"];
 
-// const typeOptions = ["first", "second", "third"];
-
 // [{"text":"as","type":"TextFilter"},{"store":"mysql","type":"DatabaseTypeFilter"},{"name":"da1","type":"DatasetNameFilter"},{"name":"Created","type":"ExperimentStateFilter"}]'
 const Datasets = () => {
   const [datasets, setDatasets] = useState([]);
@@ -43,16 +41,12 @@ const Datasets = () => {
     }
     setDatasetsLoading(true);
     const fetchDatasets = async () => {
-      const res = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}/dataset`,
-        value,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          withCredentials: true,
-        }
-      );
+      const res = await axios.post(`${process.env.REACT_APP_BASE_URL}/dataset`, value, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        withCredentials: true,
+      });
       if (res.status === 200) {
         setDatasets(res.data);
         setDatasetsLoading(false);
@@ -61,7 +55,6 @@ const Datasets = () => {
     fetchDatasets();
   }, [searchText]);
 
-  if (datasetsLoading) return <Loading />;
   return (
     <div className="pt-7 ps-7">
       <div>
@@ -88,17 +81,28 @@ const Datasets = () => {
           </button>
         </div>
       </div>
-      <>
-        <AddDatasetModal open={open} onClose={() => setOpen(false)} />
-      </>
+      {datasetsLoading ? (
+        <Loading />
+      ) : (
+        <div>
+          <>
+            <AddDatasetModal
+              open={open}
+              onClose={() => setOpen(false)}
+              datasets={datasets}
+            />
+          </>
 
-      <div className="pe-9 ">
-        <CommonTable
-          data={datasets}
-          tableHead={"Experiment"}
-          columnHeads={columnHeads}
-        />
-      </div>
+          <div className="pe-9 ">
+            <CommonTable
+              data={datasets}
+              tableHead={"Dataset"}
+              columnHeads={columnHeads}
+              setDatasets={setDatasets}
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 };

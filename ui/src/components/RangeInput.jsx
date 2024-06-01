@@ -6,7 +6,7 @@ const RangeInput = ({ value, setValue, startValue, lastValue, label }) => {
     setValue(newValue);
     const percentage =
       ((newValue - e.target.min) / (e.target.max - e.target.min)) * 100;
-    e.target.style.background = `linear-gradient(to right, #db2777 ${percentage}%, #e2e8f0 ${percentage}%)`;
+    e.target.style.background = `linear-gradient(to right, #3DA5FF ${percentage}%, #e2e8f0 ${percentage}%)`;
   };
 
   return (

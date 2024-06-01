@@ -80,30 +80,12 @@ const DashboardLayout = () => {
           <div className="">
             <h1 className={`mt-6 ms-4 font-medium text-[24px]`}>PerFix</h1>
 
-            {location.pathname === "/" ||
-            location.pathname === "/database" ||
-            location.pathname === "/experiment" ? (
-              <div className="mt-8 ms-4 flex">
-                <SideBarAddButton
-                  value={`${
-                    location.pathname === "/"
-                      ? "Dataset"
-                      : location.pathname === "/database"
-                      ? "Database"
-                      : "Experiment"
-                  }`}
-                  url={`${
-                    location.pathname === "/"
-                      ? "/add-dataset"
-                      : location.pathname === "/database"
-                      ? "/add-database"
-                      : "/add-experiment-dataset"
-                  }`}
-                />
-              </div>
-            ) : (
-              <div className="mt-8"></div>
-            )}
+            <div className="mt-8 ms-4 flex">
+              <SideBarAddButton
+                value="Experiment"
+                url="/add-experiment-dataset"
+              />
+            </div>
             <div className="mt-5 ms-1">
               {menus.map((menu) => (
                 <Link

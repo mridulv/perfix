@@ -6,6 +6,7 @@ const DeleteModal = ({
   onClose,
   data,
   action,
+  message,
   actionHead,
   actionText,
 }) => {
@@ -46,8 +47,8 @@ const DeleteModal = ({
               Don't Delete
             </button>
             <button
-              onClick={() => action(data.id.id)}
-              className="btn bg-primary btn-sm border border-primary rounded text-white hover:bg-[#6b3b51d2]"
+              onClick={() => action(data.id.id, message)}
+              className="btn bg-primary btn-sm border border-primary rounded text-white hover:bg-[#57B1FF]"
             >
               Delete
             </button>
