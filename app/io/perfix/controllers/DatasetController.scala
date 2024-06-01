@@ -3,15 +3,11 @@ package io.perfix.controllers
 import com.google.inject.Inject
 import io.perfix.auth.AuthenticationAction
 import io.perfix.manager.DatasetManager
-import io.perfix.model.{DatasetId, DatasetParams, EntityFilter, UserInfo}
-import org.pac4j.core.profile.{ProfileManager, UserProfile}
-import org.pac4j.play.PlayWebContext
+import io.perfix.model.{DatasetId, DatasetParams, EntityFilter}
+import org.pac4j.core.profile.UserProfile
 import org.pac4j.play.scala.{Security, SecurityComponents}
-import play.api.libs.json.{JsArray, JsError, JsSuccess, Json}
-import play.api.mvc.{Action, AnyContent, Request, Results}
-import play.mvc.Http.RequestBody
-
-import scala.jdk.CollectionConverters._
+import play.api.libs.json.Json
+import play.api.mvc.Results
 
 @Inject
 class DatasetController @Inject()(val controllerComponents: SecurityComponents,
