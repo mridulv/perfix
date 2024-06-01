@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { FaCaretDown, FaCaretUp } from "react-icons/fa";
 import { MdOutlineCheckBoxOutlineBlank } from "react-icons/md";
 import { RiCheckboxFill } from "react-icons/ri";
@@ -50,9 +50,9 @@ function CustomSelect({ selected, setSelected, options }) {
             >
               <span className="mb-[2px]">
                 {selected.option === option ? (
-                  <RiCheckboxFill size={17} color="#E5227A" />
+                  <RiCheckboxFill size={17} color="#3DA5FF" />
                 ) : (
-                  <MdOutlineCheckBoxOutlineBlank size={17}  color="#E5227A"/>
+                  <MdOutlineCheckBoxOutlineBlank size={17}  color="#3DA5FF"/>
                 )}
               </span>
               {option}

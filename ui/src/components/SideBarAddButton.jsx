@@ -9,9 +9,9 @@ const SideBarAddButton = ({ value, url }) => {
     <div>
       <Link
         to={url}
-        className="btn bg-[#fec2dd] pe-8 h-[65px] rounded-2xl flex gap-4 hover:bg-[#f9b9cd]"
+        className="btn bg-[#A3D4FF] pe-8 h-[65px] rounded-2xl flex gap-4 hover:bg-[#57B1FF]"
       >
-        <FaPlus color="#f02f87" size={20} />
+        <FaPlus color="#0A8DFF" size={20} />
         <span className="text-[16px]">{value}</span>
       </Link>
     </div>

@@ -4,8 +4,15 @@ import { FaGooglePlay } from "react-icons/fa6";
 import RunExperimentsDetails from "./RunExperimentsDetails";
 import DeleteModal from "./DeleteModal";
 import axios from "axios";
+import toast from "react-hot-toast";
 
-const CommonTable = ({ data, tableHead, columnHeads, dataForRun = null }) => {
+const CommonTable = ({
+  data,
+  tableHead,
+  columnHeads,
+  dataForRun = null,
+  setDatasets = null,
+}) => {
   const [showButtons, setShowButtons] = useState(null);
   const [showExperimentDetails, setShowExperimentDetails] = useState(null);
   const [selectedData, setSelectedData] = useState(null);
@@ -46,20 +53,20 @@ const CommonTable = ({ data, tableHead, columnHeads, dataForRun = null }) => {
     };
   }, []);
 
-  const handleDelete = async (id) => {
+  const handleDelete = async (id, message) => {
     try {
-      const value = [];
-      const res = await axios.delete(
-        `${process.env.REACT_APP_BASE_URL}/dataset/${id}`,
-        value,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          withCredentials: true,
-        }
-      );
+      const res = await axios.delete(`${process.env.REACT_APP_BASE_URL}/dataset/${id}`, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        withCredentials: true,
+      });
       console.log(res);
+      if (res.status === 200) {
+        setDatasets(data.filter((d) => d.id.id !== id));
+        toast.success(message);
+        setOpenDeleteModal(false);
+      }
     } catch (error) {
       console.error("Error deleting dataset:", error);
     }
@@ -232,6 +239,7 @@ const CommonTable = ({ data, tableHead, columnHeads, dataForRun = null }) => {
         onClose={() => setOpenDeleteModal(false)}
         data={selectedData}
         action={handleDelete}
+        message="Dataset Deleted successfully"
         actionHead={"Delete dataset?"}
         actionText={
           "Once you delete the dataset, you cannot modify existing experiments with this dataset, however you can create new datasets. Are you sure you want to continue?"

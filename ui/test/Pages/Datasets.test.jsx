@@ -1,34 +1,46 @@
 import React from "react";
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "react-query";
-import Datasets from "../../src/Pages/Dashboard/Datasets/Datasets"
-import { expect } from "vitest";
+import Datasets from "../../src/Pages/Dashboard/Datasets/Datasets";
+import { MemoryRouter } from "react-router-dom";
+import axios from "axios";
+import { vi } from "vitest";
 
-describe('Datasets', () => {
-    const renderComponent = () => {
-        const client = new QueryClient();
+// Mock axios
+vi.mock("axios");
 
-        render(
-            <QueryClientProvider client={client}>
-                <Datasets/>
-            </QueryClientProvider>
-        )
-    }
-    it('should render the datasets page', async() => {
-        renderComponent();
-        
-        waitFor(() => {
-            const heading =  screen.getByRole("heading");
-            expect(heading).toBeInTheDocument();
-        })
+describe("Datasets", () => {
+  beforeEach(() => {
+    // Mock the axios.post to resolve immediately with an empty array
+    axios.post.mockResolvedValue({
+      status: 200,
+      data: [],
     });
+  });
 
-    it('should render datasets card', async() => {
-        renderComponent();
+  const renderComponent = () => {
+    const client = new QueryClient();
 
-        waitFor(() => {
-            const text = screen.getAllByText(/name/i);
-            expect(text.length).toBeGreaterThan(0)
-        })
-    })
-})
+    render(
+      <MemoryRouter>
+        <QueryClientProvider client={client}>
+          <Datasets />
+        </QueryClientProvider>
+      </MemoryRouter>
+    );
+  };
+
+  it("should render the datasets page", async () => {
+    renderComponent();
+
+    const heading = await screen.findByText(/Datasets/i);
+    expect(heading).toBeInTheDocument();
+  });
+
+  it("should render CommonTable component", async () => {
+    renderComponent();
+
+    const commonTable = await screen.findByRole("table");
+    expect(commonTable).toBeInTheDocument();
+  });
+});

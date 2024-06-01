@@ -2,34 +2,14 @@ import React, { useState } from "react";
 import { MdClose } from "react-icons/md";
 import AddDataset from "./AddDataset";
 import { useNavigate } from "react-router-dom";
-import { useQuery } from "react-query";
-import axios from "axios";
 import { handleAddDatasetApi } from "../utilities/api";
-import Loading from "./Loading";
 
-const AddDatasetModal = ({ open, onClose }) => {
+const AddDatasetModal = ({ open, onClose, datasets }) => {
   const [columns, setColumns] = useState([{ columnName: "", columnType: "" }]);
 
   const navigate = useNavigate();
 
-  const { data: datasets, isLoading } = useQuery({
-    queryKey: ["datasets"],
-    queryFn: async () => {
-      const values = [];
-      const res = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}/dataset`,
-        values,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          withCredentials: true,
-        }
-      );
-      const data = await res.data;
-      return data;
-    },
-  });
+  
 
   const handleAddColumn = () => {
     setColumns([...columns, { columnName: "", columnType: "" }]);
@@ -53,7 +33,6 @@ const AddDatasetModal = ({ open, onClose }) => {
     );
   };
 
-  if (isLoading) return <Loading />;
   return (
     <div
       onClick={onClose}

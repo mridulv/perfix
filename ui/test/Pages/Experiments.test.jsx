@@ -1,31 +1,34 @@
-import React from 'react';
-import { it, expect, describe } from 'vitest';
-import { render, screen, waitFor } from '@testing-library/react';
+import React from "react";
+import { it, expect, describe } from "vitest";
+import { render, screen } from "@testing-library/react";
 import Experiment from "../../src/Pages/Dashboard/Experiment/Experiment";
-import { QueryClient, QueryClientProvider } from 'react-query';
+import { QueryClient, QueryClientProvider } from "react-query";
+import { MemoryRouter } from "react-router-dom";
 
-describe('Experiments', () => {
-    const renderComponent = () => {
-        const client = new QueryClient({
-            defaultOptions: {
-                queries: {
-                    retry: false,
-                },
-            },
-        });
+describe("Experiments", () => {
+  const renderComponent = () => {
+    const client = new QueryClient({
+      defaultOptions: {
+        queries: {
+          retry: false,
+        },
+      },
+    });
 
-        render(
-            <QueryClientProvider client={client}>
-                <Experiment/>
-            </QueryClientProvider>
-        )
-    }
-    it('should render the experiment page', () => {
-        renderComponent();
-        
-        waitFor(() => {
-            const heading = screen.getByRole("heading");
-            expect(heading).toBeInTheDocument();
-        })
+    render(
+      <MemoryRouter>
+        <QueryClientProvider client={client}>
+          <Experiment />
+        </QueryClientProvider>
+      </MemoryRouter>
+    );
+  };
+  it("should render the experiment page", async () => {
+    renderComponent();
+
+    const headings = await screen.findAllByText(/Experiments/i);
+    headings.forEach((heading) => {
+        expect(heading).toBeInTheDocument();
     })
-})
+  });
+});

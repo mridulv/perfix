@@ -26,10 +26,9 @@ const AddExperiment2 = () => {
   const { data: dataset, isLoading: isDatasetLoading } = useQuery({
     queryKey: ["dataset", datasetId],
     queryFn: async () => {
-      const res = await axios.get(
-        `${process.env.REACT_APP_BASE_URL}/dataset/${datasetId}`,
-        { withCredentials: true }
-      );
+      const res = await axios.get(`${process.env.REACT_APP_BASE_URL}/dataset/${datasetId}`, {
+        withCredentials: true,
+      });
       const data = await res.data;
       return data;
     },
@@ -43,16 +42,12 @@ const AddExperiment2 = () => {
     queryKey: ["databases"],
     queryFn: async () => {
       const values = [];
-      const res = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}/config`,
-        values,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          withCredentials: true,
-        }
-      );
+      const res = await axios.post(`${process.env.REACT_APP_BASE_URL}/config`, values, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        withCredentials: true,
+      });
       const data = await res.data;
       return data;
     },
@@ -96,15 +91,11 @@ const AddExperiment2 = () => {
 
     if (!selectedDatabase) return toast.error("Please select a database.");
 
-    const res = await axios.post(
-      `${process.env.REACT_APP_BASE_URL}/experiment/create`,
-      values,
-      {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      }
-    );
+    const res = await axios.post(`${process.env.REACT_APP_BASE_URL}/experiment/create`, values, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
     if (res.status === 200) {
       toast.success("Experiment added successfully");
       navigate("/experiment");
@@ -127,7 +118,7 @@ const AddExperiment2 = () => {
           Experiment {/*{experiments?.length + 1}*/}
         </h2>
       </div>
-      <div className="w-full bg-[#fbeaee] flex items-center">
+      <div className="w-full bg-secondary flex items-center">
         <div className="ps-7 py-3 ">
           <div
             className={`h-[45px] w-[180px] ps-3 flex items-center gap-3 rounded-xl`}

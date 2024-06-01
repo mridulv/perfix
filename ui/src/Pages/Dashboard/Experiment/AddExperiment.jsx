@@ -12,23 +12,22 @@ import toast from "react-hot-toast";
 const AddExperiment = () => {
   const [activeDataset, setActiveDataset] = useState("new");
   const [columns, setColumns] = useState([{ columnName: "", columnType: "" }]);
-  const [selectedDataset, setSelectedDataset] = useState({option: "Choose Type", value: "Choose"});
+  const [selectedDataset, setSelectedDataset] = useState({
+    option: "Choose Type",
+    value: "Choose",
+  });
 
   const navigate = useNavigate();
   const { data: experiments, isLoading } = useQuery({
     queryKey: ["experiments"],
     queryFn: async () => {
       const values = [];
-      const res = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}/experiment`,
-        values,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          withCredentials: true
-        }
-      );
+      const res = await axios.post(`${process.env.REACT_APP_BASE_URL}/experiment`, values, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        withCredentials: true,
+      });
       const data = await res.data;
       return data;
     },
@@ -38,16 +37,12 @@ const AddExperiment = () => {
     queryKey: ["datasets"],
     queryFn: async () => {
       const values = [];
-      const res = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}/dataset`,
-        values,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          withCredentials: true,
-        }
-      );
+      const res = await axios.post(`${process.env.REACT_APP_BASE_URL}/dataset`, values, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        withCredentials: true,
+      });
       const data = await res.data;
       return data;
     },
@@ -59,8 +54,8 @@ const AddExperiment = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    if(selectedDataset.value === "Choose"){
-      return toast.error("Please select a dataset")
+    if (selectedDataset.value === "Choose") {
+      return toast.error("Please select a dataset");
     }
     const datasetId = selectedDataset.value;
 
@@ -95,7 +90,7 @@ const AddExperiment = () => {
           Experiment {experiments?.length + 1}
         </h2>
       </div>
-      <div className="w-full bg-[#fbeaee] flex items-center gap-10">
+      <div className="w-full bg-secondary flex items-center gap-10">
         <div className="ps-7 py-3 ">
           <div
             className={`h-[45px] w-[180px] ps-3 bg-white  flex items-center gap-3 rounded-xl`}

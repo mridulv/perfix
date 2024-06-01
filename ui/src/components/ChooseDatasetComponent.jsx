@@ -15,13 +15,13 @@ const ChooseDatasetComponent = ({
 }) => {
   let options = [];
 
-  datasets.forEach((dataset) =>
+  datasets?.forEach((dataset) =>
     options.push({ option: dataset.name, value: dataset.id.id })
   );
 
   return (
     <div className="mt-7 ms-7 w-[320px]">
-      <div className="bg-[#fbeaee] py-1 ps-3  flex items-center gap-3 rounded">
+      <div className="bg-secondary py-1 ps-3  flex items-center gap-3 rounded">
         <button
           onClick={() => setActiveDataset("existing")}
           className={`py-1 px-2 text-[12px] ${

@@ -1,68 +1,77 @@
 import axios from "axios";
 import toast from "react-hot-toast";
 
-export const handleAddDatasetApi = async(event, datasets, columns, setColumns, navigate, navigateFor) => {
-    const datasetName = event.target.datasetName.value;
-    const description = event.target.description.value;
-    const isDuplicateName = datasets.some(
-      (dataset) => dataset.name.toLowerCase() === datasetName.toLowerCase()
-    );
+export const baseUrl = process.env.REACT_APP_BASE_URL;
 
-    if (isDuplicateName) {
-      toast.error(`A dataset with the name "${datasetName}" already exists.`);
-      return;
-    }
+export const handleAddDatasetApi = async (
+  event,
+  datasets,
+  columns,
+  setColumns,
+  navigate,
+  navigateFor
+) => {
+  const datasetName = event.target.datasetName.value;
+  const description = event.target.description.value;
+  const isDuplicateName = datasets.some(
+    (dataset) => dataset.name.toLowerCase() === datasetName.toLowerCase()
+  );
 
-    const formData = new FormData(event.target);
-    const columnValues = [];
+  if (isDuplicateName) {
+    toast.error(`A dataset with the name "${datasetName}" already exists.`);
+    return;
+  }
 
-    columns.forEach((column, index) => {
-      const columnName = formData.get(`columnName${index}`);
-      const columnType = formData.get(`columnType${index}`);
+  const formData = new FormData(event.target);
+  const columnValues = [];
 
-      columnValues.push({ columnName, columnType });
-    });
+  columns.forEach((column, index) => {
+    const columnName = formData.get(`columnName${index}`);
+    const columnType = formData.get(`columnType${index}`);
 
-    try {
-      const url = `${process.env.REACT_APP_BASE_URL}/dataset/create`;
-      const columnData = {
-        rows: 10000,
-        name: datasetName,
-        description,
-        columns: columnValues.map((columnValue) => ({
-          columnName: columnValue.columnName,
-          columnType: {
-            type: columnValue.columnType,
-            isUnique: true,
-          },
-        })),
-      };
+    columnValues.push({ columnName, columnType });
+  });
 
-      const response = await axios.post(url, columnData, {
-        headers: {
-          "Content-Type": "application/json",
+  try {
+    const url = `${process.env.REACT_APP_BASE_URL}/dataset/create`;
+    const columnData = {
+      rows: 10000,
+      name: datasetName,
+      description,
+      columns: columnValues.map((columnValue) => ({
+        columnName: columnValue.columnName,
+        columnType: {
+          type: columnValue.columnType,
+          isUnique: true,
         },
-        withCredentials: true,
-      });
-      if (response.status === 200) {
-        if(navigateFor === "experimentPage"){
-            toast.success("Database Added Successfully");
-            navigate(`/add-experiment-database/${response.data.id}`)
-            event.target.reset();
-            setColumns([{ columnName: "", columnType: "" }]);
-        } else if(navigateFor === "databasePage"){
-            toast.success("Database Added Successfully");
-            navigate(response.data.id)
-            event.target.reset();
-            setColumns([{ columnName: "", columnType: "" }]);
-        } else{
-            toast.success("Database Added Successfully");
-            navigate(`/`)
-            event.target.reset();
-            setColumns([{ columnName: "", columnType: "" }]);
-        }
+      })),
+    };
+
+    const response = await axios.post(url, columnData, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      withCredentials: true,
+    });
+    if (response.status === 200) {
+      if (navigateFor === "experimentPage") {
+        toast.success("Database Added Successfully");
+        navigate(`/add-experiment-database/${response.data.id}`);
+        event.target.reset();
+        setColumns([{ columnName: "", columnType: "" }]);
+      } else if (navigateFor === "databasePage") {
+        toast.success("Database Added Successfully");
+        navigate(response.data.id);
+        event.target.reset();
+        setColumns([{ columnName: "", columnType: "" }]);
+      } else {
+        toast.success("Database Added Successfully");
+        navigate(`/`);
+        event.target.reset();
+        setColumns([{ columnName: "", columnType: "" }]);
       }
-    } catch (err) {
-      console.log(err);
     }
-}
+  } catch (err) {
+    console.log(err);
+  }
+};

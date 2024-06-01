@@ -160,15 +160,11 @@ const AddDatabase = ({
     };
     console.log(values);
     if (isCurrentStepValid()) {
-      const res = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}/config/create`,
-        values,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+      const res = await axios.post(`${process.env.REACT_APP_BASE_URL}/config/create`, values, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
       console.log(res);
       if (res.status === 200) {
         if (valueFor === "modal") {
@@ -527,17 +523,17 @@ const AddDatabase = ({
           <div className="mb-5 flex justify-center gap-3">
             <div
               className={`bg-primary w-[10px] h-[10px] rounded-full ${
-                currentStep === 1 ? "opacity-100" : "opacity-40"
+                currentStep === 1 ? "opacity-100" : "opacity-30"
               }`}
             ></div>
             <div
               className={`bg-primary w-[10px] h-[10px] rounded-full ${
-                currentStep === 2 ? "opacity-100" : "opacity-40"
+                currentStep === 2 ? "opacity-100" : "opacity-30"
               }`}
             ></div>
             <div
               className={`bg-primary w-[10px] h-[10px] rounded-full ${
-                currentStep === 3 ? "opacity-100" : "opacity-40"
+                currentStep === 3 ? "opacity-100" : "opacity-30"
               }`}
             ></div>
           </div>
