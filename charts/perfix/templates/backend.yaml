@@ -26,6 +26,12 @@ spec:
               value: {{ .Values.backend.oauth.google.clientId }}
             - name: PAC4J_GOOGLECLIENT_SECRET
               value: {{ .Values.backend.oauth.google.secret }}
+            - name: AWS_ACCESS_KEY_ID
+              value: {{ .Values.backend.aws.key }}
+            - name: AWS_SECRET_ACCESS_KEY
+              value: {{ .Values.backend.aws.secret }}
+            - name: AWS_DEFAULT_REGION
+              value: {{ .Values.backend.aws.region }}
           imagePullPolicy: {{ .Values.backend.image.pullPolicy }}
           ports:
             - containerPort: {{ .Values.backend.service.port }}
