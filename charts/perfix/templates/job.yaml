@@ -9,9 +9,8 @@ spec:
         - name: perfix-job
           image: "{{ .Values.job.image }}"
           resources:
-            limits:
-              cpu: 100m
             requests:
+              memory: 100Mi
               cpu: 100m
           command: ["/bin/sh", "-c"]
           args:
