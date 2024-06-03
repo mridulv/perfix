@@ -1,12 +1,10 @@
 package io.perfix.auth
 
 import com.google.inject.Inject
-import io.perfix.model.UserInfo
 import org.pac4j.core.context.session.SessionStore
 import org.pac4j.core.profile.ProfileManager
 import org.pac4j.play.PlayWebContext
 import play.api.Logging
-import play.api.libs.json.Json
 import play.api.mvc._
 
 import scala.concurrent.{ExecutionContext, Future}
