@@ -1,5 +1,6 @@
 package io.perfix.query
 
+import io.perfix.model.FormInputValue._
 import play.api.libs.json.{Format, Json}
 
 case class PerfixQueryFilter(field: String, fieldValue: Any) {
