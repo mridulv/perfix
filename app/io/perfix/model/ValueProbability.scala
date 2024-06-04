@@ -1,6 +1,7 @@
 package io.perfix.model
 
 import play.api.libs.json.{Format, Json}
+import FormInputValue._
 case class ValueProbability(value: Any, probability: Int) {
 
   def isValid: Boolean = {
