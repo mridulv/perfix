@@ -4,7 +4,12 @@ import com.google.inject.{AbstractModule, Provides, Singleton}
 import org.pac4j.core.authorization.authorizer.RequireAnyRoleAuthorizer
 import org.pac4j.core.client.Clients
 import org.pac4j.core.config.Config
+import org.pac4j.core.context.{WebContext, WebContextHelper}
 import org.pac4j.core.context.session.SessionStore
+import org.pac4j.core.engine.DefaultCallbackLogic
+import org.pac4j.core.engine.savedrequest.SavedRequestHandler
+import org.pac4j.core.exception.http.{HttpAction, OkAction}
+import org.pac4j.core.util.{HttpActionHelper, Pac4jConstants}
 import org.pac4j.oauth.client.Google2Client
 import org.pac4j.oauth.client.Google2Client.Google2Scope
 import org.pac4j.play.scala.{DefaultSecurityComponents, SecurityComponents}
@@ -27,6 +32,22 @@ class SecurityModule(environment: Environment, configuration: Configuration) ext
 
     val callbackController = new CallbackController()
     callbackController.setDefaultUrl(BASE_URL + "/me")
+    DefaultCallbackLogic.INSTANCE.setSavedRequestHandler(new SavedRequestHandler {
+      override def save(webContext: WebContext, sessionStore: SessionStore): Unit = {
+        val requestedUrl = "http://perfix.com"
+        if (WebContextHelper.isPost(webContext)) {
+          val formPost = HttpActionHelper.buildFormPostContent(webContext)
+          sessionStore.set(webContext, Pac4jConstants.REQUESTED_URL, new OkAction(formPost))
+        }
+        else {
+          sessionStore.set(webContext, Pac4jConstants.REQUESTED_URL, requestedUrl)
+        }
+      }
+
+      override def restore(webContext: WebContext, sessionStore: SessionStore, defaultUrl: String): HttpAction = {
+        super.restore(webContext, sessionStore, defaultUrl)
+      }
+    })
     bind(classOf[CallbackController]).toInstance(callbackController)
 
     // logout
