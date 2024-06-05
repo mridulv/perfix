@@ -26,12 +26,12 @@ class SecurityModule(environment: Environment, configuration: Configuration) ext
     bind(classOf[SecurityComponents]).to(classOf[DefaultSecurityComponents])
 
     val callbackController = new CallbackController()
-    callbackController.setDefaultUrl("/me")
+    callbackController.setDefaultUrl(BASE_URL + "/me")
     bind(classOf[CallbackController]).toInstance(callbackController)
 
     // logout
     val logoutController = new LogoutController()
-    logoutController.setDefaultUrl("/me")
+    logoutController.setDefaultUrl(BASE_URL + "/me")
     bind(classOf[LogoutController]).toInstance(logoutController)
   }
 
