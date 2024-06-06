@@ -1,6 +1,6 @@
 package io.perfix.model
 
-import io.perfix.model.store.StoreType.{DynamoDBStoreType, MongoDBStoreType, MySQLStoreType, RedisStoreType, StoreType}
+import io.perfix.model.store.StoreType.{DynamoDB, MongoDB, MySQL, Redis, StoreType}
 import play.api.libs.json.{Format, Json}
 
 case class DatabaseFormInput(forms: Seq[FormInputs])
@@ -10,10 +10,10 @@ object DatabaseFormInput {
 
   def findRelevantDatabaseFormInput(databaseType: StoreType): DatabaseFormInput = {
     databaseType match {
-      case MySQLStoreType => MySQLDatabaseFormInput
-      case RedisStoreType => RedisDatabaseFormInput
-      case MongoDBStoreType => DocumentDBDatabaseFormInput
-      case DynamoDBStoreType => DynamoDBDatabaseFormInput
+      case MySQL => MySQLDatabaseFormInput
+      case Redis => RedisDatabaseFormInput
+      case MongoDB => DocumentDBDatabaseFormInput
+      case DynamoDB => DynamoDBDatabaseFormInput
     }
   }
 
