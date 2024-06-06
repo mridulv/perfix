@@ -2,26 +2,9 @@ package io.perfix.model.store
 
 import play.api.libs.json._
 
-sealed trait StoreType {
-  def name: String
-}
-
-object StoreType {
-  case object MySQLStoreType extends StoreType {
-    val name = "MySQL"
-  }
-
-  case object RedisStoreType extends StoreType {
-    val name = "Redis"
-  }
-
-  case object DynamoDBStoreType extends StoreType {
-    val name = "DynamoDB"
-  }
-
-  case object MongoDBStoreType extends StoreType {
-    val name = "DocumentDB"
-  }
+object StoreType extends Enumeration {
+  type StoreType = Value
+  val MySQLStoreType, RedisStoreType, DynamoDBStoreType, MongoDBStoreType = Value
 
   implicit val StoreTypeReads: Reads[StoreType] = Reads {
     case JsString("MySQLStoreType") => JsSuccess(MySQLStoreType)
