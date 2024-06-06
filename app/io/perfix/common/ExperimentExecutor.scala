@@ -9,8 +9,7 @@ import io.perfix.stores.dynamodb.DynamoDBStore
 import io.perfix.stores.mysql.MySQLStore
 import io.perfix.stores.redis.RedisStore
 
-class ExperimentExecutor(storeName: String,
-                         experimentParams: ExperimentParams,
+class ExperimentExecutor(experimentParams: ExperimentParams,
                          databaseConfigParams: DatabaseConfigParams,
                          dataset: Dataset) {
 

@@ -61,7 +61,6 @@ class ExperimentManager @Inject()(datasetManager: DatasetManager,
     val databaseConfigParams = databaseConfigManager.get(experimentParams.databaseConfigId)
     val dataset = datasetManager.get(databaseConfigParams.datasetId).dataset
     val experimentExecutor = new ExperimentExecutor(
-      databaseConfigParams.dataStore.name,
       experimentParams,
       databaseConfigParams,
       dataset

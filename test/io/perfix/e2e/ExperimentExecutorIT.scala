@@ -58,7 +58,7 @@ class ExperimentExecutorIT extends AnyFlatSpec with Matchers with MockitoSugar w
     )
     val databaseConfig = DatabaseConfigParams(
       name = "mysql-config",
-      dataStore = StoreType.MySQLStoreType,
+      dataStore = StoreType.MySQL,
       datasetId = DatasetId(-1),
       storeParams = mysqlStoreParams
     )
