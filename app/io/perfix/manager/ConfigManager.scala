@@ -8,7 +8,7 @@ import io.perfix.model.store.StoreType
 class ConfigManager {
 
   def databases(): List[String] = {
-    StoreType.values.byName.keys.toList
+    StoreType.values.toList.map(_.toString)
   }
 
   def databaseConfig(databaseName: String): DatabaseFormInput = {
