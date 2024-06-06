@@ -33,3 +33,5 @@ GET         /logout                                    @org.pac4j.play.LogoutCon
 GET         /login                                     io.perfix.controllers.UserInfoController.login
 GET         /me                                        io.perfix.controllers.UserInfoController.me
 
+GET         /databases                                 io.perfix.controllers.ConfigController.databases
+GET         /databases/inputs                          io.perfix.controllers.ConfigController.inputs(databaseType: String)
