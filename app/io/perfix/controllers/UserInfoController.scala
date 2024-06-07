@@ -17,11 +17,11 @@ class UserInfoController @Inject()(val controllerComponents: SecurityComponents,
                                    sessionStore: SessionStore,
                                    configuration: Configuration) extends Security[UserProfile] {
 
-  private val BASE_URL: String = configuration.get[String]("pac4j.googleClient.baseUrl")
+  private val APP_URL: String = configuration.get[String]("app.baseUrl")
 
   def login = Secure("Google2Client") {
     Action { implicit request =>
-      Redirect(BASE_URL)
+      Redirect(APP_URL)
     }
   }
 
