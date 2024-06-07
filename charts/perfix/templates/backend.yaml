@@ -26,6 +26,8 @@ spec:
               value: "trial"
             - name: JDBC_POSTGRES_URL
               value: "jdbc:postgresql://postgres-service:{{ .Values.postgres.port }}/mydb"
+            - name: APP_BASEURL
+              value: "https://{{ .Values.nginx.hostname }}"
             - name: PAC4J_BASEURL
               value: "https://{{ .Values.nginx.hostname }}/api"
             - name: PAC4J_GOOGLECLIENT_CLIENTID
