@@ -6,6 +6,7 @@ import org.pac4j.core.context.session.SessionStore
 import org.pac4j.core.profile.{ProfileManager, UserProfile}
 import org.pac4j.play.PlayWebContext
 import org.pac4j.play.scala.{Security, SecurityComponents}
+import play.api.Configuration
 import play.api.libs.json.Json
 import play.api.mvc._
 
@@ -13,11 +14,14 @@ import scala.jdk.CollectionConverters._
 
 @Singleton
 class UserInfoController @Inject()(val controllerComponents: SecurityComponents,
-                                   sessionStore: SessionStore) extends Security[UserProfile] {
+                                   sessionStore: SessionStore,
+                                   configuration: Configuration) extends Security[UserProfile] {
+
+  private val BASE_URL: String = configuration.get[String]("pac4j.googleClient.baseUrl")
 
   def login = Secure("Google2Client") {
     Action { implicit request =>
-      Redirect("http://localhost:3000")
+      Redirect(BASE_URL)
     }
   }
 
