@@ -9,9 +9,10 @@ backend:
     port: 9000
 
   aws:
-    key: "**********"
-    secret: "**********"
+    key: "key"
+    secret: "secret"
     region: "us-east-1"
+
   oauth:
     google:
       clientId: "clientId"
