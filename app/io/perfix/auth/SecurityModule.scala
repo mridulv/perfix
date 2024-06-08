@@ -20,6 +20,7 @@ import play.api.{Configuration, Environment}
 import java.util.Optional
 
 class SecurityModule(environment: Environment, configuration: Configuration) extends AbstractModule {
+  private val APP_URL: String = configuration.get[String]("app.baseUrl")
   private val BASE_URL: String = configuration.get[String]("pac4j.googleClient.baseUrl")
   private val CLIENT_ID: String = configuration.get[String]("pac4j.googleClient.clientId")
   private val SECRET: String = configuration.get[String]("pac4j.googleClient.secret")
@@ -42,7 +43,7 @@ class SecurityModule(environment: Environment, configuration: Configuration) ext
       }
 
       override def restore(webContext: WebContext, sessionStore: SessionStore, defaultUrl: String): HttpAction = {
-        val optRequestedUrl = Some(BASE_URL)
+        val optRequestedUrl = Some(APP_URL)
         var requestedAction: HttpAction = null
         if (optRequestedUrl.isDefined) {
           sessionStore.set(webContext, Pac4jConstants.REQUESTED_URL, null)
