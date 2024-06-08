@@ -29,7 +29,7 @@ frontend:
     port: 3000
 
 nginx:
-  hostname: "trials.perfix.com"
+  hostname: "trials.perfix.in"
 
 postgres:
   port: 5432
