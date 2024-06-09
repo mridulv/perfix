@@ -24,7 +24,7 @@ const Authentication = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-accent to-[#CFDEF3]">
-      <div className="w-[90%] max-w-[900px] bg-white rounded-3xl p-[46px] flex gap-5 shadow-2xl">
+      <div className="w-[90%] max-w-[900px] bg-white rounded-3xl p-[46px] flex flex-col md:flex-row gap-5 shadow-2xl">
         <div className="flex-1">
           <img
             className="w-full max-w-[350px] mx-auto"
@@ -35,7 +35,7 @@ const Authentication = () => {
         <div className="flex-1 flex flex-col justify-center">
           <div className="mb-8">
             <p className="text-[24px] font-semibold text-primary mb-1">
-              PerFix
+              Perfix
             </p>
             <h1 className="text-[32px] font-semibold mb-2">Sign In</h1>
             <p className="text-base">Using your Google account</p>

@@ -16,6 +16,7 @@ const AddExperiment = () => {
     option: "Choose Type",
     value: "Choose",
   });
+  
 
   const navigate = useNavigate();
   const { data: experiments, isLoading } = useQuery({
@@ -52,7 +53,7 @@ const AddExperiment = () => {
     setColumns([...columns, { columnName: "", columnType: "" }]);
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async(event) => {
     event.preventDefault();
     if (selectedDataset.value === "Choose") {
       return toast.error("Please select a dataset");
@@ -60,17 +61,16 @@ const AddExperiment = () => {
     const datasetId = selectedDataset.value;
 
     if (activeDataset === "new") {
-      const navigateFor = "experimentPage";
-      handleAddDatasetApi(
+      const successFunctions = () => {
+
+      }
+      await handleAddDatasetApi(
         event,
         datasets,
         columns,
-        setColumns,
-        navigate,
-        navigateFor
       );
     } else {
-      navigate(`/add-experiment-database/${datasetId}`);
+      
     }
   };
 

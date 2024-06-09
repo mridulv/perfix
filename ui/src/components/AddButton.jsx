@@ -1,15 +1,13 @@
 import React from "react";
-import { Link } from "react-router-dom";
 
-const AddButton = ({ value, link, type = null }) => {
+const AddButton = ({ setOpen, value }) => {
   return (
-    <Link
+    <button
+      onClick={() => setOpen(true)}
       className="btn bg-primary btn-sm border border-primary rounded text-white hover:bg-[#57B1FF]"
-      to={link}
-      type={type}
     >
-      {value}
-    </Link>
+      Add Database
+    </button>
   );
 };
 

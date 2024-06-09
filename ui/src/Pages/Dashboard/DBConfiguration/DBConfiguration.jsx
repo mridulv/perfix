@@ -33,9 +33,11 @@ const DBConfiguration = () => {
     setSearchText(e.target.value);
   };
 
-  console.log(searchText);
-
-  const { data: databases, isLoading } = useQuery({
+  const {
+    data: databases,
+    isLoading,
+    refetch,
+  } = useQuery({
     queryKey: ["databases", selectedDatabaseType, searchText],
     queryFn: async () => {
       let values = [];
@@ -48,15 +50,19 @@ const DBConfiguration = () => {
       }
 
       if (searchText) {
-        values = [{ text: searchText, type: "TextFilter" }];
+        values = [...values, { text: searchText, type: "TextFilter" }];
       }
 
-      const res = await axios.post(`${process.env.REACT_APP_BASE_URL}/config`, values, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        withCredentials: true,
-      });
+      const res = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}/config`,
+        values,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
 
       const data = await res.data;
       return data;
@@ -67,12 +73,16 @@ const DBConfiguration = () => {
     const value = [];
     setDatasetsLoading(true);
     const fetchDatasets = async () => {
-      const res = await axios.post(`${process.env.REACT_APP_BASE_URL}/dataset`, value, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        withCredentials: true,
-      });
+      const res = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}/dataset`,
+        value,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
       if (res.status === 200) {
         setDatasets(res.data);
         setDatasetsLoading(false);
@@ -81,12 +91,6 @@ const DBConfiguration = () => {
     fetchDatasets();
   }, []);
 
-  const dataForTable = databases?.map((database) => ({
-    databaseName: database.name,
-    databaseType: database.storeParams.type,
-    datasetName: "Pending",
-    createdAt: new Date(database.createdAt).toLocaleDateString(),
-  }));
 
   if (isLoading && datasetsLoading) return <Loading />;
   return (
@@ -112,6 +116,7 @@ const DBConfiguration = () => {
               selected={selectedDatabaseType}
               setSelected={setSelectedDatabaseType}
               options={databaseTypeOptions}
+              width="w-[150px]"
             />
           </div>
         </div>
@@ -132,13 +137,15 @@ const DBConfiguration = () => {
             open={open}
             onClose={() => setOpen(false)}
             datasets={datasets}
+            refetch={refetch}
           />
           <div className="me-9">
             <div className="">
               <CommonTable
-                data={dataForTable}
+                data={databases}
                 tableHead={"Database"}
                 columnHeads={columnHeads}
+                refetch={refetch}
               />
             </div>
           </div>

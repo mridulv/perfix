@@ -5,6 +5,7 @@ import Loading from "../../../components/Loading";
 import AddButton from "../../../components/AddButton";
 import CommonTable from "../../../components/CommonTable";
 import CustomSelect from "../../../components/CustomSelect";
+import AddExperimentModal from "../../../components/AddExperimentModal";
 
 const columnHeads = [
   "Experiment Name",
@@ -32,7 +33,8 @@ const demoOptions3 = [
 ];
 
 const Experiment = () => {
-  const [isRunStart, setIsRunStart] = useState(false);
+  const [open, setOpen] = useState(false);
+
   const [selectOwner, setSelectOwner] = useState({
     option: "Choose",
     value: "choose",
@@ -50,27 +52,23 @@ const Experiment = () => {
     queryKey: ["experiments"],
     queryFn: async () => {
       const values = [];
-      const res = await axios.post(`${process.env.REACT_APP_BASE_URL}/experiment`, values, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        withCredentials: true,
-      });
+      const res = await axios.post(
+        `${process.env.REACT_APP_BASE_URL}/experiment`,
+        values,
+        {
+          headers: {
+            "Content-Type": "application/json"
+          },
+          withCredentials: true,
+        }
+      );
       const data = await res.data;
       return data;
     },
   });
 
+  
   console.log(experiments);
-
-  const dataForTable = experiments?.map((experiment) => ({
-    experimentName: experiment.name,
-    databaseConfigName: "Pending",
-    createdAt: new Date(experiment.createdAt).toLocaleDateString(),
-    experimentState: experiment.experimentState,
-    isRunStart,
-    setIsRunStart,
-  }));
 
   const dataForRun = {
     overallQueryTime: 5,
@@ -98,7 +96,7 @@ const Experiment = () => {
     ],
   };
 
-  if (experimentsLoading) return <Loading />;
+  // if (experimentsLoading) return <Loading />;
   return (
     <div className="">
       <div className="pt-7 ps-7">
@@ -115,33 +113,35 @@ const Experiment = () => {
             placeholder="Search"
           />
 
+
           <CustomSelect
             selected={selectOwner}
             setSelected={setSelectOwner}
             options={demoOptions}
+            width="w-[150px]"
           />
           <CustomSelect
             selected={selectStatus}
             setSelected={setSelectStatus}
             options={demoOptions2}
+            width="w-[150px]"
           />
           <CustomSelect
             selected={selectVisible}
             setSelected={setSelectVisible}
             options={demoOptions3}
+            width="w-[150px]"
           />
         </div>
         <div>
-          <AddButton
-            value={"New Experiment"}
-            link={"/add-experiment-dataset"}
-          />
+          <AddButton value={"New Experiment"} setOpen={setOpen} />
         </div>
       </div>
+      <AddExperimentModal open={open} onClose={() => setOpen(false)} experiments={experiments} />
 
       <div className="ps-7 pe-9 ">
         <CommonTable
-          data={dataForTable}
+          data={experiments}
           tableHead={"Experiment"}
           columnHeads={columnHeads}
           dataForRun={dataForRun}

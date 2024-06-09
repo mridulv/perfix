@@ -7,9 +7,8 @@ export const handleAddDatasetApi = async (
   event,
   datasets,
   columns,
-  setColumns,
-  navigate,
-  navigateFor
+  successFunctions,
+  apiFor,
 ) => {
   const datasetName = event.target.datasetName.value;
   const description = event.target.description.value;
@@ -54,21 +53,10 @@ export const handleAddDatasetApi = async (
       withCredentials: true,
     });
     if (response.status === 200) {
-      if (navigateFor === "experimentPage") {
-        toast.success("Database Added Successfully");
-        navigate(`/add-experiment-database/${response.data.id}`);
-        event.target.reset();
-        setColumns([{ columnName: "", columnType: "" }]);
-      } else if (navigateFor === "databasePage") {
-        toast.success("Database Added Successfully");
-        navigate(response.data.id);
-        event.target.reset();
-        setColumns([{ columnName: "", columnType: "" }]);
-      } else {
-        toast.success("Database Added Successfully");
-        navigate(`/`);
-        event.target.reset();
-        setColumns([{ columnName: "", columnType: "" }]);
+      if(apiFor === "dataset"){
+        successFunctions();
+      }else{
+        successFunctions(response)
       }
     }
   } catch (err) {

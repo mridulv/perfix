@@ -4,7 +4,8 @@ import ChooseDatasetComponent from "./ChooseDatasetComponent";
 import { IoIosArrowForward } from "react-icons/io";
 import toast from "react-hot-toast";
 import axios from "axios";
-import AddDatabase from "./AddDatabase";
+import AddDatabase from "./AddDatabase/AddDatabase";
+import { handleAddDatasetApi } from "../utilities/api";
 
 const AddDatabaseModal = ({ open, onClose, datasets, refetch }) => {
   const [selectedDatasetValue, setSelectedDatasetValue] = useState(null);
@@ -46,57 +47,13 @@ const AddDatabaseModal = ({ open, onClose, datasets, refetch }) => {
     }
     // for creating new dataset
     else {
-      const datasetName = event.target.datasetName.value;
-      const description = event.target.description.value;
-      const isDuplicateName = datasets.some(
-        (dataset) => dataset.name.toLowerCase() === datasetName.toLowerCase()
-      );
-
-      if (isDuplicateName) {
-        toast.error(`A dataset with the name "${datasetName}" already exists.`);
-        return;
-      }
-
-      const formData = new FormData(event.target);
-      const columnValues = [];
-
-      columns.forEach((column, index) => {
-        const columnName = formData.get(`columnName${index}`);
-        const columnType = formData.get(`columnType${index}`);
-
-        columnValues.push({ columnName, columnType });
-      });
-
-      try {
-        const url = `${process.env.REACT_APP_BASE_URL}/dataset/create`;
-        const columnData = {
-          rows: 10000,
-          name: datasetName,
-          description,
-          columns: columnValues.map((columnValue) => ({
-            columnName: columnValue.columnName,
-            columnType: {
-              type: columnValue.columnType,
-              isUnique: true,
-            },
-          })),
-        };
-
-        const response = await axios.post(url, columnData, {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          withCredentials: true,
-        });
-        if (response.status === 200) {
-          setSelectedDatasetValue(response.data.id);
-          toast.success("New Dataset Created!");
-          setCurrentAddStep(2);
-          setColumns([{ columnName: "", columnType: "" }]);
-        }
-      } catch (err) {
-        console.log(err);
-      }
+      const successFunctions = (response) => {
+        setSelectedDatasetValue(response.data.id);
+        toast.success("New Dataset Created!");
+        setCurrentAddStep(2);
+        setColumns([{ columnName: "", columnType: "" }]);
+      };
+      await handleAddDatasetApi(event, datasets, columns, successFunctions);
     }
   };
 

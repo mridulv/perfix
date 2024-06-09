@@ -53,11 +53,12 @@ const ChooseDatasetComponent = ({
                 selected={selectedDataset}
                 setSelected={setSelectedDataset}
                 options={options}
+                width="w-[300px]"
               ></CustomSelect>
             </label>
           )}
 
-          <div className="mt-[50px] flex gap-3 pb-4">
+          <div className="mt-[200px] flex gap-3 pb-4">
             <button
               className="btn bg-primary btn-sm border border-primary rounded text-white hover:bg-[#6b3b51d2]"
               type="submit"

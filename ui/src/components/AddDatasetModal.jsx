@@ -1,15 +1,11 @@
 import React, { useState } from "react";
 import { MdClose } from "react-icons/md";
 import AddDataset from "./AddDataset";
-import { useNavigate } from "react-router-dom";
 import { handleAddDatasetApi } from "../utilities/api";
+import toast from "react-hot-toast";
 
-const AddDatasetModal = ({ open, onClose, datasets }) => {
+const AddDatasetModal = ({ open, onClose, datasets, refetch }) => {
   const [columns, setColumns] = useState([{ columnName: "", columnType: "" }]);
-
-  const navigate = useNavigate();
-
-  
 
   const handleAddColumn = () => {
     setColumns([...columns, { columnName: "", columnType: "" }]);
@@ -22,15 +18,19 @@ const AddDatasetModal = ({ open, onClose, datasets }) => {
 
   const handleAddDataset = async (event) => {
     event.preventDefault();
-    const navigateFor = "datasetPage";
-    handleAddDatasetApi(
-      event,
-      datasets,
-      columns,
-      setColumns,
-      navigate,
-      navigateFor
-    );
+
+    const successFunctions = () => {
+      refetch();
+      toast.success("Dataset Added Successfully!");
+      onClose();
+      setColumns([{ columnName: "", columnType: "" }]);
+    };
+    const apiFor = "dataset"
+    try {
+      await handleAddDatasetApi(event, datasets, columns, successFunctions, apiFor);
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (
