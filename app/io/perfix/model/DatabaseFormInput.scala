@@ -17,66 +17,69 @@ object DatabaseFormInput {
     }
   }
 
-  val RedisDatabaseFormInput = DatabaseFormInput(
+  val RedisDatabaseFormInput: DatabaseFormInput = DatabaseFormInput(
     Seq(
       FormInputs(
-        Map(
-          "Node Type" -> FormInputType(StringType),
-          "Number of Cache Nodes" -> FormInputType(IntType)
+        Seq(
+          FormInput("cacheNodeType", "Node Type", FormInputType(StringType)),
+          FormInput("numCacheNodes", "Number of Cache Nodes", FormInputType(IntType))
         )
       ),
       FormInputs(
-        Map(
-          "Select a Key Column" -> FormInputType(StringType)
+        Seq(
+          FormInput("keyColumn", "Select a Key Column", FormInputType(StringType))
         )
       )
     )
   )
 
-  val MySQLDatabaseFormInput = DatabaseFormInput(
+  val MySQLDatabaseFormInput: DatabaseFormInput = DatabaseFormInput(
     Seq(
       FormInputs(
-        Map(
-          "Instance Type" -> FormInputType(StringType),
-          "TableName" -> FormInputType(StringType)
+        Seq(
+          FormInput("instanceType", "Instance Type", FormInputType(StringType)),
+          FormInput("tableName", "TableName", FormInputType(StringType))
         )
       ),
       FormInputs(
-        Map(
-          "Primary Index" -> FormInputType(StringType),
-          "Secondary index" -> FormInputType(StringType)
+        Seq(
+          FormInput("primaryIndexColumn", "Primary Index", FormInputType(StringType)),
+          FormInput("secondaryIndexesColumn", "Secondary index", FormInputType(MultiColumnSelectorType))
         )
       )
     )
   )
 
-  val DynamoDBDatabaseFormInput = DatabaseFormInput(
+  val DynamoDBDatabaseFormInput: DatabaseFormInput = DatabaseFormInput(
     Seq(
       FormInputs(
-        Map(
-          "RCU" -> FormInputType(IntType),
-          "WCU" -> FormInputType(IntType)
+        Seq(
+          FormInput("tableName", "Table Name", FormInputType(IntType)),
+          FormInput("rcu", "RCU", FormInputType(IntType)),
+          FormInput("wcu", "WCU", FormInputType(IntType))
         )
       ),
       FormInputs(
-        Map(
-          "List of GSIs" -> FormInputType(StringType)
+        Seq(
+          FormInput("partitionKey", "Partition Key", FormInputType(StringType)),
+          FormInput("sortKey", "Sort Key", FormInputType(StringType)),
+          FormInput("gsiParams", "List of GSIs", FormInputType(GSIType))
         )
       )
     )
   )
 
-  val DocumentDBDatabaseFormInput = DatabaseFormInput(
+  val DocumentDBDatabaseFormInput: DatabaseFormInput = DatabaseFormInput(
     Seq(
       FormInputs(
-        Map(
-          "Instance Class" -> FormInputType(StringType),
-          "Collection Name" -> FormInputType(StringType)
+        Seq(
+          FormInput("instanceClass", "Instance Class", FormInputType(StringType)),
+          FormInput("collectionName", "Collection Name", FormInputType(StringType))
         )
       ),
       FormInputs(
-        Map(
-          "Indexes" -> FormInputType(StringType)
+        Seq(
+          FormInput("indices", "Indexes", FormInputType(MultiColumnSelectorType))
         )
       )
     )
