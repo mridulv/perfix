@@ -20,6 +20,13 @@ class DatasetManager @Inject()(datasetConfigStore: DatasetConfigStore) {
       .getOrElse(throw InvalidStateException("Invalid Dataset"))
   }
 
+  def columns(datasetId: DatasetId): Seq[String] = {
+    datasetConfigStore.get(datasetId)
+      .getOrElse(throw InvalidStateException("Invalid Dataset"))
+      .columns
+      .map(_.columnName)
+  }
+
   def data(datasetId: DatasetId): Dataset = {
     datasetConfigStore.get(datasetId)
       .map(_.dataset.sampleDataset(SAMPLE_ROWS))
