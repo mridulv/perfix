@@ -1,15 +1,39 @@
+import axios from "axios";
 import React from "react";
 import { MdClose } from "react-icons/md";
 
 const DeleteModal = ({
   open,
   onClose,
-  data,
-  action,
-  message,
+  dataId,
   actionHead,
   actionText,
+  deleteUrl,
+  successFunctions
 }) => {
+
+  const handleDelete = async (id, message) => {
+    try {
+      const res = await axios.delete(
+        `${deleteUrl}/${dataId}`,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
+      console.log(res);
+      if (res.status === 200) {
+        // setDatasets(data.filter((d) => d.id.id !== id));
+        // toast.success(message);
+        // setOpenDeleteModal(false);
+        successFunctions();
+      }
+    } catch (error) {
+      console.error("Error deleting dataset:", error);
+    }
+  };
   return (
     <div
       onClick={onClose}
@@ -47,7 +71,7 @@ const DeleteModal = ({
               Don't Delete
             </button>
             <button
-              onClick={() => action(data.id.id, message)}
+              onClick={() => handleDelete(dataId)}
               className="btn bg-primary btn-sm border border-primary rounded text-white hover:bg-[#57B1FF]"
             >
               Delete

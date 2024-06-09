@@ -1,17 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { SlOptionsVertical } from "react-icons/sl";
-import { FaGooglePlay } from "react-icons/fa6";
-import RunExperimentsDetails from "./RunExperimentsDetails";
 import DeleteModal from "./DeleteModal";
-import axios from "axios";
 import toast from "react-hot-toast";
+import CommonTableRows from "./CommonTableRows";
 
 const CommonTable = ({
   data,
   tableHead,
   columnHeads,
   dataForRun = null,
-  setDatasets = null,
+  refetch,
 }) => {
   const [showButtons, setShowButtons] = useState(null);
   const [showExperimentDetails, setShowExperimentDetails] = useState(null);
@@ -53,25 +50,49 @@ const CommonTable = ({
     };
   }, []);
 
-  const handleDelete = async (id, message) => {
-    try {
-      const res = await axios.delete(`${process.env.REACT_APP_BASE_URL}/dataset/${id}`, {
-        headers: {
-          "Content-Type": "application/json",
-        },
-        withCredentials: true,
-      });
-      console.log(res);
-      if (res.status === 200) {
-        setDatasets(data.filter((d) => d.id.id !== id));
-        toast.success(message);
-        setOpenDeleteModal(false);
-      }
-    } catch (error) {
-      console.error("Error deleting dataset:", error);
-    }
+  const deleteUrl =
+    columnHeads[0] === "Dataset Name"
+      ? `${process.env.REACT_APP_BASE_URL}/dataset`
+      : columnHeads[0] === "Database Name"
+      ? `${process.env.REACT_APP_BASE_URL}/config`
+      : `${process.env.REACT_APP_BASE_URL}/experiment`;
+
+  const handleDatasetDeleteSuccess = () => {
+    refetch();
+    toast.success("Dataset Deleted Successfully!");
+    setSelectedData(null);
+    setOpenDeleteModal(false);
   };
 
+  const handleDatabaseDeleteSuccess = () => {
+    // ... (handle database deletion success)
+    refetch();
+    toast.success("Database Deleted Successfully!");
+    setSelectedData(null);
+    setOpenDeleteModal(false);
+  };
+
+  const handleExperimentDeleteSuccess = () => {
+    // ... (handle experiment deletion success)
+    refetch();
+    toast.success("Experiment Deleted Successfully!");
+    setSelectedData(null);
+    setOpenDeleteModal(false);
+  };
+
+  const successFunctions =
+    columnHeads[0] === "Dataset Name"
+      ? handleDatasetDeleteSuccess
+      : columnHeads[0] === "Database Name"
+      ? handleDatabaseDeleteSuccess
+      : handleExperimentDeleteSuccess;
+
+  const dataId =
+    columnHeads[0] === "Dataset Name"
+      ? selectedData?.id?.id
+      : columnHeads[0] === "Database Name"
+      ? selectedData?.databaseConfigId.id
+      : selectedData?.experimentId.id;
   return (
     <div>
       <div className="bg-accent py-2 ps-3 text-[14px] font-semibold border-b-2 border-gray-300 rounded-t-lg">
@@ -94,140 +115,21 @@ const CommonTable = ({
           </tr>
         </thead>
         <tbody>
-          {data &&
-            columnHeads[0] === "Dataset Name" &&
+          {data ? (
             data.map((d, i) => (
-              <tr key={i} className="border-b border-gray-300 ps-2">
-                <td className="text-start text-[13px] py-4 ps-2">{d.name}</td>
-                <td className="text-start text-[13px] py-4 ps-2">
-                  {d.columns.length}
-                </td>
-                <td className="text-start text-[13px] py-4 ps-2">
-                  {new Date(d.createdAt).toLocaleDateString()}
-                </td>
-                <td className="text-start text-[13px] py-4 ps-2">{d.rows}</td>
-                <td className="relative w-[50px]">
-                  <button
-                    onClick={() => handleShowOptions(d)}
-                    className="btn-sm hover:bg-accent rounded"
-                  >
-                    <SlOptionsVertical size={13} />
-                  </button>
-                  {showButtons === d && (
-                    <div className="flex flex-col justify-center gap-1 absolute z-10 bottom-[-70px] left-[-15px] bg-white shadow-md rounded p-2 actions">
-                      <button className="px-2 py-1 text-[13px] hover:bg-accent">
-                        Edit
-                      </button>
-                      <button
-                        onClick={() => handleSelectedData(d)}
-                        className="px-2 py-1 text-[13px] hover:bg-accent"
-                      >
-                        Delete
-                      </button>
-                    </div>
-                  )}
-                </td>
-              </tr>
-            ))}
-
-          {data &&
-            columnHeads[0] === "Database Name" &&
-            data.map((d, i) => (
-              <tr key={i} className="border-b border-gray-300 ps-2">
-                <td className="text-start text-[13px] py-4 ps-2">
-                  {d.databaseName}
-                </td>
-                <td className="text-start text-[13px] py-4 ps-2">
-                  {d.databaseType}
-                </td>
-                <td className="text-start text-[13px] py-4 ps-2">
-                  {d.datasetName}
-                </td>
-                <td className="text-start text-[13px] py-4 ps-2">
-                  {d.createdAt}
-                </td>
-                <td className="relative w-[50px]">
-                  <button
-                    onClick={() => handleShowOptions(d)}
-                    className="btn-sm hover:bg-accent rounded"
-                  >
-                    <SlOptionsVertical size={13} />
-                  </button>
-                  {showButtons === d && (
-                    <div className="flex flex-col justify-center gap-1 absolute z-10 bottom-[-70px] left-[-15px] bg-white shadow-md rounded p-2 actions">
-                      <button className="px-2 py-1 text-[13px] hover:bg-accent">
-                        Edit
-                      </button>
-                      <button className="px-2 py-1 text-[13px] hover:bg-accent">
-                        Delete
-                      </button>
-                    </div>
-                  )}
-                </td>
-              </tr>
-            ))}
-          {data &&
-            columnHeads[0] === "Experiment Name" &&
-            data.map((d, i) => (
-              <React.Fragment key={i}>
-                <tr className="border-b border-gray-300 ps-2 ">
-                  <td className="text-start text-[13px] py-4 ps-2">
-                    {d.experimentName}
-                  </td>
-                  <td className="text-start text-[13px] py-4 ps-2">
-                    {d.databaseConfigName}
-                  </td>
-                  <td className="text-start text-[13px] py-4 ps-2">
-                    {d.createdAt}
-                  </td>
-                  <td className="text-start text-[13px] py-4 ps-2 flex items-center gap-2">
-                    {d.experimentState}
-                  </td>
-                  <td className="text-start text-[13px] py-4 ps-2">
-                    <span
-                      onClick={() => handleRunExperiment(d)}
-                      className="cursor-pointer hover:bg-gray-50 transition-colors duration-1000 ease-in-out"
-                    >
-                      <FaGooglePlay color="green" size={20} />
-                    </span>
-                  </td>
-                  <td className="relative w-[50px]">
-                    <button
-                      onClick={() => handleShowOptions(d)}
-                      className="btn-sm hover:bg-accent rounded"
-                    >
-                      <SlOptionsVertical size={13} />
-                    </button>
-                    {showButtons === d && (
-                      <div className="flex flex-col justify-center gap-1 absolute z-10 bottom-[-70px] left-[-15px] bg-white shadow-md rounded p-2 actions">
-                        <button className="px-2 py-1 text-[13px] hover:bg-accent">
-                          Edit
-                        </button>
-                        <button className="px-2 py-1 text-[13px] hover:bg-accent">
-                          Delete
-                        </button>
-                      </div>
-                    )}
-                  </td>
-                </tr>
-
-                <tr>
-                  <td colSpan={columnHeads.length + 1} className="relative">
-                    <div
-                      className={`overflow-hidden transition-all duration-1000 ease-in-out ${
-                        showExperimentDetails === d ? "max-h-screen" : "max-h-0"
-                      }`}
-                    >
-                      {showExperimentDetails === d && (
-                        <RunExperimentsDetails data={dataForRun} />
-                      )}
-                    </div>
-                  </td>
-                </tr>
-              </React.Fragment>
-            ))}
-
-          {!data && (
+              <CommonTableRows
+                key={i}
+                data={d}
+                columnHeads={columnHeads}
+                showButtons={showButtons}
+                showExperimentDetails={showExperimentDetails}
+                handleShowOptions={handleShowOptions}
+                handleSelectedData={handleSelectedData}
+                handleRunExperiment={handleRunExperiment}
+                dataForRun={dataForRun}
+              />
+            ))
+          ) : (
             <tr className="text-start text-[13px] py-4 ps-2">
               <td>You haven't added any data</td>
             </tr>
@@ -237,13 +139,11 @@ const CommonTable = ({
       <DeleteModal
         open={openDeleteModal}
         onClose={() => setOpenDeleteModal(false)}
-        data={selectedData}
-        action={handleDelete}
-        message="Dataset Deleted successfully"
-        actionHead={"Delete dataset?"}
-        actionText={
-          "Once you delete the dataset, you cannot modify existing experiments with this dataset, however you can create new datasets. Are you sure you want to continue?"
-        }
+        dataId={dataId}
+        actionHead={`Delete ${tableHead}?`}
+        actionText={`Once you delete the ${tableHead.toLowerCase()}, you cannot modify existing experiments with this dataset, however you can create new datasets. Are you sure you want to continue?`}
+        deleteUrl={deleteUrl}
+        successFunctions={successFunctions}
       />
     </div>
   );

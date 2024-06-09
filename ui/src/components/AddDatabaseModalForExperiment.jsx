@@ -1,6 +1,6 @@
 import React from "react";
 import { MdClose } from "react-icons/md";
-import AddDatabase from "./AddDatabase";
+import AddDatabase from "./AddDatabase/AddDatabase";
 
 const AddDatabaseModalForExperiment = ({
   open,
