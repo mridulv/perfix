@@ -2,15 +2,15 @@ apiVersion: v1
 entries:
   perfix:
   - apiVersion: v2
-    created: "2024-06-08T14:29:08.71377534Z"
+    created: "2024-06-09T07:00:39.330433527Z"
     description: A Helm chart for the Perfix application on Kubernetes
-    digest: 0dcec58ac856964c95f060e243d879214062d2210dec5c0d9ce45a55d2f9cddd
+    digest: ddd42f44697d3de191c6a76ef7f6453a13b7dd24eb712ad75e388bfbb97706a1
     name: perfix
     urls:
     - https://mridulv.github.io/perfix/perfix-0.1.4.tgz
     version: 0.1.4
   - apiVersion: v2
-    created: "2024-06-08T14:29:08.713537966Z"
+    created: "2024-06-09T07:00:39.330209578Z"
     description: A Helm chart for the Perfix application on Kubernetes
     digest: 22c6c7f5e071b5ac50d50fee125766e22ce4baba8fb27821463df9e64b4b36d2
     name: perfix
@@ -18,11 +18,11 @@ entries:
     - https://mridulv.github.io/perfix/perfix-0.1.3.tgz
     version: 0.1.3
   - apiVersion: v2
-    created: "2024-06-08T14:29:08.713360595Z"
+    created: "2024-06-09T07:00:39.330060408Z"
     description: A Helm chart for the Perfix application on Kubernetes
     digest: cc2fbfa4000bb0850854c59c25bd59600acb9d283f2067fe45b3407b0d870470
     name: perfix
     urls:
     - https://mridulv.github.io/perfix/perfix-0.1.2.tgz
     version: 0.1.2
-generated: "2024-06-08T14:29:08.713015962Z"
+generated: "2024-06-09T07:00:39.329755067Z"
