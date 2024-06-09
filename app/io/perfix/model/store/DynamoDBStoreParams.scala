@@ -8,7 +8,7 @@ case class DynamoDBStoreParams(tableName: String,
                                wcu: Long,
                                partitionKey: String,
                                sortKey: String,
-                               gsiParams: Seq[DynamoDBGSIParam]) extends StoreParams
+                               gsiParams: Option[Seq[DynamoDBGSIParam]] = None) extends StoreParams
 
 object DynamoDBStoreParams {
   implicit val DynamoDBStoreParamsFormatter: Format[DynamoDBStoreParams] = Json.format[DynamoDBStoreParams]

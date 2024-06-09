@@ -26,7 +26,7 @@ class DynamoDBStore(datasetParams: DatasetParams,
   override def launcher(): Option[StoreLauncher[DynamoDBStoreParams]] = {
     dynamoDBParams.dynamoDBTableParams = Some(DynamoDBTableParams(None, storeParams.tableName, storeParams.partitionKey, storeParams.sortKey))
     dynamoDBParams.dynamoDBCapacityParams = Some(DynamoDBCapacityParams(Some(storeParams.rcu), Some(storeParams.wcu)))
-    dynamoDBParams.dynamoDBGSIMetadataParams = Some(DynamoDBGSIMetadataParams(storeParams.gsiParams))
+    dynamoDBParams.dynamoDBGSIMetadataParams = Some(DynamoDBGSIMetadataParams(storeParams.gsiParams.getOrElse(Seq.empty)))
     None
   }
 
