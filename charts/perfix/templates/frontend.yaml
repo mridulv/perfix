@@ -26,4 +26,4 @@ spec:
             - name: NODE_ENV
               value: "production"
             - name: REACT_APP_BASE_URL
-              value: http://{{ .Values.nginx.hostname }}/api
+              value: https://{{ .Values.nginx.hostname }}/api

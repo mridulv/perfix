@@ -9,9 +9,10 @@ backend:
     port: 9000
 
   aws:
-    key: "**********"
-    secret: "**********"
+    key: "key"
+    secret: "secret"
     region: "us-east-1"
+
   oauth:
     google:
       clientId: "clientId"
@@ -28,7 +29,7 @@ frontend:
     port: 3000
 
 nginx:
-  hostname: "trials.perfix.com"
+  hostname: "trials.perfix.in"
 
 postgres:
   port: 5432

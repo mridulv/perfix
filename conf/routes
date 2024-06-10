@@ -14,6 +14,7 @@ DELETE   /experiment/:id                               io.perfix.controllers.Exp
 POST     /dataset/create                               io.perfix.controllers.DatasetController.create
 POST     /dataset                                      io.perfix.controllers.DatasetController.all
 GET      /dataset/:id                                  io.perfix.controllers.DatasetController.get(id: Int)
+GET      /dataset/:id/columns                          io.perfix.controllers.DatasetController.columns(id: Int)
 GET      /dataset/:id/data                             io.perfix.controllers.DatasetController.data(id: Int)
 POST     /dataset/:id                                  io.perfix.controllers.DatasetController.update(id: Int)
 DELETE   /dataset/:id                                  io.perfix.controllers.DatasetController.delete(id: Int)

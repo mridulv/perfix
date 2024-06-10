@@ -1,11 +1,9 @@
 package io.perfix.model
 
-import io.perfix.forms.Form.FormInputName
 import play.api.libs.json._
 
-case class FormInputs(inputs: Map[FormInputName, FormInputType])
+case class FormInputs(inputs: Seq[FormInput])
 
 object FormInputs {
-  implicit val reads: Reads[FormInputs] = Json.reads[FormInputs]
-  implicit val writes: Writes[FormInputs] = Json.writes[FormInputs]
+  implicit val formatter: Format[FormInputs] = Json.format[FormInputs]
 }

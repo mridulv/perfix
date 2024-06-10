@@ -14,11 +14,11 @@ class ConfigController @Inject()(val controllerComponents: SecurityComponents,
                                  configManager: ConfigManager) extends Security[UserProfile] {
 
 
-  def databases = Action { request =>
+  def databases = authenticationAction { request =>
     Results.Ok(Json.toJson(configManager.databases()))
   }
 
-  def inputs(databaseType: String) = Action { request =>
+  def inputs(databaseType: String) = authenticationAction { request =>
     Results.Ok(Json.toJson(configManager.databaseConfig(databaseType)))
   }
 

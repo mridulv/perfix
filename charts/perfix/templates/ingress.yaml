@@ -18,6 +18,10 @@ metadata:
     nginx.ingress.kubernetes.io/use-regex: "true"
 spec:
   ingressClassName: nginx
+  tls:
+    - hosts:
+        - {{ .Values.nginx.hostname }}
+      secretName: trials-perfix-tls
   rules:
     - host: {{ .Values.nginx.hostname }}
       http:
@@ -28,9 +32,11 @@ spec:
                 name: perfix-ui-service
                 port:
                   number: {{ .Values.frontend.service.port }}
+            pathType: Prefix
           - path: /api(/|$)(.*)
             backend:
               service:
                 name: perfix-service
                 port:
                   number: {{ .Values.backend.service.port }}
+            pathType: Prefix

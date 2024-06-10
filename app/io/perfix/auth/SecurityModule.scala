@@ -8,7 +8,7 @@ import org.pac4j.core.context.{WebContext, WebContextHelper}
 import org.pac4j.core.context.session.SessionStore
 import org.pac4j.core.engine.DefaultCallbackLogic
 import org.pac4j.core.engine.savedrequest.{DefaultSavedRequestHandler, SavedRequestHandler}
-import org.pac4j.core.exception.http.{HttpAction, OkAction}
+import org.pac4j.core.exception.http.{FoundAction, HttpAction, OkAction, RedirectionAction}
 import org.pac4j.core.util.{HttpActionHelper, Pac4jConstants}
 import org.pac4j.oauth.client.Google2Client
 import org.pac4j.oauth.client.Google2Client.Google2Scope
@@ -17,7 +17,10 @@ import org.pac4j.play.store.{NoOpDataEncrypter, PlayCookieSessionStore}
 import org.pac4j.play.{CallbackController, LogoutController}
 import play.api.{Configuration, Environment}
 
+import java.util.Optional
+
 class SecurityModule(environment: Environment, configuration: Configuration) extends AbstractModule {
+  private val APP_URL: String = configuration.get[String]("app.baseUrl")
   private val BASE_URL: String = configuration.get[String]("pac4j.googleClient.baseUrl")
   private val CLIENT_ID: String = configuration.get[String]("pac4j.googleClient.clientId")
   private val SECRET: String = configuration.get[String]("pac4j.googleClient.secret")
@@ -36,18 +39,22 @@ class SecurityModule(environment: Environment, configuration: Configuration) ext
       val defaultSavedRequestHandler = new DefaultSavedRequestHandler
 
       override def save(webContext: WebContext, sessionStore: SessionStore): Unit = {
-        val requestedUrl = "http://perfix.com"
-        if (WebContextHelper.isPost(webContext)) {
-          val formPost = HttpActionHelper.buildFormPostContent(webContext)
-          sessionStore.set(webContext, Pac4jConstants.REQUESTED_URL, new OkAction(formPost))
-        }
-        else {
-          sessionStore.set(webContext, Pac4jConstants.REQUESTED_URL, requestedUrl)
-        }
+        defaultSavedRequestHandler.save(webContext, sessionStore)
       }
 
       override def restore(webContext: WebContext, sessionStore: SessionStore, defaultUrl: String): HttpAction = {
-        defaultSavedRequestHandler.restore(webContext, sessionStore, defaultUrl)
+        val optRequestedUrl = Some(APP_URL)
+        var requestedAction: HttpAction = null
+        if (optRequestedUrl.isDefined) {
+          sessionStore.set(webContext, Pac4jConstants.REQUESTED_URL, null)
+          val requestedUrl = optRequestedUrl.get
+          if (requestedUrl.isInstanceOf[String]) requestedAction = new FoundAction(requestedUrl.asInstanceOf[String])
+          else if (requestedUrl.isInstanceOf[RedirectionAction]) requestedAction = requestedUrl.asInstanceOf[RedirectionAction]
+        }
+        if (requestedAction == null) requestedAction = new FoundAction(defaultUrl)
+
+        if (requestedAction.isInstanceOf[FoundAction]) HttpActionHelper.buildRedirectUrlAction(webContext, requestedAction.asInstanceOf[FoundAction].getLocation)
+        else HttpActionHelper.buildFormPostContentAction(webContext, requestedAction.asInstanceOf[OkAction].getContent)
       }
     })
     bind(classOf[CallbackController]).toInstance(callbackController)

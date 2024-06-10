@@ -22,6 +22,10 @@ class DatasetController @Inject()(val controllerComponents: SecurityComponents,
       Results.Ok(Json.toJson(datasetManager.get(DatasetId(datasetId))))
   }
 
+  def columns(datasetId: Int) = authenticationAction { request =>
+    Results.Ok(Json.toJson(datasetManager.columns(DatasetId(datasetId))))
+  }
+
   def data(datasetId: Int) = authenticationAction { request =>
       Results.Ok(Json.toJson(datasetManager.data(DatasetId(datasetId))))
   }
