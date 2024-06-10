@@ -9,6 +9,7 @@ case object StringType extends DataType
 case object DoubleType extends DataType
 case object IntType extends DataType
 case object GSIType extends DataType
+case object SingleColumnSelectorType extends DataType
 case object MultiColumnSelectorType extends DataType
 
 
@@ -20,6 +21,7 @@ object DataType {
     case JsString("DoubleType") => JsSuccess(DoubleType)
     case JsString("IntType") => JsSuccess(IntType)
     case JsString("GSIType") => JsSuccess(GSIType)
+    case JsString("SingleColumnSelectorType") => JsSuccess(SingleColumnSelectorType)
     case JsString("MultiColumnSelectorType") => JsSuccess(MultiColumnSelectorType)
     case _ => JsError("Invalid DataType")
   }
@@ -31,6 +33,7 @@ object DataType {
     case DoubleType => JsString("DoubleType")
     case IntType => JsString("IntType")
     case GSIType => JsString("GSIType")
+    case SingleColumnSelectorType => JsString("SingleColumnSelectorType")
     case MultiColumnSelectorType => JsString("MultiColumnSelectorType")
   }
 

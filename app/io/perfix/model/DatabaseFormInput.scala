@@ -27,7 +27,7 @@ object DatabaseFormInput {
       ),
       FormInputs(
         Seq(
-          FormInput("keyColumn", "Select a Key Column", FormInputType(StringType))
+          FormInput("keyColumn", "Select a Key Column", FormInputType(SingleColumnSelectorType))
         )
       )
     )
@@ -43,7 +43,7 @@ object DatabaseFormInput {
       ),
       FormInputs(
         Seq(
-          FormInput("primaryIndexColumn", "Primary Index", FormInputType(StringType)),
+          FormInput("primaryIndexColumn", "Primary Index", FormInputType(SingleColumnSelectorType)),
           FormInput("secondaryIndexesColumn", "Secondary index", FormInputType(MultiColumnSelectorType))
         )
       )
@@ -54,15 +54,15 @@ object DatabaseFormInput {
     Seq(
       FormInputs(
         Seq(
-          FormInput("tableName", "Table Name", FormInputType(IntType)),
+          FormInput("tableName", "Table Name", FormInputType(StringType)),
           FormInput("rcu", "RCU", FormInputType(IntType)),
           FormInput("wcu", "WCU", FormInputType(IntType))
         )
       ),
       FormInputs(
         Seq(
-          FormInput("partitionKey", "Partition Key", FormInputType(StringType)),
-          FormInput("sortKey", "Sort Key", FormInputType(StringType)),
+          FormInput("partitionKey", "Partition Key", FormInputType(SingleColumnSelectorType)),
+          FormInput("sortKey", "Sort Key", FormInputType(SingleColumnSelectorType)),
           FormInput("gsiParams", "List of GSIs", FormInputType(GSIType))
         )
       )
