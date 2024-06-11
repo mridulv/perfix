@@ -16,14 +16,17 @@ class DatabaseConfigManager @Inject()(databaseConfigStore: DatabaseConfigStore,
     databaseConfigId
   }
 
-  def get(databaseConfigId: DatabaseConfigId): DatabaseConfigParams = {
+  def get(databaseConfigId: DatabaseConfigId): DatabaseConfigDisplayParams = {
+    val datasets = datasetManager.all(Seq.empty)
     databaseConfigStore
       .get(databaseConfigId)
       .getOrElse(throw InvalidStateException("Invalid DatabaseConfigId"))
+      .toDatabaseConfigDisplayParams(datasets)
   }
 
   def update(databaseConfigId: DatabaseConfigId,
-             databaseConfigParams: DatabaseConfigParams): DatabaseConfigParams = {
+             databaseConfigParams: DatabaseConfigParams): DatabaseConfigDisplayParams = {
+    val datasets = datasetManager.all(Seq.empty)
     val exitingParams = databaseConfigStore
       .get(databaseConfigId)
       .getOrElse(throw InvalidStateException("Invalid DatabaseConfigId"))
@@ -34,11 +37,12 @@ class DatabaseConfigManager @Inject()(databaseConfigStore: DatabaseConfigStore,
         dataStore = databaseConfigParams.dataStore
       )
     databaseConfigStore.update(databaseConfigId, updatedParams)
-    updatedParams
+    updatedParams.toDatabaseConfigDisplayParams(datasets)
   }
 
-  def all(entityFilters: Seq[EntityFilter]): Seq[DatabaseConfigParams] = {
+  def all(entityFilters: Seq[EntityFilter]): Seq[DatabaseConfigDisplayParams] = {
     val allDatabaseConfigs = databaseConfigStore.list()
+    val datasets = datasetManager.all(Seq.empty)
     val allDatasets = datasetManager.all(Seq.empty)
     allDatabaseConfigs.filter { databaseConfig =>
       val relevantDataset = allDatasets.find(_.id.get == databaseConfig.datasetId).get
@@ -52,7 +56,7 @@ class DatabaseConfigManager @Inject()(databaseConfigStore: DatabaseConfigStore,
       val cond1 = datasetFilters.forall(df => df.filterDataset(relevantDataset.dataset))
       val cond2 = databaseConfigFilters.forall(df => df.filterDatabaseConfig(databaseConfig))
       cond1 && cond2
-    }
+    }.map(_.toDatabaseConfigDisplayParams(datasets))
   }
 
   def delete(databaseConfigId: DatabaseConfigId): Unit = {
