@@ -30,10 +30,23 @@ case class DatabaseConfigParams(databaseConfigId: Option[DatabaseConfigId] = Non
         storeParams = storeParams,
         dataStore = dataStore,
         createdAt = createdAt,
-        datasetName = dataset.name
+        datasetName = dataset.name,
+        datasetId
       )
       case None => throw new InvalidDatabaseConfigException(datasetId)
     }
+  }
+
+  def toDatabaseConfigDisplayParams(datasetParams: DatasetParams): DatabaseConfigDisplayParams = {
+    DatabaseConfigDisplayParams(
+      databaseConfigId = databaseConfigId,
+      name = name,
+      storeParams = storeParams,
+      dataStore = dataStore,
+      createdAt = createdAt,
+      datasetName = datasetParams.name,
+      datasetId
+    )
   }
 
 }

@@ -9,7 +9,14 @@ case class DatabaseConfigDisplayParams(databaseConfigId: Option[DatabaseConfigId
                                        storeParams: StoreParams,
                                        dataStore: StoreType,
                                        createdAt: Option[Long] = None,
-                                       datasetName: String)
+                                       datasetName: String,
+                                       datasetId: DatasetId) {
+
+  def toDatabaseConfigParams: DatabaseConfigParams = {
+    DatabaseConfigParams(databaseConfigId, name, storeParams, dataStore, createdAt, datasetId)
+  }
+
+}
 
 object DatabaseConfigDisplayParams {
   implicit val DatabaseConfigDisplayParamsFormatter: Format[DatabaseConfigDisplayParams] = Json.format[DatabaseConfigDisplayParams]
