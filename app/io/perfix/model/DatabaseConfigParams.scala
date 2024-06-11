@@ -1,5 +1,6 @@
 package io.perfix.model
 
+import io.perfix.exceptions.InvalidDatabaseConfigException
 import io.perfix.model.store.StoreParams
 import io.perfix.model.store.StoreType.StoreType
 import io.perfix.store.tables.DatabaseConfigRow
@@ -18,6 +19,20 @@ case class DatabaseConfigParams(databaseConfigId: Option[DatabaseConfigId] = Non
         DatabaseConfigRow(id = id.id, obj = Json.toJson(this).toString())
       case None =>
         DatabaseConfigRow(id = -1, obj = Json.toJson(this).toString())
+    }
+  }
+
+  def toDatabaseConfigDisplayParams(datasetParams: Seq[DatasetParams]): DatabaseConfigDisplayParams = {
+    datasetParams.find(_.id.get == datasetId) match {
+      case Some(dataset) => DatabaseConfigDisplayParams(
+        databaseConfigId = databaseConfigId,
+        name = name,
+        storeParams = storeParams,
+        dataStore = dataStore,
+        createdAt = createdAt,
+        datasetName = dataset.name
+      )
+      case None => throw new InvalidDatabaseConfigException(datasetId)
     }
   }
 
