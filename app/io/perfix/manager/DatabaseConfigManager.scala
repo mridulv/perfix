@@ -17,16 +17,16 @@ class DatabaseConfigManager @Inject()(databaseConfigStore: DatabaseConfigStore,
   }
 
   def get(databaseConfigId: DatabaseConfigId): DatabaseConfigDisplayParams = {
-    val datasets = datasetManager.all(Seq.empty)
-    databaseConfigStore
+    val databaseConfigParams = databaseConfigStore
       .get(databaseConfigId)
       .getOrElse(throw InvalidStateException("Invalid DatabaseConfigId"))
-      .toDatabaseConfigDisplayParams(datasets)
+    val datasetParams = datasetManager.get(databaseConfigParams.datasetId)
+    databaseConfigParams.toDatabaseConfigDisplayParams(datasetParams)
   }
 
   def update(databaseConfigId: DatabaseConfigId,
              databaseConfigParams: DatabaseConfigParams): DatabaseConfigDisplayParams = {
-    val datasets = datasetManager.all(Seq.empty)
+    val dataset = datasetManager.get(databaseConfigParams.datasetId)
     val exitingParams = databaseConfigStore
       .get(databaseConfigId)
       .getOrElse(throw InvalidStateException("Invalid DatabaseConfigId"))
@@ -37,12 +37,11 @@ class DatabaseConfigManager @Inject()(databaseConfigStore: DatabaseConfigStore,
         dataStore = databaseConfigParams.dataStore
       )
     databaseConfigStore.update(databaseConfigId, updatedParams)
-    updatedParams.toDatabaseConfigDisplayParams(datasets)
+    updatedParams.toDatabaseConfigDisplayParams(dataset)
   }
 
   def all(entityFilters: Seq[EntityFilter]): Seq[DatabaseConfigDisplayParams] = {
     val allDatabaseConfigs = databaseConfigStore.list()
-    val datasets = datasetManager.all(Seq.empty)
     val allDatasets = datasetManager.all(Seq.empty)
     allDatabaseConfigs.filter { databaseConfig =>
       val relevantDataset = allDatasets.find(_.id.get == databaseConfig.datasetId).get
@@ -56,7 +55,7 @@ class DatabaseConfigManager @Inject()(databaseConfigStore: DatabaseConfigStore,
       val cond1 = datasetFilters.forall(df => df.filterDataset(relevantDataset.dataset))
       val cond2 = databaseConfigFilters.forall(df => df.filterDatabaseConfig(databaseConfig))
       cond1 && cond2
-    }.map(_.toDatabaseConfigDisplayParams(datasets))
+    }.map(_.toDatabaseConfigDisplayParams(allDatasets))
   }
 
   def delete(databaseConfigId: DatabaseConfigId): Unit = {
