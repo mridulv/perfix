@@ -45,7 +45,7 @@ class ExperimentManager @Inject()(datasetManager: DatasetManager,
       }
 
       val cond1 = datasetFilters.forall(df => df.filterDataset(relevantDataset.dataset))
-      val cond2 = databaseConfigFilters.forall(df => df.filterDatabaseConfig(relevantDatabaseConfig))
+      val cond2 = databaseConfigFilters.forall(df => df.filterDatabaseConfig(relevantDatabaseConfig.toDatabaseConfigParams))
       val cond3 = experimentFilters.forall(df => df.filterExperiment(experiment))
       cond1 && cond2 && cond3
     }
@@ -62,7 +62,7 @@ class ExperimentManager @Inject()(datasetManager: DatasetManager,
     val dataset = datasetManager.get(databaseConfigParams.datasetId).dataset
     val experimentExecutor = new ExperimentExecutor(
       experimentParams,
-      databaseConfigParams,
+      databaseConfigParams.toDatabaseConfigParams,
       dataset
     )
     val result = experimentExecutor.runExperiment()
