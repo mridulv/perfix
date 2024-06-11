@@ -20,13 +20,14 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
-.search-input{
+.search-input {
   font-size: 14px;
 }
 
-.search-input::placeholder{
-  font-size: 13px;
+.search-input:focus {
+  outline-color: #3498db; /* Changes the outline color when the input is focused */
 }
+
 
 
 .dropdown {

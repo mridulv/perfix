@@ -54,6 +54,7 @@ const AddDataset = ({ columns, handleAddColumn }) => {
                     fontSize: "14px",
                     color: "#8E8E8E",
                   }}
+                  required
                 >
                   <option value="NameType">NameType</option>
                   <option value="AddressType">AddressType</option>

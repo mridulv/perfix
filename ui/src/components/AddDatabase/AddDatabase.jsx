@@ -6,18 +6,11 @@ import NavigationStep from "./NavigationStep";
 import CustomSelect from "../CustomSelect";
 import Loading from "../Loading";
 
-const AddDatabase = ({
-  dataset,
-  onClose = null,
-  navigate = null,
-  valueFor,
-  setSelectedDatabase = null,
-  refetch = null,
-}) => {
+const AddDatabase = ({ dataset, onClose = null, successFunction }) => {
   const [currentStep, setCurrentStep] = useState(1);
   const [maxSteps, setMaxSteps] = useState(2);
 
-  const [databaseName, setDatabaseName] = useState("")
+  const [databaseName, setDatabaseName] = useState("");
   const [databaseTypes, setDatabaseTypes] = useState(null);
   const [selectedDatabaseType, setselectedDatabaseType] = useState({
     option: "Choose Database",
@@ -54,12 +47,29 @@ const AddDatabase = ({
     }));
   }
 
-  const handleCurrentStep = () => {
-    setCurrentStep(currentStep + 1);
+  // for showing the input fields
+  const getCurrentStepForInputs = (currentStep) => {
+    return currentStep - 2;
   };
 
-  const getCurrentStep = (currentStep) => {
-    return currentStep - 2;
+  const handleCurrentStep = () => {
+    if (
+      currentStep === 1 &&
+      (databaseName === "" || selectedDatabaseType.value === "Choose")
+    ) {
+      return toast.error("Please input all the values");
+    }
+
+    if (currentStep > 1) {
+      const currentStepForInputs = getCurrentStepForInputs(currentStep);
+      if (
+        Object.keys(inputValues).length !==  inputFields[currentStepForInputs].inputs.length ||
+        Object.values(inputValues).some((value) => value === "" || value === 0)
+      ) {
+        return toast.error("Please fill in all required fields");
+      }
+    }
+    setCurrentStep(currentStep + 1);
   };
 
   //after the database type selected and in second step we will get the correct input fields
@@ -83,41 +93,31 @@ const AddDatabase = ({
     }
   }, [selectedDatabaseType, currentStep]);
 
-  // close the modal
-  const handleCancel = () => {
-    if (valueFor === "modal") {
-      onClose();
-    } else if (valueFor === "page") {
-      navigate("/database");
-    }
-    setCurrentStep(1);
-  };
+  //set the columns of the dataset in an array to show them in options
+  const datasetColumnsOptions = dataset.columns.map((column) => ({
+    option: column.columnName,
+    value: column.columnName,
+  }));
 
+  // when click cancel button
+  const handleCancel = () => {
+    onClose();
+  };
 
   //add database submit function
   const handleAddDatabase = async (e) => {
     e.preventDefault();
-   
 
     const values = {
       name: databaseName && databaseName,
-      dataStore:
-        selectedDatabaseType.value === "MySQL"
-          ? "MySQLStoreType"
-          : selectedDatabaseType.value === "Redis"
-          ? "RedisStoreType"
-          : selectedDatabaseType.value === "DocumentDB"
-          ? "MongoDBStoreType"
-          : "DynamoDBStoreType",
+      dataStore: selectedDatabaseType.value,
       datasetId: { id: dataset.id.id },
-      storeParams: {...inputValues, type: selectedDatabaseType.value},
+      storeParams: { ...inputValues, type: selectedDatabaseType.value },
     };
-
-    console.log(inputValues);
     if (
       currentStep > 2 &&
       currentStep === maxSteps &&
-      Object.keys(inputValues).length > 0
+      Object.keys(inputValues).length > 2
     ) {
       try {
         const res = await axios.post(
@@ -128,9 +128,7 @@ const AddDatabase = ({
           }
         );
         if (res.status === 200) {
-          toast.success("Database added successfully!");
-
-          handleCancel();
+          successFunction();
         } else {
           toast.error("Failed to add database.");
         }
@@ -140,12 +138,14 @@ const AddDatabase = ({
     }
   };
 
+  // setting the inputValues of the inputs of form
   const handleInputChange = (key, value) => {
     setInputValues((prevValues) => ({
       ...prevValues,
       [key]: value,
     }));
   };
+
   return (
     <div className="ps-7 flex flex-col relative">
       <form className="" onSubmit={handleAddDatabase}>
@@ -157,7 +157,7 @@ const AddDatabase = ({
                 <div className="flex flex-col mb-4">
                   <label className="text-[12px] font-bold mb-[2px]">Name</label>
                   <input
-                    className="search-input border-2 border-gray-300 focus:border-gray-400 outline-pink-600 max-w-[250px] px-2 py-2 rounded"
+                    className="search-input border-2 border-gray-300 focus:border-gray-400  max-w-[250px] px-2 py-2 rounded"
                     placeholder="Name"
                     name="name"
                     type="text"
@@ -189,7 +189,7 @@ const AddDatabase = ({
             ) : inputFields.length > 0 && currentStep > 1 ? (
               inputFields?.map((inputSet, index) => (
                 <div key={index}>
-                  {getCurrentStep(currentStep) === index && (
+                  {getCurrentStepForInputs(currentStep) === index && (
                     <div>
                       {inputSet.inputs &&
                         Object.entries(inputSet.inputs).map(([key, value]) => (
@@ -197,6 +197,7 @@ const AddDatabase = ({
                             key={key}
                             input={{ [key]: value }}
                             handleInputChange={handleInputChange}
+                            options={datasetColumnsOptions}
                           />
                         ))}
                     </div>

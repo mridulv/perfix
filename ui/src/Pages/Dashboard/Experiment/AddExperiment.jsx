@@ -58,7 +58,6 @@ const AddExperiment = () => {
     if (selectedDataset.value === "Choose") {
       return toast.error("Please select a dataset");
     }
-    const datasetId = selectedDataset.value;
 
     if (activeDataset === "new") {
       const successFunctions = () => {

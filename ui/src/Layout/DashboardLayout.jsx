@@ -9,22 +9,25 @@ import { AuthContext } from "../contexts/AuthProvider";
 import { FiLogOut } from "react-icons/fi";
 import axios from "axios";
 import toast from "react-hot-toast";
+import databaseIcon from "../assets/databaseIcon.png"
+import experimentIcon from "../assets/experimentIcon.png"
+import tableIcon from "../assets/tableIcon.png"
 
 const menus = [
   {
     name: "Datasets",
     link: "/",
-    icon: <GoDatabase />,
+    icon: tableIcon,
   },
   {
     name: "Database Configuration",
     link: "/database",
-    icon: <GoDatabase size={18} />,
+    icon:   databaseIcon,
   },
   {
     name: "Experiment",
     link: "/experiment",
-    icon: <AiOutlineExperiment size={18} />,
+    icon: experimentIcon,
   },
 ];
 
@@ -89,14 +92,14 @@ const DashboardLayout = () => {
             <div className="mt-5 ms-1">
               {menus.map((menu) => (
                 <Link
-                  //bg-[#fdd3db]
+                  //bg-[#fdd3db] [#A3D4FF]
                   key={menu.name}
                   className={`w-56 px-3 py-2  mt-1 flex gap-4 items-center ${
-                    location.pathname === menu.link && " bg-[#A3D4FF]"
+                    location.pathname === menu.link && " bg-[#c0dff9]"
                   } hover:bg-[#57B1FF] font-bold rounded-3xl `}
                   to={`${menu.link}`}
                 >
-                  {menu.icon}
+                  <img className="w-5" src={menu.icon} alt="" />
                   <span> {menu.name}</span>
                 </Link>
               ))}

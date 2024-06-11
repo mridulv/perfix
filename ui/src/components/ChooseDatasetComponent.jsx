@@ -53,7 +53,7 @@ const ChooseDatasetComponent = ({
                 selected={selectedDataset}
                 setSelected={setSelectedDataset}
                 options={options}
-                width="w-[300px]"
+                width="w-[200px]"
               ></CustomSelect>
             </label>
           )}

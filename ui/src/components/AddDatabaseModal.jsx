@@ -34,7 +34,11 @@ const AddDatabaseModal = ({ open, onClose, datasets, refetch }) => {
   const handleSubmitDataset = async (event) => {
     event.preventDefault();
 
-    //for choosing dataset
+    if(activeDataset === "existing" && selectedDatasetOption.value === "choose"){
+      return toast.error("Please select a dataset.")
+    }
+
+    //successfunction for choosing dataset
     if (
       activeDataset === "existing" &&
       currentAddStep === 1 &&
@@ -45,7 +49,7 @@ const AddDatabaseModal = ({ open, onClose, datasets, refetch }) => {
       setCurrentAddStep(2);
       setColumns([{ columnName: "", columnType: "" }]);
     }
-    // for creating new dataset
+    //success function for creating new dataset
     else {
       const successFunctions = (response) => {
         setSelectedDatasetValue(response.data.id);
@@ -53,6 +57,7 @@ const AddDatabaseModal = ({ open, onClose, datasets, refetch }) => {
         setCurrentAddStep(2);
         setColumns([{ columnName: "", columnType: "" }]);
       };
+
       await handleAddDatasetApi(event, datasets, columns, successFunctions);
     }
   };
@@ -73,6 +78,16 @@ const AddDatabaseModal = ({ open, onClose, datasets, refetch }) => {
       fetchDataset();
     }
   }, [selectedDatasetValue]);
+
+
+  //when database added successfully
+  const successFunctionsForDatabase = () => {
+    toast.success("Database Added Successfully");
+    refetch();
+    handleCloseModal();
+  }
+
+  //when click cancel button
 
   return (
     <div
@@ -144,7 +159,7 @@ const AddDatabaseModal = ({ open, onClose, datasets, refetch }) => {
                   dataset={selectedDataset}
                   onClose={handleCloseModal}
                   refetch={refetch}
-                  valueFor={"modal"}
+                  successFunction={successFunctionsForDatabase}
                 />
               </div>
             )}

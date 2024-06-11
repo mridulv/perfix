@@ -25,17 +25,22 @@ function CustomSelectMultipleOptions({ selected, setSelected, options, width }) 
   }, []);
 
   const handleOptionSelect = (selectedOption) => {
-    if (selected.includes(selectedOption)) {
-      setSelected(selected.filter((option) => option !== selectedOption));
+    const { option, value } = selectedOption;
+    const isOptionSelected = selected.some((opt) => opt.option === option);
+
+    if (isOptionSelected) {
+      setSelected(selected.filter((opt) => opt.option !== option));
     } else {
-      setSelected([...selected, selectedOption]);
+      setSelected([...selected, { option, value }]);
     }
   };
 
   return (
     <div className="dropdown" ref={dropdownRef}>
       <div
-        className={`dropdown-btn ${width} ${isActive ? "border-2 border-blue-400" : "border-2  border-[#E0E0E0]"}`}
+        className={`dropdown-btn ${width} ${
+          isActive ? "border-2 border-blue-400" : "border-2  border-[#E0E0E0]"
+        }`}
         onClick={handleOpenOptions}
       >
         <span className="mr-4">
@@ -43,7 +48,9 @@ function CustomSelectMultipleOptions({ selected, setSelected, options, width }) 
             ? `Selected (${selected.length})`
             : "Choose options"}
         </span>
-        <span className="mb-[2px]">{isActive ? <FaCaretUp /> : <FaCaretDown />}</span>
+        <span className="mb-[2px]">
+          {isActive ? <FaCaretUp /> : <FaCaretDown />}
+        </span>
       </div>
       <div
         className={`w-[200px] bg-white shadow-lg absolute ${
