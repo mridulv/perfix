@@ -3,8 +3,8 @@ package io.perfix.manager
 import com.google.inject.Inject
 import io.perfix.common.ExperimentExecutor
 import io.perfix.exceptions.InvalidStateException
-import io.perfix.model.experiment.{ExperimentDisplayParams, ExperimentId, ExperimentParams}
-import io.perfix.model.{DatabaseConfigFilter, DatasetFilter, EntityFilter, ExperimentFilter}
+import io.perfix.model.experiment.{ExperimentId, ExperimentParams, MultipleExperimentResult}
+import io.perfix.model.{EntityFilter, ExperimentFilter}
 import io.perfix.store.ExperimentStore
 
 import javax.inject.Singleton
@@ -21,66 +21,60 @@ class ExperimentManager @Inject()(datasetManager: DatasetManager,
       .getOrElse(throw InvalidStateException("Invalid ExperimentParams"))
   }
 
-  def get(experimentId: ExperimentId): ExperimentDisplayParams = {
+  def get(experimentId: ExperimentId): ExperimentParams = {
     val experimentParams = experimentStore
       .get(experimentId)
       .getOrElse(throw InvalidStateException(s"Invalid ExperimentId ${experimentId}"))
-    val databaseConfigParams = databaseConfigManager.get(experimentParams.databaseConfigId)
-    val dataset = datasetManager.get(databaseConfigParams.datasetId)
-    experimentParams.toExperimentDisplayParams(dataset.name, databaseConfigParams.name)
+    val databaseConfigParams = databaseConfigManager.all(Seq.empty)
+    val dataset = datasetManager.all(Seq.empty)
+    experimentParams.toExperimentParamsWithDatabaseDetails(dataset, databaseConfigParams)
   }
 
-  def all(entityFilters: Seq[EntityFilter]): Seq[ExperimentDisplayParams] = {
-    val allExperiments = experimentStore.list()
+  def all(entityFilters: Seq[EntityFilter]): Seq[ExperimentParams] = {
     val allDatasets = datasetManager.all(Seq.empty)
     val allDatabaseConfigs = databaseConfigManager.all(Seq.empty)
-
-    allExperiments.flatMap { experiment =>
-      val relevantDatabaseConfig = allDatabaseConfigs.find(_.databaseConfigId.get == experiment.databaseConfigId).get
-      val relevantDataset = allDatasets.find(_.id.get == relevantDatabaseConfig.datasetId).get
-
-      val datasetFilters = entityFilters.collect {
-        case df: DatasetFilter => df
-      }
-      val databaseConfigFilters = entityFilters.collect {
-        case df: DatabaseConfigFilter => df
-      }
-      val experimentFilters = entityFilters.collect {
-        case df: ExperimentFilter => df
-      }
-
-      val cond1 = datasetFilters.forall(df => df.filterDataset(relevantDataset.dataset))
-      val cond2 = databaseConfigFilters.forall(df => df.filterDatabaseConfig(relevantDatabaseConfig.toDatabaseConfigParams))
-      val cond3 = experimentFilters.forall(df => df.filterExperiment(experiment))
-      if (cond1 && cond2 && cond3) {
-        Some(experiment.toExperimentDisplayParams(relevantDataset.name, relevantDatabaseConfig.name))
-      } else {
-        None
-      }
+    val allExperimentsWithDatabaseDetails = experimentStore
+      .list()
+      .map(_.toExperimentParamsWithDatabaseDetails(allDatasets, allDatabaseConfigs))
+    val experimentFilters = entityFilters.collect {
+      case df: ExperimentFilter => df
+    }
+    experimentFilters.foldLeft(allExperimentsWithDatabaseDetails) { (experimentParams, experimentFilter) =>
+      experimentParams.filter(d => experimentFilter.filter(d))
     }
   }
 
-  def update(experimentId: ExperimentId, experimentParams: ExperimentParams): ExperimentDisplayParams = {
+  def update(experimentId: ExperimentId, experimentParams: ExperimentParams): ExperimentParams = {
     experimentStore.update(experimentId, experimentParams)
-    val databaseConfigParams = databaseConfigManager.get(experimentParams.databaseConfigId)
-    val dataset = datasetManager.get(databaseConfigParams.datasetId)
-    experimentParams.toExperimentDisplayParams(dataset.name, databaseConfigParams.name)
+    val databaseConfigParams = databaseConfigManager.all(Seq.empty)
+    val dataset = datasetManager.all(Seq.empty)
+    experimentParams.toExperimentParamsWithDatabaseDetails(dataset, databaseConfigParams)
   }
 
-  def executeExperiment(experimentId: ExperimentId): ExperimentDisplayParams = {
-    val experimentParams = get(experimentId).toExperimentParams
-    val databaseConfigParams = databaseConfigManager.get(experimentParams.databaseConfigId)
-    val dataset = datasetManager.get(databaseConfigParams.datasetId).dataset
-    val experimentExecutor = new ExperimentExecutor(
-      experimentParams,
-      databaseConfigParams.toDatabaseConfigParams,
-      dataset
-    )
-    val result = experimentExecutor.runExperiment()
-    val updatedExperimentParams = experimentParams.copy(experimentResult = Some(result))
+  def executeExperiment(experimentId: ExperimentId): ExperimentParams = {
+    val experimentParams = get(experimentId)
+    val allDatabaseConfigParams = databaseConfigManager.all(Seq.empty)
+    val allDatasetParams = datasetManager.all(Seq.empty)
+    val results = experimentParams.databaseConfigs.map { databaseConfigDetail =>
+      val configParams = allDatabaseConfigParams
+        .find(_.databaseConfigId.get == databaseConfigDetail.databaseConfigId)
+        .getOrElse(throw InvalidStateException("Invalid ExperimentParams"))
+      val datasetParams = allDatasetParams
+        .find(_.id.get == configParams.datasetDetails.datasetId)
+        .getOrElse(throw InvalidStateException("Invalid ExperimentParams"))
+      val experimentExecutor = new ExperimentExecutor(
+        experimentParams,
+        configParams,
+        datasetParams.dataset
+      )
+      val result = experimentExecutor.runExperiment()
+      experimentExecutor.cleanUp()
+      result
+    }
+    val updatedExperimentParams = experimentParams
+      .copy(experimentResult = Some(MultipleExperimentResult(results)))
     experimentStore.update(experimentId, updatedExperimentParams)
-    experimentExecutor.cleanUp()
-    updatedExperimentParams.toExperimentDisplayParams(dataset.params.name, databaseConfigParams.name)
+    updatedExperimentParams.toExperimentParamsWithDatabaseDetails(allDatasetParams, allDatabaseConfigParams)
   }
 
   def delete(experimentId: ExperimentId): Unit = {
