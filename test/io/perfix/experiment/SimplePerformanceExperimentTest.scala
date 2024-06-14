@@ -1,7 +1,7 @@
 package io.perfix.experiment
 
 import io.perfix.model.experiment.{ExperimentParams, ExperimentState}
-import io.perfix.model.{DatabaseConfigId, Dataset}
+import io.perfix.model.{DatabaseConfigDetails, DatabaseConfigId, Dataset}
 import io.perfix.query.{PerfixQuery, PerfixQueryFilter}
 import io.perfix.stores.mysql.MySQLStore
 import org.mockito.Mockito._
@@ -30,7 +30,7 @@ class SimplePerformanceExperimentTest extends AnyFlatSpec with Matchers {
       concurrentQueries = 10,
       experimentTimeInSeconds = 5,
       query = PerfixQuery(limitOpt = Some(100)),
-      databaseConfigId = DatabaseConfigId(-1),
+      databaseConfigs = Seq(DatabaseConfigDetails(DatabaseConfigId(-1))),
       experimentResult = None,
       createdAt = Some(System.currentTimeMillis()),
       experimentState = Some(ExperimentState.Created)
