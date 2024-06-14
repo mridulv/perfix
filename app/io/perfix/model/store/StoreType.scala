@@ -22,7 +22,7 @@ object StoreType extends Enumeration {
 
   // Define a custom Writes for serialization
   implicit val StoreTypeWrites: Writes[StoreType.Value] = Writes {
-    case MySQL => JsString(MongoDBVal)
+    case MySQL => JsString(MySQLVal)
     case Redis => JsString(RedisVal)
     case DynamoDB => JsString(DynamoDBVal)
     case MongoDB => JsString(MongoDBVal)

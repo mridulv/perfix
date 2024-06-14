@@ -37,7 +37,7 @@ case class DatabaseTypeFilter(store: String) extends DatabaseConfigFilter {
   }
 }
 
-case class DatasetNameFilter(name: String) extends EntityFilter {
+case class DatasetNameFilter(name: String) extends DatasetFilter {
 
   def filterDataset(dataset: Dataset): Boolean = {
     dataset.params.name == name
