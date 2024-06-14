@@ -11,7 +11,7 @@ case class DatabaseConfigParams(databaseConfigId: Option[DatabaseConfigId] = Non
                                 storeParams: StoreParams,
                                 dataStore: StoreType,
                                 createdAt: Option[Long] = None,
-                                datasetId: DatasetId) {
+                                datasetDetails: DatasetDetails) {
 
   def toDatabaseConfigRow: DatabaseConfigRow = {
     databaseConfigId match {
@@ -22,31 +22,15 @@ case class DatabaseConfigParams(databaseConfigId: Option[DatabaseConfigId] = Non
     }
   }
 
-  def toDatabaseConfigDisplayParams(datasetParams: Seq[DatasetParams]): DatabaseConfigDisplayParams = {
-    datasetParams.find(_.id.get == datasetId) match {
-      case Some(dataset) => DatabaseConfigDisplayParams(
-        databaseConfigId = databaseConfigId,
-        name = name,
-        storeParams = storeParams,
-        dataStore = dataStore,
-        createdAt = createdAt,
-        datasetName = dataset.name,
-        datasetId
-      )
-      case None => throw new InvalidDatabaseConfigException(datasetId)
+  def toDatabaseConfigDisplayParams(datasetParams: Seq[DatasetParams]): DatabaseConfigParams = {
+    datasetParams.find(_.id.get == datasetDetails.datasetId) match {
+      case Some(dataset) => this.copy(datasetDetails = DatasetDetails(datasetDetails.datasetId, datasetName = Some(dataset.name)))
+      case None => throw new InvalidDatabaseConfigException(datasetDetails.datasetId)
     }
   }
 
-  def toDatabaseConfigDisplayParams(datasetParams: DatasetParams): DatabaseConfigDisplayParams = {
-    DatabaseConfigDisplayParams(
-      databaseConfigId = databaseConfigId,
-      name = name,
-      storeParams = storeParams,
-      dataStore = dataStore,
-      createdAt = createdAt,
-      datasetName = datasetParams.name,
-      datasetId
-    )
+  def toDatabaseConfigDisplayParams(datasetParams: DatasetParams): DatabaseConfigParams = {
+    this.copy(datasetDetails = DatasetDetails(datasetDetails.datasetId, datasetName = Some(datasetParams.name)))
   }
 
 }

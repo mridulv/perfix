@@ -14,13 +14,3 @@ trait DataStore[T <: StoreParams] {
   def cleanup(): Unit
 }
 
-object DataStore extends Enumeration {
-
-  type DataStore = Value
-
-  val MySQLStore = Value("mysql")
-  val RedisStore = Value("redis")
-  val DynamoDBStore = Value("dynamodb")
-  val MongoDBStore = Value("mongodb")
-
-}

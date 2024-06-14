@@ -1,6 +1,6 @@
 package io.perfix.model.experiment
 
-import io.perfix.model.DatabaseConfigId
+import io.perfix.model.{DatabaseConfigDetails, DatabaseConfigId, DatabaseConfigParams, DatasetParams}
 import io.perfix.model.store.StoreType.StoreType
 import io.perfix.query.PerfixQuery
 import io.perfix.store.tables.ExperimentRow
@@ -12,9 +12,9 @@ case class ExperimentParams(experimentId: Option[ExperimentId],
                             experimentTimeInSeconds: Int = 30,
                             concurrentQueries: Int = 1,
                             query: PerfixQuery,
-                            databaseConfigId: DatabaseConfigId,
+                            databaseConfigs: Seq[DatabaseConfigDetails],
                             experimentState: Option[ExperimentState] = None,
-                            experimentResult: Option[ExperimentResult],
+                            experimentResult: Option[MultipleExperimentResult],
                             createdAt: Option[Long] = None) {
 
   def toExperimentRow: ExperimentRow = {
@@ -26,22 +26,23 @@ case class ExperimentParams(experimentId: Option[ExperimentId],
     }
   }
 
-  def toExperimentDisplayParams(datasetName: String,
-                                databaseConfigName: String): ExperimentDisplayParams = {
-    ExperimentDisplayParams(
-      experimentId = experimentId,
-      name = name,
-      writeBatchSize = writeBatchSize,
-      experimentTimeInSeconds = experimentTimeInSeconds,
-      concurrentQueries = concurrentQueries,
-      query = query,
-      databaseConfigId = databaseConfigId,
-      datasetName = datasetName,
-      databaseConfigName = databaseConfigName,
-      experimentState = experimentState,
-      experimentResult = experimentResult,
-      createdAt = createdAt
-    )
+  def toExperimentParamsWithDatabaseDetails(allDatasets: Seq[DatasetParams],
+                                            allDatabaseConfigParams: Seq[DatabaseConfigParams]): ExperimentParams = {
+    val databaseConfigDetails = databaseConfigs.map { databaseConfigDetail =>
+      val configId = databaseConfigDetail.databaseConfigId
+      val databaseConfigParams = allDatabaseConfigParams.find(_.databaseConfigId.get == configId).headOption
+      val dataset = databaseConfigParams.flatMap(params => allDatasets.find(_.id.get == params.datasetDetails.datasetId))
+      (databaseConfigParams, dataset) match {
+        case (Some(_), Some(_)) => DatabaseConfigDetails(
+          databaseConfigParams.get.databaseConfigId.get,
+          Some(databaseConfigParams.get.name),
+          Some(databaseConfigParams.get.dataStore.toString),
+          Some(dataset.get.name)
+        )
+        case (_, _) => databaseConfigDetail
+      }
+    }
+    this.copy(databaseConfigs = databaseConfigDetails)
   }
 
 }
