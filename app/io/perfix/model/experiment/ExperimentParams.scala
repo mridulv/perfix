@@ -1,6 +1,11 @@
 package io.perfix.model.experiment
 
+<<<<<<< Updated upstream
 import io.perfix.model.DatabaseConfigId
+=======
+import io.perfix.model.{DatabaseConfigDetails, DatabaseConfigId, DatabaseConfigParams, DatasetParams, UserInfo}
+import io.perfix.model.store.StoreType.StoreType
+>>>>>>> Stashed changes
 import io.perfix.query.PerfixQuery
 import io.perfix.store.tables.ExperimentRow
 import play.api.libs.json.{Format, Json}
@@ -16,12 +21,12 @@ case class ExperimentParams(experimentId: Option[ExperimentId],
                             experimentResult: Option[ExperimentResult],
                             createdAt: Option[Long] = None) {
 
-  def toExperimentRow: ExperimentRow = {
+  def toExperimentRow(userInfo: UserInfo): ExperimentRow = {
     experimentId match {
       case Some(id) =>
-        ExperimentRow(id = id.id, obj = Json.toJson(this).toString())
+        ExperimentRow(id = id.id, userEmail = userInfo.email, obj = Json.toJson(this).toString())
       case None =>
-        ExperimentRow(id = -1, obj = Json.toJson(this).toString())
+        ExperimentRow(id = -1, userEmail = userInfo.email, obj = Json.toJson(this).toString())
     }
   }
 

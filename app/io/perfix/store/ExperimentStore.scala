@@ -1,6 +1,9 @@
 package io.perfix.store
 
 import com.google.inject.{Inject, Singleton}
+import io.perfix.auth.UserContext
+import io.perfix.exceptions.UserNotDefinedException
+import io.perfix.model.UserInfo
 import io.perfix.model.experiment.{ExperimentId, ExperimentParams, ExperimentState}
 import io.perfix.store.tables.ExperimentTable
 import play.api.db.slick.DatabaseConfigProvider
@@ -18,46 +21,55 @@ class ExperimentStore @Inject()(dbConfigProvider: DatabaseConfigProvider)(implic
   import dbConfig._
   import profile.api._
 
-  def create(experimentParams: ExperimentParams): ExperimentParams = unwrapFuture {
+  def create(experimentParams: ExperimentParams): ExperimentParams = unwrapFuture { userInfo =>
     db.run {
       val experimentRow = experimentParams
         .copy(createdAt = Some(System.currentTimeMillis()))
         .copy(experimentState = Some(ExperimentState.Created))
-        .toExperimentRow
+        .toExperimentRow(userInfo)
       (experiments returning experiments.map(_.id)
         into ((experiment, id) => experiment.copy(id=id))
         ) += experimentRow
     }
   }.toExperimentParams
 
-  def update(experimentId: ExperimentId, experimentParams: ExperimentParams): Int = unwrapFuture {
+  def update(experimentId: ExperimentId, experimentParams: ExperimentParams): Int = unwrapFuture { userInfo =>
     db.run {
-      val experimentRow = experimentParams.toExperimentRow
-      val query = for { e <- experiments if e.id === experimentId.id } yield e.obj
+      val experimentRow = experimentParams.toExperimentRow(userInfo)
+      val query = for {
+        e <- experiments
+        if e.id === experimentId.id && e.userEmail === userInfo.email
+      } yield e.obj
       query.update(experimentRow.obj)
     }
   }
 
-  def get(experimentId: ExperimentId): Option[ExperimentParams] = unwrapFuture {
+  def get(experimentId: ExperimentId): Option[ExperimentParams] = unwrapFuture { userInfo =>
     db.run {
-      experiments.filter(_.id === experimentId.id).result.headOption.map(_.map(_.toExperimentParams))
+      experiments
+        .filter(_.id === experimentId.id)
+        .filter(_.userEmail === userInfo.email)
+        .result.headOption.map(_.map(_.toExperimentParams))
     }
   }
 
-  def list(): Seq[ExperimentParams] = unwrapFuture {
+  def list(): Seq[ExperimentParams] = unwrapFuture { userInfo =>
     db.run {
-      experiments.result.map(_.map(_.toExperimentParams))
+      experiments.filter(_.userEmail === userInfo.email).result.map(_.map(_.toExperimentParams))
     }
   }
 
-  def delete(experimentId: ExperimentId): Int = unwrapFuture {
+  def delete(experimentId: ExperimentId): Int = unwrapFuture { userInfo =>
     db.run {
-      experiments.filter(_.id === experimentId.id).delete
+      experiments.filter(_.userEmail === userInfo.email).filter(_.id === experimentId.id).delete
     }
   }
 
-
-  private def unwrapFuture[A](f: Future[A]): A = {
-    Await.result(f, Duration.Inf)
+  private def unwrapFuture[A](f: UserInfo => Future[A]): A = {
+    val userInfo = UserContext.getUser
+    userInfo match {
+      case Some(user) => Await.result(f(user), Duration.Inf)
+      case None => throw UserNotDefinedException()
+    }
   }
 }
