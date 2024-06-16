@@ -13,12 +13,12 @@ case class DatabaseConfigParams(databaseConfigId: Option[DatabaseConfigId] = Non
                                 createdAt: Option[Long] = None,
                                 datasetDetails: DatasetDetails) {
 
-  def toDatabaseConfigRow: DatabaseConfigRow = {
+  def toDatabaseConfigRow(userEmail: String): DatabaseConfigRow = {
     databaseConfigId match {
       case Some(id) =>
-        DatabaseConfigRow(id = id.id, obj = Json.toJson(this).toString())
+        DatabaseConfigRow(id = id.id, userEmail = userEmail, obj = Json.toJson(this).toString())
       case None =>
-        DatabaseConfigRow(id = -1, obj = Json.toJson(this).toString())
+        DatabaseConfigRow(id = -1, userEmail = userEmail, obj = Json.toJson(this).toString())
     }
   }
 

@@ -16,12 +16,12 @@ case class DatasetParams(id: Option[DatasetId],
   private val faker = new FakeDataGenerator
   lazy val dataset: Dataset = faker.generateData(this)
 
-  def toDatasetConfigParams: DatasetConfigRow = {
+  def toDatasetConfigParams(userInfo: UserInfo): DatasetConfigRow = {
     id match {
       case Some(id) =>
-        DatasetConfigRow(id = id.id, obj = Json.toJson(this).toString())
+        DatasetConfigRow(id = id.id, userEmail = userInfo.email, obj = Json.toJson(this).toString())
       case None =>
-        DatasetConfigRow(id = -1, obj = Json.toJson(this).toString())
+        DatasetConfigRow(id = -1, userEmail = userInfo.email, obj = Json.toJson(this).toString())
     }
   }
 
