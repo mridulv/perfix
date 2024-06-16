@@ -1,7 +1,9 @@
 package io.perfix.store
 
 import com.google.inject.{Inject, Singleton}
-import io.perfix.model.{DatasetId, DatasetParams}
+import io.perfix.auth.UserContext
+import io.perfix.exceptions.UserNotDefinedException
+import io.perfix.model.{DatasetId, DatasetParams, UserInfo}
 import io.perfix.store.tables.DatasetConfigTable
 import play.api.db.slick.DatabaseConfigProvider
 import slick.jdbc.JdbcProfile
@@ -18,45 +20,59 @@ class DatasetConfigStore @Inject()(dbConfigProvider: DatabaseConfigProvider)(imp
   import dbConfig._
   import profile.api._
 
-  def create(datasetParams: DatasetParams): DatasetParams = unwrapFuture {
+  def create(datasetParams: DatasetParams): DatasetParams = unwrapFuture { userInfo =>
     db.run {
       val datasetConfigRow = datasetParams
         .copy(createdAt = Some(System.currentTimeMillis()))
-        .toDatasetConfigParams
+        .toDatasetConfigParams(userInfo)
       (datasetConfigTable returning datasetConfigTable.map(_.id)
         into ((datasetParams, id) => datasetParams.copy(id=id))
         ) += datasetConfigRow
     }
   }.toDatasetParams
 
-  def update(datasetId: DatasetId, datasetParams: DatasetParams): Int = unwrapFuture {
+  def update(datasetId: DatasetId, datasetParams: DatasetParams): Int = unwrapFuture { userInfo =>
     db.run {
-      val datasetConfigRow = datasetParams.toDatasetConfigParams
-      val query = for { e <- datasetConfigTable if e.id === datasetId.id } yield e.obj
+      val datasetConfigRow = datasetParams.toDatasetConfigParams(userInfo)
+      val query = for {
+        e <- datasetConfigTable
+        if e.id === datasetId.id && e.userEmail === userInfo.email
+      } yield e.obj
       query.update(datasetConfigRow.obj)
     }
   }
 
-  def get(datasetId: DatasetId): Option[DatasetParams] = unwrapFuture {
+  def get(datasetId: DatasetId): Option[DatasetParams] = unwrapFuture { userInfo =>
     db.run {
-      datasetConfigTable.filter(_.id === datasetId.id).result.headOption.map(_.map(_.toDatasetParams))
+      datasetConfigTable
+        .filter(_.userEmail === userInfo.email)
+        .filter(_.id === datasetId.id)
+        .result.headOption.map(_.map(_.toDatasetParams))
     }
   }
 
-  def list(): Seq[DatasetParams] = unwrapFuture {
+  def list(): Seq[DatasetParams] = unwrapFuture { userInfo =>
     db.run {
-      datasetConfigTable.result.map(_.map(_.toDatasetParams))
+      datasetConfigTable
+        .filter(_.userEmail === userInfo.email)
+        .result.map(_.map(_.toDatasetParams))
     }
   }
 
-  def delete(datasetId: DatasetId): Int = unwrapFuture {
+  def delete(datasetId: DatasetId): Int = unwrapFuture { userInfo =>
     db.run {
-      datasetConfigTable.filter(_.id === datasetId.id).delete
+      datasetConfigTable
+        .filter(_.userEmail === userInfo.email)
+        .filter(_.id === datasetId.id).delete
     }
   }
 
 
-  private def unwrapFuture[A](f: Future[A]): A = {
-    Await.result(f, Duration.Inf)
+  private def unwrapFuture[A](f: UserInfo => Future[A]): A = {
+    val userInfo = UserContext.getUser
+    userInfo match {
+      case Some(user) => Await.result(f(user), Duration.Inf)
+      case None => throw UserNotDefinedException()
+    }
   }
 }
