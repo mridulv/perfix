@@ -42,11 +42,11 @@ class DatasetManager @Inject()(datasetConfigStore: DatasetConfigStore) {
 
   def all(entityFilters: Seq[EntityFilter]): Seq[DatasetParams] = {
     val allDatasets = datasetConfigStore.list()
-    allDatasets.filter { dataset =>
-      val datasetFilters = entityFilters.collect {
-        case df: DatasetFilter => df
-      }
-      datasetFilters.forall(df => df.filterDataset(dataset.dataset))
+    val datasetFilters = entityFilters.collect {
+      case df: DatasetFilter => df
+    }
+    datasetFilters.foldLeft(allDatasets) { (datasets, entityFilter) =>
+      datasets.filter(d => entityFilter.filter(d))
     }
   }
 
