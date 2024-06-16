@@ -1,7 +1,6 @@
 package io.perfix.model.experiment
 
-import io.perfix.model.{DatabaseConfigDetails, DatabaseConfigId, DatabaseConfigParams, DatasetParams}
-import io.perfix.model.store.StoreType.StoreType
+import io.perfix.model.{DatabaseConfigDetails, DatabaseConfigParams, DatasetParams, UserInfo}
 import io.perfix.query.PerfixQuery
 import io.perfix.store.tables.ExperimentRow
 import play.api.libs.json.{Format, Json}
