@@ -3,10 +3,8 @@ package io.perfix.stores.documentdb
 import com.mongodb.client.model.Indexes
 import com.mongodb.client.{MongoClient, MongoClients, MongoCollection, MongoDatabase}
 import io.perfix.exceptions.InvalidStateException
-import io.perfix.forms.documentdb.DocumentDBLauncher
 import io.perfix.launch.StoreLauncher
 import io.perfix.model.DatasetParams
-import io.perfix.model.store.DocumentDBStoreParams
 import io.perfix.query.PerfixQuery
 import io.perfix.stores.DataStore
 import org.bson.Document

@@ -1,6 +1,5 @@
 package io.perfix.stores
 
-import io.perfix.model.store.MySQLStoreParams
 import io.perfix.model.{ColumnDescription, DatasetParams, NameType}
 import io.perfix.query.PerfixQuery
 import io.perfix.stores.mysql._

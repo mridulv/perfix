@@ -1,4 +1,4 @@
-package io.perfix.stores.documentdb.model
+package io.perfix.stores.documentdb
 
 import play.api.libs.json.{Format, Json}
 
