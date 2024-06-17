@@ -1,5 +1,6 @@
-package io.perfix.model.store
+package io.perfix.stores.mysql
 
+import io.perfix.model.store.StoreParams
 import play.api.libs.json.{Format, Json}
 
 case class MySQLStoreParams(instanceType: String = "db.t3.medium",

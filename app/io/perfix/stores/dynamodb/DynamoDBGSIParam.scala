@@ -1,4 +1,4 @@
-package io.perfix.stores.dynamodb.model
+package io.perfix.stores.dynamodb
 
 import play.api.libs.json.{Format, Json}
 

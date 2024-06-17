@@ -1,6 +1,6 @@
-package io.perfix.model.store
+package io.perfix.stores.dynamodb
 
-import io.perfix.stores.dynamodb.model.DynamoDBGSIParam
+import io.perfix.model.store.StoreParams
 import play.api.libs.json.{Format, Json}
 
 case class DynamoDBStoreParams(tableName: String,

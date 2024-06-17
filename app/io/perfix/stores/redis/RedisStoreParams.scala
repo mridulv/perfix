@@ -1,5 +1,6 @@
-package io.perfix.model.store
+package io.perfix.stores.redis
 
+import io.perfix.model.store.StoreParams
 import play.api.libs.json.{Format, Json}
 
 case class RedisStoreParams(cacheNodeType: Option[String],
