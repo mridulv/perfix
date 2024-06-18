@@ -1,8 +1,6 @@
 package io.perfix.stores.dynamodb
 
-import io.perfix.forms.FormParams
-
-case class DynamoDBParams() extends FormParams {
+case class DynamoDBParams() {
   var dynamoDBTableParams: Option[DynamoDBTableParams] = None
   var dynamoDBCapacityParams: Option[DynamoDBCapacityParams] = None
   var dynamoDBGSIMetadataParams: Option[DynamoDBGSIMetadataParams] = None

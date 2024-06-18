@@ -1,8 +1,6 @@
 package io.perfix.stores.documentdb
 
-import io.perfix.forms.FormParams
-
-case class DocumentDBParams() extends FormParams {
+case class DocumentDBParams() {
   var documentDBConnectionParams: Option[DocumentDBConnectionParams] = None
   var documentDBTableParams: Option[DocumentDBTableParams] = None
   var documentDBIndicesParams: Option[DocumentDBIndicesParams] = None

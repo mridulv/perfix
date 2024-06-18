@@ -10,7 +10,7 @@ import io.perfix.launch.StoreLauncher
 import java.util.concurrent.TimeUnit
 import scala.util.Random
 
-class MySQLLauncher(formParams: MySQLParams,
+class MySQLLauncher(mysqlParams: MySQLParams,
                     override val storeParams: MySQLStoreParams)
   extends StoreLauncher[MySQLStoreParams] {
 
@@ -25,9 +25,9 @@ class MySQLLauncher(formParams: MySQLParams,
       val password = "test12345"
       val dbName = "perfix"
       val tableName = "test"
-      formParams.mySQLConnectionParams = Some(MySQLConnectionParams(connectUrl, username, password))
-      formParams.mySQLTableParams = Some(MySQLTableParams(dbName, tableName))
-      formParams.mySQLTableIndexesParams = Some(MySQLTableIndexesParams(storeParams.primaryIndexColumn, storeParams.secondaryIndexesColumn))
+      mysqlParams.mySQLConnectionParams = Some(MySQLConnectionParams(connectUrl, username, password))
+      mysqlParams.mySQLTableParams = Some(MySQLTableParams(dbName, tableName))
+      mysqlParams.mySQLTableIndexesParams = Some(MySQLTableIndexesParams(storeParams.primaryIndexColumn, storeParams.secondaryIndexesColumn))
     } else {
       actualLaunch()
     }
@@ -75,9 +75,9 @@ class MySQLLauncher(formParams: MySQLParams,
 
       println("Response is: " + response.getEndpoint)
       val connectUrl = s"jdbc:mysql://${response.getEndpoint.getAddress}:${response.getEndpoint.getPort}/${response.getDBName}?user=${username}&password=${password}"
-      formParams.mySQLConnectionParams = Some(MySQLConnectionParams(connectUrl, username, password))
-      formParams.mySQLTableParams = Some(MySQLTableParams(dbName, tableName))
-      formParams.mySQLTableIndexesParams = Some(MySQLTableIndexesParams(storeParams.primaryIndexColumn, storeParams.secondaryIndexesColumn))
+      mysqlParams.mySQLConnectionParams = Some(MySQLConnectionParams(connectUrl, username, password))
+      mysqlParams.mySQLTableParams = Some(MySQLTableParams(dbName, tableName))
+      mysqlParams.mySQLTableIndexesParams = Some(MySQLTableIndexesParams(storeParams.primaryIndexColumn, storeParams.secondaryIndexesColumn))
       println(s"RDS instance creation initiated: ${response.getDBInstanceIdentifier}")
     } catch {
       case ex: Exception =>
