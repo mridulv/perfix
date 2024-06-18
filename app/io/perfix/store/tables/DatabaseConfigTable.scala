@@ -1,6 +1,6 @@
 package io.perfix.store.tables
 
-import io.perfix.model.{DatabaseConfigId, DatabaseConfigParams}
+import io.perfix.model.api.{DatabaseConfigId, DatabaseConfigParams}
 import play.api.libs.json.Json
 import slick.jdbc.PostgresProfile.api._
 

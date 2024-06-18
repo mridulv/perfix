@@ -1,6 +1,6 @@
 package io.perfix.generator
 
-import io.perfix.model.{Dataset, DatasetParams}
+import io.perfix.model.api.{Dataset, DatasetParams}
 
 trait DataGenerator {
 

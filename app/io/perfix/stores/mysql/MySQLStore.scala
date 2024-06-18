@@ -3,7 +3,8 @@ package io.perfix.stores.mysql
 import io.perfix.exceptions.InvalidStateException
 import io.perfix.launch.StoreLauncher
 import io.perfix.model.ColumnType.toSqlType
-import io.perfix.model.{ColumnDescription, DatasetParams}
+import io.perfix.model.ColumnDescription
+import io.perfix.model.api.DatasetParams
 import io.perfix.query.PerfixQuery
 import io.perfix.stores.DataStore
 

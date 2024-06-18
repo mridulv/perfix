@@ -1,6 +1,7 @@
 package io.perfix.stores
 
-import io.perfix.model.{ColumnDescription, DatasetParams, NameType}
+import io.perfix.model.api.DatasetParams
+import io.perfix.model.{ColumnDescription, NameType}
 import io.perfix.query.PerfixQuery
 import io.perfix.stores.mysql._
 import org.mockito.MockitoSugar

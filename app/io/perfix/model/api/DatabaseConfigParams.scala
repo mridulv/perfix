@@ -1,4 +1,4 @@
-package io.perfix.model
+package io.perfix.model.api
 
 import io.perfix.exceptions.InvalidDatabaseConfigException
 import io.perfix.model.store.StoreParams

@@ -1,6 +1,6 @@
 package io.perfix.experiment
 
-import io.perfix.model.Dataset
+import io.perfix.model.api.Dataset
 import io.perfix.model.experiment.{ExperimentParams, ExperimentResult}
 import io.perfix.model.store.StoreParams
 import io.perfix.stores.DataStore

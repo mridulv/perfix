@@ -1,8 +1,6 @@
 package io.perfix.stores.redis
 
-import io.perfix.forms.FormParams
-
-case class RedisParams() extends FormParams {
+case class RedisParams() {
 
   var redisConnectionParams: Option[RedisConnectionParams] = None
   var redisTableParams: Option[RedisTableParams] = None

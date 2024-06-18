@@ -2,7 +2,7 @@ package io.perfix.stores.redis
 
 import io.perfix.exceptions.{InvalidStateException, PerfixQueryException}
 import io.perfix.launch.StoreLauncher
-import io.perfix.model.DatasetParams
+import io.perfix.model.api.DatasetParams
 import io.perfix.query.PerfixQuery
 import io.perfix.stores.DataStore
 import redis.clients.jedis.JedisPool

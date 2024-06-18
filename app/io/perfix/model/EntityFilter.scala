@@ -1,5 +1,6 @@
 package io.perfix.model
 
+import io.perfix.model.api.{DatabaseConfigParams, DatasetParams}
 import io.perfix.model.experiment.{ExperimentParams, ExperimentState}
 import play.api.libs.json._
 

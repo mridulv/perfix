@@ -3,7 +3,8 @@ package io.perfix.store
 import com.google.inject.{Inject, Singleton}
 import io.perfix.auth.UserContext
 import io.perfix.exceptions.UserNotDefinedException
-import io.perfix.model.{DatasetId, DatasetParams, UserInfo}
+import io.perfix.model.api.{DatasetId, DatasetParams}
+import io.perfix.model.UserInfo
 import io.perfix.store.tables.DatasetConfigTable
 import play.api.db.slick.DatabaseConfigProvider
 import slick.jdbc.JdbcProfile

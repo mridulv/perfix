@@ -3,7 +3,8 @@ package io.perfix.controllers
 import com.google.inject.Inject
 import io.perfix.auth.AuthenticationAction
 import io.perfix.manager.DatasetManager
-import io.perfix.model.{DatasetId, DatasetParams, EntityFilter}
+import io.perfix.model.api.{DatasetId, DatasetParams}
+import io.perfix.model.EntityFilter
 import org.pac4j.core.profile.UserProfile
 import org.pac4j.play.scala.{Security, SecurityComponents}
 import play.api.libs.json.Json
