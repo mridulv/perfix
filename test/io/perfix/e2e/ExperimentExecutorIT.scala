@@ -4,6 +4,7 @@ import io.perfix.experiment.SimplePerformanceExperiment
 import io.perfix.model.experiment.{ExperimentParams, ExperimentState, SingleExperimentResult}
 import io.perfix.model.store.StoreType
 import io.perfix.model._
+import io.perfix.model.api.{DatabaseConfigDetails, DatabaseConfigId, DatabaseConfigParams, DatasetDetails, DatasetId, DatasetParams}
 import io.perfix.query.PerfixQuery
 import io.perfix.stores.mysql.{MySQLStore, MySQLStoreParams}
 import org.mockito.MockitoSugar

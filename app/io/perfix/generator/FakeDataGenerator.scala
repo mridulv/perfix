@@ -1,7 +1,7 @@
 package io.perfix.generator
 
 import com.github.javafaker.Faker
-import io.perfix.model.{Dataset, DatasetParams}
+import io.perfix.model.api.{Dataset, DatasetParams}
 
 import scala.util.Random
 

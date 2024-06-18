@@ -1,6 +1,6 @@
 package io.perfix.manager
 
-import io.perfix.model.{DatabaseConfigId, DatabaseConfigParams}
+import io.perfix.model.api.{DatabaseConfigId, DatabaseConfigParams}
 import io.perfix.store.DatabaseConfigStore
 import org.mockito.Mockito
 import play.api.db.slick.DatabaseConfigProvider

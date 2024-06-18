@@ -1,6 +1,7 @@
-package io.perfix.model
+package io.perfix.model.api
 
 import io.perfix.generator.FakeDataGenerator
+import io.perfix.model.{ColumnDescription, UserInfo}
 import io.perfix.store.tables.DatasetConfigRow
 import play.api.libs.json.{Format, Json}
 

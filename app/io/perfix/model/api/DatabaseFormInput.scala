@@ -1,5 +1,6 @@
-package io.perfix.model
+package io.perfix.model.api
 
+import io.perfix.model._
 import io.perfix.model.store.StoreType.{DynamoDB, MongoDB, MySQL, Redis, StoreType}
 import play.api.libs.json.{Format, Json}
 

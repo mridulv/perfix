@@ -1,7 +1,7 @@
 package io.perfix.experiment
 
+import io.perfix.model.api.{DatabaseConfigDetails, DatabaseConfigId, Dataset}
 import io.perfix.model.experiment.{ExperimentParams, ExperimentState}
-import io.perfix.model.{DatabaseConfigDetails, DatabaseConfigId, Dataset}
 import io.perfix.query.{PerfixQuery, PerfixQueryFilter}
 import io.perfix.stores.mysql.MySQLStore
 import org.mockito.Mockito._

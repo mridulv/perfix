@@ -3,6 +3,7 @@ package io.perfix.manager
 import com.google.inject.{Inject, Singleton}
 import io.perfix.exceptions.InvalidStateException
 import io.perfix.model._
+import io.perfix.model.api.{DatabaseConfigId, DatabaseConfigParams}
 import io.perfix.store.DatabaseConfigStore
 
 @Singleton
