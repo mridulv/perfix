@@ -1,14 +1,18 @@
 package io.perfix.model.store
 
 import io.perfix.model.store.StoreType.{DynamoDBVal, MongoDBVal, MySQLVal, Redis, RedisVal}
+import io.perfix.stores.documentdb.DocumentDBStoreParams
+import io.perfix.stores.mysql.MySQLStoreParams
+import io.perfix.stores.dynamodb.DynamoDBStoreParams
+import io.perfix.stores.redis.RedisStoreParams
 import play.api.libs.json._
 
 trait StoreParams
 
 object StoreParams {
-  import DocumentDBStoreParams._
-  import DynamoDBStoreParams._
-  import MySQLStoreParams._
+  import io.perfix.stores.documentdb.DocumentDBStoreParams._
+  import io.perfix.stores.dynamodb.DynamoDBStoreParams._
+  import io.perfix.stores.mysql.MySQLStoreParams._
   import RedisStoreParams._
 
   implicit val storeParamsReads: Reads[StoreParams] = (json: JsValue) => {

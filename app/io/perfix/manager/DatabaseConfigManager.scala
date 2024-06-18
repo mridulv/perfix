@@ -16,17 +16,17 @@ class DatabaseConfigManager @Inject()(databaseConfigStore: DatabaseConfigStore,
     databaseConfigId
   }
 
-  def get(databaseConfigId: DatabaseConfigId): DatabaseConfigDisplayParams = {
+  def get(databaseConfigId: DatabaseConfigId): DatabaseConfigParams = {
     val databaseConfigParams = databaseConfigStore
       .get(databaseConfigId)
       .getOrElse(throw InvalidStateException("Invalid DatabaseConfigId"))
-    val datasetParams = datasetManager.get(databaseConfigParams.datasetId)
+    val datasetParams = datasetManager.get(databaseConfigParams.datasetDetails.datasetId)
     databaseConfigParams.toDatabaseConfigDisplayParams(datasetParams)
   }
 
   def update(databaseConfigId: DatabaseConfigId,
-             databaseConfigParams: DatabaseConfigParams): DatabaseConfigDisplayParams = {
-    val dataset = datasetManager.get(databaseConfigParams.datasetId)
+             databaseConfigParams: DatabaseConfigParams): DatabaseConfigParams = {
+    val dataset = datasetManager.get(databaseConfigParams.datasetDetails.datasetId)
     val exitingParams = databaseConfigStore
       .get(databaseConfigId)
       .getOrElse(throw InvalidStateException("Invalid DatabaseConfigId"))
@@ -40,22 +40,16 @@ class DatabaseConfigManager @Inject()(databaseConfigStore: DatabaseConfigStore,
     updatedParams.toDatabaseConfigDisplayParams(dataset)
   }
 
-  def all(entityFilters: Seq[EntityFilter]): Seq[DatabaseConfigDisplayParams] = {
+  def all(entityFilters: Seq[EntityFilter]): Seq[DatabaseConfigParams] = {
     val allDatabaseConfigs = databaseConfigStore.list()
     val allDatasets = datasetManager.all(Seq.empty)
-    allDatabaseConfigs.filter { databaseConfig =>
-      val relevantDataset = allDatasets.find(_.id.get == databaseConfig.datasetId).get
-
-      val datasetFilters = entityFilters.collect {
-        case df: DatasetFilter => df
-      }
-      val databaseConfigFilters = entityFilters.collect {
-        case df: DatabaseConfigFilter => df
-      }
-      val cond1 = datasetFilters.forall(df => df.filterDataset(relevantDataset.dataset))
-      val cond2 = databaseConfigFilters.forall(df => df.filterDatabaseConfig(databaseConfig))
-      cond1 && cond2
-    }.map(_.toDatabaseConfigDisplayParams(allDatasets))
+    val allDatabaseConfigsWithDataset = allDatabaseConfigs.map(_.toDatabaseConfigDisplayParams(allDatasets))
+    val databaseConfigFilters = entityFilters.collect {
+      case df: DatabaseConfigFilter => df
+    }
+    databaseConfigFilters.foldLeft(allDatabaseConfigsWithDataset) { (allDatabaseConfigsWithDataset, entityFilter) =>
+      allDatabaseConfigsWithDataset.filter(config => entityFilter.filter(config))
+    }
   }
 
   def delete(databaseConfigId: DatabaseConfigId): Unit = {

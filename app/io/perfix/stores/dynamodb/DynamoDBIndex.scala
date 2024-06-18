@@ -1,4 +1,4 @@
-package io.perfix.stores.dynamodb.model
+package io.perfix.stores.dynamodb
 
 import io.perfix.query.PerfixQuery
 

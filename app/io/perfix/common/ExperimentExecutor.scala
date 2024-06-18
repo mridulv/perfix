@@ -2,12 +2,11 @@ package io.perfix.common
 
 import io.perfix.experiment.SimplePerformanceExperiment
 import io.perfix.model.experiment.{ExperimentParams, ExperimentResult}
-import io.perfix.model.store.{DocumentDBStoreParams, DynamoDBStoreParams, MySQLStoreParams, RedisStoreParams}
 import io.perfix.model.{DatabaseConfigParams, Dataset}
-import io.perfix.stores.documentdb.DocumentDBStore
-import io.perfix.stores.dynamodb.DynamoDBStore
-import io.perfix.stores.mysql.MySQLStore
-import io.perfix.stores.redis.RedisStore
+import io.perfix.stores.documentdb.{DocumentDBStore, DocumentDBStoreParams}
+import io.perfix.stores.dynamodb.{DynamoDBStore, DynamoDBStoreParams}
+import io.perfix.stores.mysql.{MySQLStore, MySQLStoreParams}
+import io.perfix.stores.redis.{RedisStore, RedisStoreParams}
 
 class ExperimentExecutor(experimentParams: ExperimentParams,
                          databaseConfigParams: DatabaseConfigParams,

@@ -1,4 +1,4 @@
-package io.perfix.forms.mysql
+package io.perfix.stores.mysql
 
 import com.amazonaws.auth.DefaultAWSCredentialsProviderChain
 import com.amazonaws.regions.Regions
@@ -6,8 +6,6 @@ import com.amazonaws.services.rds.model.{CreateDBInstanceRequest, DBInstance, De
 import com.amazonaws.services.rds.{AmazonRDS, AmazonRDSClientBuilder}
 import io.perfix.common.CommonConfig.DB_SUBNET_GROUP_NAME
 import io.perfix.launch.StoreLauncher
-import io.perfix.model.store.MySQLStoreParams
-import io.perfix.stores.mysql.{MySQLConnectionParams, MySQLParams, MySQLTableIndexesParams, MySQLTableParams}
 
 import java.util.concurrent.TimeUnit
 import scala.util.Random

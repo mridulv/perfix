@@ -3,54 +3,96 @@ package io.perfix.model
 import io.perfix.model.experiment.{ExperimentParams, ExperimentState}
 import play.api.libs.json._
 
-trait EntityFilter
+trait EntityFilter {
+
+  val filterName: String
+
+  def filter(entityName: String): Boolean = {
+    filterName.toLowerCase == entityName.toLowerCase
+  }
+
+  def filterOpt(entityNameOpt: Option[String]): Boolean = {
+    entityNameOpt match {
+      case Some(entityName) => filter(entityName)
+      case None => false
+    }
+  }
+
+}
 
 trait DatasetFilter extends EntityFilter {
-  def filterDataset(dataset: Dataset): Boolean
+
+  def filter(dataset: DatasetParams): Boolean
+
 }
 
 trait DatabaseConfigFilter extends EntityFilter {
-  def filterDatabaseConfig(databaseConfigParams: DatabaseConfigParams): Boolean
+
+  def filter(databaseConfig: DatabaseConfigParams): Boolean
+
 }
 
 trait ExperimentFilter extends EntityFilter {
-  def filterExperiment(experimentParams: ExperimentParams): Boolean
+
+  def filter(experimentParams: ExperimentParams): Boolean
+
 }
+
 
 case class TextFilter(text: String) extends DatasetFilter with DatabaseConfigFilter with ExperimentFilter {
-  override def filterDataset(dataset: Dataset): Boolean = {
-    dataset.params.name.contains(text)
+
+  override val filterName: String = text
+
+  override def filter(entityName: String): Boolean = {
+    entityName.toLowerCase.contains(filterName.toLowerCase)
   }
 
-  override def filterDatabaseConfig(databaseConfigParams: DatabaseConfigParams): Boolean = {
-    databaseConfigParams.name.contains(text)
+  def filter(dataset: DatasetParams): Boolean = {
+    filter(dataset.name)
   }
 
-  override def filterExperiment(experimentParams: ExperimentParams): Boolean = {
-    experimentParams.name.contains(text)
+  def filter(databaseConfigParams: DatabaseConfigParams): Boolean = {
+    filter(databaseConfigParams.name)
+  }
+
+  def filter(experimentParams: ExperimentParams): Boolean = {
+    filter(experimentParams.name)
   }
 }
 
-case class DatabaseTypeFilter(store: String) extends DatabaseConfigFilter {
-  override def filterDatabaseConfig(databaseConfigParams: DatabaseConfigParams): Boolean = {
-    databaseConfigParams.dataStore.toString.toLowerCase() == store.toLowerCase()
+case class DatabaseTypeFilter(store: String) extends DatabaseConfigFilter with ExperimentFilter {
+
+  override val filterName: String = store
+
+  def filter(databaseConfigParams: DatabaseConfigParams): Boolean = {
+    filter(databaseConfigParams.dataStore.toString)
+  }
+
+  def filter(experimentParams: ExperimentParams): Boolean = {
+    experimentParams.databaseConfigs.exists(config => filterOpt(config.storeType))
   }
 }
 
-case class DatasetNameFilter(name: String) extends EntityFilter {
+case class DatasetNameFilter(name: String) extends DatabaseConfigFilter with ExperimentFilter {
 
-  def filterDataset(dataset: Dataset): Boolean = {
-    dataset.params.name == name
+  override val filterName: String = name
+
+  def filter(databaseConfigParams: DatabaseConfigParams): Boolean = {
+    filterOpt(databaseConfigParams.datasetDetails.datasetName)
   }
 
+  def filter(experimentParams: ExperimentParams): Boolean = {
+    experimentParams.databaseConfigs.exists(config => filterOpt(config.datasetName))
+  }
 }
 
 case class ExperimentStateFilter(name: String) extends ExperimentFilter {
 
-  override def filterExperiment(experimentParams: ExperimentParams): Boolean = {
-    experimentParams.experimentState.getOrElse(ExperimentState.Created).name == name
-  }
+  override val filterName: String = name
 
+  override def filter(experimentParams: ExperimentParams): Boolean = {
+    filterOpt(experimentParams.experimentState.map(_.name))
+  }
 }
 
 object EntityFilter {

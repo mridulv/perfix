@@ -1,13 +1,13 @@
 package io.perfix.util
 
-import io.perfix.model.experiment.{ExperimentResult, PercentileLatency}
+import io.perfix.model.experiment.{ExperimentResult, PercentileLatency, SingleExperimentResult}
 
 import java.util.concurrent.{Callable, Executors, Future, TimeUnit}
 import scala.collection.mutable.ListBuffer
 
 object BenchmarkUtil {
 
-  def runBenchmark(concurrentThreads: Int, benchmarkTimeSeconds: Long, runTask: () => Int): ExperimentResult = {
+  def runBenchmark(concurrentThreads: Int, benchmarkTimeSeconds: Long, runTask: () => Int): SingleExperimentResult = {
     val executor = Executors.newFixedThreadPool(concurrentThreads)
     val futures = new ListBuffer[Future[List[Long]]]
     val startTime = System.currentTimeMillis()
@@ -45,7 +45,7 @@ object BenchmarkUtil {
     println(s"Total tasks executed: $totalCalls")
     println(s"Results Sizes are: ${numResults.mkString(",")}")
     val percentiles = printPercentiles(allExecutionTimes.toSeq)
-    ExperimentResult(
+    SingleExperimentResult(
       overallQueryTime = benchmarkTimeSeconds,
       overallWriteTimeTaken = 0L,
       totalCalls,
