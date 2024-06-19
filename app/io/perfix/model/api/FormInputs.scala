@@ -1,4 +1,4 @@
-package io.perfix.model
+package io.perfix.model.api
 
 import play.api.libs.json._
 
