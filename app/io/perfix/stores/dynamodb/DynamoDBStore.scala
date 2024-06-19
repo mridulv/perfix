@@ -20,18 +20,14 @@ class DynamoDBStore(datasetParams: DatasetParams,
   extends DataStore[DynamoDBDatabaseConfigParams] {
 
   private var client: AmazonDynamoDB = _
-  private val dynamoDBParams: DynamoDBParams = DynamoDBParams()
   private var tableParams: DynamoDBTableParams = _
   override def launcher(): Option[StoreLauncher[DynamoDBDatabaseConfigParams]] = {
-    dynamoDBParams.dynamoDBTableParams = Some(DynamoDBTableParams(None, databaseConfigParams.tableName, databaseConfigParams.partitionKey, databaseConfigParams.sortKey))
-    dynamoDBParams.dynamoDBCapacityParams = Some(DynamoDBCapacityParams(Some(databaseConfigParams.rcu), Some(databaseConfigParams.wcu)))
-    dynamoDBParams.dynamoDBGSIMetadataParams = Some(DynamoDBGSIMetadataParams(databaseConfigParams.gsiParams))
     None
   }
 
   def connectAndInitialize(): Unit = {
-    tableParams = dynamoDBParams.dynamoDBTableParams.getOrElse(throw InvalidStateException("Table Params should have been defined"))
-    val capacityParams = dynamoDBParams.dynamoDBCapacityParams.getOrElse(throw InvalidStateException("Capacity Params should have been defined"))
+    tableParams = databaseConfigParams.dynamoDBTableParams.getOrElse(throw InvalidStateException("Table Params should have been defined"))
+    val capacityParams = databaseConfigParams.dynamoDBCapacityParams.getOrElse(throw InvalidStateException("Capacity Params should have been defined"))
 
     val keySchemaElements = getKeySchemaElements(
       tableParams.partitionKey,
@@ -66,7 +62,7 @@ class DynamoDBStore(datasetParams: DatasetParams,
     client.createTable(createTableRequest)
     waitForMainTable()
 
-    dynamoDBParams.dynamoDBGSIMetadataParams match {
+    databaseConfigParams.dynamoDBGSIMetadataParams match {
       case Some(gsi) =>
         val updateTableRequest = new UpdateTableRequest()
           .withTableName(tableParams.tableName)
@@ -133,7 +129,7 @@ class DynamoDBStore(datasetParams: DatasetParams,
   }
 
   private def findRelevantTableOpt(perfixQuery: PerfixQuery): Option[String] = {
-    dynamoDBParams.indexes().find(i => i.validForFilters(perfixQuery)).map(_.tableName)
+    databaseConfigParams.indexes().find(i => i.validForFilters(perfixQuery)).map(_.tableName)
   }
 
   private def createGSIs(dynamoDBGSIMetadataParams: DynamoDBGSIMetadataParams): Seq[GlobalSecondaryIndexUpdate] = {
