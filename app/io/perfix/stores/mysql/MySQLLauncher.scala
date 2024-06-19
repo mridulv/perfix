@@ -10,8 +10,7 @@ import io.perfix.launch.StoreLauncher
 import java.util.concurrent.TimeUnit
 import scala.util.Random
 
-class MySQLLauncher(mysqlParams: MySQLParams,
-                    override val databaseConfigParams: MySQLDatabaseConfigParams)
+class MySQLLauncher(override val databaseConfigParams: MySQLDatabaseConfigParams)
   extends StoreLauncher[MySQLDatabaseConfigParams] {
 
   import com.typesafe.config.ConfigFactory
@@ -25,9 +24,9 @@ class MySQLLauncher(mysqlParams: MySQLParams,
       val password = "test12345"
       val dbName = "perfix"
       val tableName = "test"
-      mysqlParams.mySQLConnectionParams = Some(MySQLConnectionParams(connectUrl, username, password))
-      mysqlParams.mySQLTableParams = Some(MySQLTableParams(dbName, tableName))
-      mysqlParams.mySQLTableIndexesParams = Some(MySQLTableIndexesParams(databaseConfigParams.primaryIndexColumn, databaseConfigParams.secondaryIndexesColumn))
+      databaseConfigParams.mySQLConnectionParams = Some(MySQLConnectionParams(connectUrl, username, password))
+      databaseConfigParams.mySQLTableParams = Some(MySQLTableParams(dbName, tableName))
+      databaseConfigParams.mySQLTableIndexesParams = Some(MySQLTableIndexesParams(databaseConfigParams.primaryIndexColumn, databaseConfigParams.secondaryIndexesColumn))
     } else {
       actualLaunch()
     }
@@ -75,9 +74,9 @@ class MySQLLauncher(mysqlParams: MySQLParams,
 
       println("Response is: " + response.getEndpoint)
       val connectUrl = s"jdbc:mysql://${response.getEndpoint.getAddress}:${response.getEndpoint.getPort}/${response.getDBName}?user=${username}&password=${password}"
-      mysqlParams.mySQLConnectionParams = Some(MySQLConnectionParams(connectUrl, username, password))
-      mysqlParams.mySQLTableParams = Some(MySQLTableParams(dbName, tableName))
-      mysqlParams.mySQLTableIndexesParams = Some(MySQLTableIndexesParams(databaseConfigParams.primaryIndexColumn, databaseConfigParams.secondaryIndexesColumn))
+      databaseConfigParams.mySQLConnectionParams = Some(MySQLConnectionParams(connectUrl, username, password))
+      databaseConfigParams.mySQLTableParams = Some(MySQLTableParams(dbName, tableName))
+      databaseConfigParams.mySQLTableIndexesParams = Some(MySQLTableIndexesParams(databaseConfigParams.primaryIndexColumn, databaseConfigParams.secondaryIndexesColumn))
       println(s"RDS instance creation initiated: ${response.getDBInstanceIdentifier}")
     } catch {
       case ex: Exception =>

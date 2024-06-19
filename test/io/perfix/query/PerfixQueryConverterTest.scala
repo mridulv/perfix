@@ -1,6 +1,7 @@
 package io.perfix.query
 
-import io.perfix.stores.mysql.{MySQLTableParams, PerfixQueryConverter}
+import io.perfix.stores.mysql.MySQLStore.convert
+import io.perfix.stores.mysql.MySQLTableParams
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
@@ -14,7 +15,7 @@ class PerfixQueryConverterTest extends AnyFlatSpec with Matchers {
       limitOpt = Some(10)
     )
 
-    val sqlQuery = PerfixQueryConverter.convert(tableParams, query)
+    val sqlQuery = convert(tableParams, query)
     assert(sqlQuery == "select name, age from testDB.testTable where age = 18 and name = \"John\" limit 10")
   }
 
@@ -22,7 +23,7 @@ class PerfixQueryConverterTest extends AnyFlatSpec with Matchers {
     val tableParams = MySQLTableParams("testDB", "testTable")
     val query = PerfixQuery(None, Some(List("name", "age")), Some(10))
 
-    val sqlQuery = PerfixQueryConverter.convert(tableParams, query)
+    val sqlQuery = convert(tableParams, query)
     assert(sqlQuery == "select name, age from testDB.testTable  limit 10")
   }
 
@@ -30,7 +31,7 @@ class PerfixQueryConverterTest extends AnyFlatSpec with Matchers {
     val tableParams = MySQLTableParams("testDB", "testTable")
     val query = PerfixQuery(Some(List(PerfixQueryFilter("age", 18))), None, None)
 
-    val sqlQuery = PerfixQueryConverter.convert(tableParams, query)
+    val sqlQuery = convert(tableParams, query)
     assert(sqlQuery == "select * from testDB.testTable where age = 18 ")
   }
 
@@ -38,7 +39,7 @@ class PerfixQueryConverterTest extends AnyFlatSpec with Matchers {
     val tableParams = MySQLTableParams("testDB", "testTable")
     val query = PerfixQuery(Some(List(PerfixQueryFilter("age", 18))), Some(List("name")), None)
 
-    val sqlQuery = PerfixQueryConverter.convert(tableParams, query)
+    val sqlQuery = convert(tableParams, query)
     assert(sqlQuery == "select name from testDB.testTable where age = 18 ")
   }
 
@@ -46,7 +47,7 @@ class PerfixQueryConverterTest extends AnyFlatSpec with Matchers {
     val tableParams = MySQLTableParams("testDB", "testTable")
     val query = PerfixQuery(None, None, None)
 
-    val sqlQuery = PerfixQueryConverter.convert(tableParams, query)
+    val sqlQuery = convert(tableParams, query)
     assert(sqlQuery == "select * from testDB.testTable  ")
   }
 }
