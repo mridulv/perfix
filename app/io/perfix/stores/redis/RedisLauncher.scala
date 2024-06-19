@@ -6,17 +6,20 @@ import com.amazonaws.services.elasticache.model._
 import com.amazonaws.services.elasticache.{AmazonElastiCache, AmazonElastiCacheClientBuilder}
 import io.perfix.common.CommonConfig.DB_SUBNET_GROUP_NAME
 import io.perfix.launch.StoreLauncher
+import io.perfix.model.api.DatabaseState
+import io.perfix.model.api.DatabaseState.DatabaseState
+import io.perfix.model.store.DatabaseSetupParams
 
 import java.util.concurrent.TimeUnit
 import scala.util.Random
 
-class RedisLauncher(override val databaseConfigParams: RedisDatabaseConfigParams)
-  extends StoreLauncher[RedisDatabaseConfigParams] {
+class RedisLauncher(override val databaseSetupParams: RedisDatabaseSetupParams)
+  extends StoreLauncher {
 
-  override def launch(): Unit = {
+  override def launch(): (DatabaseSetupParams, DatabaseState) = {
     val clusterId = "cluster" + Random.alphanumeric.take(5).mkString("")
-    val cacheNodeType = databaseConfigParams.cacheNodeType.getOrElse("cache.t3.micro")
-    val numCacheNodes = databaseConfigParams.numCacheNodes.getOrElse(1)
+    val cacheNodeType = databaseSetupParams.cacheNodeType.getOrElse("cache.t3.micro")
+    val numCacheNodes = databaseSetupParams.numCacheNodes.getOrElse(1)
 
     val credentialsProvider = DefaultAWSCredentialsProviderChain.getInstance()
 
@@ -44,13 +47,16 @@ class RedisLauncher(override val databaseConfigParams: RedisDatabaseConfigParams
       val cacheNode = describeResponse.getCacheClusters.get(0).getCacheNodes.get(0)
       val endpoint = cacheNode.getEndpoint
 
-      databaseConfigParams.redisConnectionParams = Some(RedisConnectionParams(endpoint.getAddress, endpoint.getPort))
-      databaseConfigParams.redisTableParams = Some(RedisTableParams(databaseConfigParams.keyColumn))
+      val updatedDatabaseSetupParams = databaseSetupParams.copy(
+        dbDetails = Some(RedisConnectionParams(endpoint.getAddress, endpoint.getPort))
+      )
 
       println(s"Redis cluster creation initiated: ${describeResponse.getCacheClusters.get(0).getCacheClusterId}")
+      (updatedDatabaseSetupParams, DatabaseState.Created)
     } catch {
       case ex: Exception =>
         println(s"Error creating ElastiCache cluster: ${ex.getMessage}")
+        (databaseSetupParams, DatabaseState.Failed)
     } finally {
       elasticacheClient.shutdown()
     }

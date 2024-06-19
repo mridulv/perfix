@@ -1,15 +1,15 @@
 package io.perfix.stores.dynamodb
 
-import io.perfix.model.store.DatabaseConfigParams
+import io.perfix.model.store.DatabaseSetupParams
 import io.perfix.query.PerfixQuery
 import play.api.libs.json.{Format, Json}
 
-case class DynamoDBDatabaseConfigParams(tableName: String,
-                                        rcu: Long,
-                                        wcu: Long,
-                                        partitionKey: String,
-                                        sortKey: String,
-                                        gsiParams: Seq[DynamoDBGSIParam]) extends DatabaseConfigParams {
+case class DynamoDBDatabaseSetupParams(tableName: String,
+                                       rcu: Long,
+                                       wcu: Long,
+                                       partitionKey: String,
+                                       sortKey: String,
+                                       gsiParams: Seq[DynamoDBGSIParam]) extends DatabaseSetupParams {
 
   var dynamoDBTableParams: Option[DynamoDBTableParams] = None
   var dynamoDBCapacityParams: Option[DynamoDBCapacityParams] = None
@@ -47,8 +47,8 @@ case class DynamoDBIndex(tableName: String, partitionKey: String, sortKey: Strin
 case class DynamoDBTableParams(urlOpt: Option[String], tableName: String, partitionKey: String, sortKey: String)
 case class DynamoDBCapacityParams(readCapacity: Option[Long], writeCapacity: Option[Long])
 
-object DynamoDBDatabaseConfigParams {
-  implicit val DynamoDBStoreParamsFormatter: Format[DynamoDBDatabaseConfigParams] = Json.format[DynamoDBDatabaseConfigParams]
+object DynamoDBDatabaseSetupParams {
+  implicit val DynamoDBStoreParamsFormatter: Format[DynamoDBDatabaseSetupParams] = Json.format[DynamoDBDatabaseSetupParams]
   implicit val DynamoDBGSIParamFormatter: Format[DynamoDBGSIParam] = Json.format[DynamoDBGSIParam]
 }
 

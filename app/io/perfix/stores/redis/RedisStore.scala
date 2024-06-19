@@ -7,17 +7,13 @@ import io.perfix.query.PerfixQuery
 import io.perfix.stores.DataStore
 import redis.clients.jedis.JedisPool
 
-class RedisStore(override val databaseConfigParams: RedisDatabaseConfigParams)
-  extends DataStore[RedisDatabaseConfigParams] {
+class RedisStore(override val databaseConfigParams: RedisDatabaseSetupParams)
+  extends DataStore {
 
   private var jedisPool: JedisPool = _
 
-  override def launcher(): Option[StoreLauncher[RedisDatabaseConfigParams]] = {
-    Some(new RedisLauncher(databaseConfigParams))
-  }
-
   def connectAndInitialize(): Unit = {
-    (databaseConfigParams.redisConnectionParams) match {
+    (databaseConfigParams.dbDetails) match {
       case Some(param) =>
         jedisPool = new JedisPool(param.url, param.port)
         jedisPool.setMinIdle(100)
@@ -27,7 +23,7 @@ class RedisStore(override val databaseConfigParams: RedisDatabaseConfigParams)
 
   override def putData(rows: Seq[Map[String, Any]]): Unit = {
     val jedis = jedisPool.getResource
-    val keyColumn = databaseConfigParams.redisTableParams.map(_.keyColumn).getOrElse(throw InvalidStateException("Key Column Must be defined"))
+    val keyColumn = databaseConfigParams.keyColumn
     val keyValues = scala.collection.mutable.ListBuffer.empty[String]
     rows.map { row =>
       val key = row(keyColumn).toString

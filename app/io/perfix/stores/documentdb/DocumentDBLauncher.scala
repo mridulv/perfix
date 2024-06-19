@@ -6,22 +6,25 @@ import com.amazonaws.services.docdb.model._
 import com.amazonaws.services.docdb.{AmazonDocDB, AmazonDocDBClientBuilder}
 import io.perfix.common.CommonConfig.DB_SUBNET_GROUP_NAME
 import io.perfix.launch.StoreLauncher
+import io.perfix.model.api.DatabaseState
+import io.perfix.model.api.DatabaseState.DatabaseState
+import io.perfix.model.store.DatabaseSetupParams
 
 import java.util.concurrent.TimeUnit
 import scala.annotation.tailrec
 import scala.util.Random
 
-class DocumentDBLauncher(override val databaseConfigParams: DocumentDBDatabaseConfigParams)
-  extends StoreLauncher[DocumentDBDatabaseConfigParams] {
+class DocumentDBLauncher(override val databaseSetupParams: DocumentDBDatabaseSetupParams)
+  extends StoreLauncher {
 
-  override def launch(): Unit = {
+  override def launch(): (DatabaseSetupParams, DatabaseState) = {
     val userName = "user" + Random.alphanumeric.take(10).mkString("")
     val pwd = Random.alphanumeric.take(10).mkString("")
     val defaultDbName = "db-" + Random.alphanumeric.take(10).mkString("")
     val clusterIdentifier = defaultDbName
     val masterUsername = userName
     val masterPassword = pwd
-    val instanceClass = databaseConfigParams.instanceClass
+    val instanceClass = databaseSetupParams.instanceClass
     val dbName = "perfix"+Random.alphanumeric.take(10).mkString("")
 
     val credentialsProvider = DefaultAWSCredentialsProviderChain.getInstance()
@@ -69,19 +72,20 @@ class DocumentDBLauncher(override val databaseConfigParams: DocumentDBDatabaseCo
         documentDBURL,
         dbName
       )
-      val documentDBTableParams = DocumentDBTableParams(
-        "collection" + Random.alphanumeric.take(5).mkString("")
-      )
 
-      databaseConfigParams.documentDBConnectionParams = Some(connectionParams)
-      databaseConfigParams.documentDBTableParams = Some(documentDBTableParams)
-      databaseConfigParams.documentDBIndicesParams = Some(DocumentDBIndicesParams(databaseConfigParams.indices))
+      val updatedDatabaseSetupParams = databaseSetupParams.copy(
+        collectionName = "collection" + Random.alphanumeric.take(5).mkString(""),
+        dbDetails = Some(connectionParams)
+      )
 
       println(s"DocumentDB cluster creation initiated: ${clusterResponse.getDBClusterIdentifier}")
       println(s"DocumentDB instance creation initiated: ${instanceResponse.getDBInstanceIdentifier}")
+
+      (updatedDatabaseSetupParams, DatabaseState.Created)
     } catch {
       case ex: Exception =>
         println(s"Error creating DocumentDB cluster/instance: ${ex.getMessage}")
+        (databaseSetupParams, DatabaseState.Failed)
     } finally {
       docDBClient.shutdown()
     }

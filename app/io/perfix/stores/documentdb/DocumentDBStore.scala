@@ -11,42 +11,28 @@ import org.bson.Document
 
 import scala.jdk.CollectionConverters._
 
-class DocumentDBStore(override val databaseConfigParams: DocumentDBDatabaseConfigParams)
-  extends DataStore[DocumentDBDatabaseConfigParams] {
+class DocumentDBStore(override val databaseConfigParams: DocumentDBDatabaseSetupParams)
+  extends DataStore {
 
   private var mongoClient: MongoClient = _
   private var mongoDatabase: MongoDatabase = _
 
-  override def launcher(): Option[StoreLauncher[DocumentDBDatabaseConfigParams]] = {
-    Some(new DocumentDBLauncher(databaseConfigParams))
-  }
-
   def connectAndInitialize(): Unit = {
-    val connectionParams = databaseConfigParams.documentDBConnectionParams.getOrElse(
+    val connectionParams = databaseConfigParams.dbDetails.getOrElse(
       throw InvalidStateException("Connection parameters should have been defined.")
-    )
-    val tableParams = databaseConfigParams.documentDBTableParams.getOrElse(
-      throw InvalidStateException("Table parameters should have been defined.")
     )
 
     mongoClient = MongoClients.create(connectionParams.url)
     mongoDatabase = mongoClient.getDatabase(connectionParams.database)
-    mongoDatabase.createCollection(tableParams.collectionName)
+    mongoDatabase.createCollection(databaseConfigParams.collectionName)
 
-    databaseConfigParams.documentDBIndicesParams match {
-      case Some(indicesParams) => mongoDatabase
-        .getCollection(tableParams.collectionName)
-        .createIndex(Indexes.ascending(indicesParams.columns: _*))
-      case None => ()
-    }
+    mongoDatabase
+      .getCollection(databaseConfigParams.collectionName)
+      .createIndex(Indexes.ascending(databaseConfigParams.indices: _*))
   }
 
   override def putData(rows: Seq[Map[String, Any]]): Unit = {
-    val tableParams = databaseConfigParams.documentDBTableParams.getOrElse(
-      throw InvalidStateException("Table parameters should have been defined.")
-    )
-
-    val collection: MongoCollection[Document] = mongoDatabase.getCollection(tableParams.collectionName)
+    val collection: MongoCollection[Document] = mongoDatabase.getCollection(databaseConfigParams.collectionName)
 
     val documents = rows.map { row =>
       val document = new Document()
@@ -59,10 +45,6 @@ class DocumentDBStore(override val databaseConfigParams: DocumentDBDatabaseConfi
   }
 
   override def readData(perfixQuery: PerfixQuery): Seq[Map[String, Any]] = {
-    val tableParams = databaseConfigParams.documentDBTableParams.getOrElse(
-      throw InvalidStateException("Table parameters should have been defined.")
-    )
-
     import com.mongodb.client.model.{Filters, Projections}
 
     val filter = perfixQuery.filtersOpt match {
@@ -75,7 +57,7 @@ class DocumentDBStore(override val databaseConfigParams: DocumentDBDatabaseConfi
       case None => Filters.and()
     }
 
-    val cursor = mongoDatabase.getCollection(tableParams.collectionName)
+    val cursor = mongoDatabase.getCollection(databaseConfigParams.collectionName)
       .find(filter)
       .projection(projection)
       .iterator()
@@ -85,10 +67,7 @@ class DocumentDBStore(override val databaseConfigParams: DocumentDBDatabaseConfi
   }
 
   override def cleanup(): Unit = {
-    val tableParams = databaseConfigParams.documentDBTableParams.getOrElse(
-      throw InvalidStateException("Table parameters should have been defined.")
-    )
-    mongoDatabase.getCollection(tableParams.collectionName).drop()
+    mongoDatabase.getCollection(databaseConfigParams.collectionName).drop()
     mongoDatabase.drop()
     mongoClient.close()
   }

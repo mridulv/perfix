@@ -16,14 +16,11 @@ import scala.jdk.CollectionConverters._
 import scala.util.control.Breaks.{break, breakable}
 
 class DynamoDBStore(datasetParams: DatasetParams,
-                    override val databaseConfigParams: DynamoDBDatabaseConfigParams)
-  extends DataStore[DynamoDBDatabaseConfigParams] {
+                    override val databaseConfigParams: DynamoDBDatabaseSetupParams)
+  extends DataStore {
 
   private var client: AmazonDynamoDB = _
   private var tableParams: DynamoDBTableParams = _
-  override def launcher(): Option[StoreLauncher[DynamoDBDatabaseConfigParams]] = {
-    None
-  }
 
   def connectAndInitialize(): Unit = {
     tableParams = databaseConfigParams.dynamoDBTableParams.getOrElse(throw InvalidStateException("Table Params should have been defined"))
