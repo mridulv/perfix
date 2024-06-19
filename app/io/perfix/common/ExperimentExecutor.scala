@@ -15,8 +15,8 @@ class ExperimentExecutor(experimentParams: ExperimentParams,
   private val dataStore = databaseConfigParams.storeParams match {
     case storeParams: MySQLDatabaseConfigParams => new MySQLStore(dataset.params, storeParams)
     case storeParams: DynamoDBDatabaseConfigParams => new DynamoDBStore(dataset.params, storeParams)
-    case storeParams: DocumentDBDatabaseConfigParams => new DocumentDBStore(dataset.params, storeParams)
-    case storeParams: RedisDatabaseConfigParams => new RedisStore(dataset.params, storeParams)
+    case storeParams: DocumentDBDatabaseConfigParams => new DocumentDBStore(storeParams)
+    case storeParams: RedisDatabaseConfigParams => new RedisStore(storeParams)
   }
 
   private val experiment = new SimplePerformanceExperiment(dataStore,
