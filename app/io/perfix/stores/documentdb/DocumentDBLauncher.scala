@@ -11,8 +11,7 @@ import java.util.concurrent.TimeUnit
 import scala.annotation.tailrec
 import scala.util.Random
 
-class DocumentDBLauncher(documentDBParams: DocumentDBParams,
-                         override val databaseConfigParams: DocumentDBDatabaseConfigParams)
+class DocumentDBLauncher(override val databaseConfigParams: DocumentDBDatabaseConfigParams)
   extends StoreLauncher[DocumentDBDatabaseConfigParams] {
 
   override def launch(): Unit = {
@@ -74,9 +73,9 @@ class DocumentDBLauncher(documentDBParams: DocumentDBParams,
         "collection" + Random.alphanumeric.take(5).mkString("")
       )
 
-      documentDBParams.documentDBConnectionParams = Some(connectionParams)
-      documentDBParams.documentDBTableParams = Some(documentDBTableParams)
-      documentDBParams.documentDBIndicesParams = Some(DocumentDBIndicesParams(databaseConfigParams.indices))
+      databaseConfigParams.documentDBConnectionParams = Some(connectionParams)
+      databaseConfigParams.documentDBTableParams = Some(documentDBTableParams)
+      databaseConfigParams.documentDBIndicesParams = Some(DocumentDBIndicesParams(databaseConfigParams.indices))
 
       println(s"DocumentDB cluster creation initiated: ${clusterResponse.getDBClusterIdentifier}")
       println(s"DocumentDB instance creation initiated: ${instanceResponse.getDBInstanceIdentifier}")

@@ -8,14 +8,14 @@ import io.perfix.stores.DataStore
 import redis.clients.jedis.JedisPool
 
 class RedisStore(datasetParams: DatasetParams,
-                 override val storeParams: RedisDatabaseConfigParams)
+                 override val databaseConfigParams: RedisDatabaseConfigParams)
   extends DataStore[RedisDatabaseConfigParams] {
 
   private var jedisPool: JedisPool = _
   private val redisParams: RedisParams = RedisParams()
 
   override def launcher(): Option[StoreLauncher[RedisDatabaseConfigParams]] = {
-    Some(new RedisLauncher(redisParams, storeParams))
+    Some(new RedisLauncher(redisParams, databaseConfigParams))
   }
 
   def connectAndInitialize(): Unit = {
