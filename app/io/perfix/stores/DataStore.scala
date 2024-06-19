@@ -6,7 +6,7 @@ import io.perfix.query.PerfixQuery
 
 trait DataStore[T <: DatabaseConfigParams] {
 
-  val storeParams: T
+  val databaseConfigParams: T
   def launcher(): Option[StoreLauncher[T]]
   def connectAndInitialize(): Unit
   def putData(rows: Seq[Map[String, Any]]): Unit

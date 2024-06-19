@@ -16,16 +16,16 @@ import scala.jdk.CollectionConverters._
 import scala.util.control.Breaks.{break, breakable}
 
 class DynamoDBStore(datasetParams: DatasetParams,
-                    override val storeParams: DynamoDBDatabaseConfigParams)
+                    override val databaseConfigParams: DynamoDBDatabaseConfigParams)
   extends DataStore[DynamoDBDatabaseConfigParams] {
 
   private var client: AmazonDynamoDB = _
   private val dynamoDBParams: DynamoDBParams = DynamoDBParams()
   private var tableParams: DynamoDBTableParams = _
   override def launcher(): Option[StoreLauncher[DynamoDBDatabaseConfigParams]] = {
-    dynamoDBParams.dynamoDBTableParams = Some(DynamoDBTableParams(None, storeParams.tableName, storeParams.partitionKey, storeParams.sortKey))
-    dynamoDBParams.dynamoDBCapacityParams = Some(DynamoDBCapacityParams(Some(storeParams.rcu), Some(storeParams.wcu)))
-    dynamoDBParams.dynamoDBGSIMetadataParams = Some(DynamoDBGSIMetadataParams(storeParams.gsiParams))
+    dynamoDBParams.dynamoDBTableParams = Some(DynamoDBTableParams(None, databaseConfigParams.tableName, databaseConfigParams.partitionKey, databaseConfigParams.sortKey))
+    dynamoDBParams.dynamoDBCapacityParams = Some(DynamoDBCapacityParams(Some(databaseConfigParams.rcu), Some(databaseConfigParams.wcu)))
+    dynamoDBParams.dynamoDBGSIMetadataParams = Some(DynamoDBGSIMetadataParams(databaseConfigParams.gsiParams))
     None
   }
 

@@ -11,23 +11,21 @@ import org.bson.Document
 
 import scala.jdk.CollectionConverters._
 
-class DocumentDBStore(datasetParams: DatasetParams,
-                      override val storeParams: DocumentDBDatabaseConfigParams)
+class DocumentDBStore(override val databaseConfigParams: DocumentDBDatabaseConfigParams)
   extends DataStore[DocumentDBDatabaseConfigParams] {
 
   private var mongoClient: MongoClient = _
   private var mongoDatabase: MongoDatabase = _
-  private val documentDBParams: DocumentDBParams = DocumentDBParams()
 
   override def launcher(): Option[StoreLauncher[DocumentDBDatabaseConfigParams]] = {
-    Some(new DocumentDBLauncher(documentDBParams, storeParams))
+    Some(new DocumentDBLauncher(databaseConfigParams))
   }
 
   def connectAndInitialize(): Unit = {
-    val connectionParams = documentDBParams.documentDBConnectionParams.getOrElse(
+    val connectionParams = databaseConfigParams.documentDBConnectionParams.getOrElse(
       throw InvalidStateException("Connection parameters should have been defined.")
     )
-    val tableParams = documentDBParams.documentDBTableParams.getOrElse(
+    val tableParams = databaseConfigParams.documentDBTableParams.getOrElse(
       throw InvalidStateException("Table parameters should have been defined.")
     )
 
@@ -35,7 +33,7 @@ class DocumentDBStore(datasetParams: DatasetParams,
     mongoDatabase = mongoClient.getDatabase(connectionParams.database)
     mongoDatabase.createCollection(tableParams.collectionName)
 
-    documentDBParams.documentDBIndicesParams match {
+    databaseConfigParams.documentDBIndicesParams match {
       case Some(indicesParams) => mongoDatabase
         .getCollection(tableParams.collectionName)
         .createIndex(Indexes.ascending(indicesParams.columns: _*))
@@ -44,7 +42,7 @@ class DocumentDBStore(datasetParams: DatasetParams,
   }
 
   override def putData(rows: Seq[Map[String, Any]]): Unit = {
-    val tableParams = documentDBParams.documentDBTableParams.getOrElse(
+    val tableParams = databaseConfigParams.documentDBTableParams.getOrElse(
       throw InvalidStateException("Table parameters should have been defined.")
     )
 
@@ -61,7 +59,7 @@ class DocumentDBStore(datasetParams: DatasetParams,
   }
 
   override def readData(perfixQuery: PerfixQuery): Seq[Map[String, Any]] = {
-    val tableParams = documentDBParams.documentDBTableParams.getOrElse(
+    val tableParams = databaseConfigParams.documentDBTableParams.getOrElse(
       throw InvalidStateException("Table parameters should have been defined.")
     )
 
@@ -87,7 +85,7 @@ class DocumentDBStore(datasetParams: DatasetParams,
   }
 
   override def cleanup(): Unit = {
-    val tableParams = documentDBParams.documentDBTableParams.getOrElse(
+    val tableParams = databaseConfigParams.documentDBTableParams.getOrElse(
       throw InvalidStateException("Table parameters should have been defined.")
     )
     mongoDatabase.getCollection(tableParams.collectionName).drop()

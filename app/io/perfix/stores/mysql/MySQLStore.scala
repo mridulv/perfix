@@ -11,14 +11,14 @@ import io.perfix.stores.DataStore
 import java.sql.{Connection, DriverManager, ResultSet}
 
 class MySQLStore(datasetParams: DatasetParams,
-                 override val storeParams: MySQLDatabaseConfigParams)
+                 override val databaseConfigParams: MySQLDatabaseConfigParams)
   extends DataStore[MySQLDatabaseConfigParams] {
 
   private[stores] var connection: Connection = _
   private[stores] val mySQLParams: MySQLParams = MySQLParams()
 
   override def launcher(): Option[StoreLauncher[MySQLDatabaseConfigParams]] = {
-    Some(new MySQLLauncher(mySQLParams, storeParams))
+    Some(new MySQLLauncher(mySQLParams, databaseConfigParams))
   }
 
   def connectAndInitialize(): Unit = {
