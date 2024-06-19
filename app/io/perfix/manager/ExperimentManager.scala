@@ -5,7 +5,7 @@ import io.perfix.common.ExperimentExecutor
 import io.perfix.exceptions.InvalidStateException
 import io.perfix.model.experiment.{ExperimentId, ExperimentParams, MultipleExperimentResult}
 import io.perfix.model.{EntityFilter, ExperimentFilter}
-import io.perfix.store.ExperimentStore
+import io.perfix.db.ExperimentStore
 
 import javax.inject.Singleton
 
@@ -59,6 +59,7 @@ class ExperimentManager @Inject()(datasetManager: DatasetManager,
       val configParams = allDatabaseConfigParams
         .find(_.databaseConfigId.get == databaseConfigDetail.databaseConfigId)
         .getOrElse(throw InvalidStateException("Invalid ExperimentParams"))
+      databaseConfigManager.ensureDatabase(databaseConfigDetail.databaseConfigId)
       val datasetParams = allDatasetParams
         .find(_.id.get == configParams.datasetDetails.datasetId)
         .getOrElse(throw InvalidStateException("Invalid ExperimentParams"))

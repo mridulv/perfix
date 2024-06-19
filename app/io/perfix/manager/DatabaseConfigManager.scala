@@ -3,8 +3,8 @@ package io.perfix.manager
 import com.google.inject.{Inject, Singleton}
 import io.perfix.exceptions.InvalidStateException
 import io.perfix.model._
-import io.perfix.model.api.{DatabaseConfigId, DatabaseConfigParams}
-import io.perfix.store.DatabaseConfigStore
+import io.perfix.model.api.{DatabaseConfigId, DatabaseConfigParams, DatabaseState}
+import io.perfix.db.DatabaseConfigStore
 
 @Singleton
 class DatabaseConfigManager @Inject()(databaseConfigStore: DatabaseConfigStore,
@@ -34,11 +34,31 @@ class DatabaseConfigManager @Inject()(databaseConfigStore: DatabaseConfigStore,
     val updatedParams = exitingParams
       .copy(
         name = databaseConfigParams.name,
-        storeParams = databaseConfigParams.storeParams,
+        databaseSetupParams = databaseConfigParams.databaseSetupParams,
         dataStore = databaseConfigParams.dataStore
       )
     databaseConfigStore.update(databaseConfigId, updatedParams)
     updatedParams.toDatabaseConfigDisplayParams(dataset)
+  }
+
+  def ensureDatabase(databaseConfigId: DatabaseConfigId): Unit = {
+    val databaseConfigParams = databaseConfigStore
+      .get(databaseConfigId)
+      .getOrElse(throw InvalidStateException("Invalid DatabaseConfigId"))
+    if (Seq(DatabaseState.NotStarted, DatabaseState.Failed).contains(databaseConfigParams.databaseState)) {
+      val (setupParams, databaseState) = Database.launch(databaseConfigParams.databaseSetupParams)
+      val updatedDatabaseConfigParams = databaseConfigParams.copy(databaseSetupParams = setupParams, databaseState = databaseState)
+      databaseConfigStore.update(databaseConfigId, updatedDatabaseConfigParams)
+    } else {
+      var timeout = 30
+      while (databaseConfigParams.databaseState == DatabaseState.InProgress && timeout > 0) {
+        Thread.sleep(1000)
+        timeout -= 1
+      }
+      if (timeout == 0) {
+        throw new RuntimeException("Database Setup Failed")
+      }
+    }
   }
 
   def all(entityFilters: Seq[EntityFilter]): Seq[DatabaseConfigParams] = {

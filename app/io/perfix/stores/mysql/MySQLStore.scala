@@ -7,22 +7,19 @@ import io.perfix.model.ColumnDescription
 import io.perfix.model.api.DatasetParams
 import io.perfix.query.PerfixQuery
 import io.perfix.stores.DataStore
+import io.perfix.stores.mysql.MySQLStore.convert
+import play.api.db.slick.DbName
 
 import java.sql.{Connection, DriverManager, ResultSet}
 
 class MySQLStore(datasetParams: DatasetParams,
-                 override val storeParams: MySQLStoreParams)
-  extends DataStore[MySQLStoreParams] {
+                 override val databaseConfigParams: MySQLDatabaseSetupParams)
+  extends DataStore {
 
   private[stores] var connection: Connection = _
-  private[stores] val mySQLParams: MySQLParams = MySQLParams()
-
-  override def launcher(): Option[StoreLauncher[MySQLStoreParams]] = {
-    Some(new MySQLLauncher(mySQLParams, storeParams))
-  }
 
   def connectAndInitialize(): Unit = {
-    val connectionParams = mySQLParams.mySQLConnectionParams match {
+    val connectionParams = databaseConfigParams.dbDetails match {
       case Some(con) => con
       case None => throw InvalidStateException("Connection should have been defined")
     }
@@ -32,20 +29,15 @@ class MySQLStore(datasetParams: DatasetParams,
     connection = DriverManager.getConnection(url, username, password)
     val statement = connection.createStatement()
 
-    val tableParams = mySQLParams.mySQLTableParams match {
-      case Some(tableParams) => tableParams
-      case None => throw InvalidStateException("Table Params should have been defined")
+    val db = databaseConfigParams.dbName match {
+      case Some(dbName) => dbName
+      case None => throw InvalidStateException("Database Name should have been defined")
     }
 
-    val tableIndexesParams = mySQLParams.mySQLTableIndexesParams match {
-      case Some(tableIndexesParams) => tableIndexesParams
-      case None => throw InvalidStateException("Table Index Params should have been defined")
-    }
-
-    val sql = createTableStatement(tableParams.dbName + "." + tableParams.tableName, datasetParams.columns)
+    val sql = createTableStatement(db + "." + databaseConfigParams.tableName, datasetParams.columns)
     statement.executeUpdate(sql)
 
-    val indexSql = createTableIndexesStatement(tableIndexesParams.primaryIndexColumn, tableIndexesParams.secondaryIndexesColumn)
+    val indexSql = createTableIndexesStatement(databaseConfigParams.primaryIndexColumn, databaseConfigParams.secondaryIndexesColumn)
     if (indexSql.nonEmpty) {
       statement.executeUpdate(indexSql)
     }
@@ -54,16 +46,17 @@ class MySQLStore(datasetParams: DatasetParams,
   }
 
   override def putData(rows: Seq[Map[String, Any]]): Unit = {
-    val tableParams = mySQLParams.mySQLTableParams match {
-      case Some(tableParams) => tableParams
-      case None => throw InvalidStateException("Table Params should have been defined")
+    import databaseConfigParams._
+    val db = databaseConfigParams.dbName match {
+      case Some(dbName) => dbName
+      case None => throw InvalidStateException("Database Name should have been defined")
     }
 
     val allKeys = rows.head.keys.toSeq // Assuming all rows have the same columns
     val columnNames = allKeys.mkString(", ")
     val valuePlaceholders = allKeys.map(_ => "?").mkString(", ")
 
-    val sql = s"INSERT INTO ${tableParams.dbName}.${tableParams.tableName} ($columnNames) VALUES ($valuePlaceholders);"
+    val sql = s"INSERT INTO ${db}.${tableName} ($columnNames) VALUES ($valuePlaceholders);"
     val preparedStatement = connection.prepareStatement(sql)
 
     try {
@@ -80,7 +73,8 @@ class MySQLStore(datasetParams: DatasetParams,
   }
 
   override def readData(perfixQuery: PerfixQuery): Seq[Map[String, Any]] = {
-    val query = PerfixQueryConverter.convert(mySQLParams.mySQLTableParams.get, perfixQuery)
+    import databaseConfigParams._
+    val query = convert(dbName.get, tableName, perfixQuery)
     val statement = connection.createStatement()
     val result = resultSetToSeqMap(statement.executeQuery(query))
     statement.close()
@@ -94,10 +88,7 @@ class MySQLStore(datasetParams: DatasetParams,
 
   private def createTableIndexesStatement(primaryIndexColumnName: Option[String],
                                           secondaryIndexesColumnNames: Option[Seq[String]]): String = {
-    val tableName = mySQLParams.mySQLTableParams match {
-      case Some(tableParams) => tableParams.tableName
-      case None => throw InvalidStateException("Table Params should have been defined")
-    }
+    val tableName = databaseConfigParams.tableName
 
     val primaryIndexSQL = primaryIndexColumnName.map(primaryColumn => s"ADD PRIMARY KEY ($primaryColumn)").getOrElse("")
     val secondaryIndexSQL = secondaryIndexesColumnNames.map { secondaryColumns =>
@@ -118,11 +109,11 @@ class MySQLStore(datasetParams: DatasetParams,
   }
 
   override def cleanup(): Unit = {
-    val tableParams = mySQLParams.mySQLTableParams match {
-      case Some(tableParams) => tableParams
-      case None => throw InvalidStateException("Table Params should have been defined")
+    val db = databaseConfigParams.dbName match {
+      case Some(dbName) => dbName
+      case None => throw InvalidStateException("Database Name should have been defined")
     }
-    val statement = s"DROP TABLE ${tableParams.dbName}.${tableParams.tableName}"
+    val statement = s"DROP TABLE ${db}.${databaseConfigParams.tableName}"
     val preparedStatement = connection.prepareStatement(statement)
     preparedStatement.execute()
     connection.close()
@@ -141,5 +132,27 @@ class MySQLStore(datasetParams: DatasetParams,
     }
 
     buffer.toSeq
+  }
+}
+
+object MySQLStore {
+  def convert(dbName: String, tableName: String, perfixQuery: PerfixQuery): String = {
+    import perfixQuery._
+    val sqlFilterPart = filtersOpt match {
+      case Some(filters) => "where " + filters.map(_.toString).mkString(" and ")
+      case None => ""
+    }
+
+    val projectedFieldsPart = projectedFieldsOpt match {
+      case Some(projectedFields) => projectedFields.mkString(", ")
+      case None => "*"
+    }
+
+    val limitPart = limitOpt match {
+      case Some(limit) => s"limit $limit"
+      case None => ""
+    }
+
+    s"select $projectedFieldsPart from ${dbName}.${tableName} ${sqlFilterPart} ${limitPart}"
   }
 }

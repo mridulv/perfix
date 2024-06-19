@@ -2,42 +2,19 @@ package io.perfix.model.experiment
 
 import play.api.libs.json._
 
-sealed trait ExperimentState {
-  def name: String
-}
+object ExperimentState extends Enumeration {
 
-object ExperimentState {
-  case object Created extends ExperimentState {
-    val name = "Created"
+  type ExperimentState = Value
+  val Created, inProgress, Completed, Failed = Value
+
+  implicit val writes: Writes[ExperimentState] = Writes[ExperimentState] { experimentState =>
+    JsString(experimentState.toString)
   }
 
-  case object InProgress extends ExperimentState {
-    val name = "InProgress"
+  implicit val reads: Reads[ExperimentState] = Reads[ExperimentState] {
+    case JsString(str) => JsSuccess(ExperimentState.withName(str))
+    case _ => JsError("Invalid value for Experiment State")
   }
 
-  case object Completed extends ExperimentState {
-    val name = "Completed"
-  }
-
-  case object Failed extends ExperimentState {
-    val name = "Failed"
-  }
-
-  implicit val ExperimentStateReads: Reads[ExperimentState] = Reads {
-    case JsString("Created") => JsSuccess(Created)
-    case JsString("InProgress") => JsSuccess(InProgress)
-    case JsString("Completed") => JsSuccess(Completed)
-    case JsString("Failed") => JsSuccess(Failed)
-    case _ => JsError("Invalid DataType")
-  }
-
-  // Define a custom Writes for serialization
-  implicit val ExperimentStateWrites: Writes[ExperimentState] = Writes {
-    case Created => JsString("Created")
-    case InProgress => JsString("InProgress")
-    case Completed => JsString("Completed")
-    case Failed => JsString("Failed")
-  }
-
-  implicit val ExperimentStateWritesFormat: Format[ExperimentState] = Format(ExperimentStateReads, ExperimentStateWrites)
+  implicit val ExperimentStateFormat: Format[ExperimentState] = Format(reads, writes)
 }

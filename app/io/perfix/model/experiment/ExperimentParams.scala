@@ -3,7 +3,8 @@ package io.perfix.model.experiment
 import io.perfix.model.api.{DatabaseConfigDetails, DatabaseConfigParams, DatasetParams}
 import io.perfix.model.UserInfo
 import io.perfix.query.PerfixQuery
-import io.perfix.store.tables.ExperimentRow
+import io.perfix.db.tables.ExperimentRow
+import io.perfix.model.experiment.ExperimentState.ExperimentState
 import play.api.libs.json.{Format, Json}
 
 case class ExperimentParams(experimentId: Option[ExperimentId],

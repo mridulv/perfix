@@ -1,11 +1,11 @@
-package io.perfix.store
+package io.perfix.db
 
 import com.google.inject.{Inject, Singleton}
 import io.perfix.auth.UserContext
 import io.perfix.exceptions.UserNotDefinedException
 import io.perfix.model.UserInfo
 import io.perfix.model.experiment.{ExperimentId, ExperimentParams, ExperimentState}
-import io.perfix.store.tables.ExperimentTable
+import io.perfix.db.tables.ExperimentTable
 import play.api.db.slick.DatabaseConfigProvider
 import slick.jdbc.JdbcProfile
 import slick.lifted.TableQuery

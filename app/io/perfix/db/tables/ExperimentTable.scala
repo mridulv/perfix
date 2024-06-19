@@ -1,4 +1,4 @@
-package io.perfix.store.tables
+package io.perfix.db.tables
 
 import io.perfix.model.experiment.{ExperimentId, ExperimentParams}
 import play.api.libs.json.Json

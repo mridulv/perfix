@@ -1,4 +1,4 @@
-package io.perfix.store.tables
+package io.perfix.db.tables
 
 import io.perfix.model.api.{DatabaseConfigId, DatabaseConfigParams}
 import play.api.libs.json.Json

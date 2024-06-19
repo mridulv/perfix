@@ -6,34 +6,39 @@ import com.amazonaws.services.rds.model.{CreateDBInstanceRequest, DBInstance, De
 import com.amazonaws.services.rds.{AmazonRDS, AmazonRDSClientBuilder}
 import io.perfix.common.CommonConfig.DB_SUBNET_GROUP_NAME
 import io.perfix.launch.StoreLauncher
+import io.perfix.model.api.DatabaseState
+import io.perfix.model.api.DatabaseState.DatabaseState
+import io.perfix.model.store.DatabaseSetupParams
 
 import java.util.concurrent.TimeUnit
 import scala.util.Random
 
-class MySQLLauncher(mysqlParams: MySQLParams,
-                    override val storeParams: MySQLStoreParams)
-  extends StoreLauncher[MySQLStoreParams] {
+class MySQLLauncher(override val databaseSetupParams: MySQLDatabaseSetupParams)
+  extends StoreLauncher {
 
   import com.typesafe.config.ConfigFactory
   private val restConfig = ConfigFactory.load("application.conf")
   private val useLocalDB = restConfig.getBoolean("use.local.db")
 
-  override def launch(): Unit = {
+  override def launch(): (DatabaseSetupParams, DatabaseState) = {
     if (useLocalDB) {
       val connectUrl = "jdbc:mysql://localhost:3306/perfix"
       val username = "root"
       val password = "test12345"
       val dbName = "perfix"
       val tableName = "test"
-      mysqlParams.mySQLConnectionParams = Some(MySQLConnectionParams(connectUrl, username, password))
-      mysqlParams.mySQLTableParams = Some(MySQLTableParams(dbName, tableName))
-      mysqlParams.mySQLTableIndexesParams = Some(MySQLTableIndexesParams(storeParams.primaryIndexColumn, storeParams.secondaryIndexesColumn))
+      val updatedDatabaseSetupParams = databaseSetupParams.copy(
+          dbDetails = Some(MySQLConnectionParams(connectUrl, username, password)),
+          dbName = Some(dbName),
+          tableName = tableName
+        )
+      (updatedDatabaseSetupParams, DatabaseState.Created)
     } else {
       actualLaunch()
     }
   }
 
-  def actualLaunch(): Unit = {
+  def actualLaunch(): (DatabaseSetupParams, DatabaseState) = {
     val userName = "user" + Random.alphanumeric.take(10).mkString("")
     val defaultDbName = "db" + Random.alphanumeric.take(5).mkString("")
     val instanceName = "instance" + Random.alphanumeric.take(5).mkString("")
@@ -42,8 +47,8 @@ class MySQLLauncher(mysqlParams: MySQLParams,
     val username = userName
     val password = pwd
     val instanceIdentifier = instanceName
-    val instanceType = storeParams.instanceType
-    val tableName = storeParams.tableName
+    val instanceType = databaseSetupParams.instanceType
+    val tableName = databaseSetupParams.tableName
 
     val credentialsProvider = DefaultAWSCredentialsProviderChain.getInstance()
 
@@ -75,13 +80,19 @@ class MySQLLauncher(mysqlParams: MySQLParams,
 
       println("Response is: " + response.getEndpoint)
       val connectUrl = s"jdbc:mysql://${response.getEndpoint.getAddress}:${response.getEndpoint.getPort}/${response.getDBName}?user=${username}&password=${password}"
-      mysqlParams.mySQLConnectionParams = Some(MySQLConnectionParams(connectUrl, username, password))
-      mysqlParams.mySQLTableParams = Some(MySQLTableParams(dbName, tableName))
-      mysqlParams.mySQLTableIndexesParams = Some(MySQLTableIndexesParams(storeParams.primaryIndexColumn, storeParams.secondaryIndexesColumn))
+
+      val updatedDatabaseSetupParams = databaseSetupParams.copy(
+        dbDetails = Some(MySQLConnectionParams(connectUrl, username, password)),
+        tableName = tableName,
+        dbName = Some(dbName)
+      )
+
       println(s"RDS instance creation initiated: ${response.getDBInstanceIdentifier}")
+      (updatedDatabaseSetupParams, DatabaseState.Created)
     } catch {
       case ex: Exception =>
         println(s"Error creating RDS instance: ${ex.getMessage}")
+        (databaseSetupParams, DatabaseState.Failed)
     } finally {
       rdsClient.shutdown()
     }
