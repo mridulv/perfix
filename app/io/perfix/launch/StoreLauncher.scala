@@ -10,7 +10,7 @@ import scala.jdk.CollectionConverters._
 
 trait StoreLauncher[Params <: DatabaseConfigParams] {
 
-  val storeParams: Params
+  val databaseConfigParams: Params
 
   def launch(): Unit
 

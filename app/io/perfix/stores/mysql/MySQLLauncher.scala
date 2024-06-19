@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit
 import scala.util.Random
 
 class MySQLLauncher(mysqlParams: MySQLParams,
-                    override val storeParams: MySQLDatabaseConfigParams)
+                    override val databaseConfigParams: MySQLDatabaseConfigParams)
   extends StoreLauncher[MySQLDatabaseConfigParams] {
 
   import com.typesafe.config.ConfigFactory
@@ -27,7 +27,7 @@ class MySQLLauncher(mysqlParams: MySQLParams,
       val tableName = "test"
       mysqlParams.mySQLConnectionParams = Some(MySQLConnectionParams(connectUrl, username, password))
       mysqlParams.mySQLTableParams = Some(MySQLTableParams(dbName, tableName))
-      mysqlParams.mySQLTableIndexesParams = Some(MySQLTableIndexesParams(storeParams.primaryIndexColumn, storeParams.secondaryIndexesColumn))
+      mysqlParams.mySQLTableIndexesParams = Some(MySQLTableIndexesParams(databaseConfigParams.primaryIndexColumn, databaseConfigParams.secondaryIndexesColumn))
     } else {
       actualLaunch()
     }
@@ -42,8 +42,8 @@ class MySQLLauncher(mysqlParams: MySQLParams,
     val username = userName
     val password = pwd
     val instanceIdentifier = instanceName
-    val instanceType = storeParams.instanceType
-    val tableName = storeParams.tableName
+    val instanceType = databaseConfigParams.instanceType
+    val tableName = databaseConfigParams.tableName
 
     val credentialsProvider = DefaultAWSCredentialsProviderChain.getInstance()
 
@@ -77,7 +77,7 @@ class MySQLLauncher(mysqlParams: MySQLParams,
       val connectUrl = s"jdbc:mysql://${response.getEndpoint.getAddress}:${response.getEndpoint.getPort}/${response.getDBName}?user=${username}&password=${password}"
       mysqlParams.mySQLConnectionParams = Some(MySQLConnectionParams(connectUrl, username, password))
       mysqlParams.mySQLTableParams = Some(MySQLTableParams(dbName, tableName))
-      mysqlParams.mySQLTableIndexesParams = Some(MySQLTableIndexesParams(storeParams.primaryIndexColumn, storeParams.secondaryIndexesColumn))
+      mysqlParams.mySQLTableIndexesParams = Some(MySQLTableIndexesParams(databaseConfigParams.primaryIndexColumn, databaseConfigParams.secondaryIndexesColumn))
       println(s"RDS instance creation initiated: ${response.getDBInstanceIdentifier}")
     } catch {
       case ex: Exception =>

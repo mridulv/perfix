@@ -11,13 +11,13 @@ import java.util.concurrent.TimeUnit
 import scala.util.Random
 
 class RedisLauncher(redisParams: RedisParams,
-                    override val storeParams: RedisDatabaseConfigParams)
+                    override val databaseConfigParams: RedisDatabaseConfigParams)
   extends StoreLauncher[RedisDatabaseConfigParams] {
 
   override def launch(): Unit = {
     val clusterId = "cluster" + Random.alphanumeric.take(5).mkString("")
-    val cacheNodeType = storeParams.cacheNodeType.getOrElse("cache.t3.micro")
-    val numCacheNodes = storeParams.numCacheNodes.getOrElse(1)
+    val cacheNodeType = databaseConfigParams.cacheNodeType.getOrElse("cache.t3.micro")
+    val numCacheNodes = databaseConfigParams.numCacheNodes.getOrElse(1)
 
     val credentialsProvider = DefaultAWSCredentialsProviderChain.getInstance()
 
@@ -46,7 +46,7 @@ class RedisLauncher(redisParams: RedisParams,
       val endpoint = cacheNode.getEndpoint
 
       redisParams.redisConnectionParams = Some(RedisConnectionParams(endpoint.getAddress, endpoint.getPort))
-      redisParams.redisTableParams = Some(RedisTableParams(storeParams.keyColumn))
+      redisParams.redisTableParams = Some(RedisTableParams(databaseConfigParams.keyColumn))
 
       println(s"Redis cluster creation initiated: ${describeResponse.getCacheClusters.get(0).getCacheClusterId}")
     } catch {
