@@ -2,15 +2,15 @@ package io.perfix.experiment
 
 import io.perfix.model.api.Dataset
 import io.perfix.model.experiment.{ExperimentParams, ExperimentResult}
-import io.perfix.model.store.StoreParams
+import io.perfix.model.store.DatabaseConfigParams
 import io.perfix.stores.DataStore
 import io.perfix.util.BenchmarkUtil
 
 import scala.collection.mutable.ListBuffer
 
-class SimplePerformanceExperiment[T <: StoreParams](dataStore: DataStore[T],
-                                                    experimentParams: ExperimentParams,
-                                                    dataset: Dataset) extends Experiment {
+class SimplePerformanceExperiment[T <: DatabaseConfigParams](dataStore: DataStore[T],
+                                                             experimentParams: ExperimentParams,
+                                                             dataset: Dataset) extends Experiment {
 
   def init(): Unit = {
     dataStore.launcher().foreach(_.launch())

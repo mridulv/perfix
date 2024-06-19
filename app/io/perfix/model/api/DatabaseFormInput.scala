@@ -1,6 +1,6 @@
 package io.perfix.model.api
 
-import io.perfix.model._
+import io.perfix.model.{api, _}
 import io.perfix.model.store.StoreType.{DynamoDB, MongoDB, MySQL, Redis, StoreType}
 import play.api.libs.json.{Format, Json}
 
@@ -22,13 +22,13 @@ object DatabaseFormInput {
     Seq(
       FormInputs(
         Seq(
-          FormInput("cacheNodeType", "Node Type", FormInputType(StringType)),
-          FormInput("numCacheNodes", "Number of Cache Nodes", FormInputType(IntType))
+          FormInput("cacheNodeType", "Node Type", api.FormInputType(StringType)),
+          FormInput("numCacheNodes", "Number of Cache Nodes", api.FormInputType(IntType))
         )
       ),
       FormInputs(
         Seq(
-          FormInput("keyColumn", "Select a Key Column", FormInputType(SingleColumnSelectorType))
+          FormInput("keyColumn", "Select a Key Column", api.FormInputType(SingleColumnSelectorType))
         )
       )
     )
@@ -38,14 +38,14 @@ object DatabaseFormInput {
     Seq(
       FormInputs(
         Seq(
-          FormInput("instanceType", "Instance Type", FormInputType(StringType)),
-          FormInput("tableName", "TableName", FormInputType(StringType))
+          FormInput("instanceType", "Instance Type", api.FormInputType(StringType)),
+          FormInput("tableName", "TableName", api.FormInputType(StringType))
         )
       ),
       FormInputs(
         Seq(
-          FormInput("primaryIndexColumn", "Primary Index", FormInputType(SingleColumnSelectorType)),
-          FormInput("secondaryIndexesColumn", "Secondary index", FormInputType(MultiColumnSelectorType))
+          FormInput("primaryIndexColumn", "Primary Index", api.FormInputType(SingleColumnSelectorType)),
+          FormInput("secondaryIndexesColumn", "Secondary index", api.FormInputType(MultiColumnSelectorType))
         )
       )
     )
@@ -55,16 +55,16 @@ object DatabaseFormInput {
     Seq(
       FormInputs(
         Seq(
-          FormInput("tableName", "Table Name", FormInputType(StringType)),
-          FormInput("rcu", "RCU", FormInputType(IntType)),
-          FormInput("wcu", "WCU", FormInputType(IntType))
+          FormInput("tableName", "Table Name", api.FormInputType(StringType)),
+          FormInput("rcu", "RCU", api.FormInputType(IntType)),
+          FormInput("wcu", "WCU", api.FormInputType(IntType))
         )
       ),
       FormInputs(
         Seq(
-          FormInput("partitionKey", "Partition Key", FormInputType(SingleColumnSelectorType)),
-          FormInput("sortKey", "Sort Key", FormInputType(SingleColumnSelectorType)),
-          FormInput("gsiParams", "List of GSIs", FormInputType(GSIType))
+          FormInput("partitionKey", "Partition Key", api.FormInputType(SingleColumnSelectorType)),
+          FormInput("sortKey", "Sort Key", api.FormInputType(SingleColumnSelectorType)),
+          FormInput("gsiParams", "List of GSIs", api.FormInputType(GSIType))
         )
       )
     )
@@ -74,13 +74,13 @@ object DatabaseFormInput {
     Seq(
       FormInputs(
         Seq(
-          FormInput("instanceClass", "Instance Class", FormInputType(StringType)),
-          FormInput("collectionName", "Collection Name", FormInputType(StringType))
+          FormInput("instanceClass", "Instance Class", api.FormInputType(StringType)),
+          FormInput("collectionName", "Collection Name", api.FormInputType(StringType))
         )
       ),
       FormInputs(
         Seq(
-          FormInput("indices", "Indexes", FormInputType(MultiColumnSelectorType))
+          FormInput("indices", "Indexes", api.FormInputType(MultiColumnSelectorType))
         )
       )
     )

@@ -12,8 +12,8 @@ import scala.annotation.tailrec
 import scala.util.Random
 
 class DocumentDBLauncher(documentDBParams: DocumentDBParams,
-                         override val storeParams: DocumentDBStoreParams)
-  extends StoreLauncher[DocumentDBStoreParams] {
+                         override val storeParams: DocumentDBDatabaseConfigParams)
+  extends StoreLauncher[DocumentDBDatabaseConfigParams] {
 
   override def launch(): Unit = {
     val userName = "user" + Random.alphanumeric.take(10).mkString("")

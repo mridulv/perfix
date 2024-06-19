@@ -12,14 +12,14 @@ import org.bson.Document
 import scala.jdk.CollectionConverters._
 
 class DocumentDBStore(datasetParams: DatasetParams,
-                      override val storeParams: DocumentDBStoreParams)
-  extends DataStore[DocumentDBStoreParams] {
+                      override val storeParams: DocumentDBDatabaseConfigParams)
+  extends DataStore[DocumentDBDatabaseConfigParams] {
 
   private var mongoClient: MongoClient = _
   private var mongoDatabase: MongoDatabase = _
   private val documentDBParams: DocumentDBParams = DocumentDBParams()
 
-  override def launcher(): Option[StoreLauncher[DocumentDBStoreParams]] = {
+  override def launcher(): Option[StoreLauncher[DocumentDBDatabaseConfigParams]] = {
     Some(new DocumentDBLauncher(documentDBParams, storeParams))
   }
 

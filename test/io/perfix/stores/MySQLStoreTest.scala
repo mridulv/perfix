@@ -55,7 +55,7 @@ class MySQLStoreTest extends AnyFlatSpec with Matchers with MockitoSugar with Be
       rows = 100,
       columns = Seq(ColumnDescription("name", NameType()))
     )
-    val mysqlStoreParams = MySQLStoreParams(
+    val mysqlStoreParams = MySQLDatabaseConfigParams(
       instanceType = "db.t3.medium",
       tableName = "test",
       primaryIndexColumn = Some("student_name"),

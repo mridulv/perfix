@@ -1,10 +1,10 @@
 package io.perfix.stores
 
 import io.perfix.launch.StoreLauncher
-import io.perfix.model.store.StoreParams
+import io.perfix.model.store.DatabaseConfigParams
 import io.perfix.query.PerfixQuery
 
-trait DataStore[T <: StoreParams] {
+trait DataStore[T <: DatabaseConfigParams] {
 
   val storeParams: T
   def launcher(): Option[StoreLauncher[T]]

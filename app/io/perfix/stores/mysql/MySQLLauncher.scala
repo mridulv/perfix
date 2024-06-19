@@ -11,8 +11,8 @@ import java.util.concurrent.TimeUnit
 import scala.util.Random
 
 class MySQLLauncher(mysqlParams: MySQLParams,
-                    override val storeParams: MySQLStoreParams)
-  extends StoreLauncher[MySQLStoreParams] {
+                    override val storeParams: MySQLDatabaseConfigParams)
+  extends StoreLauncher[MySQLDatabaseConfigParams] {
 
   import com.typesafe.config.ConfigFactory
   private val restConfig = ConfigFactory.load("application.conf")

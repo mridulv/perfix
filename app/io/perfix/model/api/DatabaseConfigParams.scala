@@ -1,14 +1,14 @@
 package io.perfix.model.api
 
 import io.perfix.exceptions.InvalidDatabaseConfigException
-import io.perfix.model.store.StoreParams
+import io.perfix.model.store.DatabaseConfigParams
 import io.perfix.model.store.StoreType.StoreType
 import io.perfix.store.tables.DatabaseConfigRow
 import play.api.libs.json.{Format, Json}
 
 case class DatabaseConfigParams(databaseConfigId: Option[DatabaseConfigId] = None,
                                 name: String,
-                                storeParams: StoreParams,
+                                storeParams: DatabaseConfigParams,
                                 dataStore: StoreType,
                                 createdAt: Option[Long] = None,
                                 datasetDetails: DatasetDetails) {

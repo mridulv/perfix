@@ -11,8 +11,8 @@ import java.util.concurrent.TimeUnit
 import scala.util.Random
 
 class RedisLauncher(redisParams: RedisParams,
-                    override val storeParams: RedisStoreParams)
-  extends StoreLauncher[RedisStoreParams] {
+                    override val storeParams: RedisDatabaseConfigParams)
+  extends StoreLauncher[RedisDatabaseConfigParams] {
 
   override def launch(): Unit = {
     val clusterId = "cluster" + Random.alphanumeric.take(5).mkString("")
