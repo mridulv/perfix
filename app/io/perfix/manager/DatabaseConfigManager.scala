@@ -5,6 +5,7 @@ import io.perfix.exceptions.InvalidStateException
 import io.perfix.model._
 import io.perfix.model.api.{DatabaseConfigId, DatabaseConfigParams, DatabaseState}
 import io.perfix.db.DatabaseConfigStore
+import io.perfix.stores.Database
 
 @Singleton
 class DatabaseConfigManager @Inject()(databaseConfigStore: DatabaseConfigStore,
