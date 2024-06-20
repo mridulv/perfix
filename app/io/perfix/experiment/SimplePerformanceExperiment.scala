@@ -1,7 +1,7 @@
 package io.perfix.experiment
 
 import io.perfix.model.api.Dataset
-import io.perfix.model.experiment.{ExperimentParams, ExperimentResult}
+import io.perfix.model.experiment.{ExperimentParams, SingleExperimentResult}
 import io.perfix.model.store.DatabaseSetupParams
 import io.perfix.stores.DataStore
 import io.perfix.util.BenchmarkUtil
@@ -16,7 +16,7 @@ class SimplePerformanceExperiment(dataStore: DataStore,
     dataStore.connectAndInitialize()
   }
 
-  def run(): ExperimentResult = {
+  def run(): SingleExperimentResult = {
     var rowsCount = 0
     val writeTimes = ListBuffer[Long]()
     dataset.data.grouped(experimentParams.writeBatchSize).foreach { rows =>
