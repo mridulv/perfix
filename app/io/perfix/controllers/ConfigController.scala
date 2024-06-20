@@ -22,4 +22,8 @@ class ConfigController @Inject()(val controllerComponents: SecurityComponents,
     Results.Ok(Json.toJson(configManager.databaseConfig(databaseType)))
   }
 
+  def categories = authenticationAction { request =>
+    Results.Ok(Json.toJson(configManager.categories()))
+  }
+
 }
