@@ -3,7 +3,7 @@ package io.perfix.manager
 import com.google.inject.Inject
 import io.perfix.common.ExperimentExecutor
 import io.perfix.exceptions.InvalidStateException
-import io.perfix.model.experiment.{ExperimentId, ExperimentParams, MultipleExperimentResult}
+import io.perfix.model.experiment.{ExperimentId, ExperimentParams}
 import io.perfix.model.{EntityFilter, ExperimentFilter}
 import io.perfix.db.ExperimentStore
 
@@ -70,10 +70,9 @@ class ExperimentManager @Inject()(datasetManager: DatasetManager,
       )
       val result = experimentExecutor.runExperiment()
       experimentExecutor.cleanUp()
-      result
-    }
-    val updatedExperimentParams = experimentParams
-      .copy(experimentResult = Some(MultipleExperimentResult(results)))
+      databaseConfigDetail.databaseConfigId -> result
+    }.toMap
+    val updatedExperimentParams = experimentParams.copy(experimentResult = Some(results))
     experimentStore.update(experimentId, updatedExperimentParams)
     updatedExperimentParams.toExperimentParamsWithDatabaseDetails(allDatasetParams, allDatabaseConfigParams)
   }

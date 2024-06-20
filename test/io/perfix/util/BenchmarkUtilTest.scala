@@ -1,6 +1,6 @@
 package io.perfix.util
 
-import io.perfix.model.experiment.{ExperimentResult, PercentileLatency, SingleExperimentResult}
+import io.perfix.model.experiment.{PercentileLatency, SingleExperimentResult}
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 import play.api.libs.json.Json

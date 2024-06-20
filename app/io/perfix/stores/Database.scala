@@ -1,11 +1,11 @@
-package io.perfix.model
+package io.perfix.stores
 
 import io.perfix.model.DatabaseCategory.DatabaseCategory
+import io.perfix.model._
 import io.perfix.model.api.DatabaseState.DatabaseState
-import io.perfix.model.api.{DatabaseConfigParams, DatabaseFormInput, DatabaseState, Dataset, FormInput, FormInputs}
+import io.perfix.model.api._
 import io.perfix.model.store.DatabaseSetupParams
 import io.perfix.model.store.StoreType.{DynamoDB, MongoDB, MySQL, Redis, StoreType}
-import io.perfix.stores.DataStore
 import io.perfix.stores.documentdb.{DocumentDBDatabaseSetupParams, DocumentDBLauncher, DocumentDBStore}
 import io.perfix.stores.dynamodb.{DynamoDBDatabaseSetupParams, DynamoDBStore}
 import io.perfix.stores.mysql.{MySQLDatabaseSetupParams, MySQLLauncher, MySQLStore}
@@ -45,6 +45,13 @@ object Database {
       case DynamoDB => DynamoDBDatabase.databaseFormInput
     }
   }
+
+  val allDatabases: Seq[Database] = Seq(
+    RedisDatabase,
+    MySQLDatabase,
+    DocumentDBDatabase,
+    DynamoDBDatabase
+  )
 
   val RedisDatabase: Database = Database(
     name = Redis,
