@@ -46,13 +46,6 @@ object Database {
     }
   }
 
-  val allDatabases: Seq[Database] = Seq(
-    RedisDatabase,
-    MySQLDatabase,
-    DocumentDBDatabase,
-    DynamoDBDatabase
-  )
-
   val RedisDatabase: Database = Database(
     name = Redis,
     databaseCategory = Seq(DatabaseCategory.AWS_NOSQL),
@@ -135,5 +128,12 @@ object Database {
         )
       )
     )
+  )
+
+  lazy val allDatabases: Seq[Database] = Seq(
+    RedisDatabase,
+    MySQLDatabase,
+    DocumentDBDatabase,
+    DynamoDBDatabase
   )
 }
