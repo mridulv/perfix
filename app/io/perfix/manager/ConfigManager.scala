@@ -1,7 +1,6 @@
 package io.perfix.manager
 
 import com.google.inject.Singleton
-import io.perfix.model.DatabaseCategory
 import io.perfix.stores.Database.findRelevantDatabaseFormInput
 import io.perfix.model.api.DatabaseFormInput
 import io.perfix.model.store.StoreType
