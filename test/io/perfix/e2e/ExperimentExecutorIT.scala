@@ -6,7 +6,7 @@ import io.perfix.model.store.StoreType
 import io.perfix.model._
 import io.perfix.model.api.{DatabaseConfigDetails, DatabaseConfigId, DatabaseConfigParams, DatasetDetails, DatasetId, DatasetParams}
 import io.perfix.query.PerfixQuery
-import io.perfix.stores.mysql.{MySQLStore, MySQLDatabaseSetupParams}
+import io.perfix.stores.mysql.{MySQLStore, RDSDatabaseSetupParams}
 import org.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.flatspec.AnyFlatSpec
@@ -51,7 +51,7 @@ class ExperimentExecutorIT extends AnyFlatSpec with Matchers with MockitoSugar w
       rows = 100,
       columns = cols
     )
-    val mysqlStoreParams = MySQLDatabaseSetupParams(
+    val mysqlStoreParams = RDSDatabaseSetupParams(
       instanceType = "db.t3.medium",
       tableName = "test",
       primaryIndexColumn = Some("student_name"),
@@ -63,7 +63,7 @@ class ExperimentExecutorIT extends AnyFlatSpec with Matchers with MockitoSugar w
       datasetDetails = DatasetDetails(DatasetId(-1)),
       databaseSetupParams = mysqlStoreParams
     )
-    val experimentExecutor = new SimplePerformanceExperiment[MySQLDatabaseSetupParams](
+    val experimentExecutor = new SimplePerformanceExperiment(
       new MySQLStore(datasetParams, mysqlStoreParams),
       experimentParams,
       dataset = datasetParams.dataset
