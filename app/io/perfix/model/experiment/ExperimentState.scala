@@ -5,7 +5,7 @@ import play.api.libs.json._
 object ExperimentState extends Enumeration {
 
   type ExperimentState = Value
-  val Created, inProgress, Completed, Failed = Value
+  val Created, InProgress, Completed, Failed = Value
 
   implicit val writes: Writes[ExperimentState] = Writes[ExperimentState] { experimentState =>
     JsString(experimentState.toString)

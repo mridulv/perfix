@@ -9,11 +9,12 @@ import io.perfix.launch.StoreLauncher
 import io.perfix.model.api.DatabaseState
 import io.perfix.model.api.DatabaseState.DatabaseState
 import io.perfix.model.store.DatabaseSetupParams
+import io.perfix.model.store.StoreType.MySQL
 
 import java.util.concurrent.TimeUnit
 import scala.util.Random
 
-class MySQLLauncher(override val databaseSetupParams: MySQLDatabaseSetupParams)
+class RDSLauncher(override val databaseSetupParams: RDSDatabaseSetupParams)
   extends StoreLauncher {
 
   import com.typesafe.config.ConfigFactory
@@ -60,7 +61,7 @@ class MySQLLauncher(override val databaseSetupParams: MySQLDatabaseSetupParams)
     val createDBRequest = new CreateDBInstanceRequest()
       .withDBInstanceIdentifier(instanceIdentifier)
       .withDBInstanceClass(instanceType)
-      .withEngine("mysql")
+      .withEngine(databaseSetupParams.databaseType.getOrElse(MySQL).toString.toLowerCase)
       .withMasterUsername(username)
       .withMasterUserPassword(password)
       .withAllocatedStorage(20)
@@ -125,7 +126,7 @@ class MySQLLauncher(override val databaseSetupParams: MySQLDatabaseSetupParams)
   }
 }
 
-object MySQLLauncher {
+object RDSLauncher {
   val INSTANCE_IDENTIFIER = "instanceIdentifier"
   val INSTANCE_TYPE = "instanceType"
 }

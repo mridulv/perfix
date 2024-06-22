@@ -5,7 +5,7 @@ import play.api.libs.json._
 object StoreType extends Enumeration {
   type StoreType = Value
 
-  val MySQL, Redis, DynamoDB, MongoDB = Value
+  val MySQL, Postgres, MariaDB, Redis, DynamoDB, MongoDB = Value
 
   implicit val writes: Writes[StoreType] = Writes[StoreType] { category =>
     JsString(category.toString)

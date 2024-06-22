@@ -55,20 +55,18 @@ class MySQLStoreTest extends AnyFlatSpec with Matchers with MockitoSugar with Be
       rows = 100,
       columns = Seq(ColumnDescription("name", NameType()))
     )
-    val mysqlStoreParams = MySQLDatabaseSetupParams(
+    val mysqlStoreParams = RDSDatabaseSetupParams(
       instanceType = "db.t3.medium",
       tableName = "test",
       primaryIndexColumn = Some("student_name"),
-      secondaryIndexesColumn = None
+      secondaryIndexesColumn = None,
+      dbDetails = Some(MySQLConnectionParams(url, username, password)),
+      dbName = Some("testdb")
     )
 
-    mySQLStore = new MySQLStore(datasetParams, mysqlStoreParams)
-    connection = DriverManager.getConnection(url, username, password)
+    val mySQLStore = new MySQLStore(datasetParams, mysqlStoreParams)
+    val connection = DriverManager.getConnection(url, username, password)
     initializeDatabase(connection)
-
-    mySQLStore.mySQLParams.mySQLConnectionParams = Some(MySQLConnectionParams(url, username, password))
-    mySQLStore.mySQLParams.mySQLTableParams = Some(MySQLTableParams("testdb", "testTable"))
-    mySQLStore.mySQLParams.mySQLTableIndexesParams = Some(MySQLTableIndexesParams(None, None))
 
     mySQLStore.connectAndInitialize()
   }

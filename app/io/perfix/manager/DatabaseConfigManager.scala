@@ -6,13 +6,20 @@ import io.perfix.model._
 import io.perfix.model.api.{DatabaseConfigId, DatabaseConfigParams, DatabaseState}
 import io.perfix.db.DatabaseConfigStore
 import io.perfix.stores.Database
+import io.perfix.stores.mysql.RDSDatabaseSetupParams
 
 @Singleton
 class DatabaseConfigManager @Inject()(databaseConfigStore: DatabaseConfigStore,
                                       datasetManager: DatasetManager) {
 
   def create(databaseConfigParams: DatabaseConfigParams): DatabaseConfigId = {
-    val databaseConfigId = databaseConfigStore.create(databaseConfigParams)
+    val updatedDatabaseConfigParams = databaseConfigParams.databaseSetupParams match {
+      case rdsDatabaseSetupParams: RDSDatabaseSetupParams => databaseConfigParams.copy(
+        databaseSetupParams = rdsDatabaseSetupParams.copy(databaseType = Some(databaseConfigParams.dataStore))
+      )
+      case _ => databaseConfigParams
+    }
+    val databaseConfigId = databaseConfigStore.create(updatedDatabaseConfigParams)
       .databaseConfigId
       .getOrElse(throw InvalidStateException("Invalid DatabaseConfig"))
     databaseConfigId
