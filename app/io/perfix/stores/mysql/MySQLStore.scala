@@ -13,7 +13,7 @@ import play.api.db.slick.DbName
 import java.sql.{Connection, DriverManager, ResultSet}
 
 class MySQLStore(datasetParams: DatasetParams,
-                 override val databaseConfigParams: MySQLDatabaseSetupParams)
+                 override val databaseConfigParams: RDSDatabaseSetupParams)
   extends DataStore {
 
   private[stores] var connection: Connection = _
