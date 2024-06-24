@@ -17,7 +17,7 @@ case class ExperimentParams(experimentId: Option[ExperimentId],
                             query: PerfixQuery,
                             databaseConfigs: Seq[DatabaseConfigDetails],
                             experimentState: Option[ExperimentState] = None,
-                            experimentResult: Option[Map[DatabaseConfigId, SingleExperimentResult]] = None,
+                            experimentResults: Option[Seq[ExperimentResultWithDatabaseConfigDetails]] = None,
                             createdAt: Option[Long] = None) {
 
   def toExperimentRow(userInfo: UserInfo): ExperimentRow = {

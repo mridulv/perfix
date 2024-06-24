@@ -1,19 +1,17 @@
-package io.perfix.stores.mysql
+package io.perfix.stores.mariadb
 
 import io.perfix.exceptions.InvalidStateException
-import io.perfix.launch.StoreLauncher
-import io.perfix.model.ColumnType.toSqlType
 import io.perfix.model.ColumnDescription
+import io.perfix.model.ColumnType.toSqlType
 import io.perfix.model.api.DatasetParams
 import io.perfix.query.PerfixQuery
 import io.perfix.stores.DataStore
-import io.perfix.stores.mysql.MySQLStore.convert
-import play.api.db.slick.DbName
+import io.perfix.stores.mysql.RDSDatabaseSetupParams
 
 import java.sql.{Connection, DriverManager, ResultSet}
 
-class MySQLStore(datasetParams: DatasetParams,
-                 override val databaseConfigParams: RDSDatabaseSetupParams)
+class MariaDBStore(datasetParams: DatasetParams,
+                   override val databaseConfigParams: RDSDatabaseSetupParams)
   extends DataStore {
 
   private[stores] var connection: Connection = _
@@ -25,7 +23,7 @@ class MySQLStore(datasetParams: DatasetParams,
     }
     import connectionParams._
 
-    Class.forName("com.mysql.cj.jdbc.Driver").newInstance
+    Class.forName("org.mariadb.jdbc.Driver").newInstance
     connection = DriverManager.getConnection(url, username, password)
     val statement = connection.createStatement()
 
@@ -34,11 +32,13 @@ class MySQLStore(datasetParams: DatasetParams,
       case None => throw InvalidStateException("Database Name should have been defined")
     }
 
-    val sql = createTableStatement(db + "." + databaseConfigParams.tableName, datasetParams.columns)
+    val sql = createTableStatement(databaseConfigParams.tableName, datasetParams.columns)
+    println(sql)
     statement.executeUpdate(sql)
 
-    val indexSql = createTableIndexesStatement(db, databaseConfigParams.primaryIndexColumn, databaseConfigParams.secondaryIndexesColumn)
+    val indexSql = createTableIndexesStatement(databaseConfigParams.primaryIndexColumn, databaseConfigParams.secondaryIndexesColumn)
     if (indexSql.nonEmpty) {
+      println(indexSql)
       statement.executeUpdate(indexSql)
     }
 
@@ -52,11 +52,11 @@ class MySQLStore(datasetParams: DatasetParams,
       case None => throw InvalidStateException("Database Name should have been defined")
     }
 
-    val allKeys = rows.head.keys.toSeq // Assuming all rows have the same columns
+    val allKeys = rows.head.keys.toSeq
     val columnNames = allKeys.mkString(", ")
     val valuePlaceholders = allKeys.map(_ => "?").mkString(", ")
 
-    val sql = s"INSERT INTO ${db}.${tableName} ($columnNames) VALUES ($valuePlaceholders);"
+    val sql = s"INSERT INTO ${tableName} ($columnNames) VALUES ($valuePlaceholders);"
     val preparedStatement = connection.prepareStatement(sql)
 
     try {
@@ -64,9 +64,9 @@ class MySQLStore(datasetParams: DatasetParams,
         for (i <- 1 to allKeys.length) {
           preparedStatement.setObject(i, row(s"${allKeys(i - 1)}"))
         }
-        preparedStatement.addBatch() // Add the current row to the batch
+        preparedStatement.addBatch()
       }
-      preparedStatement.executeBatch() // Execute the batch insert
+      preparedStatement.executeBatch()
     } finally {
       preparedStatement.close()
     }
@@ -74,7 +74,7 @@ class MySQLStore(datasetParams: DatasetParams,
 
   override def readData(perfixQuery: PerfixQuery): Seq[Map[String, Any]] = {
     import databaseConfigParams._
-    val query = convert(dbName.get, tableName, perfixQuery)
+    val query = MariaDBStore.convert(dbName.get, tableName, perfixQuery)
     val statement = connection.createStatement()
     val result = resultSetToSeqMap(statement.executeQuery(query))
     statement.close()
@@ -86,15 +86,14 @@ class MySQLStore(datasetParams: DatasetParams,
     s"CREATE TABLE $tableName ($columnDefs);"
   }
 
-  private def createTableIndexesStatement(dbName: String,
-                                          primaryIndexColumnName: Option[String],
+  private def createTableIndexesStatement(primaryIndexColumnName: Option[String],
                                           secondaryIndexesColumnNames: Option[Seq[String]]): String = {
     val tableName = databaseConfigParams.tableName
 
     val primaryIndexSQL = primaryIndexColumnName.map(primaryColumn => s"ADD PRIMARY KEY ($primaryColumn)").getOrElse("")
     val secondaryIndexSQL = secondaryIndexesColumnNames.map { secondaryColumns =>
       if (secondaryColumns.nonEmpty) {
-        secondaryColumns.map(columnName => s"ADD INDEX idx_$columnName ($columnName)").mkString(", ")
+        secondaryColumns.map(columnName => s"CREATE INDEX idx_$columnName ON $tableName ($columnName)").mkString(", ")
       } else {
         ""
       }
@@ -103,7 +102,7 @@ class MySQLStore(datasetParams: DatasetParams,
     val indexStatements = Seq(primaryIndexSQL, secondaryIndexSQL).filter(_.nonEmpty).mkString(", ")
 
     if (indexStatements.nonEmpty) {
-      s"ALTER TABLE $dbName.$tableName $indexStatements;"
+      s"ALTER TABLE $tableName $indexStatements;"
     } else {
       ""
     }
@@ -114,7 +113,8 @@ class MySQLStore(datasetParams: DatasetParams,
       case Some(dbName) => dbName
       case None => throw InvalidStateException("Database Name should have been defined")
     }
-    val statement = s"DROP TABLE ${db}.${databaseConfigParams.tableName}"
+    val statement = s"DROP TABLE ${databaseConfigParams.tableName}"
+    println(statement)
     val preparedStatement = connection.prepareStatement(statement)
     preparedStatement.execute()
     connection.close()
@@ -136,7 +136,7 @@ class MySQLStore(datasetParams: DatasetParams,
   }
 }
 
-object MySQLStore {
+object MariaDBStore {
   def convert(dbName: String, tableName: String, perfixQuery: PerfixQuery): String = {
     import perfixQuery._
     val sqlFilterPart = filtersOpt match {
@@ -154,6 +154,6 @@ object MySQLStore {
       case None => ""
     }
 
-    s"select $projectedFieldsPart from ${dbName}.${tableName} ${sqlFilterPart} ${limitPart}"
+    s"select $projectedFieldsPart from ${tableName} ${sqlFilterPart} ${limitPart}"
   }
 }

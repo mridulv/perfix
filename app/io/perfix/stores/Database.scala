@@ -35,6 +35,7 @@ object Database {
         storeParams.databaseType.getOrElse(MySQL) match {
           case MySQL => new MySQLStore(dataset.params, storeParams)
           case Postgres => new PostgreSQLStore(dataset.params, storeParams)
+          case MariaDB => new PostgreSQLStore(dataset.params, storeParams)
         }
       }
       case storeParams: DynamoDBDatabaseSetupParams => new DynamoDBStore(dataset.params, storeParams)
