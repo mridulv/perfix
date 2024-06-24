@@ -1,6 +1,7 @@
 package io.perfix.generator
 
 import io.perfix.model._
+import io.perfix.model.api.DatasetParams
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 

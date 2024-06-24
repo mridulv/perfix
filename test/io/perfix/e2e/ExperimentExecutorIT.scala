@@ -1,11 +1,12 @@
 package io.perfix.e2e
 
 import io.perfix.experiment.SimplePerformanceExperiment
-import io.perfix.model.experiment.{ExperimentParams, ExperimentState}
-import io.perfix.model.store.{MySQLStoreParams, StoreType}
+import io.perfix.model.experiment.{ExperimentParams, ExperimentState, SingleExperimentResult}
+import io.perfix.model.store.StoreType
 import io.perfix.model._
+import io.perfix.model.api.{DatabaseConfigDetails, DatabaseConfigId, DatabaseConfigParams, DatasetDetails, DatasetId, DatasetParams}
 import io.perfix.query.PerfixQuery
-import io.perfix.stores.mysql.MySQLStore
+import io.perfix.stores.mysql.{MySQLStore, RDSDatabaseSetupParams}
 import org.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterAll
 import org.scalatest.flatspec.AnyFlatSpec
@@ -38,7 +39,7 @@ class ExperimentExecutorIT extends AnyFlatSpec with Matchers with MockitoSugar w
       concurrentQueries = 10,
       experimentTimeInSeconds = 5,
       query = PerfixQuery(limitOpt = Some(100)),
-      databaseConfigId = DatabaseConfigId(-1),
+      databaseConfigs = Seq(DatabaseConfigDetails(DatabaseConfigId(-1))),
       experimentResult = None,
       createdAt = Some(System.currentTimeMillis()),
       experimentState = Some(ExperimentState.Created)
@@ -50,7 +51,7 @@ class ExperimentExecutorIT extends AnyFlatSpec with Matchers with MockitoSugar w
       rows = 100,
       columns = cols
     )
-    val mysqlStoreParams = MySQLStoreParams(
+    val mysqlStoreParams = RDSDatabaseSetupParams(
       instanceType = "db.t3.medium",
       tableName = "test",
       primaryIndexColumn = Some("student_name"),
@@ -59,17 +60,17 @@ class ExperimentExecutorIT extends AnyFlatSpec with Matchers with MockitoSugar w
     val databaseConfig = DatabaseConfigParams(
       name = "mysql-config",
       dataStore = StoreType.MySQL,
-      datasetId = DatasetId(-1),
-      storeParams = mysqlStoreParams
+      datasetDetails = DatasetDetails(DatasetId(-1)),
+      databaseSetupParams = mysqlStoreParams
     )
-    val experimentExecutor = new SimplePerformanceExperiment[MySQLStoreParams](
+    val experimentExecutor = new SimplePerformanceExperiment(
       new MySQLStore(datasetParams, mysqlStoreParams),
       experimentParams,
       dataset = datasetParams.dataset
     )
 
     experimentExecutor.init()
-    val result = experimentExecutor.run()
+    val result = experimentExecutor.run().asInstanceOf[SingleExperimentResult]
     experimentExecutor.cleanup()
     result.overallQueryTime should be (5)
     result.writeLatencies.length should be (8)

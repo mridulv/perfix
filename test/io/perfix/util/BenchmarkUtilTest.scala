@@ -1,13 +1,13 @@
 package io.perfix.util
 
-import io.perfix.model.experiment.{ExperimentResult, PercentileLatency}
+import io.perfix.model.experiment.{PercentileLatency, SingleExperimentResult}
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 import play.api.libs.json.Json
 
 import scala.concurrent.duration._
 
-class BenchmarkUtilSpec extends AnyFlatSpec with Matchers {
+class BenchmarkUtilTest extends AnyFlatSpec with Matchers {
 
   "runBenchmark" should "correctly execute tasks in multiple threads" in {
     val task = () => {
@@ -58,10 +58,10 @@ class BenchmarkUtilSpec extends AnyFlatSpec with Matchers {
     duration should be < (benchmarkTimeSeconds + 5).seconds
   }
 
-  it should "serialize and deserialize PerfixExperimentResult correctly" in {
+  it should "serialize and deserialize ExperimentResult correctly" in {
     val queryLatencies = Seq(PercentileLatency(50, 100.0), PercentileLatency(90, 200.0))
     val writeLatencies = Seq(PercentileLatency(50, 150.0), PercentileLatency(90, 250.0))
-    val result = ExperimentResult(
+    val result = SingleExperimentResult(
       overallQueryTime = 10L,
       overallWriteTimeTaken = 5L,
       numberOfCalls = 20,
@@ -70,7 +70,7 @@ class BenchmarkUtilSpec extends AnyFlatSpec with Matchers {
     )
 
     val json = Json.toJson(result)
-    val deserializedResult = json.validate[ExperimentResult].get
+    val deserializedResult = json.validate[SingleExperimentResult].get
 
     deserializedResult shouldEqual result
   }

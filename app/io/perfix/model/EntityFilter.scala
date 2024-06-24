@@ -1,6 +1,7 @@
 package io.perfix.model
 
-import io.perfix.model.experiment.{ExperimentParams, ExperimentState}
+import io.perfix.model.api.{DatabaseConfigParams, DatasetParams}
+import io.perfix.model.experiment.ExperimentParams
 import play.api.libs.json._
 
 trait EntityFilter {
@@ -91,7 +92,7 @@ case class ExperimentStateFilter(name: String) extends ExperimentFilter {
   override val filterName: String = name
 
   override def filter(experimentParams: ExperimentParams): Boolean = {
-    filterOpt(experimentParams.experimentState.map(_.name))
+    filterOpt(experimentParams.experimentState.map(_.toString))
   }
 }
 

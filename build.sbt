@@ -23,6 +23,7 @@ lazy val root = (project in file("."))
     libraryDependencies += guice,
     libraryDependencies += "com.github.javafaker" % "javafaker" % "1.0.2",
     libraryDependencies += "mysql" % "mysql-connector-java" % "8.0.33",
+    libraryDependencies += "org.mariadb.jdbc" % "mariadb-java-client" % "3.0.6",
     libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.9" % Test,
     libraryDependencies += "com.amazonaws" % "aws-java-sdk-dynamodb" % "1.12.618",
     libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "5.0.0" % Test,

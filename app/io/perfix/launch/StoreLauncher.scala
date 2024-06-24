@@ -4,15 +4,16 @@ import com.amazonaws.services.ec2.model.{AuthorizeSecurityGroupIngressRequest, D
 import com.amazonaws.services.ec2.{AmazonEC2, AmazonEC2ClientBuilder}
 import com.amazonaws.services.eks.AmazonEKSClientBuilder
 import com.amazonaws.services.eks.model.DescribeClusterRequest
-import io.perfix.model.store.StoreParams
+import io.perfix.model.api.DatabaseState.DatabaseState
+import io.perfix.model.store.DatabaseSetupParams
 
 import scala.jdk.CollectionConverters._
 
-trait StoreLauncher[Params <: StoreParams] {
+trait StoreLauncher {
 
-  val storeParams: Params
+  val databaseSetupParams: DatabaseSetupParams
 
-  def launch(): Unit
+  def launch(): (DatabaseSetupParams, DatabaseState)
 
   protected def addIngressRules(storeSGId: String): Unit = {
     val eksClusterName = "new-test-cluster"

@@ -1,7 +1,7 @@
 package io.perfix.common
 
-import io.perfix.model.{DatasetId, DatasetParams}
-import io.perfix.store.DatasetConfigStore
+import io.perfix.model.api.{DatasetId, DatasetParams}
+import io.perfix.db.DatasetConfigStore
 import org.mockito.Mockito
 import play.api.db.slick.DatabaseConfigProvider
 

@@ -3,7 +3,8 @@ package io.perfix.manager
 import com.google.inject.{Inject, Singleton}
 import io.perfix.exceptions.InvalidStateException
 import io.perfix.model._
-import io.perfix.store.DatasetConfigStore
+import io.perfix.model.api.{Dataset, DatasetId, DatasetParams}
+import io.perfix.db.DatasetConfigStore
 
 
 @Singleton

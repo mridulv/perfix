@@ -29,13 +29,11 @@ class UserInfoController @Inject()(val controllerComponents: SecurityComponents,
     val webContext = new PlayWebContext(request)
     val profileManager = new ProfileManager(webContext, sessionStore)
     val profiles = profileManager.getProfiles.asScala
+    val name = profiles.map(_.getAttribute("name").toString).headOption
+    val email = profiles.map(_.getAttribute("email").toString).headOption
 
-    if (profiles.nonEmpty) {
-      val name = profiles.map(_.getAttribute("name").toString).headOption
-      val email = profiles.map(_.getAttribute("email").toString).headOption
-
-      val userInfo = UserInfo(name, email)
-
+    if (profiles.nonEmpty && name.isDefined && email.isDefined) {
+      val userInfo = UserInfo(name.get, email.get)
       Ok(Json.toJson(userInfo))
     } else {
       Ok(Json.parse("{}"))
