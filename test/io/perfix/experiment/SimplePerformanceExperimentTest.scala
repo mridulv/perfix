@@ -31,7 +31,7 @@ class SimplePerformanceExperimentTest extends AnyFlatSpec with Matchers {
       experimentTimeInSeconds = 5,
       query = PerfixQuery(limitOpt = Some(100)),
       databaseConfigs = Seq(DatabaseConfigDetails(DatabaseConfigId(-1))),
-      experimentResult = None,
+      experimentResults = None,
       createdAt = Some(System.currentTimeMillis()),
       experimentState = Some(ExperimentState.Created)
     )
