@@ -9,7 +9,7 @@ import io.perfix.launch.StoreLauncher
 import io.perfix.model.api.DatabaseState
 import io.perfix.model.api.DatabaseState.DatabaseState
 import io.perfix.model.store.DatabaseSetupParams
-import io.perfix.model.store.StoreType.MySQL
+import io.perfix.model.store.StoreType.{MariaDB, MySQL, Postgres}
 
 import java.util.concurrent.TimeUnit
 import scala.util.Random
@@ -80,7 +80,12 @@ class RDSLauncher(override val databaseSetupParams: RDSDatabaseSetupParams)
       addIngressRules(dbSG.getVpcSecurityGroupId)
 
       println("Response is: " + response.getEndpoint)
-      val connectUrl = s"jdbc:mysql://${response.getEndpoint.getAddress}:${response.getEndpoint.getPort}/${response.getDBName}?user=${username}&password=${password}"
+      val databaseType = databaseSetupParams.databaseType.getOrElse(MySQL) match {
+        case MySQL => "mysql"
+        case MariaDB => "mariadb"
+        case Postgres => "postgresql"
+      }
+      val connectUrl = s"jdbc:${databaseType}://${response.getEndpoint.getAddress}:${response.getEndpoint.getPort}/${response.getDBName}?user=${username}&password=${password}"
 
       val updatedDatabaseSetupParams = databaseSetupParams.copy(
         dbDetails = Some(MySQLConnectionParams(connectUrl, username, password)),
