@@ -37,7 +37,7 @@ class MySQLStore(datasetParams: DatasetParams,
     val sql = createTableStatement(db + "." + databaseConfigParams.tableName, datasetParams.columns)
     statement.executeUpdate(sql)
 
-    val indexSql = createTableIndexesStatement(databaseConfigParams.primaryIndexColumn, databaseConfigParams.secondaryIndexesColumn)
+    val indexSql = createTableIndexesStatement(db, databaseConfigParams.primaryIndexColumn, databaseConfigParams.secondaryIndexesColumn)
     if (indexSql.nonEmpty) {
       statement.executeUpdate(indexSql)
     }
@@ -86,7 +86,8 @@ class MySQLStore(datasetParams: DatasetParams,
     s"CREATE TABLE $tableName ($columnDefs);"
   }
 
-  private def createTableIndexesStatement(primaryIndexColumnName: Option[String],
+  private def createTableIndexesStatement(dbName: String,
+                                          primaryIndexColumnName: Option[String],
                                           secondaryIndexesColumnNames: Option[Seq[String]]): String = {
     val tableName = databaseConfigParams.tableName
 
@@ -102,7 +103,7 @@ class MySQLStore(datasetParams: DatasetParams,
     val indexStatements = Seq(primaryIndexSQL, secondaryIndexSQL).filter(_.nonEmpty).mkString(", ")
 
     if (indexStatements.nonEmpty) {
-      s"ALTER TABLE $tableName $indexStatements;"
+      s"ALTER TABLE $dbName.$tableName $indexStatements;"
     } else {
       ""
     }
