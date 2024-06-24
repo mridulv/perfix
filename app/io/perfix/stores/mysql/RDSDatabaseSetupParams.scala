@@ -3,6 +3,7 @@ package io.perfix.stores.mysql
 import io.perfix.model.store.DatabaseSetupParams
 import io.perfix.model.store.StoreType.{MySQL, StoreType}
 import play.api.libs.json.{Format, Json}
+import RDSDatabaseSetupParams._
 
 case class RDSDatabaseSetupParams(instanceType: String = "db.t3.medium",
                                   tableName: String,
@@ -12,10 +13,12 @@ case class RDSDatabaseSetupParams(instanceType: String = "db.t3.medium",
                                   dbDetails: Option[MySQLConnectionParams] = None,
                                   databaseType: Option[StoreType] = Some(MySQL)) extends DatabaseSetupParams
 
+object RDSDatabaseSetupParams {
+  implicit val RDSDatabaseSetupParamsFormatter: Format[RDSDatabaseSetupParams] = Json.format[RDSDatabaseSetupParams]
+}
+
 case class MySQLConnectionParams(url: String, username: String, password: String)
 
-object RDSDatabaseSetupParams {
-  implicit val MySQLStoreParamsFormatter: Format[RDSDatabaseSetupParams] = Json.format[RDSDatabaseSetupParams]
-
+object MySQLConnectionParams {
   implicit val MySQLConnectionParamsFormatter: Format[MySQLConnectionParams] = Json.format[MySQLConnectionParams]
 }
