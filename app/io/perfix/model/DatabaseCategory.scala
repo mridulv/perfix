@@ -1,24 +1,49 @@
 package io.perfix.model
 
-import io.perfix.model.DatabaseCategory.DatabaseCategory
 import play.api.libs.json.{Format, JsError, JsString, JsSuccess, Reads, Writes}
 
-object DatabaseCategory extends Enumeration {
-  type DatabaseCategory = Value
+trait DatabaseCategory
 
-  val AWS_RDBMS, AWS_NOSQL, RDBMS, NoSQL, VectorDB, GraphDB = Value
+case object AWS_RDBMS extends DatabaseCategory {
+  override def toString: String = "AWS Cloud - RDBMS Databases"
+}
 
-  implicit val writes: Writes[DatabaseCategory] = Writes[DatabaseCategory] {
-    case AWS_RDBMS => JsString("AWS Cloud - RDBMS Databases")
-    case AWS_NOSQL => JsString("AWS Cloud - NoSQL Databases")
-    case RDBMS => JsString("RDBMS Databases")
-    case NoSQL => JsString("NoSQL Databases")
-    case VectorDB => JsString("Vector Databases")
-    case GraphDB => JsString("Graph Databases")
+case object AWS_NOSQL extends DatabaseCategory {
+  override def toString: String = "AWS Cloud - NoSQL Databases"
+}
+
+case object RDBMS extends DatabaseCategory {
+  override def toString: String = "RDBMS Databases"
+}
+
+case object NoSQL extends DatabaseCategory {
+  override def toString: String = "NoSQL Databases"
+}
+
+case object VectorDB extends DatabaseCategory {
+  override def toString: String = "Vector Databases"
+}
+
+case object GraphDB extends DatabaseCategory {
+  override def toString: String = "Graph Databases"
+}
+
+object DatabaseCategory {
+
+  implicit val writes: Writes[DatabaseCategory] = Writes[DatabaseCategory] { databaseCategory =>
+    JsString(databaseCategory.toString)
   }
 
   implicit val reads: Reads[DatabaseCategory] = Reads[DatabaseCategory] {
-    case JsString(str) => JsSuccess(DatabaseCategory.withName(str))
+    case JsString(str) => str match {
+      case "AWS_RDBMS" => JsSuccess(AWS_RDBMS)
+      case "AWS_NOSQL" => JsSuccess(AWS_NOSQL)
+      case "RDBMS" => JsSuccess(RDBMS)
+      case "NoSQL" => JsSuccess(NoSQL)
+      case "VectorDB" => JsSuccess(VectorDB)
+      case "GraphDB" => JsSuccess(GraphDB)
+      case _ => JsError("Invalid value for DatabaseCategory")
+    }
     case _ => JsError("Invalid value for DatabaseCategory")
   }
 
