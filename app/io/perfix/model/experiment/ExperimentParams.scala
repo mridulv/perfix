@@ -5,6 +5,7 @@ import io.perfix.model.UserInfo
 import io.perfix.query.PerfixQuery
 import io.perfix.db.tables.ExperimentRow
 import io.perfix.model.experiment.ExperimentState.ExperimentState
+import io.perfix.stores.Database
 import play.api.libs.json.{Format, JsResult, JsValue, Json}
 import play.api.libs.json._
 import play.api.libs.functional.syntax._
@@ -46,6 +47,14 @@ case class ExperimentParams(experimentId: Option[ExperimentId],
       }
     }
     this.copy(databaseConfigs = databaseConfigDetails)
+  }
+
+  def validateExperimentParams: Boolean = {
+    val databases = databaseConfigs.flatMap(_.storeType)
+    val categories = databases.flatMap { database =>
+      Database.allDatabases.find(d => d.name.toString == database).flatMap(_.databaseCategory).toSeq
+    }.toSet
+    categories.size == 1
   }
 
 }
