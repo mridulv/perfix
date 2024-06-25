@@ -1,6 +1,5 @@
 package io.perfix.stores
 
-import io.perfix.model.DatabaseCategory.DatabaseCategory
 import io.perfix.model._
 import io.perfix.model.api.DatabaseState.DatabaseState
 import io.perfix.model.api._
@@ -68,7 +67,7 @@ object Database {
 
   val RedisDatabase: Database = Database(
     name = Redis,
-    databaseCategory = Seq(DatabaseCategory.AWS_NOSQL),
+    databaseCategory = Seq(AWS_NOSQL),
     databaseFormInput = DatabaseFormInput(
       Seq(
         FormInputs(
@@ -88,25 +87,25 @@ object Database {
 
   val MySQLDatabase: Database = Database(
     name = MySQL,
-    databaseCategory = Seq(DatabaseCategory.AWS_RDBMS),
+    databaseCategory = Seq(AWS_RDBMS),
     databaseFormInput = RDSDatabaseFormInput
   )
 
   val PostgresDatabase: Database = Database(
     name = Postgres,
-    databaseCategory = Seq(DatabaseCategory.AWS_RDBMS),
+    databaseCategory = Seq(AWS_RDBMS),
     databaseFormInput = RDSDatabaseFormInput
   )
 
   val MariaDBDatabase: Database = Database(
     name = MariaDB,
-    databaseCategory = Seq(DatabaseCategory.AWS_RDBMS),
+    databaseCategory = Seq(AWS_RDBMS),
     databaseFormInput = RDSDatabaseFormInput
   )
 
   val DynamoDBDatabase: Database = Database(
     name = DynamoDB,
-    databaseCategory = Seq(DatabaseCategory.AWS_NOSQL),
+    databaseCategory = Seq(AWS_NOSQL),
     databaseFormInput = DatabaseFormInput(
       Seq(
         FormInputs(
@@ -129,7 +128,7 @@ object Database {
 
   val DocumentDBDatabase: Database = Database(
     name = MongoDB,
-    databaseCategory = Seq(DatabaseCategory.AWS_NOSQL),
+    databaseCategory = Seq(AWS_NOSQL),
     databaseFormInput = DatabaseFormInput(
       Seq(
         FormInputs(
