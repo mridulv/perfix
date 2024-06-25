@@ -52,8 +52,8 @@ case class ExperimentParams(experimentId: Option[ExperimentId],
   def validateExperimentParams: Boolean = {
     val databases = databaseConfigs.flatMap(_.storeType)
     val categories = databases.flatMap { database =>
-      Database.allDatabases.find(d => d.name.toString == database).flatMap(_.databaseCategory).toSeq
-    }.toSet
+      Database.allDatabases.find(d => d.name.toString == database).map(e => e.databaseCategory)
+    }.flatten.toSet
     categories.size == 1
   }
 
