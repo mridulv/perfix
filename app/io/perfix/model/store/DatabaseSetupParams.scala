@@ -1,5 +1,6 @@
 package io.perfix.model.store
 
+import io.perfix.model.api.DatabaseConfigParams
 import io.perfix.model.store.StoreType._
 import io.perfix.stores.documentdb.DocumentDBDatabaseSetupParams
 import io.perfix.stores.mysql.RDSDatabaseSetupParams
@@ -33,4 +34,6 @@ object DatabaseSetupParams {
     case params: DynamoDBDatabaseSetupParams => Json.toJson(params).as[JsObject] + ("type" -> JsString(DynamoDB.toString))
     case params: DocumentDBDatabaseSetupParams => Json.toJson(params).as[JsObject] + ("type" -> JsString(MongoDB.toString))
   }
+
+  implicit val DatabaseSetupParamsFormatter: Format[DatabaseSetupParams] = Format(storeParamsReads, storeParamsWrites)
 }
