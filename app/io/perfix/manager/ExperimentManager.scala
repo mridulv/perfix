@@ -15,10 +15,16 @@ class ExperimentManager @Inject()(datasetManager: DatasetManager,
                                   databaseConfigManager: DatabaseConfigManager) {
 
   def create(experimentParams: ExperimentParams): ExperimentId = {
-    experimentStore
-      .create(experimentParams)
-      .experimentId
-      .getOrElse(throw InvalidStateException("Invalid ExperimentParams"))
+    val databaseConfigParams = databaseConfigManager.all(Seq.empty)
+    val dataset = datasetManager.all(Seq.empty)
+    if (experimentParams.toExperimentParamsWithDatabaseDetails(dataset, databaseConfigParams).validateExperimentParams) {
+      experimentStore
+        .create(experimentParams)
+        .experimentId
+        .getOrElse(throw InvalidStateException("Invalid ExperimentParams"))
+    } else {
+      throw InvalidStateException("Choose All Databases of same database category")
+    }
   }
 
   def get(experimentId: ExperimentId): ExperimentParams = {
@@ -45,10 +51,15 @@ class ExperimentManager @Inject()(datasetManager: DatasetManager,
   }
 
   def update(experimentId: ExperimentId, experimentParams: ExperimentParams): ExperimentParams = {
-    experimentStore.update(experimentId, experimentParams)
     val databaseConfigParams = databaseConfigManager.all(Seq.empty)
     val dataset = datasetManager.all(Seq.empty)
-    experimentParams.toExperimentParamsWithDatabaseDetails(dataset, databaseConfigParams)
+    val updatedExperimentParams = experimentParams.toExperimentParamsWithDatabaseDetails(dataset, databaseConfigParams)
+    if (updatedExperimentParams.validateExperimentParams) {
+      experimentStore.update(experimentId, experimentParams)
+      updatedExperimentParams
+    } else {
+      throw InvalidStateException("Choose All Databases of same database category")
+    }
   }
 
   def executeExperiment(experimentId: ExperimentId): ExperimentParams = {
