@@ -6,7 +6,7 @@ const AddButton = ({ setOpen, value }) => {
       onClick={() => setOpen(true)}
       className="btn bg-primary btn-sm border border-primary rounded text-white hover:bg-[#57B1FF]"
     >
-      Add Database
+      {value}
     </button>
   );
 };

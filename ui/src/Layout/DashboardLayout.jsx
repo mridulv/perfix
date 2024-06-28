@@ -2,9 +2,6 @@ import React, { useContext } from "react";
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { FaUserAlt } from "react-icons/fa";
 import { IoMenu } from "react-icons/io5";
-import SideBarAddButton from "../components/SideBarAddButton";
-import { AiOutlineExperiment } from "react-icons/ai";
-import { GoDatabase } from "react-icons/go";
 import { AuthContext } from "../contexts/AuthProvider";
 import { FiLogOut } from "react-icons/fi";
 import axios from "axios";
@@ -12,6 +9,7 @@ import toast from "react-hot-toast";
 import databaseIcon from "../assets/databaseIcon.png"
 import experimentIcon from "../assets/experimentIcon.png"
 import tableIcon from "../assets/tableIcon.png"
+import SideBarAddButton from "../components/Common/SideBarAddButton";
 
 const menus = [
   {
@@ -86,7 +84,7 @@ const DashboardLayout = () => {
             <div className="mt-8 ms-4 flex">
               <SideBarAddButton
                 value="Experiment"
-                url="/add-experiment-dataset"
+                url="/add-experiment"
               />
             </div>
             <div className="mt-5 ms-1">
@@ -95,8 +93,8 @@ const DashboardLayout = () => {
                   //bg-[#fdd3db] [#A3D4FF]
                   key={menu.name}
                   className={`w-56 px-3 py-2  mt-1 flex gap-4 items-center ${
-                    location.pathname === menu.link && " bg-[#c0dff9]"
-                  } hover:bg-[#57B1FF] font-bold rounded-3xl `}
+                    location.pathname === menu.link && " bg-[#BDE0FF]"
+                  } hover:bg-[#BDE0FF] font-bold rounded-3xl `}
                   to={`${menu.link}`}
                 >
                   <img className="w-5" src={menu.icon} alt="" />
@@ -108,7 +106,7 @@ const DashboardLayout = () => {
 
           <div className="flex flex-col  mb-2 border-t border-gray-600 py-5">
             <div className="flex items-center mb-4 ">
-              <span className="p-3 bg-gray-300 rounded-full">
+              <span className="p-3 bg-secondary rounded-full">
                 {userProfile.profilePic}
               </span>
               <div className="ml-3 flex flex-col">

@@ -3,7 +3,7 @@ import { FaCaretDown, FaCaretUp } from "react-icons/fa6";
 import { MdOutlineCheckBoxOutlineBlank } from "react-icons/md";
 import { RiCheckboxFill } from "react-icons/ri";
 
-function CustomSelectMultipleOptions({ selected, setSelected, options, width }) {
+function CustomSelectMultipleOptions({ selected, setSelected, options, width, name }) {
   const [isActive, setIsActive] = useState(false);
   const dropdownRef = useRef(null);
 
@@ -36,7 +36,7 @@ function CustomSelectMultipleOptions({ selected, setSelected, options, width }) 
   };
 
   return (
-    <div className="dropdown" ref={dropdownRef}>
+    <div className="dropdown z-50" ref={dropdownRef}>
       <div
         className={`dropdown-btn ${width} ${
           isActive ? "border-2 border-blue-400" : "border-2  border-[#E0E0E0]"
@@ -46,7 +46,7 @@ function CustomSelectMultipleOptions({ selected, setSelected, options, width }) 
         <span className="mr-4">
           {selected.length > 0
             ? `Selected (${selected.length})`
-            : "Choose options"}
+            : `${name}`}
         </span>
         <span className="mb-[2px]">
           {isActive ? <FaCaretUp /> : <FaCaretDown />}

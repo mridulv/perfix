@@ -1,9 +1,14 @@
 import { useState } from "react";
-import CustomSelectMultipleOptions from "../CustomSelectMultipleOptions";
+import CustomSelectMultipleOptions from "../CustomSelect/CustomSelectMultipleOptions";
 import { FaPlus } from "react-icons/fa6";
+import CustomSelect from "../CustomSelect/CustomSelect";
 
 const AddDatabaseInputFields = ({ input, handleInputChange, options }) => {
-  const [selectedOptions, setSelectedOptions] = useState([]);
+  const [selectOption, setSelectOption] = useState({
+    option: "Choose Type",
+    value: "Choose",
+  });
+  const [selectedMultipleOptions, setSelectedMultipleOptions] = useState([]);
   //for gsi params
   const [columns, setColumns] = useState([{ partitionKey: "", sortKey: "" }]);
 
@@ -23,13 +28,17 @@ const AddDatabaseInputFields = ({ input, handleInputChange, options }) => {
     handleInputChange(inputName, value);
   };
 
+  const handleSingleSelectChange = (option) => {
+    setSelectOption(option);
+    handleInputChange(inputName, option.value);
+  };
+
   const handleMultiSelectChange = (options) => {
     const values = options.map((option) => option.value);
-    setSelectedOptions(options);
+    setSelectedMultipleOptions(options);
     handleInputChange(inputName, values);
   };
 
-  
   const handleColumnChange = (index, field, value) => {
     const updatedColumns = columns.map((column, i) =>
       i === index ? { ...column, [field]: value } : column
@@ -37,7 +46,6 @@ const AddDatabaseInputFields = ({ input, handleInputChange, options }) => {
     setColumns(updatedColumns);
     handleInputChange(inputName, updatedColumns);
   };
-  
 
   return (
     <div className="flex flex-col mb-4">
@@ -62,18 +70,32 @@ const AddDatabaseInputFields = ({ input, handleInputChange, options }) => {
             onChange={handleChange}
           />
         )}
-        {dataType === "MultiColumnSelectorType" && (
-          <CustomSelectMultipleOptions
-            selected={selectedOptions}
-            setSelected={handleMultiSelectChange}
+
+        {dataType === "SingleColumnSelectorType" && (
+          <CustomSelect
+            selected={selectOption}
+            setSelected={handleSingleSelectChange}
             options={options}
             width="w-[250px]"
           />
         )}
-         {dataType === "GSIType" && (
+
+        {dataType === "MultiColumnSelectorType" && (
+          <CustomSelectMultipleOptions
+            selected={selectedMultipleOptions}
+            setSelected={handleMultiSelectChange}
+            options={options}
+            width="w-[250px]"
+            name="Choose Columns"
+          />
+        )}
+        {dataType === "GSIType" && (
           <div>
             {columns.map((column, i) => (
-              <div className="max-w-[300px] mb-4 pt-5 pb-3 px-6 bg-accent rounded-lg" key={i}>
+              <div
+                className="max-w-[300px] mb-4 pt-5 pb-3 px-6 bg-accent rounded-lg"
+                key={i}
+              >
                 <div className="flex flex-col mb-4">
                   <div className="flex justify-between">
                     <label className="text-[12px] font-bold">
@@ -86,7 +108,9 @@ const AddDatabaseInputFields = ({ input, handleInputChange, options }) => {
                     name={`partitionKey${i}`}
                     id={`partitionKey${i}`}
                     value={column.partitionKey}
-                    onChange={(e) => handleColumnChange(i, 'partitionKey', e.target.value)}
+                    onChange={(e) =>
+                      handleColumnChange(i, "partitionKey", e.target.value)
+                    }
                     required
                   />
                 </div>
@@ -98,7 +122,9 @@ const AddDatabaseInputFields = ({ input, handleInputChange, options }) => {
                     name={`sortKey${i}`}
                     id={`sortKey${i}`}
                     value={column.sortKey}
-                    onChange={(e) => handleColumnChange(i, 'sortKey', e.target.value)}
+                    onChange={(e) =>
+                      handleColumnChange(i, "sortKey", e.target.value)
+                    }
                     required
                   />
                 </div>

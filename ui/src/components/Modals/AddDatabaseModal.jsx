@@ -1,41 +1,45 @@
 import React, { useEffect, useState } from "react";
 import { MdClose } from "react-icons/md";
-import ChooseDatasetComponent from "./ChooseDatasetComponent";
 import { IoIosArrowForward } from "react-icons/io";
 import toast from "react-hot-toast";
 import axios from "axios";
-import AddDatabase from "./AddDatabase/AddDatabase";
-import { handleAddDatasetApi } from "../utilities/api";
+import AddDatabase from "../AddDatabase/AddDatabase";
+import ChooseDatasetComponent from "../Common/ChooseDatasetComponent";
+import { handleAddDatasetApi } from "../../api/handleAddDatasetApi";
+import { useStatesForAddModals } from "../../hooks/useStatesForAddModals";
 
-const AddDatabaseModal = ({ open, onClose, datasets, refetch }) => {
-  const [selectedDatasetValue, setSelectedDatasetValue] = useState(null);
+const AddDatabaseModal = ({ open, onClose, datasets, refetch, databases }) => {
   const [currentAddStep, setCurrentAddStep] = useState(1);
-  const [activeDataset, setActiveDataset] = useState("new");
-  const [columns, setColumns] = useState([{ columnName: "", columnType: "" }]);
-  const [selectedDatasetOption, setSelectedDatasetOption] = useState({
-    option: "Choose Dataset",
-    value: "choose",
-  });
-  const [selectedDataset, setSelectedDataset] = useState(null);
+  const {
+    columns,
+    setColumns,
+    selectedDatasetOption,
+    setSelectedDatasetOption,
+    selectedDatasetId,
+    setSelectedDatasetId,
+    selectedDatasetData,
+    setSelectedDatasetData,
+    activeDataset,
+    setActiveDataset,
+    handleAddColumn,
+    resetState,
+  } = useStatesForAddModals("new");
 
-  const handleAddColumn = () => {
-    setColumns([...columns, { columnName: "", columnType: "" }]);
-  };
   const handleCloseModal = () => {
     onClose();
-    setColumns([{ columnName: "", columnType: "" }]);
-    setSelectedDatasetOption({ option: "Choose Dataset", value: "choose" });
-    setSelectedDatasetValue(null);
     setCurrentAddStep(1);
-    setSelectedDataset(null);
+    resetState();
   };
 
   // choosing dataset or creating new dataset
   const handleSubmitDataset = async (event) => {
     event.preventDefault();
 
-    if(activeDataset === "existing" && selectedDatasetOption.value === "choose"){
-      return toast.error("Please select a dataset.")
+    if (
+      activeDataset === "existing" &&
+      selectedDatasetOption.value === "choose"
+    ) {
+      return toast.error("Please select a dataset.");
     }
 
     //successfunction for choosing dataset
@@ -44,7 +48,7 @@ const AddDatabaseModal = ({ open, onClose, datasets, refetch }) => {
       currentAddStep === 1 &&
       selectedDatasetOption.value !== "choose"
     ) {
-      setSelectedDatasetValue(selectedDatasetOption.value);
+      setSelectedDatasetId(selectedDatasetOption.value);
       toast.success("Dataset Selected!");
       setCurrentAddStep(2);
       setColumns([{ columnName: "", columnType: "" }]);
@@ -52,7 +56,7 @@ const AddDatabaseModal = ({ open, onClose, datasets, refetch }) => {
     //success function for creating new dataset
     else {
       const successFunctions = (response) => {
-        setSelectedDatasetValue(response.data.id);
+        setSelectedDatasetId(response.data.id);
         toast.success("New Dataset Created!");
         setCurrentAddStep(2);
         setColumns([{ columnName: "", columnType: "" }]);
@@ -64,30 +68,27 @@ const AddDatabaseModal = ({ open, onClose, datasets, refetch }) => {
 
   //fetching the dataset based on the selected or created new dataset
   useEffect(() => {
-    if (selectedDatasetValue) {
+    if (selectedDatasetId) {
       const fetchDataset = async () => {
         const res = await axios.get(
-          `${process.env.REACT_APP_BASE_URL}/dataset/${selectedDatasetValue}`,
+          `${process.env.REACT_APP_BASE_URL}/dataset/${selectedDatasetId}`,
           {
             withCredentials: true,
           }
         );
         const data = await res.data;
-        setSelectedDataset(data);
+        setSelectedDatasetData(data);
       };
       fetchDataset();
     }
-  }, [selectedDatasetValue]);
-
+  }, [selectedDatasetId, setSelectedDatasetData]);
 
   //when database added successfully
   const successFunctionsForDatabase = () => {
     toast.success("Database Added Successfully");
     refetch();
     handleCloseModal();
-  }
-
-  //when click cancel button
+  };
 
   return (
     <div
@@ -111,17 +112,15 @@ const AddDatabaseModal = ({ open, onClose, datasets, refetch }) => {
         >
           <MdClose size={25} />
         </button>
-        <div className="min-h-[500px] ">
+        <div className="min-h-[500px]">
           <div className="mb-5 ms-6">
             <p className="text-xl font-semibold">Create new database</p>
           </div>
           <div className="w-full bg-secondary mb-9 ps-6 py-3 flex items-center gap-8">
             <div
-              className={`w-11 ${
-                currentAddStep === 1 && "bg-white"
-              }  p-[10px] rounded-xl`}
+              className={`w-11 ${currentAddStep === 1 && "bg-white"} p-[10px] rounded-xl`}
             >
-              <p className="w-6 h-6 bg-black rounded-full grid place-content-center text-sm text-white ">
+              <p className="w-6 h-6 bg-black rounded-full grid place-content-center text-sm text-white">
                 1
               </p>
             </div>
@@ -129,40 +128,37 @@ const AddDatabaseModal = ({ open, onClose, datasets, refetch }) => {
               <IoIosArrowForward size={20} />
             </div>
             <div
-              className={`w-11 ${
-                currentAddStep === 2 && "bg-white"
-              }  p-[10px] rounded-xl`}
+              className={`w-11 ${currentAddStep === 2 && "bg-white"} p-[10px] rounded-xl`}
             >
-              <p className="w-6 h-6 bg-black rounded-full grid place-content-center text-sm text-white ">
+              <p className="w-6 h-6 bg-black rounded-full grid place-content-center text-sm text-white">
                 2
               </p>
             </div>
           </div>
-          {currentAddStep === 1 && selectedDatasetValue === null && (
-            <ChooseDatasetComponent
-              activeDataset={activeDataset}
-              setActiveDataset={setActiveDataset}
-              columns={columns}
-              handleAddColumn={handleAddColumn}
-              handleSubmit={handleSubmitDataset}
-              datasets={datasets}
-              selectedDataset={selectedDatasetOption}
-              setSelectedDataset={setSelectedDatasetOption}
-            ></ChooseDatasetComponent>
-          )}
-
-          {currentAddStep === 2 &&
-            selectedDatasetValue !== null &&
-            selectedDataset !== null && (
-              <div className="">
-                <AddDatabase
-                  dataset={selectedDataset}
-                  onClose={handleCloseModal}
-                  refetch={refetch}
-                  successFunction={successFunctionsForDatabase}
-                />
-              </div>
+          <div>
+            {currentAddStep === 1 && selectedDatasetId === null && (
+              <ChooseDatasetComponent
+                activeDataset={activeDataset}
+                setActiveDataset={setActiveDataset}
+                columns={columns}
+                handleAddColumn={handleAddColumn}
+                handleSubmit={handleSubmitDataset}
+                datasets={datasets}
+                selectedDataset={selectedDatasetOption}
+                setSelectedDataset={setSelectedDatasetOption}
+              ></ChooseDatasetComponent>
             )}
+          </div>
+          {currentAddStep === 2 && selectedDatasetId !== null && selectedDatasetData !== null && (
+            <div>
+              <AddDatabase
+                dataset={selectedDatasetData}
+                cancelFunction={handleCloseModal}
+                successFunction={successFunctionsForDatabase}
+                databases={databases}
+              />
+            </div>
+          )}
         </div>
       </div>
     </div>

@@ -1,10 +1,13 @@
 import React, { useEffect, useState } from "react";
-import CommonTable from "../../../components/CommonTable";
-import { useQuery } from "react-query";
-import axios from "axios";
-import Loading from "../../../components/Loading";
-import CustomSelect from "../../../components/CustomSelect";
-import AddDatabaseModal from "../../../components/AddDatabaseModal";
+import Loading from "../../../components/Common/Loading";
+import { MdClose } from "react-icons/md";
+import useDatabases from "../../../api/useDatabases";
+import useDatasets from "../../../api/useDatasets";
+import CustomSelect from "../../../components/CustomSelect/CustomSelect";
+import AddButton from "../../../components/Common/AddButton";
+import AddDatabaseModal from "../../../components/Modals/AddDatabaseModal";
+import CommonTable from "../../../components/Common/CommonTable";
+import { Filters } from "../../../hooks/filters";
 
 const columnHeads = [
   "Database Name",
@@ -12,87 +15,71 @@ const columnHeads = [
   "Dataset Name",
   "Created At",
 ];
-const databaseTypeOptions = [
-  { option: "MySQL", value: "MySQL" },
-  { option: "DynamoDB", value: "DynamoDB" },
-  { option: "Redis", value: "Redis" },
-  { option: "DocumentDB", value: "DocumentDB" },
-];
 
 const DBConfiguration = () => {
-  const [selectedDatabaseType, setSelectedDatabaseType] = useState({
-    option: "Choose Type",
-    value: "choose",
-  });
   const [open, setOpen] = useState(false);
-  const [datasets, setDatasets] = useState([]);
-  const [datasetsLoading, setDatasetsLoading] = useState(false);
   const [searchText, setSearchText] = useState("");
+  const [values, setValues] = useState([]);
+
+  const {
+    databaseTypesOptions,
+    selectedDatabaseType,
+    setSelectedDatabaseType,
+    selectedDatasetName,
+    setSelectedDatasetName,
+  } = Filters();
 
   const handleSearchText = (e) => {
     setSearchText(e.target.value);
   };
 
-  const {
-    data: databases,
-    isLoading,
-    refetch,
-  } = useQuery({
-    queryKey: ["databases", selectedDatabaseType, searchText],
-    queryFn: async () => {
-      let values = [];
+  // if (searchText) {
+  //   values = [...values, { text: searchText, type: "TextFilter" }];
+  // }
+  useEffect(() => {
+    const newValues = [];
+    if (searchText) {
+      newValues.push({ text: searchText, type: "TextFilter" });
+    }
+    if (selectedDatabaseType.value !== "choose") {
+      newValues.push({
+        store: selectedDatabaseType.value,
+        type: "DatabaseTypeFilter",
+      });
+    }
+    if (selectedDatasetName.value !== "choose") {
+      newValues.push({
+        name: selectedDatasetName.value,
+        type: "DatasetNameFilter",
+      });
+    }
+    setValues(newValues);
+  }, [searchText, selectedDatabaseType, selectedDatasetName]);
 
-      if (selectedDatabaseType.value !== "choose") {
-        values = [
-          ...values,
-          { store: selectedDatabaseType.value, type: "DatabaseTypeFilter" },
-        ];
-      }
-
-      if (searchText) {
-        values = [...values, { text: searchText, type: "TextFilter" }];
-      }
-
-      const res = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}/config`,
-        values,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          withCredentials: true,
-        }
-      );
-
-      const data = await res.data;
-      return data;
-    },
-  });
+  const { data: databases, isLoading, refetch } = useDatabases(values);
+  const { data: datasets, isLoading: datasetsLoading } = useDatasets([]);
 
   useEffect(() => {
-    const value = [];
-    setDatasetsLoading(true);
-    const fetchDatasets = async () => {
-      const res = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}/dataset`,
-        value,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          withCredentials: true,
-        }
-      );
-      if (res.status === 200) {
-        setDatasets(res.data);
-        setDatasetsLoading(false);
-      }
-    };
-    fetchDatasets();
-  }, []);
+    refetch();
+  }, [values, refetch]);
 
+  const datasetNamesOptions = datasets?.map((dataset) => ({
+    option: dataset.name,
+    value: dataset.name,
+  }));
 
-  if (isLoading && datasetsLoading) return <Loading />;
+  // for clearing the filter
+  const handleClearDatabaseFilter = () => {
+    setSelectedDatabaseType({
+      option: "Choose Database",
+      value: "choose",
+    });
+    setSelectedDatasetName({
+      option: "Choose Dataset",
+      value: "choose",
+    });
+  };
+  
   return (
     <div className="ps-7 pt-7">
       <div>
@@ -110,23 +97,41 @@ const DBConfiguration = () => {
             onChange={(e) => handleSearchText(e)}
           />
           <div className="ms-3">
-            <label className="text-15px">Filter: </label>
-
             <CustomSelect
               selected={selectedDatabaseType}
               setSelected={setSelectedDatabaseType}
-              options={databaseTypeOptions}
-              width="w-[150px]"
+              options={databaseTypesOptions}
+              width="w-[180px]"
             />
           </div>
+          <div>
+            {databases && (
+              <CustomSelect
+                selected={selectedDatasetName}
+                setSelected={setSelectedDatasetName}
+                options={datasetNamesOptions}
+                width="w-[180px]"
+              />
+            )}
+          </div>
+
+          {(selectedDatabaseType.value !== "choose" ||
+            selectedDatasetName.value !== "choose") && (
+            <div className="">
+              <button
+                className="w-[40px] h-[40px] bg-secondary flex items-center justify-center rounded-md"
+                onClick={handleClearDatabaseFilter}
+              >
+                <MdClose size={20} />
+              </button>
+            </div>
+          )}
         </div>
         <div>
-          <button
-            onClick={() => setOpen(true)}
-            className="btn bg-primary btn-sm border border-primary rounded text-white hover:bg-[#57B1FF]"
-          >
-            Add Database
-          </button>
+          <AddButton
+            value="New Database"
+            setOpen={() => setOpen(true)}
+          ></AddButton>
         </div>
       </div>
       {isLoading && datasetsLoading ? (
@@ -138,6 +143,7 @@ const DBConfiguration = () => {
             onClose={() => setOpen(false)}
             datasets={datasets}
             refetch={refetch}
+            databases={databases}
           />
           <div className="me-9">
             <div className="">

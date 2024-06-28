@@ -1,9 +1,9 @@
-import React, { useState } from "react";
-import axios from "axios";
-import Loading from "../../../components/Loading";
-import CommonTable from "../../../components/CommonTable";
-import AddDatasetModal from "../../../components/AddDatasetModal";
-import { useQuery } from "react-query";
+import React, { useEffect, useState } from "react";
+import Loading from "../../../components/Common/Loading";
+import AddButton from "../../../components/Common/AddButton";
+import useDatasets from "../../../api/useDatasets";
+import CommonTable from "../../../components/Common/CommonTable";
+import AddDatasetModal from "../../../components/Modals/AddDatasetModal";
 
 const columnHeads = ["Dataset Name", "Number of Columns", "Created At", "Rows"];
 
@@ -13,36 +13,27 @@ const Datasets = () => {
   // const [datasetsLoading, setDatasetsLoading] = useState(false);
   const [open, setOpen] = useState(false);
   const [searchText, setSearchText] = useState("");
+  const [values, setValues] = useState([])
 
   const handleSetSearchText = (value) => {
-    setTimeout(() => {
-      setSearchText(value);
-    }, 500);
+    setSearchText(value)
   };
 
-  const {
-    data: datasets,
-    isLoading: datasetsLoading,
-    refetch,
-  } = useQuery({
-    queryKey: ["datasets", searchText],
-    queryFn: async () => {
-      let values = [];
-      if (searchText) {
-        values = [{ text: searchText, type: "TextFilter" }];
-      }
-      const req = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}/dataset`,
-        values,
-        {
-          withCredentials: true,
-        }
-      );
-      const data = await req.data;
-      return data;
-    },
-  });
 
+  useEffect(() => {
+    const newValues = [];
+    if (searchText) {
+      newValues.push({ text: searchText, type: "TextFilter" });
+    }
+    setValues(newValues)
+  }, [searchText])
+  
+  const {data: datasets, isLoading: datasetsLoading, refetch} = useDatasets(values)
+
+  // Add this useEffect hook to re-call useDatasets when searchText changes
+  useEffect(() => {
+    refetch();
+  }, [values, refetch]);
 
   return (
     <div className="pt-7 ps-7">
@@ -62,12 +53,7 @@ const Datasets = () => {
           />
         </div>
         <div>
-          <button
-            onClick={() => setOpen(true)}
-            className="btn bg-primary btn-sm border border-primary rounded text-white hover:bg-[#57B1FF]"
-          >
-            Add Dataset
-          </button>
+          <AddButton value="New Dataset" setOpen={() => setOpen(true)}></AddButton>
         </div>
       </div>
       {datasetsLoading ? (
@@ -89,6 +75,7 @@ const Datasets = () => {
               tableHead={"Dataset"}
               columnHeads={columnHeads}
               refetch={refetch}
+              data-testid="datasets-table"
             />
           </div>
         </div>

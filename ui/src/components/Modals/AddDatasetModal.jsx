@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { MdClose } from "react-icons/md";
-import AddDataset from "./AddDataset";
-import { handleAddDatasetApi } from "../utilities/api";
+import AddDataset from "../AddDataset/AddDataset";
 import toast from "react-hot-toast";
+import { handleAddDatasetApi } from "../../api/handleAddDatasetApi";
 
 const AddDatasetModal = ({ open, onClose, datasets, refetch }) => {
   const [columns, setColumns] = useState([{ columnName: "", columnType: "" }]);
@@ -25,9 +25,15 @@ const AddDatasetModal = ({ open, onClose, datasets, refetch }) => {
       onClose();
       setColumns([{ columnName: "", columnType: "" }]);
     };
-    const apiFor = "dataset"
+    const apiFor = "dataset";
     try {
-      await handleAddDatasetApi(event, datasets, columns, successFunctions, apiFor);
+      await handleAddDatasetApi(
+        event,
+        datasets,
+        columns,
+        successFunctions,
+        apiFor
+      );
     } catch (err) {
       console.log(err);
     }
@@ -52,6 +58,7 @@ const AddDatasetModal = ({ open, onClose, datasets, refetch }) => {
         <button
           onClick={handleCloseModal}
           className="absolute top-5 right-2 p-1 rounded-lg text-gray-400 bg-white hover:bg-gray-50 hover:text-gray-600"
+          aria-label='closeModal'
         >
           <MdClose size={25} />
         </button>
@@ -62,10 +69,10 @@ const AddDatasetModal = ({ open, onClose, datasets, refetch }) => {
             <AddDataset columns={columns} handleAddColumn={handleAddColumn} />
             <div className="mt-[50px] flex gap-3 pb-4">
               <button
-                className="btn bg-primary btn-sm border border-primary rounded text-white hover:bg-[#6b3b51d2]"
+                className="btn bg-primary btn-sm border border-primary rounded text-white hover:bg-[#57B1FF]"
                 type="submit"
               >
-                Add
+                Create
               </button>
               <button
                 onClick={handleCloseModal}

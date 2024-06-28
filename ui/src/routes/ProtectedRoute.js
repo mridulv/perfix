@@ -1,7 +1,7 @@
 import React, { useContext } from 'react';
-import Loading from '../components/Loading';
 import { AuthContext } from '../contexts/AuthProvider';
 import Authentication from '../Pages/Authentication/Authentication';
+import Loading from '../components/Common/Loading';
 
 const ProtectedRoute = ({children}) => {
     const {user, userLoading} = useContext(AuthContext);

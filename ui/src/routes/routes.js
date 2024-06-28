@@ -1,9 +1,9 @@
 import DashboardLayout from "../Layout/DashboardLayout";
 import DBConfiguration from "../Pages/Dashboard/DBConfiguration/DBConfiguration";
 import Datasets from "../Pages/Dashboard/Datasets/Datasets";
+import AddExperimentPage from "../Pages/Dashboard/Experiment/AddExperimentPage";
 import Experiment from "../Pages/Dashboard/Experiment/Experiment";
-import AddExperiment from "../Pages/Dashboard/Experiment/AddExperiment";
-import AddExperiment2 from "../Pages/Dashboard/Experiment/AddExperiment2";
+import ExperimentResultPage from "../Pages/Dashboard/Experiment/ExperimentResultPage";
 import ProtectedRoute from "./ProtectedRoute";
 
 
@@ -30,12 +30,12 @@ export const router = createBrowserRouter([
                 element: <Experiment/>
             },
             {
-                path: "/add-experiment-dataset",
-                element: <AddExperiment/>
+                path: "/add-experiment",
+                element: <AddExperimentPage/>
             },
             {
-                path: "/add-experiment-database/:datasetId",
-                element: <AddExperiment2/>
+                path: "/experiment-result/:id",
+                element: <ExperimentResultPage/>
             },
         ]
     },

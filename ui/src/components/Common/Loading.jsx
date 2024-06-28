@@ -3,6 +3,7 @@ import React from 'react';
 const Loading = () => {
     return (
         <div
+       aria-label='loading'
         style={{
           display: "flex",
           alignItems: "center",

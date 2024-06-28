@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import AddDataset from "./AddDataset";
-import CustomSelect from "./CustomSelect";
+import AddDataset from "../AddDataset/AddDataset";
+import CustomSelect from "../CustomSelect/CustomSelect";
 
 const ChooseDatasetComponent = ({
   activeDataset,
@@ -45,7 +45,7 @@ const ChooseDatasetComponent = ({
           {activeDataset === "new" ? (
             <AddDataset columns={columns} handleAddColumn={handleAddColumn} />
           ) : (
-            <label className="form-control w-full max-w-xs">
+            <label className="form-control max-w-[200px]">
               <div className="label">
                 <span className="label-text">Select Dataset</span>
               </div>
@@ -60,7 +60,7 @@ const ChooseDatasetComponent = ({
 
           <div className="mt-[200px] flex gap-3 pb-4">
             <button
-              className="btn bg-primary btn-sm border border-primary rounded text-white hover:bg-[#6b3b51d2]"
+              className="btn bg-primary btn-sm border border-primary rounded text-white hover:bg-[#57B1FF]"
               type="submit"
             >
               Next

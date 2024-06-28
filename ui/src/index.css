@@ -44,8 +44,8 @@ code {
   align-items: center;
   cursor: pointer;
   justify-content: space-between;
+  border: 2px solid #E0E0E0;
 }
-
 
 .dropdown-item {
   padding: 10px;
@@ -54,8 +54,21 @@ code {
   transition: all 0.2s;
 }
 .dropdown-item:hover {
-  background: white
-};
+  background: white;
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  background: white;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 1000; /* Ensure the dropdown menu has a high z-index */
+}
+
+
+
 
 
 body::-webkit-scrollbar {
@@ -69,7 +82,7 @@ body::-webkit-scrollbar-track {
 
 /* Style the scrollbar thumb */
 body::-webkit-scrollbar-thumb {
-  background: red;
+  background: #3DA5FF;
   border-radius: 10px;
 }
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import DeleteModal from "./DeleteModal";
+import DeleteModal from "../Modals/DeleteModal";
 import toast from "react-hot-toast";
 import CommonTableRows from "./CommonTableRows";
 
@@ -7,11 +7,10 @@ const CommonTable = ({
   data,
   tableHead,
   columnHeads,
-  dataForRun = null,
   refetch,
+  dataTestid=null
 }) => {
   const [showButtons, setShowButtons] = useState(null);
-  const [showExperimentDetails, setShowExperimentDetails] = useState(null);
   const [selectedData, setSelectedData] = useState(null);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
 
@@ -19,14 +18,6 @@ const CommonTable = ({
   const handleShowOptions = (data) => {
     setShowButtons(showButtons === data ? null : data);
   };
-
-  //for showing the experiment results
-  const handleRunExperiment = (experiment) => {
-    setShowExperimentDetails(
-      showExperimentDetails === experiment ? null : experiment
-    );
-  };
-
   //for the delete modal
   const handleSelectedData = (data) => {
     setOpenDeleteModal(true);
@@ -122,11 +113,8 @@ const CommonTable = ({
                 data={d}
                 columnHeads={columnHeads}
                 showButtons={showButtons}
-                showExperimentDetails={showExperimentDetails}
                 handleShowOptions={handleShowOptions}
                 handleSelectedData={handleSelectedData}
-                handleRunExperiment={handleRunExperiment}
-                dataForRun={dataForRun}
               />
             ))
           ) : (

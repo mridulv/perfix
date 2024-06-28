@@ -1,5 +1,5 @@
-import axios from "axios";
 import toast from "react-hot-toast";
+import axiosApi from "./axios";
 
 export const baseUrl = process.env.REACT_APP_BASE_URL;
 
@@ -32,7 +32,6 @@ export const handleAddDatasetApi = async (
   });
 
   try {
-    const url = `${process.env.REACT_APP_BASE_URL}/dataset/create`;
     const columnData = {
       rows: 10000,
       name: datasetName,
@@ -46,12 +45,7 @@ export const handleAddDatasetApi = async (
       })),
     };
 
-    const response = await axios.post(url, columnData, {
-      headers: {
-        "Content-Type": "application/json",
-      },
-      withCredentials: true,
-    });
+    const response = await axiosApi.post("/dataset/create", columnData);
     if (response.status === 200) {
       if(apiFor === "dataset"){
         successFunctions();

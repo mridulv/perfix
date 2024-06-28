@@ -1,102 +1,78 @@
-import React, { useState } from "react";
-import axios from "axios";
-import { useQuery } from "react-query";
-import Loading from "../../../components/Loading";
-import AddButton from "../../../components/AddButton";
-import CommonTable from "../../../components/CommonTable";
-import CustomSelect from "../../../components/CustomSelect";
-import AddExperimentModal from "../../../components/AddExperimentModal";
+import React, { useEffect, useState } from "react";
+import Loading from "../../../components/Common/Loading";
+import useExperiments from "../../../api/useExperiment";
+import useDatasets from "../../../api/useDatasets";
+import useDatabases from "../../../api/useDatabases";
+import AddExperimentModal from "../../../components/Modals/AddExperimentModal";
+import CustomSelect from "../../../components/CustomSelect/CustomSelect";
+import CommonTable from "../../../components/Common/CommonTable";
+import { Filters } from "../../../hooks/filters";
+import { useNavigate } from "react-router-dom";
 
 const columnHeads = [
   "Experiment Name",
-  "Database Config Name",
+  "DatabaseConfig Name",
   "Created At",
   "Experiment State",
-  "Run",
-];
-
-const demoOptions = [
-  { option: "Owner1", value: "Owner1" },
-  { option: "Owner2", value: "Owner2" },
-  { option: "Owner3", value: "Owner3" },
-];
-const demoOptions2 = [
-  { option: "Status1", value: "Status1" },
-  { option: "Status2", value: "Status2" },
-  { option: "Status3", value: "Status3" },
-];
-
-const demoOptions3 = [
-  { option: "Visible1", value: "Visible1" },
-  { option: "Visible2", value: "Visible2" },
-  { option: "Visible3", value: "Visible3" },
 ];
 
 const Experiment = () => {
   const [open, setOpen] = useState(false);
+  const [searchText, setSearchText] = useState("");
+  const [values, setValues] = useState([]);
 
-  const [selectOwner, setSelectOwner] = useState({
-    option: "Choose",
-    value: "choose",
-  });
-  const [selectStatus, setSelectStatus] = useState({
-    option: "Choose",
-    value: "choose",
-  });
-  const [selectVisible, setSelectVisible] = useState({
-    option: "Choose",
-    value: "choose",
-  });
+  const {
+    selectedDatabaseType,
+    setSelectedDatabaseType,
+    databaseTypesOptions,
+    selectExperimentState,
+    setSelectExperimentState,
+    selectedDatasetName,
+    setSelectedDatasetName,
+    experimentStateOptions,
+  } = Filters();
 
-  const { data: experiments, isLoading: experimentsLoading } = useQuery({
-    queryKey: ["experiments"],
-    queryFn: async () => {
-      const values = [];
-      const res = await axios.post(
-        `${process.env.REACT_APP_BASE_URL}/experiment`,
-        values,
-        {
-          headers: {
-            "Content-Type": "application/json"
-          },
-          withCredentials: true,
-        }
-      );
-      const data = await res.data;
-      return data;
-    },
-  });
+  const navigate = useNavigate();
 
-  
-  console.log(experiments);
-
-  const dataForRun = {
-    overallQueryTime: 5,
-    overallWriteTimeTaken: 39,
-    numberOfCalls: 13522,
-    queryLatencies: [
-      { percentile: 5, latency: 1 },
-      { percentile: 10, latency: 2 },
-      { percentile: 25, latency: 3 },
-      { percentile: 50, latency: 3 },
-      { percentile: 75, latency: 5 },
-      { percentile: 90, latency: 6 },
-      { percentile: 95, latency: 7 },
-      { percentile: 99, latency: 9 },
-    ],
-    writeLatencies: [
-      { percentile: 5, latency: 39 },
-      { percentile: 10, latency: 39 },
-      { percentile: 25, latency: 39 },
-      { percentile: 50, latency: 39 },
-      { percentile: 75, latency: 39 },
-      { percentile: 90, latency: 39 },
-      { percentile: 95, latency: 39 },
-      { percentile: 99, latency: 39 },
-    ],
+  const handleSearchText = (e) => {
+    setSearchText(e.target.value);
   };
 
-  // if (experimentsLoading) return <Loading />;
+  useEffect(() => {
+    const newValues = [];
+    if (searchText) {
+      newValues.push({ text: searchText, type: "TextFilter" });
+    }
+    if (selectedDatabaseType.value !== "choose") {
+      newValues.push({
+        store: selectedDatabaseType.value,
+        type: "DatabaseTypeFilter",
+      });
+    }
+    if (selectedDatasetName.value !== "choose") {
+      newValues.push({
+        name: selectedDatasetName.value,
+        type: "DatasetNameFilter",
+      });
+    }
+    setValues(newValues);
+  }, [searchText, selectedDatabaseType, selectedDatasetName]);
+
+  
+  const { data: experiments, isLoading: experimentsLoading } =
+    useExperiments(values);
+  const { data: datasets, isLoading: datasetsLoading } = useDatasets([]);
+  const {
+    data: databases,
+    isLoading: databasesLoading,
+    refetch: databaseRefetch,
+  } = useDatabases([]);
+
+  const datasetNameOptions = datasets?.map((dataset) => ({
+    option: dataset.name,
+    value: dataset.name,
+  }));
+
   return (
     <div className="">
       <div className="pt-7 ps-7">
@@ -111,42 +87,57 @@ const Experiment = () => {
             name=""
             id=""
             placeholder="Search"
+            onChange={(e) => handleSearchText(e)}
           />
 
-
           <CustomSelect
-            selected={selectOwner}
-            setSelected={setSelectOwner}
-            options={demoOptions}
-            width="w-[150px]"
+            selected={selectedDatabaseType}
+            setSelected={setSelectedDatabaseType}
+            options={databaseTypesOptions}
+            width="w-[200px]"
           />
           <CustomSelect
-            selected={selectStatus}
-            setSelected={setSelectStatus}
-            options={demoOptions2}
-            width="w-[150px]"
+            selected={selectedDatasetName}
+            setSelected={setSelectedDatasetName}
+            options={datasetNameOptions}
+            width="w-[200px]"
           />
           <CustomSelect
-            selected={selectVisible}
-            setSelected={setSelectVisible}
-            options={demoOptions3}
-            width="w-[150px]"
+            selected={selectExperimentState}
+            setSelected={setSelectExperimentState}
+            options={experimentStateOptions}
+            width="w-[200px]"
           />
         </div>
         <div>
-          <AddButton value={"New Experiment"} setOpen={setOpen} />
+          <button
+            onClick={() => navigate("/add-experiment")}
+            className="btn bg-primary btn-sm border border-primary rounded text-white hover:bg-[#57B1FF]"
+          >
+            New Experiment
+          </button>
         </div>
       </div>
-      <AddExperimentModal open={open} onClose={() => setOpen(false)} experiments={experiments} />
+      <AddExperimentModal
+        open={open}
+        onClose={() => setOpen(false)}
+        experiments={experiments}
+        datasets={datasets}
+        databases={databases}
+        databaseRefetch={databaseRefetch}
+      />
 
-      <div className="ps-7 pe-9 ">
-        <CommonTable
-          data={experiments}
-          tableHead={"Experiment"}
-          columnHeads={columnHeads}
-          dataForRun={dataForRun}
-        />
-      </div>
+      {experimentsLoading && databasesLoading && datasetsLoading ? (
+        <Loading />
+      ) : (
+        <div className="ps-7 pe-9 ">
+          <CommonTable
+            data={experiments}
+            tableHead={"Experiment"}
+            columnHeads={columnHeads}
+          />
+        </div>
+      )}
     </div>
   );
 };

@@ -1,14 +1,24 @@
 import React from "react";
+import toast from "react-hot-toast";
 import { MdClose } from "react-icons/md";
-import AddDatabase from "./AddDatabase/AddDatabase";
+import AddDatabase from "../AddDatabase/AddDatabase";
 
 const AddDatabaseModalForExperiment = ({
   open,
   onClose,
-  dataset,
-  setSelectedDatabase,
+  seletedDataset,
+  databases,
   refetch,
 }) => {
+
+  const handleClose = () => {
+    onClose();
+  }
+  const successFunctionForAddDatabase = (response) => {
+    toast.success("New Database Added Successfully!");
+    refetch();
+    onClose();
+  };
   return (
     <div
       onClick={onClose}
@@ -20,7 +30,7 @@ const AddDatabaseModalForExperiment = ({
       <div
         onClick={(e) => e.stopPropagation()}
         className={`
-          bg-white rounded-lg shadow p-6 transition-all
+          bg-white rounded-lg shadow py-6 transition-all
           ${open ? "scale-100 opacity-100" : "scale-125 opacity-0"}
         `}
         style={{ maxHeight: "80vh", overflow: "auto" }}
@@ -31,17 +41,16 @@ const AddDatabaseModalForExperiment = ({
         >
           <MdClose size={25} />
         </button>
-        <div className="w-[300px] md:w-[460px] flex flex-col">
-          <div className="">
+        <div className="w-[90%] md:w-[500px] flex flex-col">
+          <div className="ps-4">
             <h3 className="text-[20px] font-bold">Create new database</h3>
           </div>
           <div className="w-[95%] h-[1px] bg-accent my-6"></div>
-          <AddDatabase
-            dataset={dataset}
-            valueFor={"modal"}
-            onClose={onClose}
-            setSelectedDatabase={setSelectedDatabase}
-            refetch={refetch}
+          <AddDatabase 
+          dataset={seletedDataset}
+          databases={databases}
+          successFunction={successFunctionForAddDatabase}
+          cancelFunction={handleClose}
           />
         </div>
       </div>
