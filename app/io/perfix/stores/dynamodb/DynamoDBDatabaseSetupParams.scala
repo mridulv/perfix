@@ -48,7 +48,7 @@ case class DynamoDBTableParams(urlOpt: Option[String], tableName: String, partit
 case class DynamoDBCapacityParams(readCapacity: Option[Long], writeCapacity: Option[Long])
 
 object DynamoDBDatabaseSetupParams {
-  implicit val DynamoDBStoreParamsFormatter: Format[DynamoDBDatabaseSetupParams] = Json.format[DynamoDBDatabaseSetupParams]
   implicit val DynamoDBGSIParamFormatter: Format[DynamoDBGSIParam] = Json.format[DynamoDBGSIParam]
+  implicit val DynamoDBStoreParamsFormatter: Format[DynamoDBDatabaseSetupParams] = Json.format[DynamoDBDatabaseSetupParams]
 }
 

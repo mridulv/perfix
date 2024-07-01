@@ -21,6 +21,8 @@ object DatabaseSetupParams {
       StoreType.withName(tp) match {
         case Redis     => json.validate[RedisDatabaseSetupParams]
         case MySQL     => json.validate[RDSDatabaseSetupParams]
+        case Postgres   => json.validate[RDSDatabaseSetupParams].map(_.copy(databaseType = Some(Postgres)))
+        case MariaDB   => json.validate[RDSDatabaseSetupParams].map(_.copy(databaseType = Some(MariaDB)))
         case DynamoDB  => json.validate[DynamoDBDatabaseSetupParams]
         case MongoDB   => json.validate[DocumentDBDatabaseSetupParams]
         case other       => JsError(s"Unknown type: $other")
@@ -30,7 +32,11 @@ object DatabaseSetupParams {
 
   implicit val storeParamsWrites: Writes[DatabaseSetupParams] = {
     case params: RedisDatabaseSetupParams    => Json.toJson(params).as[JsObject] + ("type" -> JsString(Redis.toString))
-    case params: RDSDatabaseSetupParams    => Json.toJson(params).as[JsObject] + ("type" -> JsString(MySQL.toString))
+    case params: RDSDatabaseSetupParams    => params.databaseType.getOrElse(MySQL) match {
+      case MySQL => Json.toJson(params).as[JsObject] + ("type" -> JsString(MySQL.toString))
+      case Postgres => Json.toJson(params).as[JsObject] + ("type" -> JsString(Postgres.toString))
+      case MariaDB => Json.toJson(params).as[JsObject] + ("type" -> JsString(MariaDB.toString))
+    }
     case params: DynamoDBDatabaseSetupParams => Json.toJson(params).as[JsObject] + ("type" -> JsString(DynamoDB.toString))
     case params: DocumentDBDatabaseSetupParams => Json.toJson(params).as[JsObject] + ("type" -> JsString(MongoDB.toString))
   }
