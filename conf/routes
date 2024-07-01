@@ -36,3 +36,4 @@ GET         /me                                        io.perfix.controllers.Use
 
 GET         /databases                                 io.perfix.controllers.ConfigController.databases
 GET         /databases/inputs                          io.perfix.controllers.ConfigController.inputs(databaseType: String)
+GET         /databases/categories                      io.perfix.controllers.ConfigController.categories

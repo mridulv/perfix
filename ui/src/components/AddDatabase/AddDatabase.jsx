@@ -1,229 +1,189 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import AddDatabaseInputFields from "./AddDatabaseInputFields";
 import NavigationStep from "./NavigationStep";
-import CustomSelect from "../CustomSelect";
-import Loading from "../Loading";
+import fetchInputFields from "../../api/fetchInputFieldsForAddDatabase";
+import handleAddDatabase from "../../api/handleAddDatabase";
+import AddDatabaseFirsStep from "./AddDatabaseFirsStep";
+import StepCounter from "./StepCounter";
+import fetchDatabaseCategory from "../../api/fetchDatabaseCategory";
 
 const AddDatabase = ({
+  databases,
   dataset,
-  onClose = null,
-  navigate = null,
-  valueFor,
-  setSelectedDatabase = null,
-  refetch = null,
+  cancelFunction,
+  successFunction,
+  creationFor,
 }) => {
   const [currentStep, setCurrentStep] = useState(1);
   const [maxSteps, setMaxSteps] = useState(2);
 
-  const [databaseName, setDatabaseName] = useState("")
-  const [databaseTypes, setDatabaseTypes] = useState(null);
-  const [selectedDatabaseType, setselectedDatabaseType] = useState({
+  const [databaseName, setDatabaseName] = useState("");
+  const [databaseCategories, setDatabaseCategories] = useState(null);
+  const [selectedDatabaseCategory, setSelectedDatabaseCategory] = useState({
+    option: "Choose Category",
+    value: "Choose",
+  });
+  const [selectedDatabaseType, setSelectedDatabaseType] = useState({
     option: "Choose Database",
     value: "Choose",
   });
   const [inputFields, setInputFields] = useState([]);
-  const [isInputFieldsLoading, setIsInputFieldsLoading] = useState(false);
   const [inputValues, setInputValues] = useState({});
 
-  // fetch the database types
+  // fetch the database categories
   useEffect(() => {
-    const fetchDatabaseTypes = async () => {
-      const res = await axios.get(
-        `${process.env.REACT_APP_BASE_URL}/databases`,
-        {
-          withCredentials: true,
-        }
-      );
-      const data = await res.data;
-
-      if (res.status === 200) {
-        setDatabaseTypes(data);
-      }
-    };
-    fetchDatabaseTypes();
+    fetchDatabaseCategory(setDatabaseCategories);
   }, []);
 
-  // setting the database types in options format for custom select
-  let databaseTypesOptions = [];
-  if (databaseTypes) {
-    databaseTypesOptions = databaseTypes?.map((database) => ({
-      option: database,
-      value: database,
+  //categories options
+  const databaseCategoriesOptions =
+    databaseCategories &&
+    Object.keys(databaseCategories).map((category) => ({
+      option: category,
+      value: category,
     }));
-  }
 
-  const handleCurrentStep = () => {
-    setCurrentStep(currentStep + 1);
+  // for showing the input fields
+  const getCurrentStepForInputs = (currentStep) => {
+    return currentStep - 2;
   };
 
-  const getCurrentStep = (currentStep) => {
-    return currentStep - 2;
+  const handleCurrentStep = () => {
+    if (
+      currentStep === 1 &&
+      (databaseName === "" ||
+        selectedDatabaseType.value === "Choose" ||
+        selectedDatabaseCategory.value === "Choose")
+    ) {
+      return toast.error("Please input all the values");
+    }
+
+    const isDuplicateName = databases?.some(
+      (database) => database.name === databaseName
+    );
+    if (isDuplicateName) {
+      return toast.error(
+        `A Database exists with the same ${databaseName} name`
+      );
+    }
+
+    if (currentStep > 1) {
+      const currentStepForInputs = getCurrentStepForInputs(currentStep);
+      if (
+        Object.keys(inputValues).length !==
+          inputFields[currentStepForInputs].inputs.length ||
+        Object.values(inputValues).some((value) => value === "" || value === 0)
+      ) {
+        return toast.error("Please fill in all required fields");
+      }
+    }
+    setCurrentStep(currentStep + 1);
   };
 
   //after the database type selected and in second step we will get the correct input fields
   useEffect(() => {
     if (currentStep === 2 && selectedDatabaseType.value !== "Choose") {
-      setIsInputFieldsLoading(true);
-      const fetchInputFields = async () => {
-        const res = await axios.get(
-          `${process.env.REACT_APP_BASE_URL}/databases/inputs?databaseType=${selectedDatabaseType.value}`,
-          {
-            withCredentials: true,
-          }
-        );
-        if (res.status === 200) {
-          setInputFields(res.data.forms);
-          setMaxSteps(res.data.forms.length + 1);
-          setIsInputFieldsLoading(false);
-        }
-      };
-      fetchInputFields();
+      fetchInputFields(selectedDatabaseType, setInputFields, setMaxSteps);
     }
   }, [selectedDatabaseType, currentStep]);
 
-  // close the modal
+  //set the columns of the dataset in an array to show them in options
+  const datasetColumnsOptions = dataset?.columns.map((column) => ({
+    option: column.columnName,
+    value: column.columnName,
+  }));
+
+  // when click cancel button
   const handleCancel = () => {
-    if (valueFor === "modal") {
-      onClose();
-    } else if (valueFor === "page") {
-      navigate("/database");
-    }
-    setCurrentStep(1);
+    cancelFunction();
   };
 
-
   //add database submit function
-  const handleAddDatabase = async (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-   
 
     const values = {
       name: databaseName && databaseName,
-      dataStore:
-        selectedDatabaseType.value === "MySQL"
-          ? "MySQLStoreType"
-          : selectedDatabaseType.value === "Redis"
-          ? "RedisStoreType"
-          : selectedDatabaseType.value === "DocumentDB"
-          ? "MongoDBStoreType"
-          : "DynamoDBStoreType",
-      datasetId: { id: dataset.id.id },
-      storeParams: {...inputValues, type: selectedDatabaseType.value},
+      dataStore: selectedDatabaseType.value,
+      datasetDetails: { datasetId: { id: dataset.id.id } },
+      databaseSetupParams: { ...inputValues, type: selectedDatabaseType.value },
+      databaseState: "NotStarted",
     };
 
-    console.log(inputValues);
-    if (
-      currentStep > 2 &&
-      currentStep === maxSteps &&
-      Object.keys(inputValues).length > 0
-    ) {
-      try {
-        const res = await axios.post(
-          `${process.env.REACT_APP_BASE_URL}/config/create`,
-          values,
-          {
-            withCredentials: true,
-          }
-        );
-        if (res.status === 200) {
-          toast.success("Database added successfully!");
+    const getTotalInputFields = () => {
+      return inputFields?.reduce((total, inputSet) => {
+        const inputsCount = Object.keys(inputSet.inputs).length;
+        return total + inputsCount;
+      }, 0);
+    };
+    const totalInputFields = getTotalInputFields(inputFields);
 
-          handleCancel();
-        } else {
-          toast.error("Failed to add database.");
-        }
-      } catch (error) {
-        toast.error("An error occurred. Please try again.");
-      }
+    if (
+      maxSteps > 2 &&
+      currentStep === maxSteps &&
+      Object.keys(inputValues).length === totalInputFields
+    ) {
+      await handleAddDatabase(values, creationFor, successFunction);
     }
+
+    //the next button working like the submit button even when i added the type
   };
 
+  // setting the inputValues of the inputs of form
   const handleInputChange = (key, value) => {
     setInputValues((prevValues) => ({
       ...prevValues,
       [key]: value,
     }));
   };
+
   return (
-    <div className="ps-7 flex flex-col relative">
-      <form className="" onSubmit={handleAddDatabase}>
+    <div className="ps-7 mt-4 flex flex-col relative">
+      <form className="" onSubmit={handleSubmit}>
         <div>
           {/* step-1 */}
           <div>
             {currentStep === 1 && (
-              <div>
-                <div className="flex flex-col mb-4">
-                  <label className="text-[12px] font-bold mb-[2px]">Name</label>
-                  <input
-                    className="search-input border-2 border-gray-300 focus:border-gray-400 outline-pink-600 max-w-[250px] px-2 py-2 rounded"
-                    placeholder="Name"
-                    name="name"
-                    type="text"
-                    required
-                    onChange={(e) => setDatabaseName(e.target.value)}
-                  />
-                </div>
-                <div className="flex flex-col mb-2">
-                  <label className="text-[12px] font-bold mb-[2px]">
-                    Database type
-                  </label>
-                  <div className="w-[350px]">
-                    <CustomSelect
-                      options={databaseTypesOptions}
-                      selected={selectedDatabaseType}
-                      setSelected={setselectedDatabaseType}
-                      width="w-[250px]"
-                    />
-                  </div>
-                </div>
-              </div>
+              <AddDatabaseFirsStep
+                setDatabaseName={setDatabaseName}
+                databaseCategoriesOptions={databaseCategoriesOptions}
+                selectedDatabaseType={selectedDatabaseType}
+                setSelectedDatabaseType={setSelectedDatabaseType}
+                selectedDatabaseCategory={selectedDatabaseCategory}
+                setSelectedDatabaseCategory={setSelectedDatabaseCategory}
+                databaseCategories={databaseCategories}
+              />
             )}
           </div>
 
           {/* after step-1 we are showing the input fields dynamically */}
           <div>
-            {isInputFieldsLoading ? (
-              <Loading />
-            ) : inputFields.length > 0 && currentStep > 1 ? (
-              inputFields?.map((inputSet, index) => (
-                <div key={index}>
-                  {getCurrentStep(currentStep) === index && (
-                    <div>
-                      {inputSet.inputs &&
-                        Object.entries(inputSet.inputs).map(([key, value]) => (
-                          <AddDatabaseInputFields
-                            key={key}
-                            input={{ [key]: value }}
-                            handleInputChange={handleInputChange}
-                          />
-                        ))}
-                    </div>
-                  )}
-                </div>
-              ))
-            ) : null}
+            {inputFields.length > 0 && currentStep > 1
+              ? inputFields?.map((inputSet, index) => (
+                  <div key={index}>
+                    {getCurrentStepForInputs(currentStep) === index && (
+                      <div>
+                        {inputSet.inputs &&
+                          Object.entries(inputSet.inputs).map(
+                            ([key, value]) => (
+                              <AddDatabaseInputFields
+                                key={key}
+                                input={{ [key]: value }}
+                                handleInputChange={handleInputChange}
+                                options={datasetColumnsOptions}
+                              />
+                            )
+                          )}
+                      </div>
+                    )}
+                  </div>
+                ))
+              : null}
           </div>
         </div>
         <div className="mt-[180px]">
-          <div className="mb-5 flex justify-center gap-3">
-            <div
-              className={`bg-primary w-[10px] h-[10px] rounded-full ${
-                currentStep === 1 ? "opacity-100" : "opacity-30"
-              }`}
-            ></div>
-            <div
-              className={`bg-primary w-[10px] h-[10px] rounded-full ${
-                currentStep === 2 ? "opacity-100" : "opacity-30"
-              }`}
-            ></div>
-            <div
-              className={`bg-primary w-[10px] h-[10px] rounded-full ${
-                currentStep === 3 ? "opacity-100" : "opacity-30"
-              }`}
-            ></div>
-          </div>
+          <StepCounter currentStep={currentStep} />
 
           <div>
             <NavigationStep

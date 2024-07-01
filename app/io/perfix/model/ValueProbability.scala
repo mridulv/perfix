@@ -1,6 +1,5 @@
 package io.perfix.model
 
-import play.api.libs.json.{Format, Json}
 import play.api.libs.json._
 
 case class ValueProbability(value: Any, probability: Int) {
