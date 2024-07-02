@@ -61,10 +61,10 @@ case class TextFilter(text: String) extends DatasetFilter with DatabaseConfigFil
   }
 }
 
-case class SampleDatasetFilter() extends DatasetFilter {
+case class SampleDatasetFilter(isSampleDataset: Boolean) extends DatasetFilter {
 
   override def filter(dataset: DatasetParams): Boolean = {
-    dataset.isSampleDataset
+    isSampleDataset == dataset.isSampleDataset
   }
 
   override val filterName: String = "sample-dataset"
