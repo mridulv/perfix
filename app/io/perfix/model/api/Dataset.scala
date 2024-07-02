@@ -5,7 +5,7 @@ import play.api.libs.json._
 case class Dataset(params: DatasetParams, data: Seq[Map[String, Any]]) {
 
   def sampleDataset(numRows: Int): Dataset = {
-    Dataset(params, data.take(Math.max(numRows, data.size)))
+    Dataset(params, data.take(Math.min(numRows, data.size)))
   }
 
 }
