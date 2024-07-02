@@ -12,7 +12,8 @@ case class DatasetParams(id: Option[DatasetId],
                          description: String,
                          rows: Int,
                          columns: Seq[ColumnDescription],
-                         createdAt: Option[Long] = None) {
+                         createdAt: Option[Long] = None,
+                         isSampleDataset: Boolean = false) {
 
   private val faker = new FakeDataGenerator
   lazy val dataset: Dataset = faker.generateData(this)
