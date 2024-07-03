@@ -9,7 +9,9 @@ import io.perfix.model.api.{ConversationId, ConversationParams}
 class ConversationManager @Inject()(conversationStore: ConversationStore) {
 
   def create(conversationParams: ConversationParams): ConversationParams = {
-    conversationStore.create(conversationParams)
+    val createdConversationParams = conversationStore.create(conversationParams)
+    val id = createdConversationParams.conversationId.map(_.id).getOrElse("")
+    createdConversationParams.copy(name = Some(s"Untitled $id"))
   }
 
   def get(conversationId: ConversationId): Option[ConversationParams] = {
