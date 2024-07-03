@@ -37,3 +37,8 @@ GET         /me                                        io.perfix.controllers.Use
 GET         /databases                                 io.perfix.controllers.ConfigController.databases
 GET         /databases/inputs                          io.perfix.controllers.ConfigController.inputs(databaseType: String)
 GET         /databases/categories                      io.perfix.controllers.ConfigController.categories
+
+POST    /conversations           io.perfix.controllers.ConversationController.create
+GET     /conversations           io.perfix.controllers.ConversationController.list
+GET     /conversations/:id       io.perfix.controllers.ConversationController.get(id: Int)
+DELETE  /conversations/:id       io.perfix.controllers.ConversationController.delete(id: Int)
