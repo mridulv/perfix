@@ -3,7 +3,7 @@ package io.perfix.manager
 import com.google.inject.{Inject, Singleton}
 import io.perfix.exceptions.InvalidStateException
 import io.perfix.model._
-import io.perfix.model.api.{Dataset, DatasetId, DatasetParams}
+import io.perfix.model.api.{Dataset, DatasetId, DatasetParams, Datasets}
 import io.perfix.db.DatasetConfigStore
 
 
@@ -21,16 +21,18 @@ class DatasetManager @Inject()(datasetConfigStore: DatasetConfigStore) {
       .getOrElse(throw InvalidStateException("Invalid Dataset"))
   }
 
-  def columns(datasetId: DatasetId): Seq[String] = {
+  def columns(datasetId: DatasetId): Map[String, Seq[String]] = {
     datasetConfigStore.get(datasetId)
       .getOrElse(throw InvalidStateException("Invalid Dataset"))
-      .columns
-      .map(_.columnName)
+      .getDatasetTableParams
+      .zipWithIndex
+      .map(e => e._1.tableName.getOrElse(s"table_${e._2}") -> e._1.columns.map(_.columnName))
+      .toMap
   }
 
-  def data(datasetId: DatasetId): Dataset = {
+  def data(datasetId: DatasetId): Datasets = {
     datasetConfigStore.get(datasetId)
-      .map(_.dataset.sampleDataset(SAMPLE_ROWS))
+      .map(_.datasets.sampleDataset(SAMPLE_ROWS))
       .getOrElse(throw InvalidStateException("Invalid Dataset"))
   }
 

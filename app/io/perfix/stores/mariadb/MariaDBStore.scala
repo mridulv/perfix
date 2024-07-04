@@ -32,7 +32,7 @@ class MariaDBStore(datasetParams: DatasetParams,
       case None => throw InvalidStateException("Database Name should have been defined")
     }
 
-    val sql = createTableStatement(databaseConfigParams.tableName, datasetParams.columns)
+    val sql = createTableStatement(databaseConfigParams.tableName, datasetParams.getColumns)
     println(sql)
     statement.executeUpdate(sql)
 
