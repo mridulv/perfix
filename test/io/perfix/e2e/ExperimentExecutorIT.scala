@@ -66,7 +66,7 @@ class ExperimentExecutorIT extends AnyFlatSpec with Matchers with MockitoSugar w
     val experimentExecutor = new SimplePerformanceExperiment(
       new MySQLStore(datasetParams, mysqlStoreParams),
       experimentParams,
-      dataset = datasetParams.dataset
+      dataset = datasetParams.datasets
     )
 
     experimentExecutor.init()
