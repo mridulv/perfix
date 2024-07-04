@@ -34,7 +34,7 @@ class MySQLStore(datasetParams: DatasetParams,
       case None => throw InvalidStateException("Database Name should have been defined")
     }
 
-    val sql = createTableStatement(db + "." + databaseConfigParams.tableName, datasetParams.columns)
+    val sql = createTableStatement(db + "." + databaseConfigParams.tableName, datasetParams.getColumns)
     statement.executeUpdate(sql)
 
     val indexSql = createTableIndexesStatement(db, databaseConfigParams.primaryIndexColumn, databaseConfigParams.secondaryIndexesColumn)

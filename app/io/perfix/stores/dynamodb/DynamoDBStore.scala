@@ -30,7 +30,7 @@ class DynamoDBStore(datasetParams: DatasetParams,
       tableParams.partitionKey,
       tableParams.sortKey
     )
-    val attributeDefinitions = getAttributeDefinitions(datasetParams.columns)
+    val attributeDefinitions = getAttributeDefinitions(datasetParams.getColumns)
 
     val credentialsProvider = DefaultAWSCredentialsProviderChain.getInstance()
 
