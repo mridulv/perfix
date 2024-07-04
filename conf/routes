@@ -38,7 +38,8 @@ GET         /databases                                 io.perfix.controllers.Con
 GET         /databases/inputs                          io.perfix.controllers.ConfigController.inputs(databaseType: String)
 GET         /databases/categories                      io.perfix.controllers.ConfigController.categories
 
-POST    /conversations           io.perfix.controllers.ConversationController.create
-GET     /conversations           io.perfix.controllers.ConversationController.list
-GET     /conversations/:id       io.perfix.controllers.ConversationController.get(id: Int)
-DELETE  /conversations/:id       io.perfix.controllers.ConversationController.delete(id: Int)
+POST    /conversations                                 io.perfix.controllers.ConversationController.create
+POST    /conversations/:id/converse                    io.perfix.controllers.ConversationController.converse(id: Int)
+GET     /conversations                                 io.perfix.controllers.ConversationController.list
+GET     /conversations/:id                             io.perfix.controllers.ConversationController.get(id: Int)
+DELETE  /conversations/:id                             io.perfix.controllers.ConversationController.delete(id: Int)
