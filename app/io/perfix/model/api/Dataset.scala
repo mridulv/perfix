@@ -1,11 +1,14 @@
 package io.perfix.model.api
 
+import io.perfix.model.ColumnDescription
 import play.api.libs.json._
 
-case class Dataset(params: DatasetParams, data: Seq[Map[String, Any]]) {
+case class Dataset(tableName: Option[String],
+                   columns: Seq[ColumnDescription],
+                   data: Seq[Map[String, Any]]) {
 
   def sampleDataset(numRows: Int): Dataset = {
-    Dataset(params, data.take(Math.max(numRows, data.size)))
+    Dataset(tableName, columns, data.take(Math.min(numRows, data.size)))
   }
 
 }
@@ -28,7 +31,7 @@ object Dataset {
   implicit val DatasetFormatter: Format[Dataset] = Json.format[Dataset]
 
   def datasetForTesting: Dataset = {
-    DatasetParams.empty().dataset
+    DatasetParams.empty().datasets.datasets.head
   }
 }
 

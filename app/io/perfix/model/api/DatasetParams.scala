@@ -11,11 +11,13 @@ case class DatasetParams(id: Option[DatasetId],
                          name: String,
                          description: String,
                          rows: Int,
-                         columns: Seq[ColumnDescription],
-                         createdAt: Option[Long] = None) {
+                         columns: Option[Seq[ColumnDescription]],
+                         datasetTableParams: Option[Seq[DatasetTableParams]] = None,
+                         createdAt: Option[Long] = None,
+                         isSampleDataset: Option[Boolean] = Some(false)) {
 
   private val faker = new FakeDataGenerator
-  lazy val dataset: Dataset = faker.generateData(this)
+  lazy val datasets: Datasets = faker.generateData(this)
 
   def toDatasetConfigParams(userInfo: UserInfo): DatasetConfigRow = {
     id match {
@@ -24,6 +26,17 @@ case class DatasetParams(id: Option[DatasetId],
       case None =>
         DatasetConfigRow(id = -1, userEmail = userInfo.email, obj = Json.toJson(this).toString())
     }
+  }
+
+  def getDatasetTableParams: Seq[DatasetTableParams] = {
+    columns match {
+      case Some(cols) => Seq(DatasetTableParams(None, rows, cols))
+      case None => datasetTableParams.getOrElse(Seq.empty)
+    }
+  }
+
+  def getColumns: Seq[ColumnDescription] = {
+    getDatasetTableParams.headOption.map(_.columns).getOrElse(throw new RuntimeException("Invalid Dataset"))
   }
 
 }
@@ -37,7 +50,7 @@ object DatasetParams {
       name = s"dataset-${Random.nextInt()}",
       description = "Empty Dataset",
       0,
-      columns = Seq.empty,
+      columns = Some(Seq.empty),
       createdAt = Some(System.currentTimeMillis())
     )
   }
