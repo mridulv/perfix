@@ -1,5 +1,7 @@
 package io.perfix.model.api
 
+import io.cequence.openaiscala.domain.ChatRole.Assistant
+import io.cequence.openaiscala.domain.{AssistantMessage, BaseMessage, ChatRole, SystemMessage, UserMessage}
 import io.perfix.db.tables.ConversationRow
 import play.api.libs.json.{Format, Json}
 
@@ -17,11 +19,35 @@ case class ConversationParams(conversationId: Option[ConversationId],
     }
   }
 
+  def addConversation(conversationMessage: ConversationMessage): ConversationParams = {
+    conversationDetails match {
+      case Some(conversation) => this.copy(conversationDetails = Some(conversation.addMessage(conversationMessage)))
+      case None => this.copy(conversationDetails = Some(ConversationDetails(Seq(conversationMessage))))
+    }
+  }
+
 }
 
-case class ConversationDetails(messages: ConversationMessage)
+case class ConversationDetails(messages: Seq[ConversationMessage]) {
 
-case class ConversationMessage(user: String, message: String)
+  def addMessage(conversationMessage: ConversationMessage): ConversationDetails = {
+    this.copy(messages = messages ++ Seq(conversationMessage))
+  }
+
+}
+
+case class ConversationMessage(user: ChatRole, message: String) {
+
+  def toBaseMessage: BaseMessage ={
+    user match {
+      case ChatRole.System => SystemMessage(message)
+      case ChatRole.Assistant => AssistantMessage(message)
+      case ChatRole.User => UserMessage(message)
+      case _ => throw new RuntimeException("Invalid User")
+    }
+  }
+
+}
 
 object ConversationParams {
   implicit val ConversationMessageFormatter: Format[ConversationMessage] = Json.format[ConversationMessage]
