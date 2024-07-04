@@ -77,7 +77,7 @@ class ExperimentManager @Inject()(datasetManager: DatasetManager,
       val experimentExecutor = new ExperimentExecutor(
         experimentParams,
         configParams,
-        datasetParams.dataset
+        datasetParams
       )
       val result = experimentExecutor.runExperiment()
       experimentExecutor.cleanUp()

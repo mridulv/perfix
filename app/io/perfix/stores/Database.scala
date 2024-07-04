@@ -28,16 +28,16 @@ object Database {
     }
   }
 
-  def getStore(databaseConfigParams: DatabaseConfigParams, dataset: Dataset): DataStore = {
+  def getStore(databaseConfigParams: DatabaseConfigParams, datasetParams: DatasetParams): DataStore = {
     databaseConfigParams.databaseSetupParams match {
       case storeParams: RDSDatabaseSetupParams => {
         storeParams.databaseType.getOrElse(MySQL) match {
-          case MySQL => new MySQLStore(dataset.params, storeParams)
-          case Postgres => new PostgreSQLStore(dataset.params, storeParams)
-          case MariaDB => new PostgreSQLStore(dataset.params, storeParams)
+          case MySQL => new MySQLStore(datasetParams, storeParams)
+          case Postgres => new PostgreSQLStore(datasetParams, storeParams)
+          case MariaDB => new PostgreSQLStore(datasetParams, storeParams)
         }
       }
-      case storeParams: DynamoDBDatabaseSetupParams => new DynamoDBStore(dataset.params, storeParams)
+      case storeParams: DynamoDBDatabaseSetupParams => new DynamoDBStore(datasetParams, storeParams)
       case storeParams: DocumentDBDatabaseSetupParams => new DocumentDBStore(storeParams)
       case storeParams: RedisDatabaseSetupParams => new RedisStore(storeParams)
     }
