@@ -10,8 +10,13 @@ class ConversationManager @Inject()(conversationStore: ConversationStore) {
 
   def create(conversationParams: ConversationParams): ConversationParams = {
     val createdConversationParams = conversationStore.create(conversationParams)
-    val id = createdConversationParams.conversationId.map(_.id).getOrElse("")
-    createdConversationParams.copy(name = Some(s"Untitled $id"))
+    val id = createdConversationParams.conversationId.map(_.id).getOrElse(-1)
+    val updatedConversationParams = createdConversationParams.copy(name = Some(s"Untitled $id"))
+    conversationStore.update(
+      ConversationId(id),
+      updatedConversationParams
+    )
+    updatedConversationParams
   }
 
   def get(conversationId: ConversationId): Option[ConversationParams] = {
