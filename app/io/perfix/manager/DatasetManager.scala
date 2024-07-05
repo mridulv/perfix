@@ -12,7 +12,15 @@ class DatasetManager @Inject()(datasetConfigStore: DatasetConfigStore) {
   private val SAMPLE_ROWS = 100
 
   def create(datasetParams: DatasetParams): DatasetId = {
-    datasetConfigStore.create(datasetParams).id
+    val updatedDatasetTableParams = datasetParams
+      .getDatasetTableParams
+      .zipWithIndex
+      .map { case (params, index) =>
+        params.copy(tableName = Some(params.tableName.getOrElse(s"table_${index}")))
+      }
+    datasetConfigStore
+      .create(datasetParams.copy(datasetTableParams = Some(updatedDatasetTableParams)))
+      .id
       .getOrElse(throw InvalidStateException("Invalid DatasetParams"))
   }
 
@@ -31,11 +39,16 @@ class DatasetManager @Inject()(datasetConfigStore: DatasetConfigStore) {
   }
 
   def data(datasetId: DatasetId): Datasets = {
-    datasetConfigStore.get(datasetId)
+    val datasets = datasetConfigStore.get(datasetId)
       .map { params =>
-        val datasets = params.datasets.sampleDataset(SAMPLE_ROWS).datasets
-        Datasets(datasets ++ datasets)
+        params.datasets.sampleDataset(SAMPLE_ROWS)
+          .datasets
+          .zipWithIndex
+          .map { case (dataset, index) =>
+            dataset.copy(tableName = Some(dataset.tableName.getOrElse(s"table_${index}")))
+          }
       }.getOrElse(throw InvalidStateException("Invalid Dataset"))
+    Datasets(datasets)
   }
 
   def update(datasetId: DatasetId,
