@@ -3,11 +3,13 @@ package io.perfix.model.api
 import io.cequence.openaiscala.domain.ChatRole.Assistant
 import io.cequence.openaiscala.domain.{AssistantMessage, BaseMessage, ChatRole, SystemMessage, UserMessage}
 import io.perfix.db.tables.ConversationRow
+import io.perfix.model.api.ConversationState.ConversationState
 import play.api.libs.json.{Format, Json}
 
 case class ConversationParams(conversationId: Option[ConversationId],
                               name: Option[String] = None,
                               conversationDetails: Option[ConversationDetails] = None,
+                              conversationState: Option[ConversationState] = Some(ConversationState.Created),
                               createdAt: Option[Long] = None) {
 
   def toConversationRow(userEmail: String): ConversationRow = {
