@@ -36,13 +36,13 @@ case class ConversationDetails(messages: Seq[ConversationMessage]) {
 
 }
 
-case class ConversationMessage(user: ChatRole, message: String) {
+case class ConversationMessage(user: String, message: String) {
 
-  def toBaseMessage: BaseMessage ={
+  def toBaseMessage: BaseMessage = {
     user match {
-      case ChatRole.System => SystemMessage(message)
-      case ChatRole.Assistant => AssistantMessage(message)
-      case ChatRole.User => UserMessage(message)
+      case s if s == ChatRole.System.toString() => SystemMessage(message)
+      case s if s == ChatRole.Assistant.toString() => AssistantMessage(message)
+      case s if s == ChatRole.User.toString() => UserMessage(message)
       case _ => throw new RuntimeException("Invalid User")
     }
   }
