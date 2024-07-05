@@ -25,10 +25,13 @@ object Dataset {
   implicit val anyWrites: Writes[Any] = Writes {
     case str: String => JsString(str)
     case int: Int => JsNumber(int)
+    case long: Long => JsNumber(long)
     case b: Boolean => JsBoolean(b)
-    case _ => throw new UnsupportedOperationException("Serialization of this Any type is not supported")
+    case c => throw new UnsupportedOperationException(s"Serialization of this Any ${c} type is not supported")
   }
-  implicit val DatasetFormatter: Format[Dataset] = Json.format[Dataset]
+
+  implicit val reads: Reads[Dataset] = Json.reads[Dataset]
+  implicit val writes: Writes[Dataset] = Json.writes[Dataset]
 
   def datasetForTesting: Dataset = {
     DatasetParams.empty().datasets.datasets.head
