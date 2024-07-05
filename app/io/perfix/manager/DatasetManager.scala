@@ -32,8 +32,10 @@ class DatasetManager @Inject()(datasetConfigStore: DatasetConfigStore) {
 
   def data(datasetId: DatasetId): Datasets = {
     datasetConfigStore.get(datasetId)
-      .map(_.datasets.sampleDataset(SAMPLE_ROWS))
-      .getOrElse(throw InvalidStateException("Invalid Dataset"))
+      .map { params =>
+        val datasets = params.datasets.sampleDataset(SAMPLE_ROWS).datasets
+        Datasets(datasets ++ datasets)
+      }.getOrElse(throw InvalidStateException("Invalid Dataset"))
   }
 
   def update(datasetId: DatasetId,
