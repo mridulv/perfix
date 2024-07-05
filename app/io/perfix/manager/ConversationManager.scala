@@ -6,7 +6,7 @@ import com.google.inject.{Inject, Singleton}
 import io.cequence.openaiscala.domain.ChatRole
 import io.cequence.openaiscala.service.OpenAIServiceFactory
 import io.perfix.db.ConversationStore
-import io.perfix.model.api.{ConversationId, ConversationMessage, ConversationParams}
+import io.perfix.model.api.{ConversationId, ConversationMessage, ConversationParams, ConversationState}
 
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, ExecutionContext}
@@ -20,7 +20,10 @@ class ConversationManager @Inject()(conversationStore: ConversationStore) {
   def create(conversationParams: ConversationParams): ConversationParams = {
     val createdConversationParams = conversationStore.create(conversationParams)
     val id = createdConversationParams.conversationId.map(_.id).getOrElse(-1)
-    val updatedConversationParams = createdConversationParams.copy(name = Some(s"Untitled $id"))
+    val updatedConversationParams = createdConversationParams.copy(
+      name = Some(s"Untitled $id"),
+      conversationState = Some(ConversationState.Created)
+    )
     conversationStore.update(
       ConversationId(id),
       updatedConversationParams
@@ -47,7 +50,7 @@ class ConversationManager @Inject()(conversationStore: ConversationStore) {
       conversationId,
       updatedConversationParams.addConversation(
         ConversationMessage(ChatRole.Assistant.toString(), assistantMessage)
-      )
+      ).copy(conversationState = Some(ConversationState.InProgress))
     )
     assistantMessage
   }
