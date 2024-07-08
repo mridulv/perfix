@@ -89,12 +89,14 @@ class ConversationManager @Inject()(conversationStore: ConversationStore) {
     }
   }
 
+  private def checkIfConversationEnded(messages: Seq[ConversationMessage]): Boolean = {
     val service = OpenAIServiceFactory()
-    val allMessages = Seq(systemMessage) ++ messages
-    Await.result(service.createChatCompletion(allMessages.map(_.toBaseMessage)), Duration.Inf)
+    val allMessages = Seq(CheckIfConversationCompletedMessage) ++ messages
+    val response = Await.result(service.createChatCompletion(allMessages.map(_.toBaseMessage)), Duration.Inf)
       .choices
       .head
       .message
       .content
+    response.strip().toLowerCase == "yes"
   }
 }
