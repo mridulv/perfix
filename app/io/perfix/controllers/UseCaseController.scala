@@ -5,8 +5,8 @@ import io.perfix.auth.AuthenticationAction
 import javax.inject.{Inject, Singleton}
 import play.api.libs.json.{JsString, JsValue, Json}
 import play.api.mvc.{AbstractController, Action, AnyContent, ControllerComponents}
-import io.perfix.manager.ConversationManager
-import io.perfix.model.api.{ConversationId, ConversationMessage, ConversationParams}
+import io.perfix.manager.UseCaseManager
+import io.perfix.model.api.{UseCaseId, ConversationMessage, UseCaseParams}
 import org.pac4j.core.profile.UserProfile
 import org.pac4j.play.scala.{Security, SecurityComponents}
 
@@ -14,20 +14,20 @@ import scala.concurrent.ExecutionContext
 import scala.util.parsing.json.JSONObject
 
 @Singleton
-class ConversationController @Inject()(val controllerComponents: SecurityComponents,
-                                       authenticationAction: AuthenticationAction,
-                                       conversationManager: ConversationManager)(implicit ec: ExecutionContext)
+class UseCaseController @Inject()(val controllerComponents: SecurityComponents,
+                                  authenticationAction: AuthenticationAction,
+                                  useCaseManager: UseCaseManager)(implicit ec: ExecutionContext)
   extends Security[UserProfile] {
 
   def create: Action[JsValue] = authenticationAction(parse.json) { request =>
-    val conversationParams = request.body.as[ConversationParams]
-    val createdConversation = conversationManager.create(conversationParams)
+    val conversationParams = request.body.as[UseCaseParams]
+    val createdConversation = useCaseManager.create(conversationParams)
     Ok(Json.toJson(createdConversation))
   }
 
   def get(id: Int): Action[AnyContent] = authenticationAction {
     try {
-      Ok(Json.toJson(conversationManager.get(ConversationId(id))))
+      Ok(Json.toJson(useCaseManager.get(UseCaseId(id))))
     } catch {
       case e: Exception => NotFound
     }
@@ -35,17 +35,17 @@ class ConversationController @Inject()(val controllerComponents: SecurityCompone
 
   def converse(id: Int): Action[JsValue] = authenticationAction(parse.json) { request =>
     val message = (request.body \ "message").as[String]
-    val conversationResponse = conversationManager.converse(ConversationId(id), message)
+    val conversationResponse = useCaseManager.converse(UseCaseId(id), message)
     Ok(Json.obj("message" -> conversationResponse))
   }
 
   def list: Action[AnyContent] = authenticationAction {
-    val conversations = conversationManager.list()
+    val conversations = useCaseManager.list()
     Ok(Json.toJson(conversations))
   }
 
   def delete(id: Int): Action[AnyContent] = authenticationAction {
-    val deletedRows = conversationManager.delete(ConversationId(id))
+    val deletedRows = useCaseManager.delete(UseCaseId(id))
     if (deletedRows > 0) Ok else NotFound
   }
 }

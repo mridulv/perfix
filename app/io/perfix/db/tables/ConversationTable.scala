@@ -1,13 +1,13 @@
 package io.perfix.db.tables
 
-import io.perfix.model.api.{ConversationId, ConversationParams}
+import io.perfix.model.api.{UseCaseId, UseCaseParams}
 import play.api.libs.json.Json
 import slick.jdbc.PostgresProfile.api._
 
 case class ConversationRow(id: Int, userEmail: String, obj: String) {
 
-  def toConversationRow: ConversationParams = {
-    Json.parse(this.obj).as[ConversationParams].copy(conversationId = Some(ConversationId(id)))
+  def toConversationRow: UseCaseParams = {
+    Json.parse(this.obj).as[UseCaseParams].copy(useCaseId = Some(UseCaseId(id)))
   }
 
 }
