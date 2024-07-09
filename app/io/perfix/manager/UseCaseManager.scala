@@ -5,8 +5,8 @@ import akka.stream.Materializer
 import com.google.inject.{Inject, Singleton}
 import io.cequence.openaiscala.domain.ChatRole
 import io.cequence.openaiscala.service.OpenAIServiceFactory
-import io.perfix.db.ConversationStore
-import io.perfix.model.api.{ConversationId, ConversationMessage, ConversationParams, ConversationState}
+import io.perfix.db.UseCaseStore
+import io.perfix.model.api.{UseCaseId, ConversationMessage, UseCaseParams, UseCaseState}
 import io.perfix.util.ConversationSystemPrompt.{CheckIfConversationCompletedMessage, CompletionConversationMessage, SystemConversationMessage}
 
 import scala.concurrent.duration.Duration
@@ -14,63 +14,63 @@ import scala.concurrent.{Await, ExecutionContext}
 
 
 @Singleton
-class ConversationManager @Inject()(conversationStore: ConversationStore) {
+class UseCaseManager @Inject()(useCaseStore: UseCaseStore) {
   implicit val ec = ExecutionContext.global
   implicit val materializer = Materializer(ActorSystem())
 
-  def create(conversationParams: ConversationParams): ConversationParams = {
-    val createdConversationParams = conversationStore.create(conversationParams)
-    val id = createdConversationParams.conversationId.map(_.id).getOrElse(-1)
+  def create(dbExplorerParams: UseCaseParams): UseCaseParams = {
+    val createdConversationParams = useCaseStore.create(dbExplorerParams)
+    val id = createdConversationParams.useCaseId.map(_.id).getOrElse(-1)
     val updatedConversationParams = createdConversationParams.copy(
       name = Some(s"Untitled $id"),
-      conversationState = Some(ConversationState.Created)
+      useCaseState = Some(UseCaseState.Created)
     )
-    conversationStore.update(
-      ConversationId(id),
+    useCaseStore.update(
+      UseCaseId(id),
       updatedConversationParams
     )
     updatedConversationParams
   }
 
-  def get(conversationId: ConversationId): ConversationParams = {
-    conversationStore
+  def get(conversationId: UseCaseId): UseCaseParams = {
+    useCaseStore
       .get(conversationId)
       .getOrElse(throw new RuntimeException(s"Invalid ${conversationId}"))
   }
 
-  def converse(conversationId: ConversationId, message: String): String = {
+  def converse(conversationId: UseCaseId, message: String): String = {
     val conversationParams = get(conversationId)
     val updatedConversationParams = conversationParams.addConversation(
       ConversationMessage(ChatRole.User.toString(), message)
     )
-    val conversationMessage: ConversationMessage = updatedConversationParams.conversationDetails match {
+    val conversationMessage: ConversationMessage = updatedConversationParams.useCaseDetails match {
       case Some(conversation) => chatResponse(conversation.messages)
       case None => throw new RuntimeException(s"Invalid ConversationParams for id: ${conversationId}")
     }
     if (conversationMessage == CheckIfConversationCompletedMessage) {
-      conversationStore.update(
+      useCaseStore.update(
         conversationId,
         updatedConversationParams
           .addConversation(conversationMessage)
-          .copy(conversationState = Some(ConversationState.Completed))
+          .copy(useCaseState = Some(UseCaseState.Completed))
       )
     } else {
-      conversationStore.update(
+      useCaseStore.update(
         conversationId,
         updatedConversationParams
           .addConversation(conversationMessage)
-          .copy(conversationState = Some(ConversationState.InProgress))
+          .copy(useCaseState = Some(UseCaseState.InProgress))
       )
     }
     conversationMessage.message
   }
 
-  def list(): Seq[ConversationParams] = {
-    conversationStore.list()
+  def list(): Seq[UseCaseParams] = {
+    useCaseStore.list()
   }
 
-  def delete(conversationId: ConversationId): Int = {
-    conversationStore.delete(conversationId)
+  def delete(conversationId: UseCaseId): Int = {
+    useCaseStore.delete(conversationId)
   }
 
   private def chatResponse(messages: Seq[ConversationMessage]): ConversationMessage = {
