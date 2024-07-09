@@ -2,7 +2,7 @@ package io.perfix.db
 
 import com.google.inject.{Inject, Singleton}
 import io.perfix.auth.UserContext
-import io.perfix.db.tables.ConversationTable
+import io.perfix.db.tables.UseCaseTable
 import io.perfix.exceptions.UserNotDefinedException
 import io.perfix.model.UserInfo
 import io.perfix.model.api.{UseCaseId, UseCaseParams}
@@ -17,56 +17,56 @@ import scala.concurrent.{Await, ExecutionContext, Future}
 class UseCaseStore @Inject()(dbConfigProvider: DatabaseConfigProvider)(implicit ec: ExecutionContext) {
 
   private val dbConfig = dbConfigProvider.get[JdbcProfile]
-  private val conversationTable = TableQuery[ConversationTable]
+  private val useCaseTable = TableQuery[UseCaseTable]
   import dbConfig._
   import profile.api._
 
-  def create(conversationParams: UseCaseParams): UseCaseParams = unwrapFuture { userInfo =>
+  def create(useCaseParams: UseCaseParams): UseCaseParams = unwrapFuture { userInfo =>
     db.run {
-      val conversationRow = conversationParams
+      val conversationRow = useCaseParams
         .copy(createdAt = Some(System.currentTimeMillis()))
         .toConversationRow(userInfo.email)
-      (conversationTable returning conversationTable.map(_.id)
+      (useCaseTable returning useCaseTable.map(_.id)
         into ((conversationRow, id) => conversationRow.copy(id = id))
         ) += conversationRow
     }
-  }.toConversationRow
+  }.toUseCaseRow
 
-  def update(conversationId: UseCaseId, conversationParams: UseCaseParams): Int = unwrapFuture { userInfo =>
+  def update(useCaseId: UseCaseId, useCaseParams: UseCaseParams): Int = unwrapFuture { userInfo =>
     db.run {
-      val conversationRow = conversationParams.toConversationRow(userInfo.email)
+      val useCaseRow = useCaseParams.toConversationRow(userInfo.email)
       val query = for {
-        e <- conversationTable
-        if e.id === conversationId.id && e.userEmail === userInfo.email
+        e <- useCaseTable
+        if e.id === useCaseId.id && e.userEmail === userInfo.email
       } yield e.obj
-      query.update(conversationRow.obj)
+      query.update(useCaseRow.obj)
     }
   }
 
-  def get(conversationId: UseCaseId): Option[UseCaseParams] = unwrapFuture { userInfo =>
+  def get(useCaseId: UseCaseId): Option[UseCaseParams] = unwrapFuture { userInfo =>
     db.run {
-      conversationTable
-        .filter(_.id === conversationId.id)
+      useCaseTable
+        .filter(_.id === useCaseId.id)
         .filter(_.userEmail === userInfo.email)
         .result
         .headOption
-        .map(_.map(_.toConversationRow))
+        .map(_.map(_.toUseCaseRow))
     }
   }
 
 
   def list(): Seq[UseCaseParams] = unwrapFuture { userInfo =>
     db.run {
-      conversationTable
+      useCaseTable
         .filter(_.userEmail === userInfo.email)
         .result
-        .map(_.map(_.toConversationRow))
+        .map(_.map(_.toUseCaseRow))
     }
   }
 
   def delete(conversationId: UseCaseId): Int = unwrapFuture { userInfo =>
     db.run {
-      conversationTable
+      useCaseTable
         .filter(_.userEmail === userInfo.email)
         .filter(_.id === conversationId.id)
         .delete

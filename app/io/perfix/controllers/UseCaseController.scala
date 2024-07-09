@@ -20,9 +20,9 @@ class UseCaseController @Inject()(val controllerComponents: SecurityComponents,
   extends Security[UserProfile] {
 
   def create: Action[JsValue] = authenticationAction(parse.json) { request =>
-    val conversationParams = request.body.as[UseCaseParams]
-    val createdConversation = useCaseManager.create(conversationParams)
-    Ok(Json.toJson(createdConversation))
+    val useCaseParams = request.body.as[UseCaseParams]
+    val createdUseCase = useCaseManager.create(useCaseParams)
+    Ok(Json.toJson(createdUseCase))
   }
 
   def get(id: Int): Action[AnyContent] = authenticationAction {
@@ -40,8 +40,8 @@ class UseCaseController @Inject()(val controllerComponents: SecurityComponents,
   }
 
   def list: Action[AnyContent] = authenticationAction {
-    val conversations = useCaseManager.list()
-    Ok(Json.toJson(conversations))
+    val useCases = useCaseManager.list()
+    Ok(Json.toJson(useCases))
   }
 
   def delete(id: Int): Action[AnyContent] = authenticationAction {

@@ -2,7 +2,7 @@ package io.perfix.model.api
 
 import io.cequence.openaiscala.domain.ChatRole.Assistant
 import io.cequence.openaiscala.domain.{AssistantMessage, BaseMessage, ChatRole, SystemMessage, UserMessage}
-import io.perfix.db.tables.ConversationRow
+import io.perfix.db.tables.UseCaseRow
 import io.perfix.model.api.UseCaseState.UseCaseState
 import play.api.libs.json.{Format, Json}
 
@@ -12,12 +12,12 @@ case class UseCaseParams(useCaseId: Option[UseCaseId],
                          useCaseState: Option[UseCaseState] = Some(UseCaseState.Created),
                          createdAt: Option[Long] = None) {
 
-  def toConversationRow(userEmail: String): ConversationRow = {
+  def toConversationRow(userEmail: String): UseCaseRow = {
     useCaseId match {
       case Some(id) =>
-        ConversationRow(id = id.id, userEmail = userEmail, obj = Json.toJson(this).toString())
+        UseCaseRow(id = id.id, userEmail = userEmail, obj = Json.toJson(this).toString())
       case None =>
-        ConversationRow(id = -1, userEmail = userEmail, obj = Json.toJson(this).toString())
+        UseCaseRow(id = -1, userEmail = userEmail, obj = Json.toJson(this).toString())
     }
   }
 
