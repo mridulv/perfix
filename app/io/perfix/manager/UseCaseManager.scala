@@ -18,46 +18,46 @@ class UseCaseManager @Inject()(useCaseStore: UseCaseStore) {
   implicit val ec = ExecutionContext.global
   implicit val materializer = Materializer(ActorSystem())
 
-  def create(dbExplorerParams: UseCaseParams): UseCaseParams = {
-    val createdConversationParams = useCaseStore.create(dbExplorerParams)
-    val id = createdConversationParams.useCaseId.map(_.id).getOrElse(-1)
-    val updatedConversationParams = createdConversationParams.copy(
+  def create(useCaseParams: UseCaseParams): UseCaseParams = {
+    val createdUseCaseParams = useCaseStore.create(useCaseParams)
+    val id = createdUseCaseParams.useCaseId.map(_.id).getOrElse(-1)
+    val updatedUseCaseParams = createdUseCaseParams.copy(
       name = Some(s"Untitled $id"),
       useCaseState = Some(UseCaseState.Created)
     )
     useCaseStore.update(
       UseCaseId(id),
-      updatedConversationParams
+      updatedUseCaseParams
     )
-    updatedConversationParams
+    updatedUseCaseParams
   }
 
-  def get(conversationId: UseCaseId): UseCaseParams = {
+  def get(useCaseId: UseCaseId): UseCaseParams = {
     useCaseStore
-      .get(conversationId)
-      .getOrElse(throw new RuntimeException(s"Invalid ${conversationId}"))
+      .get(useCaseId)
+      .getOrElse(throw new RuntimeException(s"Invalid ${useCaseId}"))
   }
 
-  def converse(conversationId: UseCaseId, message: String): String = {
-    val conversationParams = get(conversationId)
-    val updatedConversationParams = conversationParams.addConversation(
+  def converse(useCaseId: UseCaseId, message: String): String = {
+    val useCaseParams = get(useCaseId)
+    val updatedUseCaseParams = useCaseParams.addConversation(
       ConversationMessage(ChatRole.User.toString(), message)
     )
-    val conversationMessage: ConversationMessage = updatedConversationParams.useCaseDetails match {
+    val conversationMessage: ConversationMessage = updatedUseCaseParams.useCaseDetails match {
       case Some(conversation) => chatResponse(conversation.messages)
-      case None => throw new RuntimeException(s"Invalid ConversationParams for id: ${conversationId}")
+      case None => throw new RuntimeException(s"Invalid ConversationParams for id: ${useCaseId}")
     }
     if (conversationMessage == CheckIfConversationCompletedMessage) {
       useCaseStore.update(
-        conversationId,
-        updatedConversationParams
+        useCaseId,
+        updatedUseCaseParams
           .addConversation(conversationMessage)
           .copy(useCaseState = Some(UseCaseState.Completed))
       )
     } else {
       useCaseStore.update(
-        conversationId,
-        updatedConversationParams
+        useCaseId,
+        updatedUseCaseParams
           .addConversation(conversationMessage)
           .copy(useCaseState = Some(UseCaseState.InProgress))
       )
@@ -69,8 +69,8 @@ class UseCaseManager @Inject()(useCaseStore: UseCaseStore) {
     useCaseStore.list()
   }
 
-  def delete(conversationId: UseCaseId): Int = {
-    useCaseStore.delete(conversationId)
+  def delete(useCaseId: UseCaseId): Int = {
+    useCaseStore.delete(useCaseId)
   }
 
   private def chatResponse(messages: Seq[ConversationMessage]): ConversationMessage = {
