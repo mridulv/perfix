@@ -23,18 +23,18 @@ class UseCaseStore @Inject()(dbConfigProvider: DatabaseConfigProvider)(implicit 
 
   def create(useCaseParams: UseCaseParams): UseCaseParams = unwrapFuture { userInfo =>
     db.run {
-      val conversationRow = useCaseParams
+      val useCaseRow = useCaseParams
         .copy(createdAt = Some(System.currentTimeMillis()))
-        .toConversationRow(userInfo.email)
+        .toUseCaseRow(userInfo.email)
       (useCaseTable returning useCaseTable.map(_.id)
-        into ((conversationRow, id) => conversationRow.copy(id = id))
-        ) += conversationRow
+        into ((useCaseRow, id) => useCaseRow.copy(id = id))
+        ) += useCaseRow
     }
   }.toUseCaseRow
 
   def update(useCaseId: UseCaseId, useCaseParams: UseCaseParams): Int = unwrapFuture { userInfo =>
     db.run {
-      val useCaseRow = useCaseParams.toConversationRow(userInfo.email)
+      val useCaseRow = useCaseParams.toUseCaseRow(userInfo.email)
       val query = for {
         e <- useCaseTable
         if e.id === useCaseId.id && e.userEmail === userInfo.email
@@ -64,11 +64,11 @@ class UseCaseStore @Inject()(dbConfigProvider: DatabaseConfigProvider)(implicit 
     }
   }
 
-  def delete(conversationId: UseCaseId): Int = unwrapFuture { userInfo =>
+  def delete(useCaseId: UseCaseId): Int = unwrapFuture { userInfo =>
     db.run {
       useCaseTable
         .filter(_.userEmail === userInfo.email)
-        .filter(_.id === conversationId.id)
+        .filter(_.id === useCaseId.id)
         .delete
     }
   }
