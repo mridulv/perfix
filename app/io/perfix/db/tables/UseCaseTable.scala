@@ -12,7 +12,7 @@ case class UseCaseRow(id: Int, userEmail: String, obj: String) {
 
 }
 
-class UseCaseTable(tag: Tag) extends Table[UseCaseRow](tag, "conversations") {
+class UseCaseTable(tag: Tag) extends Table[UseCaseRow](tag, "usecases") {
   def id = column[Int]("id", O.PrimaryKey, O.AutoInc)
   def userEmail = column[String]("useremail")
   def obj = column[String]("obj")
