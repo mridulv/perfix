@@ -38,8 +38,8 @@ GET         /databases                                 io.perfix.controllers.Con
 GET         /databases/inputs                          io.perfix.controllers.ConfigController.inputs(databaseType: String)
 GET         /databases/categories                      io.perfix.controllers.ConfigController.categories
 
-POST        /usecases                                  io.perfix.controllers.UseCaseController.create
+POST        /usecases/create                           io.perfix.controllers.UseCaseController.create
+POST        /usecases                                  io.perfix.controllers.UseCaseController.all
 POST        /usecases/:id/converse                     io.perfix.controllers.UseCaseController.converse(id: Int)
-GET         /usecases                                  io.perfix.controllers.UseCaseController.list
 GET         /usecases/:id                              io.perfix.controllers.UseCaseController.get(id: Int)
 DELETE      /usecases/:id                              io.perfix.controllers.UseCaseController.delete(id: Int)

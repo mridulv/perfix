@@ -1,6 +1,6 @@
 package io.perfix.model
 
-import io.perfix.model.api.{DatabaseConfigParams, DatasetParams}
+import io.perfix.model.api.{DatabaseConfigParams, DatasetParams, UseCaseParams}
 import io.perfix.model.experiment.ExperimentParams
 import play.api.libs.json._
 
@@ -39,8 +39,12 @@ trait ExperimentFilter extends EntityFilter {
 
 }
 
+trait UseCaseFilter extends EntityFilter {
+  def filter(useCaseParams: UseCaseParams): Boolean
+}
 
-case class TextFilter(text: String) extends DatasetFilter with DatabaseConfigFilter with ExperimentFilter {
+
+case class TextFilter(text: String) extends DatasetFilter with DatabaseConfigFilter with ExperimentFilter with UseCaseFilter {
 
   override val filterName: String = text
 
@@ -58,6 +62,10 @@ case class TextFilter(text: String) extends DatasetFilter with DatabaseConfigFil
 
   def filter(experimentParams: ExperimentParams): Boolean = {
     filter(experimentParams.name)
+  }
+
+  override def filter(useCaseParams: UseCaseParams): Boolean = {
+    filterOpt(useCaseParams.name)
   }
 }
 

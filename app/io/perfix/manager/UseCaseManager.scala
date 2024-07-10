@@ -6,7 +6,8 @@ import com.google.inject.{Inject, Singleton}
 import io.cequence.openaiscala.domain.ChatRole
 import io.cequence.openaiscala.service.OpenAIServiceFactory
 import io.perfix.db.UseCaseStore
-import io.perfix.model.api.{UseCaseId, ConversationMessage, UseCaseParams, UseCaseState}
+import io.perfix.model.{EntityFilter, ExperimentFilter, UseCaseFilter}
+import io.perfix.model.api.{ConversationMessage, UseCaseId, UseCaseParams, UseCaseState}
 import io.perfix.util.ConversationSystemPrompt.{CheckIfConversationCompletedMessage, CompletionConversationMessage, SystemConversationMessage}
 
 import scala.concurrent.duration.Duration
@@ -65,8 +66,14 @@ class UseCaseManager @Inject()(useCaseStore: UseCaseStore) {
     conversationMessage.message
   }
 
-  def list(): Seq[UseCaseParams] = {
-    useCaseStore.list()
+  def all(entityFilters: Seq[EntityFilter]): Seq[UseCaseParams] = {
+    val allUseCases = useCaseStore.list()
+    val useCaseFilters = entityFilters.collect {
+      case df: UseCaseFilter => df
+    }
+    useCaseFilters.foldLeft(allUseCases) { (useCaseParams, filter) =>
+      useCaseParams.filter(d => filter.filter(d))
+    }
   }
 
   def delete(useCaseId: UseCaseId): Int = {
