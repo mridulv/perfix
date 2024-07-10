@@ -39,8 +39,8 @@ class UseCaseController @Inject()(val controllerComponents: SecurityComponents,
     Ok(Json.obj("message" -> conversationResponse))
   }
 
-  def list: Action[AnyContent] = authenticationAction {
-    val useCases = useCaseManager.list()
+  def all: Action[AnyContent] = authenticationAction {
+    val useCases = useCaseManager.all()
     Ok(Json.toJson(useCases))
   }
 
