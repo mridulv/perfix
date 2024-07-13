@@ -6,8 +6,10 @@ import com.google.inject.{Inject, Singleton}
 import io.cequence.openaiscala.domain.ChatRole
 import io.cequence.openaiscala.service.OpenAIServiceFactory
 import io.perfix.db.UseCaseStore
-import io.perfix.model.{EntityFilter, ExperimentFilter, UseCaseFilter}
+import io.perfix.model.{EntityFilter, UseCaseFilter}
 import io.perfix.model.api.{ConversationMessage, UseCaseId, UseCaseParams, UseCaseState}
+import io.perfix.model.store.StoreType
+import io.perfix.model.store.StoreType.StoreType
 import io.perfix.util.ConversationSystemPrompt.{CheckIfConversationCompletedMessage, CompletionConversationMessage, SystemConversationMessage}
 
 import scala.concurrent.duration.Duration
@@ -82,7 +84,7 @@ class UseCaseManager @Inject()(useCaseStore: UseCaseStore) {
 
   private def chatResponse(messages: Seq[ConversationMessage]): ConversationMessage = {
     val service = OpenAIServiceFactory()
-    val allMessages = Seq(SystemConversationMessage) ++ messages
+    val allMessages = messages ++ Seq(SystemConversationMessage)
     val response = Await.result(service.createChatCompletion(allMessages.map(_.toBaseMessage)), Duration.Inf)
       .choices
       .head
@@ -98,7 +100,7 @@ class UseCaseManager @Inject()(useCaseStore: UseCaseStore) {
 
   private def checkIfConversationEnded(messages: Seq[ConversationMessage]): Boolean = {
     val service = OpenAIServiceFactory()
-    val allMessages = Seq(CheckIfConversationCompletedMessage) ++ messages
+    val allMessages = messages ++ Seq(CheckIfConversationCompletedMessage)
     val response = Await.result(service.createChatCompletion(allMessages.map(_.toBaseMessage)), Duration.Inf)
       .choices
       .head
