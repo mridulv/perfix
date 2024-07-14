@@ -15,6 +15,15 @@ case class RDSDatabaseSetupParams(instanceType: String = "db.t3.medium",
 
 object RDSDatabaseSetupParams {
   implicit val RDSDatabaseSetupParamsFormatter: Format[RDSDatabaseSetupParams] = Json.format[RDSDatabaseSetupParams]
+
+  def defaultRDSDatabaseSetupParams(tableName: String, storeType: StoreType): RDSDatabaseSetupParams = {
+    RDSDatabaseSetupParams(
+      tableName = tableName,
+      databaseType = Some(storeType),
+      primaryIndexColumn = None,
+      secondaryIndexesColumn = None
+    )
+  }
 }
 
 case class MySQLConnectionParams(url: String, username: String, password: String)
