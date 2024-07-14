@@ -89,7 +89,17 @@ class UseCaseManager @Inject()(useCaseStore: UseCaseStore,
     useCaseStore.delete(useCaseId)
   }
 
-  private def chatResponse(messages: Seq[ConversationMessage]): ConversationMessage = {
+  private def handleEndConversation(useCaseParams: UseCaseParams): ConversationMessage = {
+    val conversationMessages = useCaseParams.useCaseDetails.map(_.messages).getOrElse(Seq.empty)
+    val useCaseConversationParser = new UseCaseConversationParser(conversationMessages)
+    val (datasetId, databaseConfigId, experimentId) = useCaseConversationParser.init(datasetManager, databaseConfigManager, experimentManager)
+    ConversationMessage(
+      ChatRole.System.toString(),
+      s"We have created a benchmark run for you given all the inputs in the chat. Link: ${APP_URL}/experiment/${experimentId}"
+    )
+  }
+
+  private def wrappedResponse(messages: Seq[ConversationMessage]): ConversationMessage = {
     val service = OpenAIServiceFactory()
     val allMessages = Seq(SystemConversationMessage) ++ messages
     val response = Await.result(service.createChatCompletion(allMessages.map(_.toBaseMessage)), Duration.Inf)
