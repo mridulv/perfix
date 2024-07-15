@@ -13,7 +13,7 @@ import useDatabases from "../../../api/useDatabases";
 import AddExperiment from "../../../components/AddExperiment/AddExperiment";
 import axios from "axios";
 
-const AddExperimentPage= () => {
+const AddExperimentPage = () => {
   const [creatingStep, setCreatingStep] = useState("dataset");
 
   const {
@@ -34,7 +34,11 @@ const AddExperimentPage= () => {
 
   const { data: experiments, isLoading } = useExperiments([]);
   const { data: datasets, isLoading: datasetsLoading } = useDatasets([]);
-  const { data: databases, isLoading: databaseLoading, refetch: databaseRefetch } = useDatabases([]);
+  const {
+    data: databases,
+    isLoading: databaseLoading,
+    refetch: databaseRefetch,
+  } = useDatabases([]);
 
   const handleSubmitDataset = async (event) => {
     event.preventDefault();
@@ -69,7 +73,7 @@ const AddExperimentPage= () => {
     if (selectedDatasetId) {
       const fetchDataset = async () => {
         const res = await axios.get(
-          `${process.env.REACT_APP_BASE_URL}/dataset/${selectedDatasetId}`,
+          `${import.meta.env.VITE_BASE_URL}/dataset/${selectedDatasetId}`,
           {
             withCredentials: true,
           }
@@ -84,7 +88,7 @@ const AddExperimentPage= () => {
   if (isLoading && datasetsLoading && databaseLoading) return <Loading />;
   return (
     <div className="pt-8">
-      <div className="ps-7 mb-5 flex items-center gap-3">
+      <div className="ps-7 mb-5 flex items-center gap-3 -tracking-tighter">
         <FaArrowLeft
           className="cursor-pointer"
           onClick={() => navigate("/experiment")}

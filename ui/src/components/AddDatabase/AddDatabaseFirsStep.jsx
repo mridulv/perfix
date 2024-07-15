@@ -31,7 +31,7 @@ const AddDatabaseFirsStep = ({
       <div className="flex flex-col mb-4">
         <label className="text-[12px] font-bold mb-[2px]">Name</label>
         <input
-          className="search-input border-2 border-gray-300 focus:border-gray-400  max-w-[250px] px-2 py-2 rounded"
+          className=" border-2 border-gray-300 focus:border-gray-400  max-w-[250px] px-2 py-2 rounded"
           placeholder="Name"
           name="name"
           type="text"

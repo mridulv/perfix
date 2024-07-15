@@ -1,5 +1,5 @@
+/* eslint-disable react/no-unescaped-entities */
 import axios from "axios";
-import React from "react";
 import { MdClose } from "react-icons/md";
 
 const DeleteModal = ({
@@ -12,7 +12,7 @@ const DeleteModal = ({
   successFunctions
 }) => {
 
-  const handleDelete = async (id, message) => {
+  const handleDelete = async () => {
     try {
       const res = await axios.delete(
         `${deleteUrl}/${dataId}`,

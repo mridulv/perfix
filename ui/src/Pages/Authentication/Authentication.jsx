@@ -15,7 +15,7 @@ const Authentication = () => {
   }, [user, navigate]);
 
   const handleUser = () => {
-    window.location.href = `${process.env.REACT_APP_BASE_URL}/login`;
+    window.location.href = `${import.meta.env.VITE_BASE_URL}/login`;
   };
 
   if (user && Object.keys(user).length > 0) {

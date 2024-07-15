@@ -1,6 +1,7 @@
 import React from "react";
 
 const TableForMultiDatabase = ({ experimentData }) => {
+  console.log(experimentData);
   const headers = experimentData.databaseConfigs.map(
     (config) => `${config.storeType}: ${config.databaseConfigName}`
   );

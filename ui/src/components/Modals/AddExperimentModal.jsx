@@ -71,7 +71,7 @@ const AddExperimentModal = ({
     if (selectedDatasetId) {
       const fetchDataset = async () => {
         const res = await axios.get(
-          `${process.env.REACT_APP_BASE_URL}/dataset/${selectedDatasetId}`,
+          `${import.meta.env.VITE_BASE_URL}/dataset/${selectedDatasetId}`,
           {
             withCredentials: true,
           }

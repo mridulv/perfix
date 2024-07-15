@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import  { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaArrowLeft } from "react-icons/fa6";
 import SingleDatabaseExperimentResult from "../../../components/ExperimentResults/SingleDatabaseExperimentResult";
@@ -13,7 +13,7 @@ const ExperimentResultPage = () => {
   };
 
   const experimentData = {
-    name: "first",
+    name: "TPC-H Experiment",
     writeBatchSize: 100,
     experimentTimeInSeconds: 5,
     concurrentQueries: 10,
@@ -25,7 +25,7 @@ const ExperimentResultPage = () => {
         databaseConfigId: {
           id: 37,
         },
-        databaseConfigName: "first",
+        databaseConfigName: "TPC-H",
         storeType: "MongoDB",
         datasetName: "First Dataset",
       },
@@ -33,7 +33,7 @@ const ExperimentResultPage = () => {
         databaseConfigId: {
           id: 38,
         },
-        databaseConfigName: "second",
+        databaseConfigName: "TPC-C",
         storeType: "Redis",
         datasetName: "First Dataset",
       },
@@ -41,7 +41,7 @@ const ExperimentResultPage = () => {
         databaseConfigId: {
           id: 39,
         },
-        databaseConfigName: "third",
+        databaseConfigName: "TPC-F",
         storeType: "MySQL",
         datasetName: "First Dataset",
       },
@@ -49,7 +49,7 @@ const ExperimentResultPage = () => {
     experimentState: "Created",
     experimentResults: [
       {
-        databaseConfigDetails: { databaseConfigId: { id: 1 }, databaseConfigName: "first" },
+        databaseConfigDetails: { databaseConfigId: { id: 1 }, databaseConfigName: "TPC-H" },
         experimentResult: {
           overallQueryTime: 120,
           overallWriteTimeTaken: 5,
@@ -77,7 +77,7 @@ const ExperimentResultPage = () => {
         },
       },
       {
-        databaseConfigDetails: { databaseConfigId: { id: 2 }, databaseConfigName: "second" },
+        databaseConfigDetails: { databaseConfigId: { id: 2 }, databaseConfigName: "TPC-C" },
         experimentResult: {
           overallQueryTime: 150,
           overallWriteTimeTaken: 7,
@@ -105,7 +105,7 @@ const ExperimentResultPage = () => {
         },
       },
       {
-        databaseConfigDetails: { databaseConfigId: { id: 3 }, databaseConfigName: "third" },
+        databaseConfigDetails: { databaseConfigId: { id: 3 }, databaseConfigName: "TPC-F" },
         experimentResult: {
           overallQueryTime: 180,
           overallWriteTimeTaken: 6,
@@ -138,16 +138,16 @@ const ExperimentResultPage = () => {
 
   return (
     <div className="py-8">
-      <div className="ps-7 mb-5 flex items-center gap-3">
+      <div className="ps-7 mb-5 flex items-center gap-3 -tracking-tighter">
         <FaArrowLeft
           className="cursor-pointer"
           onClick={() => navigate("/experiment")}
           size={20}
         />
         <h2 className="text-[#8e8e8e] text-xl font-semibold">
-          Create new Experiment /
+           Experiments /
         </h2>
-        <h2 className="text-xl font-semibold">First Experiment</h2>
+        <h2 className="text-xl font-semibold">TPC-H Experiment</h2>
       </div>
       <div className="w-[95%] h-[1px] bg-accent my-6"></div>
 

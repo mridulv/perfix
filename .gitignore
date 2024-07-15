@@ -6,3 +6,4 @@ project/project/
 logs/
 ui/node_modules/
 ui/.env.local
+ui/dist

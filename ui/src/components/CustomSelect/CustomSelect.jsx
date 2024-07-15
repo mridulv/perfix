@@ -32,14 +32,14 @@ function CustomSelect({ selected, setSelected, options, width }) {
   return (
     <div className="relative dropdown" ref={dropdownRef}>
       <div
-        className={`dropdown-btn ${width} ${isActive ? "border-2 border-blue-400" : "border-2 border-[#E0E0E0]"}`}
+        className={`dropdown-btn ${width} ${isActive ? "border-2 border-blue-400" : "border-2 border-[#E0E0E0]"} flex items-center justify-between`}
         onClick={handleOpenOptions}
       >
-        <span className="mr-4">{selected?.option}</span>
-        <span className="mb-[2px]">{isActive ? <FaCaretUp /> : <FaCaretDown />}</span>
+        <span className="truncate flex-grow mr-[2px]">{selected?.option}</span>
+        <span className="flex-shrink-0">{isActive ? <FaCaretUp /> : <FaCaretDown />}</span>
       </div>
       {isActive && (
-        <div className="absolute top-full left-0 right-0 bg-white shadow-md z-50">
+        <div className=" absolute top-full left-0 bg-white shadow-md z-30" style={{ minWidth: '100%' }}>
           {options.length === 0 ? (
             <div className="dropdown-item flex items-center gap-2 px-4 py-2 bg-gray-100 cursor-default">
               No options available
@@ -49,16 +49,16 @@ function CustomSelect({ selected, setSelected, options, width }) {
               <div
                 key={i}
                 onClick={() => handleOptionSelect({ option, value })}
-                className="dropdown-item flex items-center gap-2 px-4 py-2 hover:bg-gray-200 cursor-pointer"
+                className="dropdown-item flex items-center gap-2 px-4 py-2 hover:bg-gray-200 cursor-pointer z-50 whitespace-nowrap"
               >
-                <span className="mb-[2px]">
+                <span className="flex-shrink-0">
                   {selected?.option === option ? (
                     <RiCheckboxFill size={17} color="#3DA5FF" />
                   ) : (
                     <MdOutlineCheckBoxOutlineBlank size={17} color="#3DA5FF" />
                   )}
                 </span>
-                {option}
+                <span>{option}</span>
               </div>
             ))
           )}

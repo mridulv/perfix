@@ -50,7 +50,7 @@ const AddDatasetModal = ({ open, onClose, datasets, refetch }) => {
       <div
         onClick={(e) => e.stopPropagation()}
         className={`
-          bg-white rounded-lg shadow p-6 transition-all
+          bg-white rounded-lg shadow px-6 pt-5 pb-1 transition-all
           ${open ? "scale-100 opacity-100" : "scale-125 opacity-0"}
         `}
         style={{ maxHeight: "80vh", overflow: "auto" }}
@@ -65,9 +65,9 @@ const AddDatasetModal = ({ open, onClose, datasets, refetch }) => {
         <div className="">
           <h2 className="ms-2 text-[20px] font-bold">Create new dataset</h2>
           <div className="w-[95%] h-[1px] bg-accent mb-3 mt-5"></div>
-          <form onSubmit={handleAddDataset} className="mb-2 ps-3 pe-8 py-2 ">
+          <form onSubmit={handleAddDataset} className=" ps-3 pe-8 py-2 ">
             <AddDataset columns={columns} handleAddColumn={handleAddColumn} />
-            <div className="mt-[50px] flex gap-3 pb-4">
+            <div className="mt-[50px] flex gap-3">
               <button
                 className="btn bg-primary btn-sm border border-primary rounded text-white hover:bg-[#57B1FF]"
                 type="submit"

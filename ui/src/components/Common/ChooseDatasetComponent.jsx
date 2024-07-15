@@ -20,11 +20,11 @@ const ChooseDatasetComponent = ({
   );
 
   return (
-    <div className="mt-7 ms-7 w-[320px]">
-      <div className="bg-secondary py-1 ps-3  flex items-center gap-3 rounded">
+    <div className="mt-7 ms-7 max-w-[300px] flex flex-col" style={{ minHeight: 'calc(100vh - 200px)' }}>
+      <div className="bg-secondary py-1 ps-3 flex items-center gap-3 rounded tracking-tight">
         <button
           onClick={() => setActiveDataset("existing")}
-          className={`py-1 px-2 text-[12px] ${
+          className={`py-2 px-2 text-[12px] ${
             activeDataset === "existing" && "bg-white"
           } font-semibold rounded transition ease-in-out delay-150`}
         >
@@ -32,7 +32,7 @@ const ChooseDatasetComponent = ({
         </button>
         <button
           onClick={() => setActiveDataset("new")}
-          className={`py-1 px-2 text-[12px] ${
+          className={`py-2 px-2 text-[12px] ${
             activeDataset === "new" && "bg-white"
           } font-semibold rounded transition ease-in-out delay-100`}
         >
@@ -40,8 +40,8 @@ const ChooseDatasetComponent = ({
         </button>
       </div>
 
-      <div className="mt-6">
-        <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} className="flex flex-col flex-grow">
+        <div className="mt-6 flex-grow">
           {activeDataset === "new" ? (
             <AddDataset columns={columns} handleAddColumn={handleAddColumn} />
           ) : (
@@ -57,23 +57,23 @@ const ChooseDatasetComponent = ({
               ></CustomSelect>
             </label>
           )}
+        </div>
 
-          <div className="mt-[200px] flex gap-3 pb-4">
-            <button
-              className="btn bg-primary btn-sm border border-primary rounded text-white hover:bg-[#57B1FF]"
-              type="submit"
-            >
-              Next
-            </button>
-            <Link
-              to="/experiment"
-              className="px-3 py-1 text-[14px] font-bold border-2 border-gray-300 rounded"
-            >
-              Cancel
-            </Link>
-          </div>
-        </form>
-      </div>
+        <div className="mt-auto pt-4 flex gap-3">
+          <button
+            className="btn bg-primary btn-sm border border-primary rounded text-white hover:bg-[#57B1FF]"
+            type="submit"
+          >
+            Next
+          </button>
+          <Link
+            to="/experiment"
+            className="px-3 py-1 text-[14px] font-bold border-2 border-gray-300 rounded"
+          >
+            Cancel
+          </Link>
+        </div>
+      </form>
     </div>
   );
 };

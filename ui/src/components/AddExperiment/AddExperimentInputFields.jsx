@@ -15,7 +15,7 @@ const AddExperimentInputFields = ({ params }) => {
       <div className="flex flex-col mb-7">
         <label className="text-[12px] font-bold mb-[2px]">Name</label>
         <input
-          className="search-input w-[250px] px-2 py-1 border border-[#E0E0E0] rounded"
+          className=" w-[250px] px-2 py-1 border border-[#E0E0E0] rounded"
           type="text"
           name="name"
           placeholder="Enter Experiment Name"
@@ -52,7 +52,7 @@ const AddExperimentInputFields = ({ params }) => {
       <div className="flex flex-col mb-7">
         <label className="text-[12px] font-bold mb-[2px]">Query</label>
         <input
-          className="search-input w-[250px] px-2 py-1 border border-[#E0E0E0] rounded"
+          className=" w-[250px] px-2 py-1 border border-[#E0E0E0] rounded"
           type="number"
           name="limitOpt"
           placeholder="Enter Number"

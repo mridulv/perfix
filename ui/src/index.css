@@ -9,19 +9,21 @@
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Inter", "Inter Placeholder", 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: "Inter";
+  letter-spacing: 0.25px;
+  overflow-y: auto;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
-}
+
 .search-input {
-  font-size: 14px;
+  height: 30px;
+  width: 180px;
+  font-size: 13px;
+  padding: 2px 4px;
+  border: 2px solid #E0E0E0;
+  border-radius: 6px;
 }
 
 .search-input:focus {
@@ -35,9 +37,9 @@ code {
   position: relative;
 }
 .dropdown .dropdown-btn {
-  padding: 8px 8px;
+  padding: 4px 4px;
   background: #fff;
-  font-size: 14px;
+  font-size: 13px;
   color: #8E8E8E;
   border-radius: 6px;
   display: flex;
@@ -49,7 +51,7 @@ code {
 
 .dropdown-item {
   padding: 10px;
-  font-size: 14px;
+  font-size: 13px;
   cursor: pointer;
   transition: all 0.2s;
 }
@@ -65,30 +67,6 @@ code {
   background: white;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   z-index: 1000; /* Ensure the dropdown menu has a high z-index */
-}
-
-
-
-
-
-body::-webkit-scrollbar {
-  width: 10px;
-}
-
-/* Style the scrollbar track */
-body::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
-
-/* Style the scrollbar thumb */
-body::-webkit-scrollbar-thumb {
-  background: #3DA5FF;
-  border-radius: 10px;
-}
-
-/* Optionally style the scrollbar corner */
-body::-webkit-scrollbar-corner {
-  background: #f1f1f1;
 }
 
 .range-input {
@@ -151,3 +129,9 @@ body::-webkit-scrollbar-corner {
   opacity: 1;
   transition: max-height 1000ms ease-in-out;
 }
+
+
+
+
+
+

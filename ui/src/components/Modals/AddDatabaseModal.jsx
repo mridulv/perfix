@@ -71,7 +71,7 @@ const AddDatabaseModal = ({ open, onClose, datasets, refetch, databases }) => {
     if (selectedDatasetId) {
       const fetchDataset = async () => {
         const res = await axios.get(
-          `${process.env.REACT_APP_BASE_URL}/dataset/${selectedDatasetId}`,
+          `${import.meta.env.VITE_BASE_URL}/dataset/${selectedDatasetId}`,
           {
             withCredentials: true,
           }
@@ -118,7 +118,9 @@ const AddDatabaseModal = ({ open, onClose, datasets, refetch, databases }) => {
           </div>
           <div className="w-full bg-secondary mb-9 ps-6 py-3 flex items-center gap-8">
             <div
-              className={`w-11 ${currentAddStep === 1 && "bg-white"} p-[10px] rounded-xl`}
+              className={`w-11 ${
+                currentAddStep === 1 && "bg-white"
+              } p-[10px] rounded-xl`}
             >
               <p className="w-6 h-6 bg-black rounded-full grid place-content-center text-sm text-white">
                 1
@@ -128,7 +130,9 @@ const AddDatabaseModal = ({ open, onClose, datasets, refetch, databases }) => {
               <IoIosArrowForward size={20} />
             </div>
             <div
-              className={`w-11 ${currentAddStep === 2 && "bg-white"} p-[10px] rounded-xl`}
+              className={`w-11 ${
+                currentAddStep === 2 && "bg-white"
+              } p-[10px] rounded-xl`}
             >
               <p className="w-6 h-6 bg-black rounded-full grid place-content-center text-sm text-white">
                 2
@@ -149,16 +153,18 @@ const AddDatabaseModal = ({ open, onClose, datasets, refetch, databases }) => {
               ></ChooseDatasetComponent>
             )}
           </div>
-          {currentAddStep === 2 && selectedDatasetId !== null && selectedDatasetData !== null && (
-            <div>
-              <AddDatabase
-                dataset={selectedDatasetData}
-                cancelFunction={handleCloseModal}
-                successFunction={successFunctionsForDatabase}
-                databases={databases}
-              />
-            </div>
-          )}
+          {currentAddStep === 2 &&
+            selectedDatasetId !== null &&
+            selectedDatasetData !== null && (
+              <div>
+                <AddDatabase
+                  dataset={selectedDatasetData}
+                  cancelFunction={handleCloseModal}
+                  successFunction={successFunctionsForDatabase}
+                  databases={databases}
+                />
+              </div>
+            )}
         </div>
       </div>
     </div>
