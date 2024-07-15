@@ -45,6 +45,7 @@ lazy val root = (project in file("."))
     libraryDependencies += "io.cequence" %% "openai-scala-client" % "1.0.0",
     dependencyOverrides += "org.scala-lang.modules" %% "scala-xml" % "1.2.0",
     libraryDependencies += "org.apache.shiro" % "shiro-crypto-cipher" % "1.13.0",
+    libraryDependencies += "com.github.jsqlparser" % "jsqlparser" % "4.5",
     dockerBaseImage := "openjdk:11-jre-slim",
     semanticdbEnabled := true,
     scalacOptions += "-Wunused:imports"

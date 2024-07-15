@@ -6,15 +6,28 @@ import com.google.inject.{Inject, Singleton}
 import io.cequence.openaiscala.domain.ChatRole
 import io.cequence.openaiscala.service.OpenAIServiceFactory
 import io.perfix.db.UseCaseStore
-import io.perfix.model.api.{UseCaseId, ConversationMessage, UseCaseParams, UseCaseState}
+import io.perfix.model.{BooleanValueType, ColumnDescription, ColumnType, EntityFilter, IntType, NumericType, TextType, UseCaseFilter}
+import io.perfix.model.api.{ConversationMessage, DatabaseConfigId, DatasetId, DatasetParams, ExperimentConfig, Field, UseCaseId, UseCaseParams, UseCaseState}
+import io.perfix.model.experiment.{ExperimentId, ExperimentParams}
+import io.perfix.model.store.StoreType
+import io.perfix.model.store.StoreType.StoreType
 import io.perfix.util.ConversationSystemPrompt.{CheckIfConversationCompletedMessage, CompletionConversationMessage, SystemConversationMessage}
+import play.api.Configuration
+import play.api.libs.json.Json
 
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, ExecutionContext}
 
 
 @Singleton
-class UseCaseManager @Inject()(useCaseStore: UseCaseStore) {
+class UseCaseManager @Inject()(useCaseStore: UseCaseStore,
+                               datasetManager: DatasetManager,
+                               databaseConfigManager: DatabaseConfigManager,
+                               experimentManager: ExperimentManager,
+                               configuration: Configuration) {
+
+  private val APP_URL: String = configuration.get[String]("app.baseUrl")
+
   implicit val ec = ExecutionContext.global
   implicit val materializer = Materializer(ActorSystem())
 
@@ -43,37 +56,50 @@ class UseCaseManager @Inject()(useCaseStore: UseCaseStore) {
     val updatedUseCaseParams = useCaseParams.addConversation(
       ConversationMessage(ChatRole.User.toString(), message)
     )
-    val conversationMessage: ConversationMessage = updatedUseCaseParams.useCaseDetails match {
-      case Some(conversation) => chatResponse(conversation.messages)
+    val responseConversationMessage: ConversationMessage = updatedUseCaseParams.useCaseDetails match {
+      case Some(conversation) => wrappedResponse(conversation.messages)
       case None => throw new RuntimeException(s"Invalid ConversationParams for id: ${useCaseId}")
     }
-    if (conversationMessage == CheckIfConversationCompletedMessage) {
+    if (responseConversationMessage == CompletionConversationMessage) {
+      val endConversationMessage = handleEndConversation(useCaseParams)
       useCaseStore.update(
         useCaseId,
-        updatedUseCaseParams
-          .addConversation(conversationMessage)
-          .copy(useCaseState = Some(UseCaseState.Completed))
+        updatedUseCaseParams.copy(useCaseState = Some(UseCaseState.Completed))
       )
     } else {
       useCaseStore.update(
         useCaseId,
-        updatedUseCaseParams
-          .addConversation(conversationMessage)
-          .copy(useCaseState = Some(UseCaseState.InProgress))
+        updatedUseCaseParams.addConversation(responseConversationMessage).copy(useCaseState = Some(UseCaseState.InProgress))
       )
     }
-    conversationMessage.message
+    responseConversationMessage.message
   }
 
-  def list(): Seq[UseCaseParams] = {
-    useCaseStore.list()
+  def all(entityFilters: Seq[EntityFilter]): Seq[UseCaseParams] = {
+    val allUseCases = useCaseStore.list()
+    val useCaseFilters = entityFilters.collect {
+      case df: UseCaseFilter => df
+    }
+    useCaseFilters.foldLeft(allUseCases) { (useCaseParams, filter) =>
+      useCaseParams.filter(d => filter.filter(d))
+    }
   }
 
   def delete(useCaseId: UseCaseId): Int = {
     useCaseStore.delete(useCaseId)
   }
 
-  private def chatResponse(messages: Seq[ConversationMessage]): ConversationMessage = {
+  private def handleEndConversation(useCaseParams: UseCaseParams): ConversationMessage = {
+    val conversationMessages = useCaseParams.useCaseDetails.map(_.messages).getOrElse(Seq.empty)
+    val useCaseConversationParser = new UseCaseConversationParser(conversationMessages)
+    val (datasetId, databaseConfigId, experimentId) = useCaseConversationParser.init(datasetManager, databaseConfigManager, experimentManager)
+    ConversationMessage(
+      ChatRole.System.toString(),
+      s"We have created a benchmark run for you given all the inputs in the chat. Link: ${APP_URL}/experiment/${experimentId}"
+    )
+  }
+
+  private def wrappedResponse(messages: Seq[ConversationMessage]): ConversationMessage = {
     val service = OpenAIServiceFactory()
     val allMessages = Seq(SystemConversationMessage) ++ messages
     val response = Await.result(service.createChatCompletion(allMessages.map(_.toBaseMessage)), Duration.Inf)
@@ -91,7 +117,7 @@ class UseCaseManager @Inject()(useCaseStore: UseCaseStore) {
 
   private def checkIfConversationEnded(messages: Seq[ConversationMessage]): Boolean = {
     val service = OpenAIServiceFactory()
-    val allMessages = Seq(CheckIfConversationCompletedMessage) ++ messages
+    val allMessages = messages ++ Seq(CheckIfConversationCompletedMessage)
     val response = Await.result(service.createChatCompletion(allMessages.map(_.toBaseMessage)), Duration.Inf)
       .choices
       .head

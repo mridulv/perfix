@@ -6,7 +6,8 @@ import javax.inject.{Inject, Singleton}
 import play.api.libs.json.{JsString, JsValue, Json}
 import play.api.mvc.{AbstractController, Action, AnyContent, ControllerComponents}
 import io.perfix.manager.UseCaseManager
-import io.perfix.model.api.{UseCaseId, ConversationMessage, UseCaseParams}
+import io.perfix.model.EntityFilter
+import io.perfix.model.api.{ConversationMessage, UseCaseId, UseCaseParams}
 import org.pac4j.core.profile.UserProfile
 import org.pac4j.play.scala.{Security, SecurityComponents}
 
@@ -39,8 +40,9 @@ class UseCaseController @Inject()(val controllerComponents: SecurityComponents,
     Ok(Json.obj("message" -> conversationResponse))
   }
 
-  def list: Action[AnyContent] = authenticationAction {
-    val useCases = useCaseManager.list()
+  def all = authenticationAction(parse.json) { request =>
+    val filters = request.body.as[Seq[EntityFilter]]
+    val useCases = useCaseManager.all(filters)
     Ok(Json.toJson(useCases))
   }
 
