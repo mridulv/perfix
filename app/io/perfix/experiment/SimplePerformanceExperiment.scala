@@ -37,7 +37,7 @@ class SimplePerformanceExperiment(dataStore: DataStore,
       val results = BenchmarkUtil.runBenchmark(
         concurrentThreads = experimentParams.concurrentQueries,
         benchmarkTimeSeconds = experimentParams.experimentTimeInSeconds,
-        runTask = () => dataStore.readData(experimentParams.query).size
+        runTask = () => dataStore.readData(experimentParams.dbQuery).size
       )
       results
     } catch {

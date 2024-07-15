@@ -1,7 +1,7 @@
 package io.perfix.stores.dynamodb
 
 import io.perfix.model.store.DatabaseSetupParams
-import io.perfix.query.PerfixQuery
+import io.perfix.query.SqlDBQueryBuilder
 import play.api.libs.json.{Format, Json}
 
 case class DynamoDBDatabaseSetupParams(tableName: String,
@@ -38,7 +38,7 @@ case class DynamoDBGSIParam(partitionKey: String, sortKey: String) {
 
 case class DynamoDBIndex(tableName: String, partitionKey: String, sortKey: String) {
 
-  def validForFilters(perfixQuery: PerfixQuery): Boolean = {
+  def validForFilters(perfixQuery: SqlDBQueryBuilder): Boolean = {
     perfixQuery.selectFields.forall(e => partitionKey == e)
   }
 

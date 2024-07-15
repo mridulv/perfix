@@ -3,7 +3,7 @@ package io.perfix.stores.redis
 import io.perfix.exceptions.{InvalidStateException, PerfixQueryException}
 import io.perfix.launch.StoreLauncher
 import io.perfix.model.api.DatasetParams
-import io.perfix.query.PerfixQuery
+import io.perfix.query.SqlDBQueryBuilder
 import io.perfix.stores.DataStore
 import redis.clients.jedis.JedisPool
 
@@ -36,15 +36,15 @@ class RedisStore(override val databaseConfigParams: RedisDatabaseSetupParams)
     jedis.mset(keyValues.toList: _*)
   }
 
-  override def readData(perfixQuery: PerfixQuery): Seq[Map[String, Any]] = {
+  override def readData(dbQuery: SqlDBQueryBuilder): Seq[Map[String, Any]] = {
     val jedis = jedisPool.getResource
-    val matchedValues = perfixQuery.filtersOpt.flatMap(_.headOption) match {
+    val matchedValues = dbQuery.filtersOpt.flatMap(_.headOption) match {
       case Some(filter) =>
         Option(jedis.get(filter.fieldValue.toString)).flatMap { v =>
           val value = v.split(",").flatMap { e =>
             val k = e.split(":").head
             val v = e.split(":").reverse.head
-            if (perfixQuery.projectedFieldsOpt.getOrElse(List.empty).contains(k)) {
+            if (dbQuery.projectedFieldsOpt.getOrElse(List.empty).contains(k)) {
               Some(k -> v)
             } else {
               None
