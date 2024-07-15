@@ -3,7 +3,7 @@ package io.perfix.query
 import play.api.libs.json.{Format, Json}
 import io.perfix.model.ValueProbability._
 
-case class PerfixQueryFilter(field: String, fieldValue: Any) {
+case class DbQueryFilter(field: String, fieldValue: Any) {
 
   override def toString: String = {
     fieldValue match {
@@ -14,6 +14,6 @@ case class PerfixQueryFilter(field: String, fieldValue: Any) {
 
 }
 
-object PerfixQueryFilter {
-  implicit val PerfixQueryFilterFormatter: Format[PerfixQueryFilter] = Json.format[PerfixQueryFilter]
+object DbQueryFilter {
+  implicit val DbQueryFilterFormatter: Format[DbQueryFilter] = Json.format[DbQueryFilter]
 }

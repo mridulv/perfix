@@ -2,7 +2,7 @@ package io.perfix.experiment
 
 import io.perfix.model.api.{DatabaseConfigDetails, DatabaseConfigId, Dataset}
 import io.perfix.model.experiment.{ExperimentParams, ExperimentState}
-import io.perfix.query.{PerfixQuery, PerfixQueryFilter}
+import io.perfix.query.{SqlDBQueryBuilder, DbQueryFilter}
 import io.perfix.stores.mysql.MySQLStore
 import org.mockito.Mockito._
 import org.mockito.invocation.InvocationOnMock
@@ -18,8 +18,8 @@ class SimplePerformanceExperimentTest extends AnyFlatSpec with Matchers {
     val dataStore = mock(classOf[MySQLStore])
 
     // Create a mock PerfixQuery
-    val perfixQuery = PerfixQuery(
-      filtersOpt = Some(List(PerfixQueryFilter("student_name", "John"))),
+    val perfixQuery = SqlDBQueryBuilder(
+      filtersOpt = Some(List(DbQueryFilter("student_name", "John"))),
       projectedFieldsOpt = Some(List("student_name")),
       limitOpt = Some(10)
     )
@@ -29,7 +29,7 @@ class SimplePerformanceExperimentTest extends AnyFlatSpec with Matchers {
       name = s"exp-${Random.nextInt()}",
       concurrentQueries = 10,
       experimentTimeInSeconds = 5,
-      query = PerfixQuery(limitOpt = Some(100)),
+      dbQuery = SqlDBQueryBuilder(limitOpt = Some(100)),
       databaseConfigs = Seq(DatabaseConfigDetails(DatabaseConfigId(-1))),
       experimentResults = None,
       createdAt = Some(System.currentTimeMillis()),

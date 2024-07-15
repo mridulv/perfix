@@ -9,7 +9,7 @@ import io.perfix.launch.StoreLauncher
 import io.perfix.model.ColumnType.toDynamoDBType
 import io.perfix.model.ColumnDescription
 import io.perfix.model.api.DatasetParams
-import io.perfix.query.PerfixQuery
+import io.perfix.query.SqlDBQueryBuilder
 import io.perfix.stores.DataStore
 
 import scala.jdk.CollectionConverters._
@@ -90,16 +90,16 @@ class DynamoDBStore(datasetParams: DatasetParams,
     client.batchWriteItem(batchWriteItemRequest)
   }
 
-  override def readData(perfixQuery: PerfixQuery): Seq[Map[String, Any]] = {
-    val filterExpression = translatePerfixQueryToFilterExpression(perfixQuery)
+  override def readData(dbQuery: SqlDBQueryBuilder): Seq[Map[String, Any]] = {
+    val filterExpression = translatePerfixQueryToFilterExpression(dbQuery)
 
     // Assuming projectedFieldsOpt is a List of field names you want to return
-    val projectionExpression = perfixQuery.projectedFieldsOpt match {
+    val projectionExpression = dbQuery.projectedFieldsOpt match {
       case Some(fields) => fields.mkString(", ")
       case None => null  // or specify default fields you always want to fetch
     }
 
-    val result = findRelevantTableOpt(perfixQuery) match {
+    val result = findRelevantTableOpt(dbQuery) match {
       case Some(table) =>
         val queryRequest = new QueryRequest()
           .withTableName(table)
@@ -125,7 +125,7 @@ class DynamoDBStore(datasetParams: DatasetParams,
     ).toSeq
   }
 
-  private def findRelevantTableOpt(perfixQuery: PerfixQuery): Option[String] = {
+  private def findRelevantTableOpt(perfixQuery: SqlDBQueryBuilder): Option[String] = {
     databaseConfigParams.indexes().find(i => i.validForFilters(perfixQuery)).map(_.tableName)
   }
 
@@ -145,7 +145,7 @@ class DynamoDBStore(datasetParams: DatasetParams,
     }
   }
 
-  private def translatePerfixQueryToFilterExpression(perfixQuery: PerfixQuery): FilterExpression = {
+  private def translatePerfixQueryToFilterExpression(perfixQuery: SqlDBQueryBuilder): FilterExpression = {
     perfixQuery.filtersOpt match {
       case Some(filters) =>
         val expressionParts = filters.zipWithIndex.map { case (filter, index) =>

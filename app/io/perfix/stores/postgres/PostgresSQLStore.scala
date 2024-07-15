@@ -4,7 +4,7 @@ import io.perfix.exceptions.InvalidStateException
 import io.perfix.model.ColumnType.toSqlType
 import io.perfix.model.ColumnDescription
 import io.perfix.model.api.DatasetParams
-import io.perfix.query.PerfixQuery
+import io.perfix.query.SqlDBQueryBuilder
 import io.perfix.stores.DataStore
 import io.perfix.stores.mysql.RDSDatabaseSetupParams
 
@@ -72,9 +72,9 @@ class PostgreSQLStore(datasetParams: DatasetParams,
     }
   }
 
-  override def readData(perfixQuery: PerfixQuery): Seq[Map[String, Any]] = {
+  override def readData(dbQuery: SqlDBQueryBuilder): Seq[Map[String, Any]] = {
     import databaseConfigParams._
-    val query = PostgreSQLStore.convert(dbName.get, tableName, perfixQuery)
+    val query = PostgreSQLStore.convert(dbName.get, tableName, dbQuery)
     val statement = connection.createStatement()
     val result = resultSetToSeqMap(statement.executeQuery(query))
     statement.close()
@@ -137,7 +137,7 @@ class PostgreSQLStore(datasetParams: DatasetParams,
 }
 
 object PostgreSQLStore {
-  def convert(dbName: String, tableName: String, perfixQuery: PerfixQuery): String = {
+  def convert(dbName: String, tableName: String, perfixQuery: SqlDBQueryBuilder): String = {
     import perfixQuery._
     val sqlFilterPart = filtersOpt match {
       case Some(filters) => "where " + filters.map(_.toString).mkString(" and ")

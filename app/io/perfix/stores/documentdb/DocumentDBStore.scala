@@ -5,7 +5,7 @@ import com.mongodb.client.{MongoClient, MongoClients, MongoCollection, MongoData
 import io.perfix.exceptions.InvalidStateException
 import io.perfix.launch.StoreLauncher
 import io.perfix.model.api.DatasetParams
-import io.perfix.query.PerfixQuery
+import io.perfix.query.SqlDBQueryBuilder
 import io.perfix.stores.DataStore
 import org.bson.Document
 
@@ -44,15 +44,15 @@ class DocumentDBStore(override val databaseConfigParams: DocumentDBDatabaseSetup
     collection.insertMany(documents.asJava)
   }
 
-  override def readData(perfixQuery: PerfixQuery): Seq[Map[String, Any]] = {
+  override def readData(dbQuery: SqlDBQueryBuilder): Seq[Map[String, Any]] = {
     import com.mongodb.client.model.{Filters, Projections}
 
-    val filter = perfixQuery.filtersOpt match {
+    val filter = dbQuery.filtersOpt match {
       case Some(filter) => Filters.and(filter.map(filter => Filters.eq(filter.field, filter.fieldValue)).asJavaCollection)
       case None => Filters.and()
     }
 
-    val projection = perfixQuery.projectedFieldsOpt match {
+    val projection = dbQuery.projectedFieldsOpt match {
       case Some(projections) => Projections.fields(Projections.include(projections: _*))
       case None => Filters.and()
     }

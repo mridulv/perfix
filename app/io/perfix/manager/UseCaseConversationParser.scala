@@ -9,7 +9,7 @@ import io.perfix.model.api.{ConversationMessage, DatabaseConfigDetails, Database
 import io.perfix.model.experiment.{ExperimentId, ExperimentParams}
 import io.perfix.model.store.{DatabaseSetupParams, StoreType}
 import io.perfix.model.store.StoreType.StoreType
-import io.perfix.query.{PerfixQuery, PerfixQueryFilter}
+import io.perfix.query.{SqlDBQueryBuilder, DbQueryFilter}
 import io.perfix.stores.documentdb.DocumentDBDatabaseSetupParams
 import io.perfix.stores.dynamodb.DynamoDBDatabaseSetupParams
 import io.perfix.stores.mysql.RDSDatabaseSetupParams
@@ -59,7 +59,7 @@ class UseCaseConversationParser(conversationMessages: Seq[ConversationMessage]) 
       name = tableName.concat("-").concat("exp"),
       experimentTimeInSeconds = experimentConfig.experiment_time_in_seconds,
       concurrentQueries = experimentConfig.reads_per_minute,
-      query = perfixQuery,
+      dbQuery = perfixQuery,
       databaseConfigs = Seq(DatabaseConfigDetails(databaseConfigId))
     )
     val experimentId = experimentManager.create(experimentParams)
@@ -120,7 +120,7 @@ class UseCaseConversationParser(conversationMessages: Seq[ConversationMessage]) 
     Json.parse(response).as[ExperimentConfig]
   }
 
-  private def getQuery(): PerfixQuery = {
+  private def getQuery(): SqlDBQueryBuilder = {
     val service = OpenAIServiceFactory()
     val databaseConversation = ConversationMessage(
       ChatRole.System.toString(),
@@ -147,7 +147,7 @@ class UseCaseConversationParser(conversationMessages: Seq[ConversationMessage]) 
           val filters = whereClause.map { expression =>
             expression.toString.split("AND").map { condition =>
               val Array(field, value) = condition.split("=").map(_.trim)
-              PerfixQueryFilter(field, value.replace("'", ""))
+              DbQueryFilter(field, value.replace("'", ""))
             }.toList
           }
 
@@ -160,15 +160,15 @@ class UseCaseConversationParser(conversationMessages: Seq[ConversationMessage]) 
           }
 
           // Create PerfixQuery object
-          PerfixQuery(
+          SqlDBQueryBuilder(
             filtersOpt = filters,
             projectedFieldsOpt = Some(projectedFields),
             limitOpt = limit
           )
 
-        case _ => PerfixQuery()
+        case _ => SqlDBQueryBuilder()
       }
-    }.headOption.getOrElse(PerfixQuery())
+    }.headOption.getOrElse(SqlDBQueryBuilder())
   }
 
   private def getDatabaseType(): StoreType = {

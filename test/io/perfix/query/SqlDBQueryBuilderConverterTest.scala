@@ -4,11 +4,11 @@ import io.perfix.stores.mysql.MySQLStore.convert
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers
 
-class PerfixQueryConverterTest extends AnyFlatSpec with Matchers {
+class SqlDBQueryBuilderConverterTest extends AnyFlatSpec with Matchers {
 
   "PerfixQueryConverter" should "handle all query components" in {
-    val query = PerfixQuery(
-      filtersOpt = Some(List(PerfixQueryFilter("age", 18), PerfixQueryFilter("name", "John"))),
+    val query = SqlDBQueryBuilder(
+      filtersOpt = Some(List(DbQueryFilter("age", 18), DbQueryFilter("name", "John"))),
       projectedFieldsOpt = Some(List("name", "age")),
       limitOpt = Some(10)
     )
@@ -18,28 +18,28 @@ class PerfixQueryConverterTest extends AnyFlatSpec with Matchers {
   }
 
   "PerfixQueryConverter" should "handle no filters" in {
-    val query = PerfixQuery(None, Some(List("name", "age")), Some(10))
+    val query = SqlDBQueryBuilder(None, Some(List("name", "age")), Some(10))
 
     val sqlQuery = convert("testDB", "testTable", query)
     assert(sqlQuery == "select name, age from testDB.testTable  limit 10")
   }
 
   "PerfixQueryConverter" should "handle no projected fields" in {
-    val query = PerfixQuery(Some(List(PerfixQueryFilter("age", 18))), None, None)
+    val query = SqlDBQueryBuilder(Some(List(DbQueryFilter("age", 18))), None, None)
 
     val sqlQuery = convert("testDB", "testTable", query)
     assert(sqlQuery == "select * from testDB.testTable where age = 18 ")
   }
 
   "PerfixQueryConverter" should "handle no limit" in {
-    val query = PerfixQuery(Some(List(PerfixQueryFilter("age", 18))), Some(List("name")), None)
+    val query = SqlDBQueryBuilder(Some(List(DbQueryFilter("age", 18))), Some(List("name")), None)
 
     val sqlQuery = convert("testDB", "testTable", query)
     assert(sqlQuery == "select name from testDB.testTable where age = 18 ")
   }
 
   "PerfixQueryConverter" should "handle empty query" in {
-    val query = PerfixQuery(None, None, None)
+    val query = SqlDBQueryBuilder(None, None, None)
 
     val sqlQuery = convert("testDB", "testTable", query)
     assert(sqlQuery == "select * from testDB.testTable  ")
