@@ -36,13 +36,7 @@ case class DynamoDBGSIParam(partitionKey: String, sortKey: String) {
 
 }
 
-case class DynamoDBIndex(tableName: String, partitionKey: String, sortKey: String) {
-
-  def validForFilters(perfixQuery: SqlDBQueryBuilder): Boolean = {
-    perfixQuery.selectFields.forall(e => partitionKey == e)
-  }
-
-}
+case class DynamoDBIndex(tableName: String, partitionKey: String, sortKey: String)
 
 case class DynamoDBTableParams(urlOpt: Option[String], tableName: String, partitionKey: String, sortKey: String)
 case class DynamoDBCapacityParams(readCapacity: Option[Long], writeCapacity: Option[Long])

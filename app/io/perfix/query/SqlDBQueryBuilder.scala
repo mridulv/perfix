@@ -4,22 +4,24 @@ import play.api.libs.json.{Format, Json}
 
 case class SqlDBQueryBuilder(filtersOpt: Option[List[DbQueryFilter]] = None,
                              projectedFieldsOpt: Option[List[String]] = None,
-                             limitOpt: Option[Int] = None) extends DBQuery {
+                             tableName: String) extends DBQuery {
 
-  def selectFields: Seq[String] = {
-    projectedFieldsOpt.map(_.toSeq).getOrElse(Seq.empty)
-  }
+  def convert: SqlDBQuery = {
+    val sqlFilterPart = filtersOpt match {
+      case Some(filters) => "where " + filters.map(_.toString).mkString(" and ")
+      case None => ""
+    }
 
-  def filterFields: Seq[String] = {
-    filtersOpt.map(_.map(_.field).toSeq).getOrElse(Seq.empty)
+    val projectedFieldsPart = projectedFieldsOpt match {
+      case Some(projectedFields) => projectedFields.mkString(", ")
+      case None => "*"
+    }
+
+    SqlDBQuery(s"select $projectedFieldsPart from $tableName ${sqlFilterPart}")
   }
 
 }
 
 object SqlDBQueryBuilder {
   implicit val SqlDBQueryBuilderFormatter: Format[SqlDBQueryBuilder] = Json.format[SqlDBQueryBuilder]
-
-  def empty: SqlDBQueryBuilder = {
-    SqlDBQueryBuilder(limitOpt = Some(1))
-  }
 }

@@ -1,14 +1,11 @@
 package io.perfix.stores.mysql
 
-import io.perfix.exceptions.InvalidStateException
-import io.perfix.launch.StoreLauncher
+import io.perfix.exceptions.{InvalidStateException, WrongQueryException}
 import io.perfix.model.ColumnType.toSqlType
 import io.perfix.model.ColumnDescription
 import io.perfix.model.api.DatasetParams
-import io.perfix.query.SqlDBQueryBuilder
+import io.perfix.query.{DBQuery, NoSqlDBQuery, SqlDBQuery, SqlDBQueryBuilder}
 import io.perfix.stores.DataStore
-import io.perfix.stores.mysql.MySQLStore.convert
-import play.api.db.slick.DbName
 
 import java.sql.{Connection, DriverManager, ResultSet}
 
@@ -72,9 +69,15 @@ class MySQLStore(datasetParams: DatasetParams,
     }
   }
 
-  override def readData(dbQuery: SqlDBQueryBuilder): Seq[Map[String, Any]] = {
+  override def readData(dbQuery: DBQuery): Seq[Map[String, Any]] = {
+    val sqlDBQuery: SqlDBQuery = dbQuery match {
+      case _: NoSqlDBQuery => throw WrongQueryException("No Sql query not supported")
+      case sqlDBQuery: SqlDBQuery => sqlDBQuery
+      case sqlDBQueryBuilder: SqlDBQueryBuilder => sqlDBQueryBuilder.convert
+    }
+
     import databaseConfigParams._
-    val query = convert(dbName.get, tableName, dbQuery)
+    val query = sqlDBQuery.convert(Seq(tableName), dbName.get)
     val statement = connection.createStatement()
     val result = resultSetToSeqMap(statement.executeQuery(query))
     statement.close()
@@ -133,27 +136,5 @@ class MySQLStore(datasetParams: DatasetParams,
     }
 
     buffer.toSeq
-  }
-}
-
-object MySQLStore {
-  def convert(dbName: String, tableName: String, perfixQuery: SqlDBQueryBuilder): String = {
-    import perfixQuery._
-    val sqlFilterPart = filtersOpt match {
-      case Some(filters) => "where " + filters.map(_.toString).mkString(" and ")
-      case None => ""
-    }
-
-    val projectedFieldsPart = projectedFieldsOpt match {
-      case Some(projectedFields) => projectedFields.mkString(", ")
-      case None => "*"
-    }
-
-    val limitPart = limitOpt match {
-      case Some(limit) => s"limit $limit"
-      case None => ""
-    }
-
-    s"select $projectedFieldsPart from ${dbName}.${tableName} ${sqlFilterPart} ${limitPart}"
   }
 }

@@ -7,6 +7,7 @@ import io.perfix.model.store.DatabaseSetupParams
 import io.perfix.model.store.StoreType.{DynamoDB, MariaDB, MongoDB, MySQL, Postgres, Redis, StoreType}
 import io.perfix.stores.documentdb.{DocumentDBDatabaseSetupParams, DocumentDBLauncher, DocumentDBStore}
 import io.perfix.stores.dynamodb.{DynamoDBDatabaseSetupParams, DynamoDBStore}
+import io.perfix.stores.mariadb.MariaDBStore
 import io.perfix.stores.mysql.{MySQLStore, RDSDatabaseSetupParams, RDSLauncher}
 import io.perfix.stores.postgres.PostgreSQLStore
 import io.perfix.stores.redis.{RedisDatabaseSetupParams, RedisLauncher, RedisStore}
@@ -34,7 +35,7 @@ object Database {
         storeParams.databaseType.getOrElse(MySQL) match {
           case MySQL => new MySQLStore(datasetParams, storeParams)
           case Postgres => new PostgreSQLStore(datasetParams, storeParams)
-          case MariaDB => new PostgreSQLStore(datasetParams, storeParams)
+          case MariaDB => new MariaDBStore(datasetParams, storeParams)
         }
       }
       case storeParams: DynamoDBDatabaseSetupParams => new DynamoDBStore(datasetParams, storeParams)
