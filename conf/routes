@@ -8,6 +8,7 @@ POST     /experiment/create                            io.perfix.controllers.Exp
 POST     /experiment/:id                               io.perfix.controllers.ExperimentController.update(id: Int)
 POST     /experiment/:id/execute                       io.perfix.controllers.ExperimentController.executeExperiment(id: Int)
 GET      /experiment/:id                               io.perfix.controllers.ExperimentController.get(id: Int)
+GET      /experiment/dataset                           io.perfix.controllers.ExperimentController.datasets(category: String)
 POST     /experiment                                   io.perfix.controllers.ExperimentController.all
 DELETE   /experiment/:id                               io.perfix.controllers.ExperimentController.delete(id: Int)
 
@@ -36,6 +37,7 @@ GET         /me                                        io.perfix.controllers.Use
 
 GET         /databases                                 io.perfix.controllers.ConfigController.databases
 GET         /databases/inputs                          io.perfix.controllers.ConfigController.inputs(databaseType: String)
+GET         /databases/categories                      io.perfix.controllers.ConfigController.categories
 GET         /databases/categories                      io.perfix.controllers.ConfigController.categories
 
 POST        /usecases/create                           io.perfix.controllers.UseCaseController.create
