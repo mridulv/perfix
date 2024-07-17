@@ -1,3 +1,9 @@
 package io.perfix.query
 
-case class NoSqlDBQuery(filtersOpt: Option[List[DbQueryFilter]] = None) extends DBQuery
+import play.api.libs.json.{Format, Json}
+
+case class NoSqlDBQuery(filters: List[DbQueryFilter]) extends DBQuery
+
+object NoSqlDBQuery {
+  implicit val NoSqlDBQueryFormatter: Format[NoSqlDBQuery] = Json.format[NoSqlDBQuery]
+}
