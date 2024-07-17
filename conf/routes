@@ -9,6 +9,7 @@ POST     /experiment/:id                               io.perfix.controllers.Exp
 POST     /experiment/:id/execute                       io.perfix.controllers.ExperimentController.executeExperiment(id: Int)
 GET      /experiment/:id                               io.perfix.controllers.ExperimentController.get(id: Int)
 GET      /experiment/dataset/:category                 io.perfix.controllers.ExperimentController.datasets(category: String)
+GET      /experiment/config/:category                  io.perfix.controllers.ExperimentController.config(category: String)
 POST     /experiment                                   io.perfix.controllers.ExperimentController.all
 DELETE   /experiment/:id                               io.perfix.controllers.ExperimentController.delete(id: Int)
 
