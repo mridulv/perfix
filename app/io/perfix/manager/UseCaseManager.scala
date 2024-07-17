@@ -6,14 +6,10 @@ import com.google.inject.{Inject, Singleton}
 import io.cequence.openaiscala.domain.ChatRole
 import io.cequence.openaiscala.service.OpenAIServiceFactory
 import io.perfix.db.UseCaseStore
-import io.perfix.model.{BooleanValueType, ColumnDescription, ColumnType, EntityFilter, IntType, NumericType, TextType, UseCaseFilter}
-import io.perfix.model.api.{ConversationMessage, DatabaseConfigId, DatasetId, DatasetParams, ExperimentConfig, Field, UseCaseId, UseCaseParams, UseCaseState}
-import io.perfix.model.experiment.{ExperimentId, ExperimentParams}
-import io.perfix.model.store.StoreType
-import io.perfix.model.store.StoreType.StoreType
+import io.perfix.model.{EntityFilter, UseCaseFilter}
+import io.perfix.model.api.{ConversationMessage, UseCaseId, UseCaseParams, UseCaseState}
 import io.perfix.util.ConversationSystemPrompt.{CheckIfConversationCompletedMessage, CompletionConversationMessage, SystemConversationMessage}
 import play.api.Configuration
-import play.api.libs.json.Json
 
 import scala.concurrent.duration.Duration
 import scala.concurrent.{Await, ExecutionContext}
