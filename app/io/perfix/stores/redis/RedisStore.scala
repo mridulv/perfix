@@ -1,9 +1,7 @@
 package io.perfix.stores.redis
 
-import io.perfix.exceptions.{InvalidStateException, PerfixQueryException}
-import io.perfix.launch.StoreLauncher
-import io.perfix.model.api.DatasetParams
-import io.perfix.query.PerfixQuery
+import io.perfix.exceptions.{InvalidStateException, WrongQueryException}
+import io.perfix.query.{DBQuery, NoSqlDBQuery, SqlDBQuery, SqlDBQueryBuilder}
 import io.perfix.stores.DataStore
 import redis.clients.jedis.JedisPool
 
@@ -36,26 +34,30 @@ class RedisStore(override val databaseConfigParams: RedisDatabaseSetupParams)
     jedis.mset(keyValues.toList: _*)
   }
 
-  override def readData(perfixQuery: PerfixQuery): Seq[Map[String, Any]] = {
-    val jedis = jedisPool.getResource
-    val matchedValues = perfixQuery.filtersOpt.flatMap(_.headOption) match {
-      case Some(filter) =>
-        Option(jedis.get(filter.fieldValue.toString)).flatMap { v =>
-          val value = v.split(",").flatMap { e =>
-            val k = e.split(":").head
-            val v = e.split(":").reverse.head
-            if (perfixQuery.projectedFieldsOpt.getOrElse(List.empty).contains(k)) {
-              Some(k -> v)
-            } else {
-              None
-            }
-          }.toMap
-          Some(value)
-        }
-      case None => throw PerfixQueryException("For RedisStore, filter should be present")
+  override def readData(dbQuery: DBQuery): Seq[Map[String, Any]] = {
+    val noSqlDBQuery = dbQuery match {
+      case noSqlDBQuery: NoSqlDBQuery => noSqlDBQuery
+      case _: SqlDBQuery => throw WrongQueryException("Sql query not supported")
+      case _: SqlDBQueryBuilder => throw WrongQueryException("Sql query not supported")
     }
-    jedisPool.returnResource(jedis)
-    Seq(matchedValues).flatten
+
+    val jedis = jedisPool.getResource
+    try {
+      // Iterate over the filters and retrieve values from Redis
+      val matchedValues = noSqlDBQuery.filters.flatMap { filter =>
+        Option(jedis.get(filter.fieldValue.toString)).map { value =>
+          val keyValuePairs = value.split(",").flatMap { entry =>
+            val Array(key, value) = entry.split(":").map(_.trim)
+            Some(key -> value)
+          }.toMap
+          keyValuePairs
+        }
+      }
+
+      matchedValues
+    } finally {
+      jedisPool.returnResource(jedis)
+    }
   }
 
   override def cleanup(): Unit = {

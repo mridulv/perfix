@@ -4,8 +4,10 @@ import com.google.inject.Inject
 import io.perfix.common.ExperimentExecutor
 import io.perfix.exceptions.InvalidStateException
 import io.perfix.model.experiment.{ExperimentId, ExperimentParams, ExperimentResultWithDatabaseConfigDetails}
-import io.perfix.model.{EntityFilter, ExperimentFilter}
+import io.perfix.model.{DatabaseCategory, EntityFilter, ExperimentFilter}
 import io.perfix.db.ExperimentStore
+import io.perfix.model.api.{DatabaseConfigDetails, DatasetDetails}
+import io.perfix.stores.Database
 
 import javax.inject.Singleton
 
@@ -34,6 +36,24 @@ class ExperimentManager @Inject()(datasetManager: DatasetManager,
     val databaseConfigParams = databaseConfigManager.all(Seq.empty)
     val dataset = datasetManager.all(Seq.empty)
     experimentParams.toExperimentParamsWithDatabaseDetails(dataset, databaseConfigParams)
+  }
+
+  def datasets(category: String): Seq[DatasetDetails] = {
+    val relevantDatabases = Database.allDatabases.filter(db => db.databaseCategory.map(_.toString).contains(category))
+    databaseConfigManager
+      .all(Seq.empty)
+      .filter { dbConfig =>
+        relevantDatabases.map(_.name).contains(dbConfig.dataStore)
+      }.map(_.datasetDetails)
+  }
+
+  def configs(category: String): Seq[DatabaseConfigDetails] = {
+    val relevantDatabases = Database.allDatabases.filter(db => db.databaseCategory.map(_.toString).contains(category))
+    databaseConfigManager
+      .all(Seq.empty)
+      .filter { dbConfig =>
+        relevantDatabases.map(_.name).contains(dbConfig.dataStore)
+      }.map(_.toDatabaseConfigDetails)
   }
 
   def all(entityFilters: Seq[EntityFilter]): Seq[ExperimentParams] = {

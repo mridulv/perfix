@@ -4,12 +4,12 @@ import com.amazonaws.auth.DefaultAWSCredentialsProviderChain
 import com.amazonaws.client.builder.AwsClientBuilder
 import com.amazonaws.services.dynamodbv2.model._
 import com.amazonaws.services.dynamodbv2.{AmazonDynamoDB, AmazonDynamoDBClientBuilder}
-import io.perfix.exceptions.InvalidStateException
+import io.perfix.exceptions.{InvalidStateException, WrongQueryException}
 import io.perfix.launch.StoreLauncher
 import io.perfix.model.ColumnType.toDynamoDBType
 import io.perfix.model.ColumnDescription
 import io.perfix.model.api.DatasetParams
-import io.perfix.query.PerfixQuery
+import io.perfix.query.{DBQuery, NoSqlDBQuery, SqlDBQuery, SqlDBQueryBuilder}
 import io.perfix.stores.DataStore
 
 import scala.jdk.CollectionConverters._
@@ -90,43 +90,40 @@ class DynamoDBStore(datasetParams: DatasetParams,
     client.batchWriteItem(batchWriteItemRequest)
   }
 
-  override def readData(perfixQuery: PerfixQuery): Seq[Map[String, Any]] = {
-    val filterExpression = translatePerfixQueryToFilterExpression(perfixQuery)
-
-    // Assuming projectedFieldsOpt is a List of field names you want to return
-    val projectionExpression = perfixQuery.projectedFieldsOpt match {
-      case Some(fields) => fields.mkString(", ")
-      case None => null  // or specify default fields you always want to fetch
+  override def readData(dbQuery: DBQuery): Seq[Map[String, Any]] = {
+    val noSqlDBQuery = dbQuery match {
+      case noSqlDBQuery: NoSqlDBQuery => noSqlDBQuery
+      case _: SqlDBQuery => throw WrongQueryException("Sql query not supported")
+      case _: SqlDBQueryBuilder => throw WrongQueryException("Sql query not supported")
     }
 
-    val result = findRelevantTableOpt(perfixQuery) match {
-      case Some(table) =>
-        val queryRequest = new QueryRequest()
-          .withTableName(table)
-          .withKeyConditionExpression(filterExpression.expression)
-          .withExpressionAttributeValues(filterExpression.values)
-          .withProjectionExpression(projectionExpression)
-        val res = client.query(queryRequest)
-        res.getItems
-      case None =>
-        val scanRequest = new ScanRequest()
-          .withTableName(tableParams.tableName)
-          .withFilterExpression(filterExpression.expression)
-          .withExpressionAttributeValues(filterExpression.values)
-          .withProjectionExpression(projectionExpression)
-        val res = client.scan(scanRequest)
-        res.getItems
+    val filterExpression = new StringBuilder
+    val expressionAttributeValues = new java.util.HashMap[String, AttributeValue]()
+    noSqlDBQuery.filters.zipWithIndex.foreach { case (filter, index) =>
+      val attributeName = s":value$index"
+      filterExpression.append(s"${filter.field} = $attributeName")
+      if (index < noSqlDBQuery.filters.size - 1) {
+        filterExpression.append(" AND ")
+      }
+      expressionAttributeValues.put(attributeName, new AttributeValue().withS(filter.fieldValue.toString))
     }
 
-    val items = result.asScala
+    val queryRequest = new QueryRequest()
+      .withTableName(tableParams.tableName)
+      .withKeyConditionExpression(filterExpression.toString())
+      .withExpressionAttributeValues(expressionAttributeValues)
 
-    items.map(item =>
-      item.asScala.toMap.view.mapValues(_.toString).toMap
-    ).toSeq
-  }
+    // Execute the query
+    val queryResult = client.query(queryRequest)
 
-  private def findRelevantTableOpt(perfixQuery: PerfixQuery): Option[String] = {
-    databaseConfigParams.indexes().find(i => i.validForFilters(perfixQuery)).map(_.tableName)
+    // Process the query result
+    val results = queryResult.getItems.asScala.map { item =>
+      item.asScala.map { case (key, value) =>
+        key -> (if (value.getS != null) value.getS else value.getN)
+      }.toMap
+    }
+
+    results.toSeq
   }
 
   private def createGSIs(dynamoDBGSIMetadataParams: DynamoDBGSIMetadataParams): Seq[GlobalSecondaryIndexUpdate] = {
@@ -142,36 +139,6 @@ class DynamoDBStore(datasetParams: DatasetParams,
         .withProvisionedThroughput(provisionedThroughput)
 
       new GlobalSecondaryIndexUpdate().withCreate(globalSecondaryIndexAction)
-    }
-  }
-
-  private def translatePerfixQueryToFilterExpression(perfixQuery: PerfixQuery): FilterExpression = {
-    perfixQuery.filtersOpt match {
-      case Some(filters) =>
-        val expressionParts = filters.zipWithIndex.map { case (filter, index) =>
-          val placeholder = s":val$index"
-          filter.field + " = " + placeholder
-        }
-        val expression = expressionParts.mkString(" AND ")
-
-        val attributeValues = filters.zipWithIndex.map { case (filter, index) =>
-          val placeholder = s":val$index"
-          placeholder -> toAttributeValue(filter.fieldValue)
-        }.toMap
-
-        FilterExpression(expression, attributeValues.asJava)
-
-      case None =>
-        FilterExpression("", Map.empty[String, AttributeValue].asJava)
-    }
-  }
-
-  private def toAttributeValue(value: Any): AttributeValue = {
-    value match {
-      case s: String => new AttributeValue().withS(s)
-      case n: Number => new AttributeValue().withN(n.toString)
-      // Add more cases as needed for different data types
-      case _ => throw new IllegalArgumentException("Unsupported attribute value type")
     }
   }
 

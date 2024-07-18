@@ -2,10 +2,8 @@ package io.perfix.stores.documentdb
 
 import com.mongodb.client.model.Indexes
 import com.mongodb.client.{MongoClient, MongoClients, MongoCollection, MongoDatabase}
-import io.perfix.exceptions.InvalidStateException
-import io.perfix.launch.StoreLauncher
-import io.perfix.model.api.DatasetParams
-import io.perfix.query.PerfixQuery
+import io.perfix.exceptions.{InvalidStateException, WrongQueryException}
+import io.perfix.query.{DBQuery, NoSqlDBQuery, SqlDBQuery, SqlDBQueryBuilder}
 import io.perfix.stores.DataStore
 import org.bson.Document
 
@@ -44,26 +42,41 @@ class DocumentDBStore(override val databaseConfigParams: DocumentDBDatabaseSetup
     collection.insertMany(documents.asJava)
   }
 
-  override def readData(perfixQuery: PerfixQuery): Seq[Map[String, Any]] = {
-    import com.mongodb.client.model.{Filters, Projections}
-
-    val filter = perfixQuery.filtersOpt match {
-      case Some(filter) => Filters.and(filter.map(filter => Filters.eq(filter.field, filter.fieldValue)).asJavaCollection)
-      case None => Filters.and()
+  override def readData(dbQuery: DBQuery): Seq[Map[String, Any]] = {
+    val noSqlDBQuery = dbQuery match {
+      case noSqlDBQuery: NoSqlDBQuery => noSqlDBQuery
+      case _: SqlDBQuery => throw WrongQueryException("Sql query not supported")
+      case _: SqlDBQueryBuilder => throw WrongQueryException("Sql query not supported")
     }
 
-    val projection = perfixQuery.projectedFieldsOpt match {
-      case Some(projections) => Projections.fields(Projections.include(projections: _*))
-      case None => Filters.and()
+    val collection = mongoDatabase.getCollection(databaseConfigParams.collectionName)
+
+    // Build the query from the filters
+    val mongoQuery = new Document()
+    noSqlDBQuery.filters.foreach { filter =>
+      filter.fieldValue match {
+        case value: String => mongoQuery.put(filter.field, value)
+        case value: Int => mongoQuery.put(filter.field, value)
+        case value: Long => mongoQuery.put(filter.field, value)
+        case value: Double => mongoQuery.put(filter.field, value)
+        case value: Boolean => mongoQuery.put(filter.field, value)
+        case _ => mongoQuery.put(filter.field, filter.fieldValue.toString)
+      }
     }
 
-    val cursor = mongoDatabase.getCollection(databaseConfigParams.collectionName)
-      .find(filter)
-      .projection(projection)
-      .iterator()
-    cursor.asScala.toList.map { c =>
-      c.asScala.toMap
+    // Execute the query and collect the results
+    val cursor = collection.find(mongoQuery).iterator()
+
+    val results = scala.collection.mutable.ListBuffer[Map[String, Any]]()
+    while (cursor.hasNext) {
+      val doc = cursor.next()
+      val map = doc.keySet().asScala.map { key =>
+        key -> doc.get(key)
+      }.toMap
+      results += map
     }
+
+    results.toSeq
   }
 
   override def cleanup(): Unit = {

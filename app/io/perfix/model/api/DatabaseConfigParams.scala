@@ -35,6 +35,13 @@ case class DatabaseConfigParams(databaseConfigId: Option[DatabaseConfigId] = Non
     this.copy(datasetDetails = DatasetDetails(datasetDetails.datasetId, datasetName = Some(datasetParams.name)))
   }
 
+  def toDatabaseConfigDetails: DatabaseConfigDetails = {
+    DatabaseConfigDetails(databaseConfigId = databaseConfigId.get,
+      databaseConfigName = Some(name),
+      storeType = Some(dataStore.toString)
+    )
+  }
+
 }
 
 object DatabaseConfigParams {

@@ -3,7 +3,7 @@ package io.perfix.controllers
 import controllers.AssetsFinder
 import io.perfix.auth.AuthenticationAction
 import io.perfix.manager.ExperimentManager
-import io.perfix.model.EntityFilter
+import io.perfix.model.{DatabaseCategory, EntityFilter}
 import io.perfix.model.experiment.{ExperimentId, ExperimentParams}
 import org.pac4j.core.profile.UserProfile
 import org.pac4j.play.scala.{Security, SecurityComponents}
@@ -25,6 +25,14 @@ class ExperimentController @Inject()(val controllerComponents: SecurityComponent
 
   def get(experimentId: Int) = authenticationAction { request =>
       Results.Ok(Json.toJson(experimentManager.get(ExperimentId(experimentId))))
+  }
+
+  def datasets(category: String) = authenticationAction { request =>
+    Results.Ok(Json.toJson(experimentManager.datasets(category)))
+  }
+
+  def config(category: String) = authenticationAction { request =>
+    Results.Ok(Json.toJson(experimentManager.configs(category)))
   }
 
   def update(experimentId: Int) = authenticationAction(parse.json) { request =>

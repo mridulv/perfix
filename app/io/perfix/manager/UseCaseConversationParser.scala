@@ -9,7 +9,7 @@ import io.perfix.model.api.{ConversationMessage, DatabaseConfigDetails, Database
 import io.perfix.model.experiment.{ExperimentId, ExperimentParams}
 import io.perfix.model.store.{DatabaseSetupParams, StoreType}
 import io.perfix.model.store.StoreType.StoreType
-import io.perfix.query.{PerfixQuery, PerfixQueryFilter}
+import io.perfix.query.{DbQueryFilter, SqlDBQueryBuilder}
 import io.perfix.stores.documentdb.DocumentDBDatabaseSetupParams
 import io.perfix.stores.dynamodb.DynamoDBDatabaseSetupParams
 import io.perfix.stores.mysql.RDSDatabaseSetupParams
@@ -17,6 +17,7 @@ import io.perfix.stores.redis.RedisDatabaseSetupParams
 import play.api.libs.json.Json
 import net.sf.jsqlparser.expression.{Expression, LongValue}
 import net.sf.jsqlparser.parser.CCJSqlParserUtil
+import net.sf.jsqlparser.schema.Table
 import net.sf.jsqlparser.statement.Statement
 import net.sf.jsqlparser.statement.select.{PlainSelect, Select}
 
@@ -33,8 +34,8 @@ class UseCaseConversationParser(conversationMessages: Seq[ConversationMessage]) 
            databaseConfigManager: DatabaseConfigManager,
            experimentManager: ExperimentManager): (DatasetId, DatabaseConfigId, ExperimentId) = {
     val experimentConfig = getExperimentConfig()
-    val perfixQuery = getQuery()
     val databaseType = getDatabaseType()
+    val sqlQuery = getQuery()
     val (columnsDescriptions, tableName)  = getDatasetDetails()
 
     val datasetParams: DatasetParams = DatasetParams(
@@ -59,7 +60,7 @@ class UseCaseConversationParser(conversationMessages: Seq[ConversationMessage]) 
       name = tableName.concat("-").concat("exp"),
       experimentTimeInSeconds = experimentConfig.experiment_time_in_seconds,
       concurrentQueries = experimentConfig.reads_per_minute,
-      query = perfixQuery,
+      dbQuery = sqlQuery,
       databaseConfigs = Seq(DatabaseConfigDetails(databaseConfigId))
     )
     val experimentId = experimentManager.create(experimentParams)
@@ -120,11 +121,11 @@ class UseCaseConversationParser(conversationMessages: Seq[ConversationMessage]) 
     Json.parse(response).as[ExperimentConfig]
   }
 
-  private def getQuery(): PerfixQuery = {
+  private def getQuery(): SqlDBQueryBuilder = {
     val service = OpenAIServiceFactory()
     val databaseConversation = ConversationMessage(
       ChatRole.System.toString(),
-      """can you return in a string different databases selected by the user. Options should always be within options among "RDS-mysql","RDS-postgresql","RDS-mariadb","dynamodb","redis","memcache","documentdb". If there is an option beyond these do not return that. Also in case there are multiple return multiple of these segregated by commas. Eg RDS-mysql,RDS-postgresql."""
+      """can you return the query which the user is interested in running in simple sql format [{"query" : $query1}, {"query" : $query2}]. Don't return anything apart from this json object"""
     )
     val allMessages = conversationMessages ++ Seq(databaseConversation)
     val response = Await.result(service.createChatCompletion(allMessages.map(_.toBaseMessage)), Duration.Inf)
@@ -147,28 +148,26 @@ class UseCaseConversationParser(conversationMessages: Seq[ConversationMessage]) 
           val filters = whereClause.map { expression =>
             expression.toString.split("AND").map { condition =>
               val Array(field, value) = condition.split("=").map(_.trim)
-              PerfixQueryFilter(field, value.replace("'", ""))
+              DbQueryFilter(field, value.replace("'", ""))
             }.toList
           }
 
-          // Extract limit
-          val limitClause = Option(selectBody.getLimit)
-          val limit = limitClause.flatMap { limit =>
-            Option(limit.getRowCount).collect {
-              case value: LongValue => value.getValue.toInt
-            }
+          // Extract table name
+          val tableName = selectBody.getFromItem match {
+            case table: Table => table.getName
+            case _ => throw new IllegalArgumentException("Unable to extract table name from query")
           }
 
           // Create PerfixQuery object
-          PerfixQuery(
+          SqlDBQueryBuilder(
             filtersOpt = filters,
             projectedFieldsOpt = Some(projectedFields),
-            limitOpt = limit
+            tableName = tableName
           )
 
-        case _ => PerfixQuery()
+        case _ => throw new IllegalArgumentException("Unable to find parse query")
       }
-    }.headOption.getOrElse(PerfixQuery())
+    }.headOption.getOrElse(throw new IllegalArgumentException("Unable to get any query from response"))
   }
 
   private def getDatabaseType(): StoreType = {
