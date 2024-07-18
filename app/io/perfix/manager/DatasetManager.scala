@@ -48,7 +48,7 @@ class DatasetManager @Inject()(datasetConfigStore: DatasetConfigStore) {
             dataset.copy(tableName = Some(dataset.tableName.getOrElse(s"table_${index}")))
           }
       }.getOrElse(throw InvalidStateException("Invalid Dataset"))
-    Datasets(datasets ++ datasets)
+    Datasets(datasets)
   }
 
   def update(datasetId: DatasetId,
