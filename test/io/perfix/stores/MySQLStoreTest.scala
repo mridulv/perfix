@@ -2,7 +2,7 @@ package io.perfix.stores
 
 import io.perfix.model.api.DatasetParams
 import io.perfix.model.{ColumnDescription, NameType}
-import io.perfix.query.PerfixQuery
+import io.perfix.query.SqlDBQueryBuilder
 import io.perfix.stores.mysql._
 import org.mockito.MockitoSugar
 import org.scalatest.BeforeAndAfterAll
@@ -42,7 +42,7 @@ class MySQLStoreTest extends AnyFlatSpec with Matchers with MockitoSugar with Be
   it should "insert data correctly" in {
     val rows = Seq(Map("name" -> "test22"))
     mySQLStore.putData(rows)
-    val res = mySQLStore.readData(PerfixQuery(filtersOpt = None))
+    val res = mySQLStore.readData(SqlDBQueryBuilder(filtersOpt = None))
     println(res.size)
     res.size should be (1)
   }
@@ -53,7 +53,7 @@ class MySQLStoreTest extends AnyFlatSpec with Matchers with MockitoSugar with Be
       name = s"dataset-${Random.nextInt()}",
       description = "desc",
       rows = 100,
-      columns = Seq(ColumnDescription("name", NameType()))
+      columns = Option(Seq(ColumnDescription("name", NameType())))
     )
     val mysqlStoreParams = RDSDatabaseSetupParams(
       instanceType = "db.t3.medium",
