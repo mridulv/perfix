@@ -49,26 +49,32 @@ class UseCaseManager @Inject()(useCaseStore: UseCaseStore,
 
   def converse(useCaseId: UseCaseId, message: String): String = {
     val useCaseParams = get(useCaseId)
-    val updatedUseCaseParams = useCaseParams.addConversation(
-      ConversationMessage(ChatRole.User.toString(), message)
-    )
-    val responseConversationMessage: ConversationMessage = updatedUseCaseParams.useCaseDetails match {
-      case Some(conversation) => wrappedResponse(conversation.messages)
-      case None => throw new RuntimeException(s"Invalid ConversationParams for id: ${useCaseId}")
-    }
-    if (responseConversationMessage == CompletionConversationMessage) {
-      val endConversationMessage = handleEndConversation(useCaseParams)
-      useCaseStore.update(
-        useCaseId,
-        updatedUseCaseParams.copy(useCaseState = Some(UseCaseState.Completed))
+    if (useCaseParams.useCaseState.getOrElse(UseCaseState.Created) != UseCaseState.Completed) {
+      val updatedUseCaseParams = useCaseParams.addConversation(
+        ConversationMessage(ChatRole.User.toString(), message)
       )
+      val responseConversationMessage: ConversationMessage = updatedUseCaseParams.useCaseDetails match {
+        case Some(conversation) => wrappedResponse(conversation.messages)
+        case None => throw new RuntimeException(s"Invalid ConversationParams for id: ${useCaseId}")
+      }
+      val conversationMessage = if (responseConversationMessage == CompletionConversationMessage) {
+        val endConversationMessage = handleEndConversation(useCaseParams)
+        useCaseStore.update(
+          useCaseId,
+          updatedUseCaseParams.copy(useCaseState = Some(UseCaseState.Completed))
+        )
+        endConversationMessage
+      } else {
+        useCaseStore.update(
+          useCaseId,
+          updatedUseCaseParams.addConversation(responseConversationMessage).copy(useCaseState = Some(UseCaseState.InProgress))
+        )
+        responseConversationMessage
+      }
+      conversationMessage.message
     } else {
-      useCaseStore.update(
-        useCaseId,
-        updatedUseCaseParams.addConversation(responseConversationMessage).copy(useCaseState = Some(UseCaseState.InProgress))
-      )
+      throw new RuntimeException(s"Conversation is completed for ${useCaseId}")
     }
-    responseConversationMessage.message
   }
 
   def all(entityFilters: Seq[EntityFilter]): Seq[UseCaseParams] = {
