@@ -22,6 +22,6 @@ case class SqlQueries(queries: Seq[SqlQuery])
 case class SqlQuery(query: String)
 
 object SqlQueries {
-  implicit val SqlQueriesFormatter: Format[SqlQueries] = Json.format[SqlQueries]
   implicit val SqlQueryFormatter: Format[SqlQuery] = Json.format[SqlQuery]
+  implicit val SqlQueriesFormatter: Format[SqlQueries] = Json.format[SqlQueries]
 }
