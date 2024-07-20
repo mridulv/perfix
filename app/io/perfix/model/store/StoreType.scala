@@ -16,6 +16,10 @@ object StoreType extends Enumeration {
     case _ => JsError("Invalid value for StoreType")
   }
 
+  def fromString(input: String): Option[StoreType] = {
+    values.find(storeType => input.toLowerCase.contains(storeType.toString.toLowerCase))
+  }
+
 
   implicit val StoreTypeFormat: Format[StoreType] = Format(reads, writes)
 
