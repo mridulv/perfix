@@ -121,7 +121,7 @@ class UseCaseConversationParser(conversationMessages: Seq[ConversationMessage]) 
     Json.parse(response).as[ExperimentConfig]
   }
 
-  private def getQuery(): SqlDBQueryBuilder = {
+  private def getQuery(tableName: String): SqlDBQueryBuilder = {
     val service = OpenAIServiceFactory()
     val databaseConversation = ConversationMessage(
       ChatRole.System.toString(),
@@ -150,12 +150,6 @@ class UseCaseConversationParser(conversationMessages: Seq[ConversationMessage]) 
               val Array(field, value) = condition.split("=").map(_.trim)
               DbQueryFilter(field, value.replace("'", ""))
             }.toList
-          }
-
-          // Extract table name
-          val tableName = selectBody.getFromItem match {
-            case table: Table => table.getName
-            case _ => throw new IllegalArgumentException("Unable to extract table name from query")
           }
 
           // Create PerfixQuery object
