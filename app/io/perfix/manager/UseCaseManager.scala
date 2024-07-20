@@ -97,7 +97,7 @@ class UseCaseManager @Inject()(useCaseStore: UseCaseStore,
     val (datasetId, databaseConfigId, experimentId) = useCaseConversationParser.init(datasetManager, databaseConfigManager, experimentManager)
     ConversationMessage(
       ChatRole.System.toString(),
-      s"We have created a benchmark run for you given all the inputs in the chat. Link: ${APP_URL}/experiment/${experimentId}"
+      s"We have created a benchmark run for you given all the inputs in the chat. Link: ${APP_URL}/experiment/${experimentId.id}"
     )
   }
 
