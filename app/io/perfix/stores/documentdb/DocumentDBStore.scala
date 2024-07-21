@@ -15,6 +15,8 @@ class DocumentDBStore(override val databaseConfigParams: DocumentDBDatabaseSetup
   private var mongoClient: MongoClient = _
   private var mongoDatabase: MongoDatabase = _
 
+  override val kindOfQuery: String = DBQuery.NoSql
+
   def connectAndInitialize(): Unit = {
     val connectionParams = databaseConfigParams.dbDetails.getOrElse(
       throw InvalidStateException("Connection parameters should have been defined.")

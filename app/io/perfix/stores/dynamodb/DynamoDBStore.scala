@@ -22,6 +22,8 @@ class DynamoDBStore(datasetParams: DatasetParams,
   private var client: AmazonDynamoDB = _
   private var tableParams: DynamoDBTableParams = _
 
+  override val kindOfQuery: String = DBQuery.NoSql
+
   def connectAndInitialize(): Unit = {
     tableParams = databaseConfigParams.dynamoDBTableParams.getOrElse(throw InvalidStateException("Table Params should have been defined"))
     val capacityParams = databaseConfigParams.dynamoDBCapacityParams.getOrElse(throw InvalidStateException("Capacity Params should have been defined"))

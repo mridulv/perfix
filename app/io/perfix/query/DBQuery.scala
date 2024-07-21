@@ -2,7 +2,11 @@ package io.perfix.query
 
 import play.api.libs.json._
 
-trait DBQuery
+trait DBQuery {
+
+  def resolve(mapping: Map[String, Any]): DBQuery
+
+}
 
 object DBQuery {
   val Sql = "sql"

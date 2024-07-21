@@ -6,6 +6,8 @@ import io.perfix.query.{DBQuery, SqlDBQueryBuilder}
 
 trait DataStore {
 
+  val kindOfQuery: String
+
   val databaseConfigParams: DatabaseSetupParams
   def connectAndInitialize(): Unit
   def putData(rows: Seq[Map[String, Any]]): Unit

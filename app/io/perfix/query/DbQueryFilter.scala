@@ -12,6 +12,14 @@ case class DbQueryFilter(field: String, fieldValue: Any) {
     }
   }
 
+  def resolve(mapping: Map[String, Any]): DbQueryFilter = {
+    val resolvedValue = fieldValue match {
+      case value: String => mapping.getOrElse(value, value)
+      case _ => fieldValue
+    }
+    DbQueryFilter(field, resolvedValue)
+  }
+
 }
 
 object DbQueryFilter {

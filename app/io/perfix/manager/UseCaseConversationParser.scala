@@ -9,21 +9,15 @@ import io.perfix.model.api.{ConversationMessage, DatabaseConfigDetails, Database
 import io.perfix.model.experiment.{ExperimentId, ExperimentParams}
 import io.perfix.model.store.{DatabaseSetupParams, StoreType}
 import io.perfix.model.store.StoreType.StoreType
-import io.perfix.query.{DbQueryFilter, SqlDBQueryBuilder}
+import io.perfix.query.{DbQueryFilter, SqlDBQuery, SqlDBQueryBuilder}
 import io.perfix.stores.documentdb.DocumentDBDatabaseSetupParams
 import io.perfix.stores.dynamodb.DynamoDBDatabaseSetupParams
 import io.perfix.stores.mysql.RDSDatabaseSetupParams
 import io.perfix.stores.redis.RedisDatabaseSetupParams
 import play.api.libs.json.Json
-import net.sf.jsqlparser.expression.{Expression, LongValue}
-import net.sf.jsqlparser.parser.CCJSqlParserUtil
-import net.sf.jsqlparser.schema.Table
-import net.sf.jsqlparser.statement.Statement
-import net.sf.jsqlparser.statement.select.{PlainSelect, Select}
 
 import scala.concurrent.{Await, ExecutionContext}
 import scala.concurrent.duration.Duration
-import scala.jdk.CollectionConverters.CollectionHasAsScala
 
 class UseCaseConversationParser(conversationMessages: Seq[ConversationMessage]) {
   implicit val ec = ExecutionContext.global
@@ -121,11 +115,11 @@ class UseCaseConversationParser(conversationMessages: Seq[ConversationMessage]) 
     Json.parse(response).as[ExperimentConfig]
   }
 
-  private def getQuery(tableName: String): SqlDBQueryBuilder = {
+  private def getQuery(tableName: String): SqlDBQuery = {
     val service = OpenAIServiceFactory()
     val databaseConversation = ConversationMessage(
       ChatRole.System.toString(),
-      """can you return the query which the user is interested in running in simple sql format {"queries" : [{"query" : $query1}, {"query" : $query2}]}. Don't return anything apart from this json array"""
+      """can you return the query which the user is interested in running in simple sql format {"queries" : [{"query" : $query1}, {"query" : $query2}]}. Don't return anything apart from this json array. Also make sure the variable names start with {{ and ends with }} like it is a jinja variable and have the same exact names as the column name on which the operation is applied. Also make sure the table name referenced in SQL is """ + tableName + """."""
     )
     val allMessages = conversationMessages ++ Seq(databaseConversation)
     val response = Await.result(service.createChatCompletion(allMessages.map(_.toBaseMessage)), Duration.Inf)
@@ -134,34 +128,7 @@ class UseCaseConversationParser(conversationMessages: Seq[ConversationMessage]) 
       .message
       .content
     val sqlQueries = Json.parse(response).as[SqlQueries]
-    sqlQueries.queries.map { query =>
-      val statement: Statement = CCJSqlParserUtil.parse(query.query)
-      statement match {
-        case selectStatement: Select =>
-          val selectBody = selectStatement.getSelectBody.asInstanceOf[PlainSelect]
-
-          // Extract projected fields
-          val projectedFields = selectBody.getSelectItems.asScala.map(_.toString).toList
-
-          // Extract filters
-          val whereClause: Option[Expression] = Option(selectBody.getWhere)
-          val filters = whereClause.map { expression =>
-            expression.toString.split("AND").map { condition =>
-              val Array(field, value) = condition.split("=").map(_.trim)
-              DbQueryFilter(field, value.replace("'", ""))
-            }.toList
-          }
-
-          // Create PerfixQuery object
-          SqlDBQueryBuilder(
-            filtersOpt = filters,
-            projectedFieldsOpt = Some(projectedFields),
-            tableName = tableName
-          )
-
-        case _ => throw new IllegalArgumentException("Unable to find parse query")
-      }
-    }.headOption.getOrElse(throw new IllegalArgumentException("Unable to get any query from response"))
+    sqlQueries.queries.headOption.getOrElse(throw new IllegalArgumentException("Unable to get any query from response")).toSqlDBQuery
   }
 
   private def getDatabaseType(): StoreType = {

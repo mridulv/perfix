@@ -16,6 +16,8 @@ class MariaDBStore(datasetParams: DatasetParams,
 
   private[stores] var connection: Connection = _
 
+  override val kindOfQuery: String = DBQuery.Sql
+
   def connectAndInitialize(): Unit = {
     val connectionParams = databaseConfigParams.dbDetails match {
       case Some(con) => con
