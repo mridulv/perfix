@@ -11,6 +11,13 @@ case class SqlDBQuery(sql: String) extends DBQuery {
     }
   }
 
+  def resolve(mapping: Map[String, Any]): SqlDBQuery = {
+    val resolvedSql = mapping.foldLeft(sql) {
+      case (resolvedSql, (placeholder, value)) =>
+        resolvedSql.replace(s"{{$placeholder}}", value.toString)
+    }
+    SqlDBQuery(resolvedSql)
+  }
 }
 
 object SqlDBQuery {
