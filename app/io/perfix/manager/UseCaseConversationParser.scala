@@ -93,6 +93,7 @@ class UseCaseConversationParser(conversationMessages: Seq[ConversationMessage]) 
         case "integer" => NumericType(None)
         case "boolean" => BooleanValueType()
         case "double" => NumericType(None)
+        case "long" => NumericType(None)
       }
       ColumnDescription(field.fieldName, columnType)
     }
