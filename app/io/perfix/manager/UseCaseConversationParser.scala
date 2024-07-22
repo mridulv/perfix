@@ -88,11 +88,12 @@ class UseCaseConversationParser(conversationMessages: Seq[ConversationMessage]) 
       .content
 
     val columnsDescriptions = fields.map { field =>
-      val columnType: ColumnType = field.fieldType match {
+      val columnType: ColumnType = field.fieldType.toLowerCase match {
         case "string" => TextType()
         case "integer" => NumericType(None)
         case "boolean" => BooleanValueType()
         case "double" => NumericType(None)
+        case "long" => NumericType(None)
       }
       ColumnDescription(field.fieldName, columnType)
     }
