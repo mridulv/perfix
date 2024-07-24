@@ -1,23 +1,24 @@
-package io.perfix.manager
+package io.perfix.conversations
 
 import akka.actor.ActorSystem
 import akka.stream.Materializer
 import io.cequence.openaiscala.domain.ChatRole
 import io.cequence.openaiscala.service.OpenAIServiceFactory
-import io.perfix.model.{BooleanValueType, ColumnDescription, ColumnType, NumericType, TextType}
-import io.perfix.model.api.{ConversationMessage, DatabaseConfigDetails, DatabaseConfigId, DatabaseConfigParams, DatasetDetails, DatasetId, DatasetParams, ExperimentConfig, Field, SqlQueries}
+import io.perfix.manager.{DatabaseConfigManager, DatasetManager, ExperimentManager}
+import io.perfix.model.api._
 import io.perfix.model.experiment.{ExperimentId, ExperimentParams}
-import io.perfix.model.store.{DatabaseSetupParams, StoreType}
 import io.perfix.model.store.StoreType.StoreType
-import io.perfix.query.{DbQueryFilter, SqlDBQuery, SqlDBQueryBuilder}
+import io.perfix.model.store.{DatabaseSetupParams, StoreType}
+import io.perfix.model._
+import io.perfix.query.SqlDBQuery
 import io.perfix.stores.documentdb.DocumentDBDatabaseSetupParams
 import io.perfix.stores.dynamodb.DynamoDBDatabaseSetupParams
 import io.perfix.stores.mysql.RDSDatabaseSetupParams
 import io.perfix.stores.redis.RedisDatabaseSetupParams
 import play.api.libs.json.Json
 
-import scala.concurrent.{Await, ExecutionContext}
 import scala.concurrent.duration.Duration
+import scala.concurrent.{Await, ExecutionContext}
 
 class UseCaseConversationParser(conversationMessages: Seq[ConversationMessage]) {
   implicit val ec = ExecutionContext.global
