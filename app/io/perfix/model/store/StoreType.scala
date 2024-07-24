@@ -22,5 +22,4 @@ object StoreType extends Enumeration {
 
 
   implicit val StoreTypeFormat: Format[StoreType] = Format(reads, writes)
-
 }

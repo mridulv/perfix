@@ -5,6 +5,7 @@ import akka.stream.Materializer
 import com.google.inject.{Inject, Singleton}
 import io.cequence.openaiscala.domain.ChatRole
 import io.cequence.openaiscala.service.OpenAIServiceFactory
+import io.perfix.conversations.UseCaseConversationParser
 import io.perfix.db.UseCaseStore
 import io.perfix.model.{EntityFilter, UseCaseFilter}
 import io.perfix.model.api.{ConversationMessage, UseCaseId, UseCaseParams, UseCaseState}
