@@ -10,6 +10,8 @@ class RedisStore(override val databaseConfigParams: RedisDatabaseSetupParams)
 
   private var jedisPool: JedisPool = _
 
+  override val kindOfQuery: String = DBQuery.NoSql
+
   def connectAndInitialize(): Unit = {
     (databaseConfigParams.dbDetails) match {
       case Some(param) =>

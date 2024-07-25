@@ -20,6 +20,9 @@ case class SqlDBQueryBuilder(filtersOpt: Option[List[DbQueryFilter]] = None,
     SqlDBQuery(s"select $projectedFieldsPart from $tableName ${sqlFilterPart}")
   }
 
+  override def resolve(mapping: Map[String, Any]): DBQuery = {
+    this
+  }
 }
 
 object SqlDBQueryBuilder {

@@ -10,38 +10,38 @@ class SqlDBQueryBuilderConverterTest extends AnyFlatSpec with Matchers {
     val query = SqlDBQueryBuilder(
       filtersOpt = Some(List(DbQueryFilter("age", 18), DbQueryFilter("name", "John"))),
       projectedFieldsOpt = Some(List("name", "age")),
-      limitOpt = Some(10)
+      tableName = "table"
     )
 
-    val sqlQuery = convert("testDB", "testTable", query)
-    assert(sqlQuery == "select name, age from testDB.testTable where age = 18 and name = \"John\" limit 10")
+    val sqlQuery = query.convert
+    assert(sqlQuery.sql == "select name, age from testDB.testTable where age = 18 and name = \"John\" limit 10")
   }
 
   "PerfixQueryConverter" should "handle no filters" in {
-    val query = SqlDBQueryBuilder(None, Some(List("name", "age")), Some(10))
+    val query = SqlDBQueryBuilder(None, Some(List("name", "age")), "table")
 
-    val sqlQuery = convert("testDB", "testTable", query)
-    assert(sqlQuery == "select name, age from testDB.testTable  limit 10")
+    val sqlQuery = query.convert
+    assert(sqlQuery.sql == "select name, age from testDB.testTable  limit 10")
   }
 
   "PerfixQueryConverter" should "handle no projected fields" in {
-    val query = SqlDBQueryBuilder(Some(List(DbQueryFilter("age", 18))), None, None)
+    val query = SqlDBQueryBuilder(Some(List(DbQueryFilter("age", 18))), None, "table")
 
-    val sqlQuery = convert("testDB", "testTable", query)
-    assert(sqlQuery == "select * from testDB.testTable where age = 18 ")
+    val sqlQuery = query.convert
+    assert(sqlQuery.sql == "select * from testDB.testTable where age = 18 ")
   }
 
   "PerfixQueryConverter" should "handle no limit" in {
-    val query = SqlDBQueryBuilder(Some(List(DbQueryFilter("age", 18))), Some(List("name")), None)
+    val query = SqlDBQueryBuilder(Some(List(DbQueryFilter("age", 18))), Some(List("name")), "table")
 
-    val sqlQuery = convert("testDB", "testTable", query)
-    assert(sqlQuery == "select name from testDB.testTable where age = 18 ")
+    val sqlQuery = query.convert
+    assert(sqlQuery.sql == "select name from testDB.testTable where age = 18 ")
   }
 
   "PerfixQueryConverter" should "handle empty query" in {
-    val query = SqlDBQueryBuilder(None, None, None)
+    val query = SqlDBQueryBuilder(None, None, "table")
 
-    val sqlQuery = convert("testDB", "testTable", query)
-    assert(sqlQuery == "select * from testDB.testTable  ")
+    val sqlQuery = query.convert
+    assert(sqlQuery.sql == "select * from testDB.testTable  ")
   }
 }

@@ -2,7 +2,7 @@ package io.perfix.experiment
 
 import io.perfix.model.api.Dataset
 import io.perfix.model.experiment.{ExperimentParams, SingleExperimentResult}
-import io.perfix.model.store.DatabaseSetupParams
+import io.perfix.query.{DBQuery, NoSqlDBQuery, SqlDBQuery}
 import io.perfix.stores.DataStore
 import io.perfix.util.BenchmarkUtil
 
@@ -37,7 +37,7 @@ class SimplePerformanceExperiment(dataStore: DataStore,
       val results = BenchmarkUtil.runBenchmark(
         concurrentThreads = experimentParams.concurrentQueries,
         benchmarkTimeSeconds = experimentParams.experimentTimeInSeconds,
-        runTask = () => dataStore.readData(experimentParams.dbQuery).size
+        runTask = () => dataStore.readData(getUpdatedDbQuery(experimentParams.dbQuery)).size
       )
       results
     } catch {
@@ -53,5 +53,24 @@ class SimplePerformanceExperiment(dataStore: DataStore,
 
   def cleanup(): Unit = {
     dataStore.cleanup()
+  }
+
+  private def getUpdatedDbQuery(dbQuery: DBQuery): DBQuery = {
+    val columnNameToValueMapping = dataset.columns.map { column =>
+      (column.columnName, column.columnType.getValue)
+    }.toMap
+    if (dataStore.kindOfQuery == DBQuery.NoSql) {
+      dbQuery match {
+        case noSqlDBQuery: NoSqlDBQuery => noSqlDBQuery.resolve(columnNameToValueMapping)
+        case sqlDBQuery: SqlDBQuery => sqlDBQuery.resolve(columnNameToValueMapping).toNoSqlDBQuery
+      }
+    } else if (dataStore.kindOfQuery == DBQuery.Sql) {
+      dbQuery match {
+        case noSqlDBQuery: NoSqlDBQuery => throw new RuntimeException(s"Invalid Query: $noSqlDBQuery")
+        case sqlDBQuery: NoSqlDBQuery => sqlDBQuery.resolve(columnNameToValueMapping)
+      }
+    } else {
+      throw new RuntimeException(s"Invalid Query: $dbQuery")
+    }
   }
 }

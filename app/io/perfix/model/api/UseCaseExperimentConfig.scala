@@ -1,5 +1,6 @@
 package io.perfix.model.api
 
+import io.perfix.query.SqlDBQuery
 import play.api.libs.json.{Format, Json}
 
 case class Field(fieldName: String, fieldType: String)
@@ -19,9 +20,15 @@ object ExperimentConfig {
 
 case class SqlQueries(queries: Seq[SqlQuery])
 
-case class SqlQuery(query: String)
+case class SqlQuery(query: String) {
+
+  def toSqlDBQuery: SqlDBQuery = {
+    SqlDBQuery(query)
+  }
+
+}
 
 object SqlQueries {
-  implicit val SqlQueriesFormatter: Format[SqlQueries] = Json.format[SqlQueries]
   implicit val SqlQueryFormatter: Format[SqlQuery] = Json.format[SqlQuery]
+  implicit val SqlQueriesFormatter: Format[SqlQueries] = Json.format[SqlQueries]
 }

@@ -1,29 +1,24 @@
-package io.perfix.manager
+package io.perfix.conversations
 
 import akka.actor.ActorSystem
 import akka.stream.Materializer
 import io.cequence.openaiscala.domain.ChatRole
 import io.cequence.openaiscala.service.OpenAIServiceFactory
-import io.perfix.model.{BooleanValueType, ColumnDescription, ColumnType, NumericType, TextType}
-import io.perfix.model.api.{ConversationMessage, DatabaseConfigDetails, DatabaseConfigId, DatabaseConfigParams, DatasetDetails, DatasetId, DatasetParams, ExperimentConfig, Field, SqlQueries}
+import io.perfix.manager.{DatabaseConfigManager, DatasetManager, ExperimentManager}
+import io.perfix.model.api._
 import io.perfix.model.experiment.{ExperimentId, ExperimentParams}
-import io.perfix.model.store.{DatabaseSetupParams, StoreType}
 import io.perfix.model.store.StoreType.StoreType
-import io.perfix.query.{DbQueryFilter, SqlDBQueryBuilder}
+import io.perfix.model.store.{DatabaseSetupParams, StoreType}
+import io.perfix.model._
+import io.perfix.query.SqlDBQuery
 import io.perfix.stores.documentdb.DocumentDBDatabaseSetupParams
 import io.perfix.stores.dynamodb.DynamoDBDatabaseSetupParams
 import io.perfix.stores.mysql.RDSDatabaseSetupParams
 import io.perfix.stores.redis.RedisDatabaseSetupParams
 import play.api.libs.json.Json
-import net.sf.jsqlparser.expression.{Expression, LongValue}
-import net.sf.jsqlparser.parser.CCJSqlParserUtil
-import net.sf.jsqlparser.schema.Table
-import net.sf.jsqlparser.statement.Statement
-import net.sf.jsqlparser.statement.select.{PlainSelect, Select}
 
-import scala.concurrent.{Await, ExecutionContext}
 import scala.concurrent.duration.Duration
-import scala.jdk.CollectionConverters.CollectionHasAsScala
+import scala.concurrent.{Await, ExecutionContext}
 
 class UseCaseConversationParser(conversationMessages: Seq[ConversationMessage]) {
   implicit val ec = ExecutionContext.global
@@ -35,8 +30,8 @@ class UseCaseConversationParser(conversationMessages: Seq[ConversationMessage]) 
            experimentManager: ExperimentManager): (DatasetId, DatabaseConfigId, ExperimentId) = {
     val experimentConfig = getExperimentConfig()
     val databaseType = getDatabaseType()
-    val sqlQuery = getQuery()
     val (columnsDescriptions, tableName)  = getDatasetDetails()
+    val sqlQuery = getQuery(tableName)
 
     val datasetParams: DatasetParams = DatasetParams(
       None,
@@ -72,7 +67,7 @@ class UseCaseConversationParser(conversationMessages: Seq[ConversationMessage]) 
     val service = OpenAIServiceFactory()
     val datasetConversation = ConversationMessage(
       ChatRole.System.toString(),
-      """can you define in a single json array in this format: [{"fieldName" : "$fieldName", "fieldType": "$fieldType"}] fieldtype should be among string,integer,boolean,double and the object should be a valid json object. make sure the response is proper json object without anything else but in this format.""".stripMargin
+      """can you define in a single json array in this format: [{"fieldName" : "$fieldName", "fieldType": "$fieldType"}] fieldtype should be among string,integer,boolean,double and the response should be a valid json array. Make sure the response is just json array in the format defined without any other text.""".stripMargin
     )
     val allMessagesWithDatasetDetails = conversationMessages ++ Seq(datasetConversation)
     val response = Await.result(service.createChatCompletion(allMessagesWithDatasetDetails.map(_.toBaseMessage)), Duration.Inf)
@@ -84,32 +79,33 @@ class UseCaseConversationParser(conversationMessages: Seq[ConversationMessage]) 
 
     val tableConversation = ConversationMessage(
       ChatRole.System.toString(),
-      """if i have to name a table name in the database for the experiment, can you give a simple easy name. Name can contain multiple words but they should be combined with "_". Just give the name as the response.""".stripMargin
+      """if i have to name a table name in the database for the experiment, can you give a simple easy name. Name can contain multiple words but they should be combined with "_". Just give the name of the table as the response without anything else.""".stripMargin
     )
     val allMessagesWithTableName = conversationMessages ++ Seq(tableConversation)
-    val tableName = Await.result(service.createChatCompletion(allMessagesWithDatasetDetails.map(_.toBaseMessage)), Duration.Inf)
+    val tableName = Await.result(service.createChatCompletion(allMessagesWithTableName.map(_.toBaseMessage)), Duration.Inf)
       .choices
       .head
       .message
       .content
 
     val columnsDescriptions = fields.map { field =>
-      val columnType: ColumnType = field.fieldType match {
+      val columnType: ColumnType = field.fieldType.toLowerCase match {
         case "string" => TextType()
         case "integer" => NumericType(None)
         case "boolean" => BooleanValueType()
         case "double" => NumericType(None)
+        case "long" => NumericType(None)
       }
       ColumnDescription(field.fieldName, columnType)
     }
-    (columnsDescriptions, tableName)
+    (columnsDescriptions, tableName.replace("\"", ""))
   }
 
   private def getExperimentConfig(): ExperimentConfig = {
     val service = OpenAIServiceFactory()
     val experimentConfigConversation = ConversationMessage(
       ChatRole.System.toString(),
-      """can you return the number of rows, number of writes per minute, number of reads per minute, duration of the experiment in a json object in this json object: {"rows" : "$rows", "experiment_time_in_seconds" : "$num_rows", "num_writes_per_minute" : "$writes_per_minute", "reads_per_minute" : "$reads_per_minute"}. in the json object all the fields are either long or int.""".stripMargin
+      """can you return the number of rows, number of writes per minute, number of reads per minute, duration of the experiment in a json object in this json object: {"rows" : "$rows", "experiment_time_in_seconds" : "$num_rows", "num_writes_per_minute" : "$writes_per_minute", "reads_per_minute" : "$reads_per_minute"}. in the json object all the fields are either long or int. Make sure to return just json object and no other text""".stripMargin
     )
     val allMessagesWithDatasetDetails = conversationMessages ++ Seq(experimentConfigConversation)
     val response = Await.result(service.createChatCompletion(allMessagesWithDatasetDetails.map(_.toBaseMessage)), Duration.Inf)
@@ -121,11 +117,11 @@ class UseCaseConversationParser(conversationMessages: Seq[ConversationMessage]) 
     Json.parse(response).as[ExperimentConfig]
   }
 
-  private def getQuery(): SqlDBQueryBuilder = {
+  private def getQuery(tableName: String): SqlDBQuery = {
     val service = OpenAIServiceFactory()
     val databaseConversation = ConversationMessage(
       ChatRole.System.toString(),
-      """can you return the query which the user is interested in running in simple sql format [{"query" : $query1}, {"query" : $query2}]. Don't return anything apart from this json object"""
+      """can you return the query which the user is interested in running in simple sql format {"queries" : [{"query" : $query1}, {"query" : $query2}]}. Don't return anything apart from this json array. Also make sure the variable names start with {{ and ends with }} like it is a jinja variable and have the same exact names as the column name on which the operation is applied. Also make sure the table name referenced in SQL is """ + tableName + """."""
     )
     val allMessages = conversationMessages ++ Seq(databaseConversation)
     val response = Await.result(service.createChatCompletion(allMessages.map(_.toBaseMessage)), Duration.Inf)
@@ -134,40 +130,7 @@ class UseCaseConversationParser(conversationMessages: Seq[ConversationMessage]) 
       .message
       .content
     val sqlQueries = Json.parse(response).as[SqlQueries]
-    sqlQueries.queries.map { query =>
-      val statement: Statement = CCJSqlParserUtil.parse(query.query)
-      statement match {
-        case selectStatement: Select =>
-          val selectBody = selectStatement.getSelectBody.asInstanceOf[PlainSelect]
-
-          // Extract projected fields
-          val projectedFields = selectBody.getSelectItems.asScala.map(_.toString).toList
-
-          // Extract filters
-          val whereClause: Option[Expression] = Option(selectBody.getWhere)
-          val filters = whereClause.map { expression =>
-            expression.toString.split("AND").map { condition =>
-              val Array(field, value) = condition.split("=").map(_.trim)
-              DbQueryFilter(field, value.replace("'", ""))
-            }.toList
-          }
-
-          // Extract table name
-          val tableName = selectBody.getFromItem match {
-            case table: Table => table.getName
-            case _ => throw new IllegalArgumentException("Unable to extract table name from query")
-          }
-
-          // Create PerfixQuery object
-          SqlDBQueryBuilder(
-            filtersOpt = filters,
-            projectedFieldsOpt = Some(projectedFields),
-            tableName = tableName
-          )
-
-        case _ => throw new IllegalArgumentException("Unable to find parse query")
-      }
-    }.headOption.getOrElse(throw new IllegalArgumentException("Unable to get any query from response"))
+    sqlQueries.queries.headOption.getOrElse(throw new IllegalArgumentException("Unable to get any query from response")).toSqlDBQuery
   }
 
   private def getDatabaseType(): StoreType = {
@@ -182,13 +145,10 @@ class UseCaseConversationParser(conversationMessages: Seq[ConversationMessage]) 
       .head
       .message
       .content
-    response.strip().toLowerCase match {
-      case "RDS-mysql" => StoreType.MySQL
-      case "RDS-postgresql" => StoreType.Postgres
-      case "RDS-mariadb" => StoreType.MariaDB
-      case "dynamodb" => StoreType.DynamoDB
-      case "redis" => StoreType.Redis
-      case "documentdb" => StoreType.MongoDB
+
+    StoreType.fromString(response) match {
+      case Some(storeType) => storeType
+      case None => throw new IllegalArgumentException("Unable to get database from response")
     }
   }
 
