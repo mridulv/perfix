@@ -19,7 +19,7 @@ const columnHeads = [
 
 const Experiment = () => {
   const [open, setOpen] = useState(false);
-  const [filterValues, setFilterValues] = useState([]);
+  const [filterValues, setFilterValues] = useState({});
   const [selectedOptions, setSelectedOptions] = useState({
     States: null,
     Database: null,
@@ -99,7 +99,7 @@ const Experiment = () => {
         <h3 className="text-2xl font-semibold -tracking-tighter">Experiments</h3>
       </div>
       <div className="w-[95%] h-[1px] bg-accent my-6"></div>
-      <div className="mb-3 ps-7 pe-9 flex justify-between">
+      <div className="mb-5 ps-7 pe-9 flex justify-between">
         <div className="flex gap-x-4">
           <input
             className=" search-input"

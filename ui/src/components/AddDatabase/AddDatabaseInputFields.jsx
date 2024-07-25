@@ -56,14 +56,14 @@ const AddDatabaseInputFields = ({ input, handleInputChange, options }) => {
         {dataType === "StringType" && (
           <input
             type="text"
-            className="border-2 border-gray-300 focus:border-gray-400 w-[250px] px-2 py-1 rounded"
+            className="search-input border-2 border-gray-300 focus:border-gray-400 w-[250px] px-2 py-1 rounded"
             name={inputName}
             onChange={handleChange}
           />
         )}
         {dataType === "IntType" && (
           <input
-            className="border-2 border-gray-300 focus:border-gray-400 w-[250px] px-2 py-1 rounded"
+            className="search-input border-2 border-gray-300 focus:border-gray-400 w-[250px] px-2 py-1 rounded"
             placeholder={inputDisplayName}
             type="number"
             name={inputName}
@@ -103,7 +103,7 @@ const AddDatabaseInputFields = ({ input, handleInputChange, options }) => {
                     </label>
                   </div>
                   <input
-                    className="border-2 border-gray-300 focus:border-gray-400 max-w-[250px] px-2 py-1 rounded"
+                    className=" search-input border-2 border-gray-300 focus:border-gray-400 max-w-[250px] px-2 py-1 rounded"
                     type="text"
                     name={`partitionKey${i}`}
                     id={`partitionKey${i}`}
@@ -117,7 +117,7 @@ const AddDatabaseInputFields = ({ input, handleInputChange, options }) => {
                 <div className="flex flex-col mb-3">
                   <label className="text-[12px] font-bold">Sort Key</label>
                   <input
-                    className="border-2 border-gray-300 focus:border-gray-400 max-w-[250px] px-2 py-1 rounded"
+                    className="search-input border-2 border-gray-300 focus:border-gray-400 max-w-[250px] px-2 py-1 rounded"
                     type="text"
                     name={`sortKey${i}`}
                     id={`sortKey${i}`}

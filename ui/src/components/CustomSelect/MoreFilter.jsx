@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from "react";
+import  { useRef, useEffect, useState } from "react";
 import { FaCaretDown, FaCaretUp } from "react-icons/fa6";
 import { IoIosArrowForward } from "react-icons/io";
 import { MdOutlineCheckBoxOutlineBlank } from "react-icons/md";
@@ -37,7 +37,7 @@ const MoreDropdown = ({ onSelect, selectedOptions }) => {
     <div ref={dropdownRef} className="relative">
       <button
         onClick={toggleDropdown}
-        className="p-1 text-[#8E8E8E] text-[13px] flex items-center gap-1 font-semibold border-2 border-gray-300 rounded"
+        className="px-1 py-[6px] text-primary text-[13px] flex items-center gap-1 font-semibold border-2 border-primary rounded"
       >
         More
         {isOpen ? <FaCaretUp/> : <FaCaretDown />}

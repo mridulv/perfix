@@ -7,6 +7,7 @@ import AddDatabase from "../AddDatabase/AddDatabase";
 import ChooseDatasetComponent from "../Common/ChooseDatasetComponent";
 import { handleAddDatasetApi } from "../../api/handleAddDatasetApi";
 import { useStatesForAddModals } from "../../hooks/useStatesForAddModals";
+import axiosApi from "../../api/axios";
 
 const AddDatabaseModal = ({ open, onClose, datasets, refetch, databases }) => {
   const [currentAddStep, setCurrentAddStep] = useState(1);
@@ -70,11 +71,8 @@ const AddDatabaseModal = ({ open, onClose, datasets, refetch, databases }) => {
   useEffect(() => {
     if (selectedDatasetId) {
       const fetchDataset = async () => {
-        const res = await axios.get(
-          `${import.meta.env.VITE_BASE_URL}/dataset/${selectedDatasetId}`,
-          {
-            withCredentials: true,
-          }
+        const res = await axiosApi.get(
+          `/dataset/${selectedDatasetId}`,
         );
         const data = await res.data;
         setSelectedDatasetData(data);

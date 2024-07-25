@@ -1,4 +1,3 @@
-import React from "react";
 import { Link } from "react-router-dom";
 import AddDataset from "../AddDataset/AddDataset";
 import CustomSelect from "../CustomSelect/CustomSelect";
@@ -12,6 +11,7 @@ const ChooseDatasetComponent = ({
   datasets,
   selectedDataset,
   setSelectedDataset,
+  reduceHeight,
 }) => {
   let options = [];
 
@@ -20,7 +20,7 @@ const ChooseDatasetComponent = ({
   );
 
   return (
-    <div className="mt-7 ms-7 max-w-[300px] flex flex-col" style={{ minHeight: 'calc(100vh - 200px)' }}>
+    <div className="mt-7 ms-7 max-w-[300px] flex flex-col" style={{ minHeight: `calc(100vh - ${reduceHeight})` }}>
       <div className="bg-secondary py-1 ps-3 flex items-center gap-3 rounded tracking-tight">
         <button
           onClick={() => setActiveDataset("existing")}

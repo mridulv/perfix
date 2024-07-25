@@ -1,7 +1,7 @@
 import toast from "react-hot-toast";
 import axiosApi from "./axios";
 
-export const baseUrl = import.meta.env.VITE_BASE_URL;
+
 
 export const handleAddDatasetApi = async (
   event,

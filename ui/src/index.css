@@ -18,8 +18,8 @@ body {
 
 
 .search-input {
-  height: 30px;
-  width: 180px;
+  height: 35px;
+  width: 250px;
   font-size: 13px;
   padding: 2px 4px;
   border: 2px solid #E0E0E0;
@@ -27,7 +27,7 @@ body {
 }
 
 .search-input:focus {
-  outline-color: #3498db; /* Changes the outline color when the input is focused */
+  outline-color: #E0E0E0; /* Changes the outline color when the input is focused */
 }
 
 
@@ -37,10 +37,11 @@ body {
   position: relative;
 }
 .dropdown .dropdown-btn {
-  padding: 4px 4px;
+  padding: 6px 4px;
   background: #fff;
   font-size: 13px;
-  color: #8E8E8E;
+  color: #c0aeae;
+  font-weight: 500;
   border-radius: 6px;
   display: flex;
   align-items: center;
@@ -131,7 +132,16 @@ body {
 }
 
 
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
 
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
 
 
 

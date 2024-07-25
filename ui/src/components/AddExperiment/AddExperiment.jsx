@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useState } from "react";
 import { FaPlus } from "react-icons/fa6";
 import { Link, useNavigate } from "react-router-dom";
 import { ImPencil } from "react-icons/im";
@@ -7,23 +7,25 @@ import CustomSelectMultipleOptions from "../CustomSelect/CustomSelectMultipleOpt
 import AddExperimentInputFields from "./AddExperimentInputFields";
 import AddDatabaseModalForExperiment from "../Modals/AddDatabaseModalForExperiment";
 import handleAddExperiment from "../../api/handleAddExperiment";
-import fetchDatabaseCategory from "../../api/fetchDatabaseCategory";
-import CustomSelect from "../CustomSelect/CustomSelect";
 
-const AddExperiment = ({ databases, dataset, databaseRefetch }) => {
+const AddExperiment = ({
+  databases,
+  databasesOptions,
+  dataset,
+  databaseRefetch,
+  selectedDatabaseCategory,
+}) => {
   const [selectedDatabases, setSelectedDatabases] = useState([]);
-  const [databaseCategories, setDatabaseCategories] = useState(null);
-  const [selectedDatabaseCategory, setSelectedDatabaseCategory] = useState({
-    option: "Choose Category",
-    value: "Choose"
-  })
-  const [writeBatchSizeValue, setWriteBatchSizeValue] = useState(0);
-  const [concurrentQueries, setConcurrentQueries] = useState(0);
-  const [experimentTimeInSecond, setExperimentTimeInSecond] = useState(0);
+  const [writeBatchSizeValue, setWriteBatchSizeValue] = useState("1000");
+  const [concurrentQueries, setConcurrentQueries] = useState("1000");
+  const [experimentTimeInSecond, setExperimentTimeInSecond] = useState("60");
   const [openAddDatabaseModal, setOpenAddDatabaseModal] = useState(false);
-  const [availableDatabases, setAvailableDatabases] = useState([]);
 
   const navigate = useNavigate();
+
+  const handleRemoveSelectedDatabase = (databaseToRemove) => {
+    setSelectedDatabases(selectedDatabases.filter(db => db.value !== databaseToRemove.value));
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -40,42 +42,37 @@ const AddExperiment = ({ databases, dataset, databaseRefetch }) => {
     );
   };
 
-  useEffect(() => {
-    fetchDatabaseCategory(setDatabaseCategories);
-  }, []);
+  // useEffect(() => {
+  //   if (
+  //     selectedDatabaseCategory.value !== "Choose Category" &&
+  //     databaseCategories
+  //   ) {
+  //     const categoryDatabases =
+  //       databaseCategories[selectedDatabaseCategory.value] || [];
+  //     const filteredDatabases = databases.filter((db) =>
+  //       categoryDatabases.includes(db.dataStore)
+  //     );
+  //     setAvailableDatabases(filteredDatabases);
 
-  useEffect(() => {
-    if (selectedDatabaseCategory.value !== "Choose Category" && databaseCategories) {
-      const categoryDatabases = databaseCategories[selectedDatabaseCategory.value] || [];
-      const filteredDatabases = databases.filter(db => categoryDatabases.includes(db.dataStore));
-      setAvailableDatabases(filteredDatabases);
+  //     // Only filter selected databases if the category has changed
+  //     setSelectedDatabases((prevSelected) => {
+  //       const newSelected = prevSelected.filter((db) =>
+  //         filteredDatabases.some(
+  //           (availableDb) => availableDb.databaseConfigId.id === db.value
+  //         )
+  //       );
 
-      // Only filter selected databases if the category has changed
-      setSelectedDatabases(prevSelected => {
-        const newSelected = prevSelected.filter(db => 
-          filteredDatabases.some(availableDb => availableDb.databaseConfigId.id === db.value)
-        );
-        
-        // If the new selection is different, return it. Otherwise, keep the previous selection.
-        return newSelected.length !== prevSelected.length ? newSelected : prevSelected;
-      });
-    } else {
-      setAvailableDatabases([]);
-      setSelectedDatabases([]);
-    }
-  }, [selectedDatabaseCategory, databaseCategories, databases]);
+  //       // If the new selection is different, return it. Otherwise, keep the previous selection.
+  //       return newSelected.length !== prevSelected.length
+  //         ? newSelected
+  //         : prevSelected;
+  //     });
+  //   } else {
+  //     setAvailableDatabases([]);
+  //     setSelectedDatabases([]);
+  //   }
+  // }, [selectedDatabaseCategory, databaseCategories, databases]);
 
-  const databaseCategoriesOptions =
-    databaseCategories &&
-    Object.keys(databaseCategories).map((category) => ({
-      option: category,
-      value: category,
-    }));
-
-    const databasesOptions = availableDatabases.map((database) => ({
-      option: database.name,
-      value: database.databaseConfigId.id,
-    }));
 
   const paramsForInputFieldsComponent = {
     experimentTimeInSecond,
@@ -84,6 +81,7 @@ const AddExperiment = ({ databases, dataset, databaseRefetch }) => {
     setConcurrentQueries,
     writeBatchSizeValue,
     setWriteBatchSizeValue,
+    selectedDatabaseCategory
   };
   return (
     <div>
@@ -98,7 +96,7 @@ const AddExperiment = ({ databases, dataset, databaseRefetch }) => {
               {selectedDatabases.map((database) => (
                 <div
                   key={database.value}
-                  className={`w-full h-full px-4  mr-2 flex gap-2 items-center justify-center bg-secondary rounded-2xl`}
+                  className={` h-full px-4  mr-2 flex gap-2 items-center justify-center bg-secondary rounded-2xl`}
                 >
                   <p>{database.option}</p>
                   <ImPencil size={12} />
@@ -106,19 +104,13 @@ const AddExperiment = ({ databases, dataset, databaseRefetch }) => {
                     title="Remove Database"
                     cursor={"pointer"}
                     size={18}
+                    onClick={() => handleRemoveSelectedDatabase(database)}
                   />
                 </div>
               ))}
             </div>
           )}
-          <div>
-            <CustomSelect
-              options={databaseCategoriesOptions}
-              selected={selectedDatabaseCategory}
-              setSelected={setSelectedDatabaseCategory}
-              width="w-[200px]"
-            />
-          </div>
+
           <div>
             <CustomSelectMultipleOptions
               selected={selectedDatabases}

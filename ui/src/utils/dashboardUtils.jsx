@@ -8,7 +8,7 @@ import useCasesIcon from "../assets/conversationIcon.png";
 export const menus = [
   {
     name: "Datasets",
-    link: "/",
+    link: "/dataset",
     icon: datasetIcon,
   },
   {
