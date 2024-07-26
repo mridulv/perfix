@@ -1,30 +1,57 @@
 package io.perfix.conversations
 
+import akka.actor.ActorSystem
+import akka.stream.Materializer
+import io.cequence.openaiscala.domain.ChatRole
+import io.cequence.openaiscala.service.OpenAIServiceFactory
 import io.perfix.model.{BooleanValueType, ColumnDescription, ColumnType, NumericType, TextType}
-import io.perfix.model.api.{Field, SqlQuery}
+import io.perfix.model.api.{ConversationMessage, Field, SqlQuery}
 import io.perfix.model.store.StoreType
 import io.perfix.model.store.StoreType.StoreType
 import net.sf.jsqlparser.JSQLParserException
 import net.sf.jsqlparser.parser.CCJSqlParserUtil
 import play.api.libs.json.{JsArray, JsError, JsSuccess, JsValue, Json}
 
+import scala.concurrent.{Await, ExecutionContext}
+import scala.concurrent.duration.Duration
+
 object ConversationCompiler {
+  val requiredKeys = Seq(
+    "schema",
+    "databaseType",
+    "queries",
+    "filteredRows",
+    "experiment_time_in_seconds",
+    "total_rows",
+    "concurrent_reads_rate",
+    "concurrent_writes_rate"
+  )
 
   def compile(response: String): Seq[CompilationError] = {
-    val json = Json.parse(response)
-    Seq(
-      checkCompilationForSchema(json),
-      //checkCompilationForDatabaseType(json),
-      checkCompilationForExperimentParamsFields(json),
-      checkCompilationForQuery(json)
-    ).flatten
+    try {
+      val json = Json.parse(response)
+      Seq(
+        checkCompilationForSchema(json),
+        //checkCompilationForDatabaseType(json),
+        checkCompilationForExperimentParamsFields(json),
+        checkCompilationForQuery(json)
+      ).flatten
+    } catch {
+      case e: Exception => allFieldsCompilationFailure()
+    }
+  }
+
+  def allFieldsCompilationFailure(): Seq[CompilationError] = {
+    requiredKeys.map { key =>
+      CompilationError(key, s"Please create a valid json object in the response. Not able to parse: ${key} from the json object")
+    }
   }
 
   private def checkCompilationForSchema(json: JsValue): Option[CompilationError] = {
     val result = (json \ "schema").validate[Seq[Field]]
     result match {
       case JsSuccess(ok, _) => None
-      case JsError(errors) => Some(CompilationError("schema", "Failed to parse schema field as per the defined structure"))
+      case JsError(errors) => Some(CompilationError("schema", "Failed to parse \"schema\" field. Expectation is that schema field should be of this format: [{\"fieldName\" : \"$fieldName\", \"fieldType\": \"$fieldType\"}]"))
     }
   }
 
@@ -32,7 +59,7 @@ object ConversationCompiler {
     val result = (json \ "databaseType").validate[Seq[StoreType]]
     result match {
       case JsSuccess(_, _) => None
-      case JsError(errors) => Some(CompilationError("databaseType", s"Failed to parse databaseType. Expectation is that databaseType should contain values among: ${StoreType.values.map(_.toString)}"))
+      case JsError(errors) => Some(CompilationError("databaseType", s"Failed to parse \"databaseType\" field. Expectation is that databaseType should contain values among: ${StoreType.values.map(_.toString)}"))
     }
   }
 
@@ -41,7 +68,7 @@ object ConversationCompiler {
       val result = (json \ fieldName).validate[Int]
       result match {
         case JsSuccess(_, _) => None
-        case JsError(errors) => Some(CompilationError(fieldName, s"Failed to parse $fieldName. Expectation is that $fieldName should be in Int"))
+        case JsError(errors) => Some(CompilationError(fieldName, s"Failed to parse \"$fieldName\" field. Expectation is that $fieldName should be in Int"))
       }
     }
 
@@ -70,15 +97,16 @@ object ConversationCompiler {
       val result = (json \ "query").validate[String]
       result match {
         case JsSuccess(query, _) =>
-          val sqlQuery = SqlQuery(query).toSqlDBQuery.resolve(columnsDescriptions.map { c => (c.columnName, c.columnType.getValue)}.toMap)
-          try {
-            CCJSqlParserUtil.parse(sqlQuery.sql)
-            None
-          } catch {
-            case e: JSQLParserException =>
-              Some(CompilationError("", s"Invalid sql query: $query"))
-          }
-        case JsError(errors) => Some(CompilationError("", s"Failed to parse databases. Expectation is that databaseType should contain values among: ${StoreType.values.map(_.toString)}"))
+          validateSQLQuery(query, columnsDescriptions)
+          None
+        case JsError(errors) => Some(CompilationError("", s"Failed to parse \"query\" field. " +
+          s"Expectation is that the \"query\" field value should be  \n " +
+          s"1) A valid sql query  \n " +
+          s"2) all the variables should be jinja variables \n "))
+      }
+    }
+  }
+
   private def validateSQLQuery(query: String, columnDescriptions: Seq[ColumnDescription]): Unit = {
     var success = false
     var attempts = 0
@@ -111,7 +139,7 @@ object ConversationCompiler {
 case class CompilationError(field: String, issue: String) {
 
   def compilationError: String = {
-    s"$field compilation failed. Issue was: $issue"
+    s"- $field parsing failed. Issue was: $issue"
   }
 
 }
