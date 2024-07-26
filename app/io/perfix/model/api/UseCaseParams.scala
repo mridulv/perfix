@@ -27,6 +27,13 @@ case class UseCaseParams(useCaseId: Option[UseCaseId],
     }
   }
 
+  def addConversationMessages(conversationMessages: Seq[ConversationMessage]): UseCaseParams = {
+    useCaseDetails match {
+      case Some(conversation) => this.copy(useCaseDetails = Some(conversation.addMessages(conversationMessages)))
+      case None => this.copy(useCaseDetails = Some(UseCaseDetails(conversationMessages)))
+    }
+  }
+
 }
 
 case class UseCaseDetails(messages: Seq[ConversationMessage]) {
@@ -35,9 +42,13 @@ case class UseCaseDetails(messages: Seq[ConversationMessage]) {
     this.copy(messages = messages ++ Seq(conversationMessage))
   }
 
+  def addMessages(conversationMessages: Seq[ConversationMessage]): UseCaseDetails = {
+    this.copy(messages = messages ++ conversationMessages)
+  }
+
 }
 
-case class ConversationMessage(user: String, message: String) {
+case class ConversationMessage(user: String, message: String, isHidden: Option[Boolean] = Some(false)) {
 
   def toBaseMessage: BaseMessage = {
     user match {
