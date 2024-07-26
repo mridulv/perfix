@@ -5,11 +5,13 @@ import akka.stream.Materializer
 import com.google.inject.{Inject, Singleton}
 import io.cequence.openaiscala.domain.ChatRole
 import io.cequence.openaiscala.service.OpenAIServiceFactory
-import io.perfix.conversations.UseCaseConversationParser
+import io.perfix.conversations.ConversationCompiler.allFieldsCompilationFailure
+import io.perfix.conversations.{CompilationError, ConversationCompiler, UseCaseConversationParser}
 import io.perfix.db.UseCaseStore
 import io.perfix.model.{EntityFilter, UseCaseFilter}
 import io.perfix.model.api.{ConversationMessage, UseCaseId, UseCaseParams, UseCaseState}
-import io.perfix.util.ConversationSystemPrompt.{CheckIfConversationCompletedMessage, CompletionConversationMessage, SystemConversationMessage}
+import io.perfix.util.ConversationSystemPrompt
+import io.perfix.util.ConversationSystemPrompt.{CheckIfConversationCompletedMessage, SystemConversationMessage}
 import play.api.Configuration
 
 import scala.concurrent.duration.Duration
@@ -54,23 +56,31 @@ class UseCaseManager @Inject()(useCaseStore: UseCaseStore,
       val updatedUseCaseParams = useCaseParams.addConversation(
         ConversationMessage(ChatRole.User.toString(), message)
       )
-      val responseConversationMessage: ConversationMessage = updatedUseCaseParams.useCaseDetails match {
-        case Some(conversation) => wrappedResponse(conversation.messages)
+      val conversationMessage: ConversationMessage = updatedUseCaseParams.useCaseDetails match {
+        case Some(conversation) =>
+          val compilationErrors = findCompilationIssues(conversation.messages)
+          val overallMessages = conversation.messages
+          if (compilationErrors.isEmpty) {
+            val endConversationMessage = handleEndConversation(useCaseParams)
+            useCaseStore.update(
+              useCaseId,
+              updatedUseCaseParams
+                .addConversation(endConversationMessage)
+                .copy(useCaseState = Some(UseCaseState.Completed))
+            )
+            endConversationMessage
+          } else {
+            println(s"There were ${compilationErrors.size} compilation errors. These are the compilation errors: \n\n${compilationErrors.map(_.compilationError).mkString("\n")}. " +
+              s"\n\n" +
+              s"These are the compilation errors in the json object response")
+            val finalResponse = getAssistantResponse(overallMessages)
+            useCaseStore.update(
+              useCaseId,
+              updatedUseCaseParams.addConversation(finalResponse)copy(useCaseState = Some(UseCaseState.InProgress))
+            )
+            finalResponse
+          }
         case None => throw new RuntimeException(s"Invalid ConversationParams for id: ${useCaseId}")
-      }
-      val conversationMessage = if (responseConversationMessage == CompletionConversationMessage) {
-        val endConversationMessage = handleEndConversation(useCaseParams)
-        useCaseStore.update(
-          useCaseId,
-          updatedUseCaseParams.copy(useCaseState = Some(UseCaseState.Completed))
-        )
-        endConversationMessage
-      } else {
-        useCaseStore.update(
-          useCaseId,
-          updatedUseCaseParams.addConversation(responseConversationMessage).copy(useCaseState = Some(UseCaseState.InProgress))
-        )
-        responseConversationMessage
       }
       conversationMessage.message
     } else {
@@ -95,14 +105,14 @@ class UseCaseManager @Inject()(useCaseStore: UseCaseStore,
   private def handleEndConversation(useCaseParams: UseCaseParams): ConversationMessage = {
     val conversationMessages = useCaseParams.useCaseDetails.map(_.messages).getOrElse(Seq.empty)
     val useCaseConversationParser = new UseCaseConversationParser(conversationMessages)
-    val (datasetId, databaseConfigId, experimentId) = useCaseConversationParser.init(datasetManager, databaseConfigManager, experimentManager)
+    //val (datasetId, databaseConfigId, experimentId) = useCaseConversationParser.init(datasetManager, databaseConfigManager, experimentManager)
     ConversationMessage(
       ChatRole.System.toString(),
-      s"We have created a benchmark run for you given all the inputs in the chat. Link: ${APP_URL}/experiment/${experimentId.id}"
+      s"We have created a benchmark run for you given all the inputs in the chat. Link: ${APP_URL}/experiment}"
     )
   }
 
-  private def wrappedResponse(messages: Seq[ConversationMessage]): ConversationMessage = {
+  private def getAssistantResponse(messages: Seq[ConversationMessage]): ConversationMessage = {
     val service = OpenAIServiceFactory()
     val allMessages = Seq(SystemConversationMessage) ++ messages
     val response = Await.result(service.createChatCompletion(allMessages.map(_.toBaseMessage)), Duration.Inf)
@@ -110,11 +120,42 @@ class UseCaseManager @Inject()(useCaseStore: UseCaseStore,
       .head
       .message
       .content
-    val assistantMessage = ConversationMessage(ChatRole.Assistant.toString(), response)
-    if (checkIfConversationEnded(allMessages ++ Seq(assistantMessage))) {
-      CompletionConversationMessage
-    } else {
-      assistantMessage
+    ConversationMessage(ChatRole.Assistant.toString(), response)
+  }
+
+  private def findCompilationIssues(conversationMessages: Seq[ConversationMessage]): Seq[CompilationError] = {
+    val service = OpenAIServiceFactory()
+    val jsonMessage = ConversationMessage(
+      ChatRole.System.toString(),
+      """Given the user inputs before this, can you create a json object of the response in this format: {"schema": [{"fieldName" : "$fieldName", "fieldType": "$fieldType"}], "databaseType": [$database1, $database2],  "query": $query, "filteredRows": $filteredRows, "experiment_time_in_seconds": $experiment_time_in_seconds, "total_rows": $total_rows, "concurrent_reads_rate": $concurrent_reads_rate, "concurrent_writes_rate": $concurrent_writes_rate }. Note if there is no corresponding value defined by the user till now, leave the field as null and do not assign any default values. Also the response should be a valid json object
+        | Make sure of the following things
+        | - $fieldType should always be among (long, bool, int, string, double)
+        | - $query should be in SQL format. Also make sure the variable names start with {{ and ends with }}.
+        | - Variable names in the SQL should have the same name as the fieldNames.
+        | - $filteredRows should be in Int
+        | - $experiment_time_in_seconds should be in Int
+        | - $total_rows should be in Int
+        | - $concurrent_reads_rate should be in Int
+        | - $concurrent_writes_rate should be in Int
+        |
+        | Do Make sure that the format of the json object is the same as mentioned above.
+        | Also please consider the compilation failures in the previous json objects to return the json object.
+        |
+        |""".stripMargin,
+      isHidden = Some(true)
+    )
+    val toBeSend = Seq(ConversationSystemPrompt.SystemConversationMessage) ++ conversationMessages ++ Seq(jsonMessage)
+    val response = Await.result(service.createChatCompletion(toBeSend.map(_.toBaseMessage)), Duration.Inf)
+      .choices
+      .head
+      .message
+      .content
+    println(s"Assistant: $response")
+    try {
+      val compilationErrors = ConversationCompiler.compile(response)
+      compilationErrors
+    } catch {
+      case e: Exception => allFieldsCompilationFailure()
     }
   }
 
