@@ -79,6 +79,28 @@ object ConversationCompiler {
               Some(CompilationError("", s"Invalid sql query: $query"))
           }
         case JsError(errors) => Some(CompilationError("", s"Failed to parse databases. Expectation is that databaseType should contain values among: ${StoreType.values.map(_.toString)}"))
+  private def validateSQLQuery(query: String, columnDescriptions: Seq[ColumnDescription]): Unit = {
+    var success = false
+    var attempts = 0
+    implicit val ec = ExecutionContext.global
+    implicit val materializer = Materializer(ActorSystem())
+    val service = OpenAIServiceFactory()
+    val sqlQuery = SqlQuery(query).toSqlDBQuery.resolve(columnDescriptions.map { c => (c.columnName, c.columnType.getValue)}.toMap)
+    val prompt = s"""Can we have the jinja variables name same as the column name on which the operation is applied in this sql query
+                   |        "$query"
+                   |        Response should just be a valid sql query with jinja variables""".stripMargin
+    while (!success && attempts < 10) {
+      attempts += 1
+      try {
+        val response = Await.result(service.createChatCompletion(Seq(ConversationMessage(ChatRole.System.toString(), prompt).toBaseMessage)), Duration.Inf)
+          .choices
+          .head
+          .message
+          .content
+        val sql = CCJSqlParserUtil.parse(response)
+        success = true
+      } catch {
+        case e: JSQLParserException => Some(CompilationError("", s"Invalid sql query: $query"))
       }
     }
   }
