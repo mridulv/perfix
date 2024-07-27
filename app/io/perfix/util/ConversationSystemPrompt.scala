@@ -41,17 +41,4 @@ object ConversationSystemPrompt {
       |
       |        DO NOT STOP THE EXPERIMENT, TILL USER HAS COMMUNICATED THESE above things""".stripMargin
   )
-
-
-  val CheckIfConversationCompletedMessage: ConversationMessage = ConversationMessage(
-    ChatRole.System.toString(),
-    "Do you think the conversation purpose has been met. Yes / No"
-  )
-
-  val CompletionConversationMessage: ConversationMessage = ConversationMessage(
-    ChatRole.System.toString(),
-    "We are working on creating an experiment for your use-case. Stay tuned !!!"
-  )
-
-
 }

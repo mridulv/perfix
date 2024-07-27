@@ -1,5 +1,6 @@
 package io.perfix.query
 
+import io.perfix.model.ColumnDescription
 import net.sf.jsqlparser.parser.CCJSqlParserUtil
 import net.sf.jsqlparser.statement.select.PlainSelect
 import net.sf.jsqlparser.statement.select.Select
@@ -10,7 +11,7 @@ import net.sf.jsqlparser.statement.select.SelectExpressionItem
 import net.sf.jsqlparser.expression.Expression
 import net.sf.jsqlparser.expression.BinaryExpression
 import net.sf.jsqlparser.expression.operators.relational.EqualsTo
-import net.sf.jsqlparser.schema.Column
+import net.sf.jsqlparser.schema.{Column, Table}
 import net.sf.jsqlparser.statement.Statement
 import play.api.libs.json.{Format, Json}
 
@@ -28,6 +29,14 @@ case class SqlDBQuery(sql: String) extends DBQuery {
         resolvedSql.replace(s"{{$placeholder}}", value.toString)
     }
     SqlDBQuery(resolvedSql)
+  }
+
+  def tableName(columnsDescriptions: Seq[ColumnDescription]): String = {
+    val resolvedQuery = SqlDBQuery(sql).resolve(columnsDescriptions.map { c => (c.columnName, c.columnType.getValue)}.toMap)
+    println(resolvedQuery)
+    val selectStatement = CCJSqlParserUtil.parse(resolvedQuery.sql).asInstanceOf[Select]
+    val plainSelect = selectStatement.getSelectBody.asInstanceOf[PlainSelect]
+    plainSelect.getFromItem.asInstanceOf[Table].getName
   }
 
   def extractFilters: List[DbQueryFilter] = {
