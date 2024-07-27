@@ -11,7 +11,7 @@ import io.perfix.db.UseCaseStore
 import io.perfix.model.{EntityFilter, UseCaseFilter}
 import io.perfix.model.api.{ConversationMessage, UseCaseId, UseCaseParams, UseCaseState}
 import io.perfix.util.ConversationSystemPrompt
-import io.perfix.util.ConversationSystemPrompt.{CheckIfConversationCompletedMessage, SystemConversationMessage}
+import io.perfix.util.ConversationSystemPrompt.SystemConversationMessage
 import play.api.Configuration
 
 import scala.concurrent.duration.Duration
@@ -58,10 +58,10 @@ class UseCaseManager @Inject()(useCaseStore: UseCaseStore,
       )
       val conversationMessage: ConversationMessage = updatedUseCaseParams.useCaseDetails match {
         case Some(conversation) =>
-          val compilationErrors = findCompilationIssues(conversation.messages)
+          val (response, compilationErrors) = findCompilationIssues(conversation.messages)
           val overallMessages = conversation.messages
           if (compilationErrors.isEmpty) {
-            val endConversationMessage = handleEndConversation(useCaseParams)
+            val endConversationMessage = handleEndConversation(response)
             useCaseStore.update(
               useCaseId,
               updatedUseCaseParams
@@ -102,13 +102,12 @@ class UseCaseManager @Inject()(useCaseStore: UseCaseStore,
     useCaseStore.delete(useCaseId)
   }
 
-  private def handleEndConversation(useCaseParams: UseCaseParams): ConversationMessage = {
-    val conversationMessages = useCaseParams.useCaseDetails.map(_.messages).getOrElse(Seq.empty)
-    val useCaseConversationParser = new UseCaseConversationParser(conversationMessages)
-    //val (datasetId, databaseConfigId, experimentId) = useCaseConversationParser.init(datasetManager, databaseConfigManager, experimentManager)
+  private def handleEndConversation(response: String): ConversationMessage = {
+    val useCaseConversationParser = new UseCaseConversationParser(response)
+    val (datasetId, databaseConfigId, experimentId) = useCaseConversationParser.init(datasetManager, databaseConfigManager, experimentManager)
     ConversationMessage(
       ChatRole.System.toString(),
-      s"We have created a benchmark run for you given all the inputs in the chat. Link: ${APP_URL}/experiment}"
+      s"We have created a benchmark run for you given all the inputs in the chat. Link: ${APP_URL}/experiment/${experimentId.id}"
     )
   }
 
@@ -123,7 +122,7 @@ class UseCaseManager @Inject()(useCaseStore: UseCaseStore,
     ConversationMessage(ChatRole.Assistant.toString(), response)
   }
 
-  private def findCompilationIssues(conversationMessages: Seq[ConversationMessage]): Seq[CompilationError] = {
+  private def findCompilationIssues(conversationMessages: Seq[ConversationMessage]): (String, Seq[CompilationError]) = {
     val service = OpenAIServiceFactory()
     val jsonMessage = ConversationMessage(
       ChatRole.System.toString(),
@@ -153,20 +152,9 @@ class UseCaseManager @Inject()(useCaseStore: UseCaseStore,
     println(s"Assistant: $response")
     try {
       val compilationErrors = ConversationCompiler.compile(response)
-      compilationErrors
+      (response, compilationErrors)
     } catch {
-      case e: Exception => allFieldsCompilationFailure()
+      case e: Exception => (response, allFieldsCompilationFailure())
     }
-  }
-
-  private def checkIfConversationEnded(messages: Seq[ConversationMessage]): Boolean = {
-    val service = OpenAIServiceFactory()
-    val allMessages = messages ++ Seq(CheckIfConversationCompletedMessage)
-    val response = Await.result(service.createChatCompletion(allMessages.map(_.toBaseMessage)), Duration.Inf)
-      .choices
-      .head
-      .message
-      .content
-    response.strip().toLowerCase == "yes"
   }
 }
