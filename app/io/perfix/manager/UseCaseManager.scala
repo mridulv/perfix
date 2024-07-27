@@ -11,7 +11,7 @@ import io.perfix.db.UseCaseStore
 import io.perfix.model.{EntityFilter, UseCaseFilter}
 import io.perfix.model.api.{ConversationMessage, UseCaseId, UseCaseParams, UseCaseState}
 import io.perfix.util.ConversationSystemPrompt
-import io.perfix.util.ConversationSystemPrompt.{CheckIfConversationCompletedMessage, SystemConversationMessage}
+import io.perfix.util.ConversationSystemPrompt.SystemConversationMessage
 import play.api.Configuration
 
 import scala.concurrent.duration.Duration
@@ -156,16 +156,5 @@ class UseCaseManager @Inject()(useCaseStore: UseCaseStore,
     } catch {
       case e: Exception => (response, allFieldsCompilationFailure())
     }
-  }
-
-  private def checkIfConversationEnded(messages: Seq[ConversationMessage]): Boolean = {
-    val service = OpenAIServiceFactory()
-    val allMessages = messages ++ Seq(CheckIfConversationCompletedMessage)
-    val response = Await.result(service.createChatCompletion(allMessages.map(_.toBaseMessage)), Duration.Inf)
-      .choices
-      .head
-      .message
-      .content
-    response.strip().toLowerCase == "yes"
   }
 }
