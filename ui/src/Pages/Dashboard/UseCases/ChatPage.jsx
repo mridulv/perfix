@@ -5,10 +5,15 @@ import { Navigate, useParams } from "react-router-dom";
 import axiosApi from "../../../api/axios";
 import { useQuery } from "react-query";
 import Loading from "../../../components/Common/Loading";
+import ReactMarkdown from "react-markdown";
+// import remarkGfm from "remark-gfm";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { atomDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 
 const ChatPage = () => {
   const [inputValue, setInputValue] = useState("");
   const [isSending, setIsSending] = useState(false);
+  const [localMessages, setLocalMessages] = useState([]);
   const messagesEndRef = useRef(null);
   const loadingRef = useRef(null);
 
@@ -30,16 +35,18 @@ const ChatPage = () => {
   });
 
   const messages = useCase?.useCaseDetails?.messages || [];
+  const combinedMessages = [...messages, ...localMessages];
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
     if (!inputValue.trim() || isSending) return;
 
-    setIsSending(true);
     const tempMessage = { user: "user", message: inputValue };
+    setLocalMessages([...localMessages, tempMessage]);
+    setInputValue("");
+    setIsSending(true);
 
     try {
-      setInputValue("");
       await axiosApi.post(`/usecases/${id}/converse`, {
         message: tempMessage.message,
       });
@@ -57,6 +64,9 @@ const ChatPage = () => {
   };
 
   useEffect(() => {
+    if (!isSending) {
+      setLocalMessages([]);
+    }
     if (isSending) {
       loadingRef.current?.scrollIntoView({ behavior: "smooth" });
     } else {
@@ -68,61 +78,113 @@ const ChatPage = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-white">
-    <div className="w-full md:w-[65%] bg-accent mx-auto flex-grow p-4 overflow-y-auto">
-      {messages.map((message, index) => (
-        <div 
-          key={index} 
-          className={`chat ${message.user === "user" ? "chat-end" : "chat-start"} my-4`}
-        >
-          <div 
-            className={`chat-bubble text-sm ${
-              message.user === "user" 
-                ? "bg-primary text-white" 
-                : "bg-gray-200 text-gray-800"
-            }`}
+      <div className="w-full md:w-[65%] bg-accent mx-auto flex-grow p-4 overflow-y-auto">
+        {combinedMessages.map((message, index) => (
+          <div
+            key={index}
+            className={`chat ${
+              message.user === "user" ? "chat-end" : "chat-start"
+            } my-4`}
           >
-            {message.message}
+            <div
+              className={`chat-bubble text-sm ${
+                message.user === "user"
+                  ? "bg-primary text-white"
+                  : "bg-gray-200 text-gray-800"
+              }`}
+            >
+              {/* <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                {message.message}
+              </ReactMarkdown> */}
+              {/* <ReactMarkdown
+                children={message.message}
+                components={{
+                  code(props) {
+                    const { children, className, node, ...rest } = props;
+                    const match = /language-(\w+)/.exec(className || "");
+                    return match ? (
+                      <SyntaxHighlighter
+                        {...rest}
+                        PreTag="div"
+                        children={String(children).replace(/\n$/, "")}
+                        language={match[1]}
+                        style={dark}
+                      />
+                    ) : (
+                      <code {...rest} className={className}>
+                        {children}
+                      </code>
+                    );
+                  },
+                }}
+              /> */}
+              <ReactMarkdown
+                components={{
+                  code(props) {
+                    const { children, className, ...rest } = props;
+                    const match = /language-(\w+)/.exec(className || "");
+                    return match ? (
+                      <SyntaxHighlighter
+                        {...rest}
+                        PreTag="div"
+                        language={match[1]}
+                        style={atomDark}
+                      >
+                        {String(children).replace(/\n$/, "")}
+                      </SyntaxHighlighter>
+                    ) : (
+                      <code {...rest} className={className}>
+                        {children}
+                      </code>
+                    );
+                  },
+                }}
+              >
+                {message.message}
+              </ReactMarkdown>
+            </div>
           </div>
-        </div>
-      ))}
-      {isSending && (
-        <div className="chat chat-start my-2" ref={loadingRef}>
-          <div className="chat-bubble bg-gray-300 text-gray-800">
-          <span className="loading loading-dots loading-md"></span>
+        ))}
+        {isSending && (
+          <div className="chat chat-start my-2" ref={loadingRef}>
+            <div className="chat-bubble bg-gray-300 text-gray-800">
+              <span className="loading loading-dots loading-md"></span>
+            </div>
           </div>
-        </div>
-      )}
-      <div ref={messagesEndRef} />
-    </div>
-    <form
-      onSubmit={handleSendMessage}
-      className="w-full md:w-[65%] mx-auto p-4 bg-secondary border-t border-gray-200 sticky bottom-0"
-    >
-      <div className="flex items-center">
-        <input
-          type="text"
-          value={inputValue}
-          onChange={handleInputChange}
-          placeholder="Type a message"
-          className="flex-grow p-2 bg-gray-100 rounded-full outline-none focus:ring-2 focus:ring-primary"
-          disabled={isSending}
-        />
-        <button
-          type="submit"
-          className={`ml-2 p-2 rounded-full ${
-            !inputValue || isSending
-              ? "bg-gray-300 cursor-not-allowed"
-              : "bg-primary hover:bg-primary-dark"
-          }`}
-          disabled={!inputValue || isSending}
-        >
-          {
-            isSending ? <FaRegStopCircle className="text-primary"/> : <FaArrowUp color="white" />
-          }
-        </button>
+        )}
+        <div ref={messagesEndRef} />
       </div>
-    </form>
-  </div>
+      <form
+        onSubmit={handleSendMessage}
+        className="w-full md:w-[65%] mx-auto p-4 bg-secondary border-t border-gray-200 sticky bottom-0"
+      >
+        <div className="flex items-center">
+          <input
+            type="text"
+            value={inputValue}
+            onChange={handleInputChange}
+            placeholder="Type a message"
+            className="flex-grow p-2 bg-gray-100 rounded-full outline-none focus:ring-2 focus:ring-primary"
+            disabled={isSending}
+          />
+          <button
+            type="submit"
+            className={`ml-2 p-2 rounded-full ${
+              !inputValue || isSending
+                ? "bg-gray-300 cursor-not-allowed"
+                : "bg-primary hover:bg-primary-dark"
+            }`}
+            disabled={!inputValue || isSending}
+          >
+            {isSending ? (
+              <FaRegStopCircle className="text-primary" />
+            ) : (
+              <FaArrowUp color="white" />
+            )}
+          </button>
+        </div>
+      </form>
+    </div>
   );
 };
 

@@ -19,7 +19,7 @@ const columnHeads = [
 
 const Experiment = () => {
   const [open, setOpen] = useState(false);
-  const [filterValues, setFilterValues] = useState({});
+  const [filterValues, setFilterValues] = useState([]);
   const [selectedOptions, setSelectedOptions] = useState({
     States: null,
     Database: null,
