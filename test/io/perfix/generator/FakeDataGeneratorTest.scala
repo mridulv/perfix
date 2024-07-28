@@ -14,15 +14,14 @@ class FakeDataGeneratorTest extends AnyFlatSpec with Matchers {
       name = s"dataset-${Random.nextInt()}",
       description = "desc",
       5,
-      Seq(ColumnDescription("name", NameType(isUnique = true)), ColumnDescription("age", NumericType(None)))
+      Some(Seq(ColumnDescription("name", NameType(isUnique = true)), ColumnDescription("age", NumericType(None))))
     )
 
     val fakeDataGenerator = new FakeDataGenerator
     val dataset = fakeDataGenerator.generateData(datasetParams)
 
-    dataset.params.rows shouldEqual 5
-    dataset.params.columns should have size 2
-    dataset.data should have size 5
+    dataset.datasets.head.data.size shouldEqual 5
+    dataset.datasets.head.columns should have size 2
   }
 
   it should "generate unique values for columns marked as unique" in {
@@ -31,13 +30,13 @@ class FakeDataGeneratorTest extends AnyFlatSpec with Matchers {
       name = s"dataset-${Random.nextInt()}",
       description = "desc",
       10,
-      Seq(ColumnDescription("id", TextType(isUnique = true)))
+      Some(Seq(ColumnDescription("id", TextType(isUnique = true))))
     )
 
     val fakeDataGenerator = new FakeDataGenerator
     val dataset = fakeDataGenerator.generateData(datasetParams)
 
-    val ids = dataset.data.map(_("id")).distinct
+    val ids = dataset.datasets.head.data.map(_("id")).distinct
     ids should have size 10
   }
 
@@ -47,16 +46,18 @@ class FakeDataGeneratorTest extends AnyFlatSpec with Matchers {
       name = s"dataset-${Random.nextInt()}",
       description = "desc",
       5,
-      Seq(
-        ColumnDescription("name", NameType(isUnique = true)),
-        ColumnDescription("score", NumericType(Some(NumericRangeConstraint(10, 11))))
+      Some(
+        Seq(
+          ColumnDescription("name", NameType(isUnique = true)),
+          ColumnDescription("score", NumericType(Some(NumericRangeConstraint(10, 11))))
+        )
       )
     )
 
     val fakeDataGenerator = new FakeDataGenerator
     val dataset = fakeDataGenerator.generateData(datasetParams)
 
-    dataset.data.foreach { row =>
+    dataset.datasets.head.data.foreach { row =>
       row("score").toString.toInt >= 10 shouldBe true
       row("score").toString.toInt <= 11 shouldBe true
     }
