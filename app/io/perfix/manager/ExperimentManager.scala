@@ -59,7 +59,7 @@ class ExperimentManager @Inject()(datasetManager: DatasetManager,
             columnDescription match {
               case Some(column) => column.columnType.getValue match {
                 case str: String => s"select * from ${rdsDatabaseSetupParams.tableName} where ${column.columnName} = \"$str\""
-                case v: _ => s"select * from ${rdsDatabaseSetupParams.tableName} where ${column.columnName} = $v"
+                case v: Any => s"select * from ${rdsDatabaseSetupParams.tableName} where ${column.columnName} = $v"
               }
               case None => s"select * from ${rdsDatabaseSetupParams.tableName}"
             }
