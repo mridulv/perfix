@@ -10,6 +10,7 @@ POST     /experiment/:id/execute                       io.perfix.controllers.Exp
 GET      /experiment/:id                               io.perfix.controllers.ExperimentController.get(id: Int)
 GET      /experiment/dataset/:category                 io.perfix.controllers.ExperimentController.datasets(category: String)
 GET      /experiment/config/:category                  io.perfix.controllers.ExperimentController.config(category: String)
+POST     /experiment/sql/placeholder                   io.perfix.controllers.ExperimentController.sqlPlaceholderQueryString
 POST     /experiment                                   io.perfix.controllers.ExperimentController.all
 DELETE   /experiment/:id                               io.perfix.controllers.ExperimentController.delete(id: Int)
 
