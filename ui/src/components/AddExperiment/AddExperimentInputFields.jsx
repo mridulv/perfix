@@ -111,7 +111,7 @@ const AddExperimentInputFields = ({ params }) => {
                 selectedRDBMSOption === "sequel" && "bg-white"
               } font-semibold rounded`}
             >
-              Sequel
+              SQL
             </button>
             <button
               type="button"
@@ -120,7 +120,7 @@ const AddExperimentInputFields = ({ params }) => {
                 selectedRDBMSOption === "non-sequel" && "bg-white"
               } font-semibold rounded`}
             >
-              Non-Sequel
+              NoSQL
             </button>
           </div>
           <QueryComponentForRDBMS selectedOption={selectedRDBMSOption} />

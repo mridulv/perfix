@@ -70,66 +70,20 @@ body {
   z-index: 1000; /* Ensure the dropdown menu has a high z-index */
 }
 
-.range-input {
-  -webkit-appearance: none;
-  width: 100%;
-  height: 8px;
-  background: linear-gradient(to right, #3DA5FF 0%, #e2e8f0 0%);
-  border-radius: 8px;
-  outline: none;
-  cursor: pointer;
-}
 
-.range-input::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 20px;
-  height: 20px;
-  background: #3DA5FF;
-  border: 4px solid white;
-  border-radius: 50%;
-  box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
-  cursor: pointer;
-  position: relative;
-  top: 0%; /* Center the thumb vertically */
-}
-
-.range-input::-moz-range-thumb {
+/* HTML: <div class="loader"></div> */
+.loader {
   width: 16px;
-  height: 16px;
-  background: #3DA5FF;
-  
+  aspect-ratio: 1;
   border-radius: 50%;
-  cursor: pointer;
-  position: relative;
-  top: -4px; /* Center the thumb vertically */
-};
-
-.experiment-details-enter {
-  max-height: 0;
-  opacity: 0;
-  overflow: hidden;
+  background: #3DA5FF;
+  box-shadow: 0 0 0 0 #BDE0FF;
+  animation: l1 1s infinite;
+}
+@keyframes l1 {
+    100% {box-shadow: 0 0 0 20px #0000}
 }
 
-.experiment-details-enter-active {
-  max-height: 1000px;
-  overflow: hidden;
-  opacity: 1;
-  transition: max-height 1000ms ease-in-out;
-}
-
-.experiment-details-exit {
-  max-height: 1000px;
-  overflow: hidden;
-  opacity: 1;
-}
-
-.experiment-details-exit-active {
-  max-height: 0;
-  overflow: hidden;
-  opacity: 1;
-  transition: max-height 1000ms ease-in-out;
-}
 
 
 input::-webkit-outer-spin-button,

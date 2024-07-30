@@ -151,7 +151,7 @@ const AddExperimentPage = () => {
           size={20}
         />
         <h2 className="text-[#8e8e8e] text-xl font-semibold">
-          Create new Experiment /
+          Create new Experiment
         </h2>
         <h2 className="text-xl font-semibold">
           {/* Experiment {experiments?.length + 1} */}

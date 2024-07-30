@@ -143,7 +143,7 @@ const AddExperiment = ({
         <form onSubmit={handleSubmit}>
           <AddExperimentInputFields params={paramsForInputFieldsComponent} />
 
-          <div className="mt-[100px] pb-3 flex gap-2">
+          <div className="mt-[150px] pb-3 flex gap-2">
             <button
               className="btn bg-primary btn-sm border border-primary rounded text-white hover:bg-[#6b3b51d2]"
               type="submit"

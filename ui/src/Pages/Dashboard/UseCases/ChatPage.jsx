@@ -6,14 +6,16 @@ import axiosApi from "../../../api/axios";
 import { useQuery } from "react-query";
 import Loading from "../../../components/Common/Loading";
 import ReactMarkdown from "react-markdown";
-// import remarkGfm from "remark-gfm";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { atomDark } from "react-syntax-highlighter/dist/esm/styles/prism";
+import { materialDark } from "react-syntax-highlighter/dist/esm/styles/prism";
+import ChatBoxLoader from "../../../components/ChatPage/ChatBoxLoader";
+import remarkGfm from "remark-gfm";
 
 const ChatPage = () => {
   const [inputValue, setInputValue] = useState("");
   const [isSending, setIsSending] = useState(false);
   const [localMessages, setLocalMessages] = useState([]);
+  const [rows, setRows] = useState(1);
   const messagesEndRef = useRef(null);
   const loadingRef = useRef(null);
 
@@ -39,11 +41,13 @@ const ChatPage = () => {
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
-    if (!inputValue.trim() || isSending) return;
+    const sanitizedInputValue = inputValue.replace(/\u200B/g, ''); // Replace zero-width spaces
+    if (!sanitizedInputValue.trim() || isSending) return;
 
-    const tempMessage = { user: "user", message: inputValue };
+    const tempMessage = { user: "user", message: sanitizedInputValue };
     setLocalMessages([...localMessages, tempMessage]);
     setInputValue("");
+    setRows(1);
     setIsSending(true);
 
     try {
@@ -60,6 +64,22 @@ const ChatPage = () => {
   };
 
   const handleInputChange = (event) => {
+    const textareaLineHeight = 24; // Adjust this value based on your styling
+    const previousRows = event.target.rows;
+    event.target.rows = 1; // Reset the number of rows to 1
+
+    const currentRows = Math.floor(event.target.scrollHeight / textareaLineHeight);
+
+    if (currentRows === previousRows) {
+      event.target.rows = currentRows;
+    }
+
+    if (currentRows >= 5) {
+      event.target.rows = 5;
+      event.target.scrollTop = event.target.scrollHeight;
+    }
+
+    setRows(currentRows < 5 ? currentRows : 5);
     setInputValue(event.target.value);
   };
 
@@ -93,32 +113,8 @@ const ChatPage = () => {
                   : "bg-gray-200 text-gray-800"
               }`}
             >
-              {/* <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                {message.message}
-              </ReactMarkdown> */}
-              {/* <ReactMarkdown
-                children={message.message}
-                components={{
-                  code(props) {
-                    const { children, className, node, ...rest } = props;
-                    const match = /language-(\w+)/.exec(className || "");
-                    return match ? (
-                      <SyntaxHighlighter
-                        {...rest}
-                        PreTag="div"
-                        children={String(children).replace(/\n$/, "")}
-                        language={match[1]}
-                        style={dark}
-                      />
-                    ) : (
-                      <code {...rest} className={className}>
-                        {children}
-                      </code>
-                    );
-                  },
-                }}
-              /> */}
               <ReactMarkdown
+                remarkPlugins={[remarkGfm]}
                 components={{
                   code(props) {
                     const { children, className, ...rest } = props;
@@ -128,7 +124,7 @@ const ChatPage = () => {
                         {...rest}
                         PreTag="div"
                         language={match[1]}
-                        style={atomDark}
+                        style={materialDark}
                       >
                         {String(children).replace(/\n$/, "")}
                       </SyntaxHighlighter>
@@ -147,9 +143,7 @@ const ChatPage = () => {
         ))}
         {isSending && (
           <div className="chat chat-start my-2" ref={loadingRef}>
-            <div className="chat-bubble bg-gray-300 text-gray-800">
-              <span className="loading loading-dots loading-md"></span>
-            </div>
+            <ChatBoxLoader />
           </div>
         )}
         <div ref={messagesEndRef} />
@@ -158,18 +152,19 @@ const ChatPage = () => {
         onSubmit={handleSendMessage}
         className="w-full md:w-[65%] mx-auto p-4 bg-secondary border-t border-gray-200 sticky bottom-0"
       >
-        <div className="flex items-center">
-          <input
-            type="text"
+        <div className="flex items-end">
+         <textarea
             value={inputValue}
             onChange={handleInputChange}
             placeholder="Type a message"
-            className="flex-grow p-2 bg-gray-100 rounded-full outline-none focus:ring-2 focus:ring-primary"
+            className="w-full bg-gray-100 p-2 rounded-md outline-none focus:ring-2 focus:ring-primary resize-none"
+            rows={rows}
             disabled={isSending}
+            style={{ lineHeight: "24px" }} // Adjust this value based on your styling
           />
           <button
             type="submit"
-            className={`ml-2 p-2 rounded-full ${
+            className={`w-10 h-10 flex items-center justify-center ml-2 p-2 rounded-full ${
               !inputValue || isSending
                 ? "bg-gray-300 cursor-not-allowed"
                 : "bg-primary hover:bg-primary-dark"
