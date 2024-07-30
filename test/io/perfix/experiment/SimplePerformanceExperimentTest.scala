@@ -21,7 +21,7 @@ class SimplePerformanceExperimentTest extends AnyFlatSpec with Matchers {
     val perfixQuery = SqlDBQueryBuilder(
       filtersOpt = Some(List(DbQueryFilter("student_name", "John"))),
       projectedFieldsOpt = Some(List("student_name")),
-      limitOpt = Some(10)
+      tableName = "table"
     )
 
     val experimentParams = ExperimentParams(
@@ -29,7 +29,7 @@ class SimplePerformanceExperimentTest extends AnyFlatSpec with Matchers {
       name = s"exp-${Random.nextInt()}",
       concurrentQueries = 10,
       experimentTimeInSeconds = 5,
-      dbQuery = SqlDBQueryBuilder(limitOpt = Some(100)),
+      dbQuery = SqlDBQueryBuilder(tableName = "table"),
       databaseConfigs = Seq(DatabaseConfigDetails(DatabaseConfigId(-1))),
       experimentResults = None,
       createdAt = Some(System.currentTimeMillis()),

@@ -5,20 +5,42 @@ import org.scalatest.matchers.should.Matchers
 
 class SqlDBQueryBuilderTest extends AnyFlatSpec with Matchers {
 
-  "PerfixQuery" should "hold the correct filter values" in {
-    val filters = List(DbQueryFilter("age", 18), DbQueryFilter("name", "John"))
-    val query = SqlDBQueryBuilder(Some(filters), None, None)
-    assert(query.filtersOpt.contains(filters))
+  "SqlQueryBuilder" should "handle all query components" in {
+    val query = SqlDBQueryBuilder(
+      filtersOpt = Some(List(DbQueryFilter("age", 18), DbQueryFilter("name", "John"))),
+      projectedFieldsOpt = Some(List("name", "age")),
+      tableName = "table"
+    )
+
+    val sqlQuery = query.convert
+    assert(sqlQuery.sql == "select name, age from table where age = 18 and name = \"John\"")
   }
 
-  "PerfixQuery" should "hold the correct projected fields" in {
-    val projectedFields = List("name", "age")
-    val query = SqlDBQueryBuilder(None, Some(projectedFields), None)
-    assert(query.projectedFieldsOpt.contains(projectedFields))
+  "SqlQueryBuilder" should "handle no filters" in {
+    val query = SqlDBQueryBuilder(None, Some(List("name", "age")), "table")
+
+    val sqlQuery = query.convert
+    assert(sqlQuery.sql == "select name, age from table ")
   }
 
-  "PerfixQuery" should "hold the correct limit value" in {
-    val query = SqlDBQueryBuilder(None, None, Some(10))
-    assert(query.limitOpt.contains(10))
+  "SqlQueryBuilder" should "handle no projected fields" in {
+    val query = SqlDBQueryBuilder(Some(List(DbQueryFilter("age", 18))), None, "table")
+
+    val sqlQuery = query.convert
+    assert(sqlQuery.sql == "select * from table where age = 18")
+  }
+
+  "SqlQueryBuilder" should "handle no limit" in {
+    val query = SqlDBQueryBuilder(Some(List(DbQueryFilter("age", 18))), Some(List("name")), "table")
+
+    val sqlQuery = query.convert
+    assert(sqlQuery.sql == "select name from table where age = 18")
+  }
+
+  "SqlQueryBuilder" should "handle empty query" in {
+    val query = SqlDBQueryBuilder(None, None, "table")
+
+    val sqlQuery = query.convert
+    assert(sqlQuery.sql == "select * from table ")
   }
 }

@@ -1,7 +1,7 @@
 package io.perfix.common
 
 import io.perfix.manager.DatasetManager
-import io.perfix.model.api.DatasetParams
+import io.perfix.model.api.{DatasetParams, DatasetTableParams}
 import org.mockito.MockitoSugar
 import org.scalatest.flatspec.AnyFlatSpec
 import org.scalatest.matchers.should.Matchers.convertToAnyShouldWrapper
@@ -18,11 +18,12 @@ class DatasetManagerTest extends AnyFlatSpec with MockitoSugar {
       name = s"dataset-${Random.nextInt()}",
       description = "test desc",
       rows = 100,
-      columns = Some(Seq.empty)
+      columns = Some(Seq.empty),
+      datasetTableParams = Some(Seq(DatasetTableParams(Some("table_0"), 100, Seq.empty)))
     )
     val datasetId = datasetManager.create(datasetParams)
 
-    //datasetManager.get(datasetId).datasets.params.copy(id = None) shouldBe datasetParams
+    datasetManager.get(datasetId).copy(id = None) shouldBe datasetParams
   }
 
   "DatasetManager" should "retrieve a dataset by ID" in {
@@ -32,20 +33,21 @@ class DatasetManagerTest extends AnyFlatSpec with MockitoSugar {
       name = s"dataset-${Random.nextInt()}",
       description = "desc",
       rows = 100,
-      columns = Some(Seq.empty)
+      columns = Some(Seq.empty),
+      datasetTableParams = Some(Seq(DatasetTableParams(Some("table_0"), 100, Seq.empty)))
     )
     val datasetId = datasetManager.create(datasetParams)
 
     val retrievedDataset = datasetManager.get(datasetId)
     val expectedDataset = datasetParams.datasets.sampleDataset(100)
 
-    //retrievedDataset.datasets.params.copy(id = None) shouldBe datasetParams
+    retrievedDataset.copy(id = None) shouldBe datasetParams
   }
 
   "DatasetManager" should "retrieve all datasets" in {
     val datasetManager = new DatasetManager(new InMemoryDatasetConfigStore)
-    val datasetParams1 = DatasetParams(id = None, name = s"dataset-${Random.nextInt()}", description = "desc", rows = 100, columns = Some(Seq.empty))
-    val datasetParams2 = DatasetParams(id = None, name = s"dataset-${Random.nextInt()}", description = "desc", rows = 200, columns = Some(Seq.empty))
+    val datasetParams1 = DatasetParams(id = None, name = s"dataset-${Random.nextInt()}", description = "desc", rows = 100, columns = Some(Seq.empty), datasetTableParams = Some(Seq(DatasetTableParams(Some("table_0"), 100, Seq.empty))))
+    val datasetParams2 = DatasetParams(id = None, name = s"dataset-${Random.nextInt()}", description = "desc", rows = 200, columns = Some(Seq.empty), datasetTableParams = Some(Seq(DatasetTableParams(Some("table_0"), 200, Seq.empty))))
 
     datasetManager.create(datasetParams1)
     datasetManager.create(datasetParams2)

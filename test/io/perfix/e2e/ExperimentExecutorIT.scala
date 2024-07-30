@@ -38,7 +38,7 @@ class ExperimentExecutorIT extends AnyFlatSpec with Matchers with MockitoSugar w
       name = s"exp-${Random.nextInt()}",
       concurrentQueries = 10,
       experimentTimeInSeconds = 5,
-      dbQuery = SqlDBQueryBuilder(limitOpt = Some(100)),
+      dbQuery = SqlDBQueryBuilder(tableName = "table"),
       databaseConfigs = Seq(DatabaseConfigDetails(DatabaseConfigId(-1))),
       experimentResults = None,
       createdAt = Some(System.currentTimeMillis()),
