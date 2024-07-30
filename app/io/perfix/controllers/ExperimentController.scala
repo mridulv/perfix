@@ -3,6 +3,7 @@ package io.perfix.controllers
 import controllers.AssetsFinder
 import io.perfix.auth.AuthenticationAction
 import io.perfix.manager.ExperimentManager
+import io.perfix.model.api.DatabaseConfigId
 import io.perfix.model.{DatabaseCategory, EntityFilter}
 import io.perfix.model.experiment.{ExperimentId, ExperimentParams}
 import org.pac4j.core.profile.UserProfile
@@ -33,6 +34,11 @@ class ExperimentController @Inject()(val controllerComponents: SecurityComponent
 
   def config(category: String) = authenticationAction { request =>
     Results.Ok(Json.toJson(experimentManager.configs(category)))
+  }
+
+  def sqlPlaceholderQueryString = authenticationAction(parse.json) { request =>
+    val databaseConfigIdOpt = (request.body \ "databaseConfigId").asOpt[Int].map(i => DatabaseConfigId(i))
+    Results.Ok(Json.toJson(experimentManager.sqlPlaceholderQueryString(databaseConfigIdOpt)))
   }
 
   def update(experimentId: Int) = authenticationAction(parse.json) { request =>

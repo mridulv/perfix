@@ -6,8 +6,9 @@ import io.perfix.exceptions.InvalidStateException
 import io.perfix.model.experiment.{ExperimentId, ExperimentParams, ExperimentResultWithDatabaseConfigDetails}
 import io.perfix.model.{DatabaseCategory, EntityFilter, ExperimentFilter}
 import io.perfix.db.ExperimentStore
-import io.perfix.model.api.{DatabaseConfigDetails, DatasetDetails}
+import io.perfix.model.api.{DatabaseConfigDetails, DatabaseConfigId, DatasetDetails, DatasetId}
 import io.perfix.stores.Database
+import io.perfix.stores.mysql.RDSDatabaseSetupParams
 
 import javax.inject.Singleton
 
@@ -45,6 +46,27 @@ class ExperimentManager @Inject()(datasetManager: DatasetManager,
       .filter { dbConfig =>
         relevantDatabases.map(_.name).contains(dbConfig.dataStore)
       }.map(_.datasetDetails)
+  }
+
+  def sqlPlaceholderQueryString(databaseConfigIdOpt: Option[DatabaseConfigId]): String = {
+    databaseConfigIdOpt match {
+      case Some(databaseConfigId) =>
+        val databaseConfigParams = databaseConfigManager.get(databaseConfigId)
+        val datasetParams = datasetManager.get(databaseConfigParams.datasetDetails.datasetId)
+        databaseConfigParams.databaseSetupParams match {
+          case rdsDatabaseSetupParams: RDSDatabaseSetupParams =>
+            val columnDescription = datasetParams.columns.getOrElse(Seq.empty).headOption
+            columnDescription match {
+              case Some(column) => column.columnType.getValue match {
+                case str: String => s"select * from ${rdsDatabaseSetupParams.tableName} where ${column.columnName} = \"$str\""
+                case v: _ => s"select * from ${rdsDatabaseSetupParams.tableName} where ${column.columnName} = $v"
+              }
+              case None => s"select * from ${rdsDatabaseSetupParams.tableName}"
+            }
+          case _ => "select * from $replace_with_the_table_name"
+        }
+      case None => "select * from $replace_with_the_table_name"
+    }
   }
 
   def configs(category: String): Seq[DatabaseConfigDetails] = {
