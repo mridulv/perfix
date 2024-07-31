@@ -42,7 +42,7 @@ class MySQLStoreTest extends AnyFlatSpec with Matchers with MockitoSugar with Be
   it should "insert data correctly" in {
     val rows = Seq(Map("name" -> "test22"))
     mySQLStore.putData(rows)
-    val res = mySQLStore.readData(SqlDBQueryBuilder(filtersOpt = None, tableName = "TEST"))
+    val res = mySQLStore.readData(SqlDBQueryBuilder(filtersOpt = None, tableName = "test"))
     println(res.size)
     res.size should be (1)
   }
