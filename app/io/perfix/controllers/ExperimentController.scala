@@ -32,7 +32,7 @@ class ExperimentController @Inject()(val controllerComponents: SecurityComponent
     Results.Ok(Json.toJson(experimentManager.datasets(category)))
   }
 
-  def config(category: String, datasetId: Int) = authenticationAction(parse.json) { request =>
+  def dbconfig = authenticationAction(parse.json) { request =>
     val category = (request.body \ "category").as[String]
     val datasetId = (request.body \ "datasetId").as[Int]
     Results.Ok(Json.toJson(experimentManager.configs(category, DatasetId(datasetId))))
