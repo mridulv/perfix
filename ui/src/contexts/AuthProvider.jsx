@@ -1,5 +1,5 @@
 import axios from "axios";
-import React, { createContext, useEffect, useState } from "react";
+import { createContext, useEffect, useState } from "react";
 
 export const AuthContext = createContext();
 
@@ -15,6 +15,7 @@ const AuthProvider = ({ children }) => {
       });
       const userData = await res.data;
       if (res.status === 200) {
+        
         setUser(userData);
         setUserLoading(false);
       }

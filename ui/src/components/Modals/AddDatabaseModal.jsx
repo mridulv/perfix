@@ -1,8 +1,7 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { MdClose } from "react-icons/md";
 import { IoIosArrowForward } from "react-icons/io";
 import toast from "react-hot-toast";
-import axios from "axios";
 import AddDatabase from "../AddDatabase/AddDatabase";
 import ChooseDatasetComponent from "../Common/ChooseDatasetComponent";
 import { handleAddDatasetApi } from "../../api/handleAddDatasetApi";

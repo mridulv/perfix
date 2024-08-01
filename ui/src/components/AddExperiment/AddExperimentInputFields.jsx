@@ -13,9 +13,10 @@ const AddExperimentInputFields = ({ params }) => {
     experimentTimeInSecond,
     setExperimentTimeInSecond,
     selectedDatabaseCategory,
+    sqlPlaceholder,
   } = params;
 
-  const [selectedRDBMSOption, setSelectedRDBMSOption] = useState("sequel");
+  const [selectedRDBMSOption, setSelectedRDBMSOption] = useState("sql");
   const [columns, setColumns] = useState([{ columnName: "", columnType: "" }]);
   const handleAddColumn = () => {
     setColumns([...columns, { columnName: "", columnType: "" }]);
@@ -65,9 +66,8 @@ const AddExperimentInputFields = ({ params }) => {
         />
       </div>
 
-
       <div className="w-full md:w-[70%] grid grid-cols-1 md:grid-cols-3 gap-8">
-        {fieldsData.map(({ label, value, setValue }) => (
+        {fieldsData?.map(({ label, value, setValue }) => (
           <div key={label} className="mb-4">
             <div className="mb-2">
               <label className="block text-xs font-semibold text-gray-700">
@@ -102,31 +102,39 @@ const AddExperimentInputFields = ({ params }) => {
 
       {selectedDatabaseCategory.value.includes("RDBMS") ? (
         <div>
-           <label className="text-[12px] font-bold mb-1">Query</label>
+          <label className="text-[12px] font-bold mb-1">Query</label>
           <div className="mt-2 mb-4 max-w-[180px] px-auto bg-secondary py-1 ps-3 flex items-center gap-3 rounded tracking-tight">
             <button
               type="button"
-              onClick={() => setSelectedRDBMSOption("sequel")}
+              onClick={() => setSelectedRDBMSOption("sql")}
               className={`py-1 px-2 text-[13px] ${
-                selectedRDBMSOption === "sequel" && "bg-white"
+                selectedRDBMSOption === "sql" && "bg-white"
               } font-semibold rounded`}
             >
               SQL
             </button>
             <button
               type="button"
-              onClick={() => setSelectedRDBMSOption("non-sequel")}
+              onClick={() => setSelectedRDBMSOption("non-sql")}
               className={`py-1 px-2 text-[13px] ${
-                selectedRDBMSOption === "non-sequel" && "bg-white"
+                selectedRDBMSOption === "non-sql" && "bg-white"
               } font-semibold rounded`}
             >
-              NoSQL
+              SQL Builder
             </button>
           </div>
-          <QueryComponentForRDBMS selectedOption={selectedRDBMSOption} />
+          <QueryComponentForRDBMS
+            sqlPlaceholder={sqlPlaceholder}
+            selectedOption={selectedRDBMSOption}
+            columns={columns}
+            handleAddColumn={handleAddColumn}
+          />
         </div>
       ) : (
-        <QueryComponentForNoSQL columns={columns} handleAddColumn={handleAddColumn}/>
+        <QueryComponentForNoSQL
+          columns={columns}
+          handleAddColumn={handleAddColumn}
+        />
       )}
     </div>
   );

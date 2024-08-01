@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaPlus } from "react-icons/fa6";
 import { Link, useNavigate } from "react-router-dom";
 import { ImPencil } from "react-icons/im";
@@ -7,6 +7,7 @@ import CustomSelectMultipleOptions from "../CustomSelect/CustomSelectMultipleOpt
 import AddExperimentInputFields from "./AddExperimentInputFields";
 import AddDatabaseModalForExperiment from "../Modals/AddDatabaseModalForExperiment";
 import handleAddExperiment from "../../api/handleAddExperiment";
+import axiosApi from "../../api/axios";
 
 const AddExperiment = ({
   databases,
@@ -20,17 +21,22 @@ const AddExperiment = ({
   const [concurrentQueries, setConcurrentQueries] = useState("1000");
   const [experimentTimeInSecond, setExperimentTimeInSecond] = useState("60");
   const [openAddDatabaseModal, setOpenAddDatabaseModal] = useState(false);
+  const [sqlPlaceholder, setSqlPlaceholder] = useState("");
 
   const navigate = useNavigate();
 
   const handleRemoveSelectedDatabase = (databaseToRemove) => {
-    setSelectedDatabases(selectedDatabases.filter(db => db.value !== databaseToRemove.value));
+    setSelectedDatabases(
+      selectedDatabases.filter((db) => db.value !== databaseToRemove.value)
+    );
   };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
     const form = event.target;
+
+    const dbQuery = {}
 
     await handleAddExperiment(
       form,
@@ -42,37 +48,29 @@ const AddExperiment = ({
     );
   };
 
-  // useEffect(() => {
-  //   if (
-  //     selectedDatabaseCategory.value !== "Choose Category" &&
-  //     databaseCategories
-  //   ) {
-  //     const categoryDatabases =
-  //       databaseCategories[selectedDatabaseCategory.value] || [];
-  //     const filteredDatabases = databases.filter((db) =>
-  //       categoryDatabases.includes(db.dataStore)
-  //     );
-  //     setAvailableDatabases(filteredDatabases);
+  //getting the sql placeholder
+  useEffect(() => {
+    const fetchSQLPlaceholder = async () => {
+      const payload = selectedDatabases.length > 0
+      ? selectedDatabases.reduce((acc, database) => {
+          acc[`databaseConfigId`] = database.value;
+          return acc;
+        }, {})
+      : {};
 
-  //     // Only filter selected databases if the category has changed
-  //     setSelectedDatabases((prevSelected) => {
-  //       const newSelected = prevSelected.filter((db) =>
-  //         filteredDatabases.some(
-  //           (availableDb) => availableDb.databaseConfigId.id === db.value
-  //         )
-  //       );
+      try {
+        const res = await axiosApi.post("/experiment/sql/placeholder",payload);
+        console.log(res);
+        if(res.status === 200){
+          setSqlPlaceholder(res.data)
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    };
 
-  //       // If the new selection is different, return it. Otherwise, keep the previous selection.
-  //       return newSelected.length !== prevSelected.length
-  //         ? newSelected
-  //         : prevSelected;
-  //     });
-  //   } else {
-  //     setAvailableDatabases([]);
-  //     setSelectedDatabases([]);
-  //   }
-  // }, [selectedDatabaseCategory, databaseCategories, databases]);
-
+    fetchSQLPlaceholder();
+  }, [selectedDatabases]);
 
   const paramsForInputFieldsComponent = {
     experimentTimeInSecond,
@@ -81,7 +79,8 @@ const AddExperiment = ({
     setConcurrentQueries,
     writeBatchSizeValue,
     setWriteBatchSizeValue,
-    selectedDatabaseCategory
+    selectedDatabaseCategory,
+    sqlPlaceholder
   };
   return (
     <div>
@@ -93,7 +92,7 @@ const AddExperiment = ({
               className={`min-w-[140px] h-[35px] flex items-center justify-center rounded-2xl text-[12px]
                 font-semibold `}
             >
-              {selectedDatabases.map((database) => (
+              {selectedDatabases?.map((database) => (
                 <div
                   key={database.value}
                   className={` h-full px-4  mr-2 flex gap-2 items-center justify-center bg-secondary rounded-2xl`}
@@ -133,7 +132,7 @@ const AddExperiment = ({
             open={openAddDatabaseModal}
             onClose={() => setOpenAddDatabaseModal(false)}
             databases={databases}
-            seletedDataset={dataset}
+            selectedDataset={dataset}
             refetch={databaseRefetch}
           />
         </div>
@@ -141,7 +140,9 @@ const AddExperiment = ({
 
       <div className="ps-7 mt-7">
         <form onSubmit={handleSubmit}>
-          <AddExperimentInputFields params={paramsForInputFieldsComponent} />
+          {
+            sqlPlaceholder && <AddExperimentInputFields params={paramsForInputFieldsComponent} />
+          }
 
           <div className="mt-[150px] pb-3 flex gap-2">
             <button

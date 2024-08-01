@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import MonacoEditor from "react-monaco-editor";
 import * as monaco from 'monaco-editor';
 
@@ -17,9 +18,18 @@ monaco.editor.defineTheme('myCustomTheme', {
 });
 
 const TextBox = ({ texts, onChange }) => {
+  const editorRef = useRef(null);
+
+  useEffect(() => {
+    if (editorRef.current) {
+      editorRef.current.editor.setValue(texts);
+    }
+  }, [texts]);
+
   return (
     <div className="w-full md:w-[80%] lg:w-[85%] border-b-2 border-gray-300">
       <MonacoEditor
+        ref={editorRef}
         width="100%"
         height="200"
         theme="myCustomTheme"
