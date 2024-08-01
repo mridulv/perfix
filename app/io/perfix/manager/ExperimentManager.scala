@@ -69,12 +69,12 @@ class ExperimentManager @Inject()(datasetManager: DatasetManager,
     }
   }
 
-  def configs(category: String): Seq[DatabaseConfigDetails] = {
+  def configs(category: String, datasetId: DatasetId): Seq[DatabaseConfigDetails] = {
     val relevantDatabases = Database.allDatabases.filter(db => db.databaseCategory.map(_.toString).contains(category))
     databaseConfigManager
       .all(Seq.empty)
       .filter { dbConfig =>
-        relevantDatabases.map(_.name).contains(dbConfig.dataStore)
+        relevantDatabases.map(_.name).contains(dbConfig.dataStore) && dbConfig.datasetDetails.datasetId == datasetId
       }.map(_.toDatabaseConfigDetails)
   }
 
