@@ -28,7 +28,7 @@ class SecurityModule(environment: Environment, configuration: Configuration) ext
 
   override def configure(): Unit = {
     val dataEncrypter = new NoOpDataEncrypter
-    val playSessionStore = new PlayCookieSessionStore(dataEncrypter)
+    val playSessionStore = new CustomPlayCookieSessionStore(dataEncrypter)
     bind(classOf[SessionStore]).toInstance(playSessionStore)
 
     bind(classOf[SecurityComponents]).to(classOf[DefaultSecurityComponents])

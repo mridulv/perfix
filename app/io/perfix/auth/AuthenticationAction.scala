@@ -1,6 +1,7 @@
 package io.perfix.auth
 
 import com.google.inject.Inject
+import io.perfix.auth.CustomPlayCookieSessionStore.PAC4J_SESSION_TIMEOUT
 import io.perfix.model.UserInfo
 import org.pac4j.core.context.session.SessionStore
 import org.pac4j.core.profile.ProfileManager
@@ -10,6 +11,7 @@ import play.api.mvc._
 
 import scala.concurrent.{ExecutionContext, Future}
 import scala.jdk.CollectionConverters._
+import scala.util.Try
 
 class AuthenticationAction @Inject() (parser: BodyParsers.Default,
                                       sessionStore: SessionStore)(implicit ec: ExecutionContext)
@@ -21,8 +23,10 @@ class AuthenticationAction @Inject() (parser: BodyParsers.Default,
     val profiles = profileManager.getProfiles.asScala
     val name = profiles.map(_.getAttribute("name").toString).headOption
     val email = profiles.map(_.getAttribute("email").toString).headOption
+    val sessionTimeout = Try(sessionStore.get(webContext, PAC4J_SESSION_TIMEOUT).get().asInstanceOf[Long]).toOption.getOrElse(0L)
+    println("SessionTimeout is: " + sessionTimeout)
 
-    if (profiles.nonEmpty && name.isDefined && email.isDefined) {
+    if (profiles.nonEmpty && name.isDefined && email.isDefined && System.currentTimeMillis() < sessionTimeout) {
       val userInfo = UserInfo(name.get, email.get)
       UserContext.setUser(userInfo)
       block(request)
