@@ -4,11 +4,11 @@ import fetchDatabaseTypes from "../api/fetchDatabaseTypes";
 export const Filters = () => {
     const [databaseTypes, setDatabaseTypes] = useState([]);
     const [selectedDatabaseType, setSelectedDatabaseType] = useState({
-        option: "Choose Database",
+        option: "Databases",
         value: "choose",
       });
       const [selectedDatasetName, setSelectedDatasetName] = useState({
-        option: "Choose Dataset",
+        option: "Datasets",
         value: "choose",
       });
       const [selectExperimentState, setSelectExperimentState] = useState({

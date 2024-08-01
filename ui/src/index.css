@@ -9,23 +9,25 @@
 
 body {
   margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Inter", "Inter Placeholder", 'Segoe UI', 'Roboto', 'Oxygen',
-    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
-    sans-serif;
+  font-family: "Inter";
+  letter-spacing: 0.25px;
+  overflow-y: auto;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-code {
-  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
-    monospace;
-}
+
 .search-input {
-  font-size: 14px;
+  height: 35px;
+  width: 250px;
+  font-size: 13px;
+  padding: 2px 4px;
+  border: 2px solid #E0E0E0;
+  border-radius: 6px;
 }
 
 .search-input:focus {
-  outline-color: #3498db; /* Changes the outline color when the input is focused */
+  outline-color: #E0E0E0; /* Changes the outline color when the input is focused */
 }
 
 
@@ -35,10 +37,11 @@ code {
   position: relative;
 }
 .dropdown .dropdown-btn {
-  padding: 8px 8px;
+  padding: 6px 4px;
   background: #fff;
-  font-size: 14px;
-  color: #8E8E8E;
+  font-size: 13px;
+  color: #c0aeae;
+  font-weight: 500;
   border-radius: 6px;
   display: flex;
   align-items: center;
@@ -49,7 +52,7 @@ code {
 
 .dropdown-item {
   padding: 10px;
-  font-size: 14px;
+  font-size: 13px;
   cursor: pointer;
   transition: all 0.2s;
 }
@@ -68,86 +71,31 @@ code {
 }
 
 
-
-
-
-body::-webkit-scrollbar {
-  width: 10px;
-}
-
-/* Style the scrollbar track */
-body::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
-
-/* Style the scrollbar thumb */
-body::-webkit-scrollbar-thumb {
-  background: #3DA5FF;
-  border-radius: 10px;
-}
-
-/* Optionally style the scrollbar corner */
-body::-webkit-scrollbar-corner {
-  background: #f1f1f1;
-}
-
-.range-input {
-  -webkit-appearance: none;
-  width: 100%;
-  height: 8px;
-  background: linear-gradient(to right, #3DA5FF 0%, #e2e8f0 0%);
-  border-radius: 8px;
-  outline: none;
-  cursor: pointer;
-}
-
-.range-input::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 20px;
-  height: 20px;
-  background: #3DA5FF;
-  border: 4px solid white;
-  border-radius: 50%;
-  box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
-  cursor: pointer;
-  position: relative;
-  top: 0%; /* Center the thumb vertically */
-}
-
-.range-input::-moz-range-thumb {
+/* HTML: <div class="loader"></div> */
+.loader {
   width: 16px;
-  height: 16px;
-  background: #3DA5FF;
-  
+  aspect-ratio: 1;
   border-radius: 50%;
-  cursor: pointer;
-  position: relative;
-  top: -4px; /* Center the thumb vertically */
-};
-
-.experiment-details-enter {
-  max-height: 0;
-  opacity: 0;
-  overflow: hidden;
+  background: #3DA5FF;
+  box-shadow: 0 0 0 0 #BDE0FF;
+  animation: l1 1s infinite;
+}
+@keyframes l1 {
+    100% {box-shadow: 0 0 0 20px #0000}
 }
 
-.experiment-details-enter-active {
-  max-height: 1000px;
-  overflow: hidden;
-  opacity: 1;
-  transition: max-height 1000ms ease-in-out;
+
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
 }
 
-.experiment-details-exit {
-  max-height: 1000px;
-  overflow: hidden;
-  opacity: 1;
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
 }
 
-.experiment-details-exit-active {
-  max-height: 0;
-  overflow: hidden;
-  opacity: 1;
-  transition: max-height 1000ms ease-in-out;
-}
+
+

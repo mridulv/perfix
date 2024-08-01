@@ -1,11 +1,10 @@
-import React from "react";
 import { FaPlus } from "react-icons/fa6";
 
 const AddDataset = ({ columns, handleAddColumn }) => {
   return (
     <>
       <div className="flex flex-col mb-6">
-        <label className="text-[12px] font-bold">Name</label>
+        <label className="text-[12px] font-bold">Enter Name</label>
         <input
           className="search-input border-2 border-gray-300 focus:border-gray-400 max-w-[250px] px-2 py-1 rounded"
           type="text"
@@ -15,17 +14,17 @@ const AddDataset = ({ columns, handleAddColumn }) => {
         />
       </div>
       <div className="flex flex-col mb-5">
-        <label className="text-[12px] font-bold">Description</label>
+        <label className="text-[12px] font-bold">Enter Description</label>
         <textarea
-          className="search-input border-2 border-gray-300 w-[400px] px-2 py-1 rounded resize-none"
+          className="w-[400px] px-2 py-1 text-[13px] border-2 border-gray-300 rounded resize-none outline-gray-500"
           type="text"
           placeholder="Enter Name"
-          rows={2}
+          rows={3}
           name="description"
           required
         />
       </div>
-      <div>
+      <div className="mb-8">
         <h3 className="text-base font-bold mb-4">Setup Columns</h3>
         <div className="max-w-[290px]     rounded-md">
           {columns.map((column, i) => (
@@ -49,7 +48,7 @@ const AddDataset = ({ columns, handleAddColumn }) => {
                 <select
                   name={`columnType${i}`}
                   id={`columnType${i}`}
-                  className="block max-w-[250px] px-2 py-2 border-2 border-gray-300 rounded-md  focus:outline-none focus:border-gray-500"
+                  className="block w-[250px] px-2 py-2 border-2 border-gray-300 rounded-md  focus:outline-none focus:border-gray-500"
                   style={{
                     fontSize: "14px",
                     color: "#8E8E8E",

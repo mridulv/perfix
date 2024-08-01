@@ -1,14 +1,14 @@
 import toast from "react-hot-toast";
 import axiosApi from "./axios";
 
-export const baseUrl = process.env.REACT_APP_BASE_URL;
+
 
 export const handleAddDatasetApi = async (
   event,
   datasets,
   columns,
   successFunctions,
-  apiFor,
+  apiFor
 ) => {
   const datasetName = event.target.datasetName.value;
   const description = event.target.description.value;
@@ -47,10 +47,10 @@ export const handleAddDatasetApi = async (
 
     const response = await axiosApi.post("/dataset/create", columnData);
     if (response.status === 200) {
-      if(apiFor === "dataset"){
+      if (apiFor === "dataset") {
         successFunctions();
-      }else{
-        successFunctions(response)
+      } else {
+        successFunctions(response);
       }
     }
   } catch (err) {

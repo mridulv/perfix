@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import CustomSelect from "../CustomSelect/CustomSelect";
 
 const AddDatabaseFirsStep = ({
@@ -52,17 +52,19 @@ const AddDatabaseFirsStep = ({
           />
         </div>
       </div>
-      <div className="flex flex-col mb-2">
-        <label className="text-[12px] font-bold mb-[2px]">Database type</label>
-        <div className="w-[350px]">
-          <CustomSelect
-            options={databaseTypesOptions}
-            selected={selectedDatabaseType}
-            setSelected={setSelectedDatabaseType}
-            width="w-[250px]"
-          />
+      {selectedDatabaseCategory.value !== "Choose" && (
+        <div className="flex flex-col mb-2">
+          <label className="text-[12px] font-bold mb-[2px]">Database</label>
+          <div className="w-[350px]">
+            <CustomSelect
+              options={databaseTypesOptions}
+              selected={selectedDatabaseType}
+              setSelected={setSelectedDatabaseType}
+              width="w-[250px]"
+            />
+          </div>
         </div>
-      </div>
+      )}
     </div>
   );
 };

@@ -1,8 +1,8 @@
-import axios from 'axios';
+import axios from "axios";
 
 const axiosApi = axios.create({
   withCredentials: true,
-  baseURL: process.env.REACT_APP_BASE_URL,
+  baseURL: import.meta.env.VITE_BASE_URL,
   timeout: 5000,
 });
 

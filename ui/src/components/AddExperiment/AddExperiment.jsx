@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { FaPlus } from "react-icons/fa6";
 import { Link, useNavigate } from "react-router-dom";
 import { ImPencil } from "react-icons/im";
@@ -7,28 +7,36 @@ import CustomSelectMultipleOptions from "../CustomSelect/CustomSelectMultipleOpt
 import AddExperimentInputFields from "./AddExperimentInputFields";
 import AddDatabaseModalForExperiment from "../Modals/AddDatabaseModalForExperiment";
 import handleAddExperiment from "../../api/handleAddExperiment";
-import fetchDatabaseCategory from "../../api/fetchDatabaseCategory";
-import CustomSelect from "../CustomSelect/CustomSelect";
+import axiosApi from "../../api/axios";
 
-const AddExperiment = ({ databases, dataset, databaseRefetch }) => {
+const AddExperiment = ({
+  databases,
+  databasesOptions,
+  dataset,
+  databaseRefetch,
+  selectedDatabaseCategory,
+}) => {
   const [selectedDatabases, setSelectedDatabases] = useState([]);
-  const [databaseCategories, setDatabaseCategories] = useState(null);
-  const [selectedDatabaseCategory, setSelectedDatabaseCategory] = useState({
-    option: "Choose Category",
-    value: "Choose"
-  })
-  const [writeBatchSizeValue, setWriteBatchSizeValue] = useState(0);
-  const [concurrentQueries, setConcurrentQueries] = useState(0);
-  const [experimentTimeInSecond, setExperimentTimeInSecond] = useState(0);
+  const [writeBatchSizeValue, setWriteBatchSizeValue] = useState("1000");
+  const [concurrentQueries, setConcurrentQueries] = useState("1000");
+  const [experimentTimeInSecond, setExperimentTimeInSecond] = useState("60");
   const [openAddDatabaseModal, setOpenAddDatabaseModal] = useState(false);
-  const [availableDatabases, setAvailableDatabases] = useState([]);
+  const [sqlPlaceholder, setSqlPlaceholder] = useState("");
 
   const navigate = useNavigate();
+
+  const handleRemoveSelectedDatabase = (databaseToRemove) => {
+    setSelectedDatabases(
+      selectedDatabases.filter((db) => db.value !== databaseToRemove.value)
+    );
+  };
 
   const handleSubmit = async (event) => {
     event.preventDefault();
 
     const form = event.target;
+
+    const dbQuery = {}
 
     await handleAddExperiment(
       form,
@@ -40,42 +48,29 @@ const AddExperiment = ({ databases, dataset, databaseRefetch }) => {
     );
   };
 
+  //getting the sql placeholder
   useEffect(() => {
-    fetchDatabaseCategory(setDatabaseCategories);
-  }, []);
+    const fetchSQLPlaceholder = async () => {
+      const payload = selectedDatabases.length > 0
+      ? selectedDatabases.reduce((acc, database) => {
+          acc[`databaseConfigId`] = database.value;
+          return acc;
+        }, {})
+      : {};
 
-  useEffect(() => {
-    if (selectedDatabaseCategory.value !== "Choose Category" && databaseCategories) {
-      const categoryDatabases = databaseCategories[selectedDatabaseCategory.value] || [];
-      const filteredDatabases = databases.filter(db => categoryDatabases.includes(db.dataStore));
-      setAvailableDatabases(filteredDatabases);
+      try {
+        const res = await axiosApi.post("/experiment/sql/placeholder",payload);
+        console.log(res);
+        if(res.status === 200){
+          setSqlPlaceholder(res.data)
+        }
+      } catch (err) {
+        console.log(err);
+      }
+    };
 
-      // Only filter selected databases if the category has changed
-      setSelectedDatabases(prevSelected => {
-        const newSelected = prevSelected.filter(db => 
-          filteredDatabases.some(availableDb => availableDb.databaseConfigId.id === db.value)
-        );
-        
-        // If the new selection is different, return it. Otherwise, keep the previous selection.
-        return newSelected.length !== prevSelected.length ? newSelected : prevSelected;
-      });
-    } else {
-      setAvailableDatabases([]);
-      setSelectedDatabases([]);
-    }
-  }, [selectedDatabaseCategory, databaseCategories, databases]);
-
-  const databaseCategoriesOptions =
-    databaseCategories &&
-    Object.keys(databaseCategories).map((category) => ({
-      option: category,
-      value: category,
-    }));
-
-    const databasesOptions = availableDatabases.map((database) => ({
-      option: database.name,
-      value: database.databaseConfigId.id,
-    }));
+    fetchSQLPlaceholder();
+  }, [selectedDatabases]);
 
   const paramsForInputFieldsComponent = {
     experimentTimeInSecond,
@@ -84,6 +79,8 @@ const AddExperiment = ({ databases, dataset, databaseRefetch }) => {
     setConcurrentQueries,
     writeBatchSizeValue,
     setWriteBatchSizeValue,
+    selectedDatabaseCategory,
+    sqlPlaceholder
   };
   return (
     <div>
@@ -95,10 +92,10 @@ const AddExperiment = ({ databases, dataset, databaseRefetch }) => {
               className={`min-w-[140px] h-[35px] flex items-center justify-center rounded-2xl text-[12px]
                 font-semibold `}
             >
-              {selectedDatabases.map((database) => (
+              {selectedDatabases?.map((database) => (
                 <div
                   key={database.value}
-                  className={`w-full h-full px-4  mr-2 flex gap-2 items-center justify-center bg-secondary rounded-2xl`}
+                  className={` h-full px-4  mr-2 flex gap-2 items-center justify-center bg-secondary rounded-2xl`}
                 >
                   <p>{database.option}</p>
                   <ImPencil size={12} />
@@ -106,19 +103,13 @@ const AddExperiment = ({ databases, dataset, databaseRefetch }) => {
                     title="Remove Database"
                     cursor={"pointer"}
                     size={18}
+                    onClick={() => handleRemoveSelectedDatabase(database)}
                   />
                 </div>
               ))}
             </div>
           )}
-          <div>
-            <CustomSelect
-              options={databaseCategoriesOptions}
-              selected={selectedDatabaseCategory}
-              setSelected={setSelectedDatabaseCategory}
-              width="w-[200px]"
-            />
-          </div>
+
           <div>
             <CustomSelectMultipleOptions
               selected={selectedDatabases}
@@ -141,7 +132,7 @@ const AddExperiment = ({ databases, dataset, databaseRefetch }) => {
             open={openAddDatabaseModal}
             onClose={() => setOpenAddDatabaseModal(false)}
             databases={databases}
-            seletedDataset={dataset}
+            selectedDataset={dataset}
             refetch={databaseRefetch}
           />
         </div>
@@ -149,9 +140,11 @@ const AddExperiment = ({ databases, dataset, databaseRefetch }) => {
 
       <div className="ps-7 mt-7">
         <form onSubmit={handleSubmit}>
-          <AddExperimentInputFields params={paramsForInputFieldsComponent} />
+          {
+            sqlPlaceholder && <AddExperimentInputFields params={paramsForInputFieldsComponent} />
+          }
 
-          <div className="mt-[100px] pb-3 flex gap-2">
+          <div className="mt-[150px] pb-3 flex gap-2">
             <button
               className="btn bg-primary btn-sm border border-primary rounded text-white hover:bg-[#6b3b51d2]"
               type="submit"

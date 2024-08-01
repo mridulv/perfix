@@ -6,7 +6,7 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import Datasets from "../../src/Pages/Dashboard/Datasets/Datasets";
 import { MemoryRouter } from "react-router-dom";
 import axios from "axios";
-import { expect, vi } from "vitest";
+import { expect, it, vi } from "vitest";
 
 // Mock axios
 vi.mock("axios");
@@ -83,7 +83,7 @@ describe("Datasets", () => {
     const searchInput = screen.getByPlaceholderText("Search");
     userEvent.type(searchInput, "test dataset");
 
-    await waitFor(() => {
+    waitFor(() => {
       expect(searchInput.value).toBe("test dataset");
     });
   });

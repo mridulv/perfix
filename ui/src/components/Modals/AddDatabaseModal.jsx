@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { MdClose } from "react-icons/md";
 import { IoIosArrowForward } from "react-icons/io";
 import toast from "react-hot-toast";
-import axios from "axios";
 import AddDatabase from "../AddDatabase/AddDatabase";
 import ChooseDatasetComponent from "../Common/ChooseDatasetComponent";
 import { handleAddDatasetApi } from "../../api/handleAddDatasetApi";
 import { useStatesForAddModals } from "../../hooks/useStatesForAddModals";
+import axiosApi from "../../api/axios";
 
 const AddDatabaseModal = ({ open, onClose, datasets, refetch, databases }) => {
   const [currentAddStep, setCurrentAddStep] = useState(1);
@@ -70,11 +70,8 @@ const AddDatabaseModal = ({ open, onClose, datasets, refetch, databases }) => {
   useEffect(() => {
     if (selectedDatasetId) {
       const fetchDataset = async () => {
-        const res = await axios.get(
-          `${process.env.REACT_APP_BASE_URL}/dataset/${selectedDatasetId}`,
-          {
-            withCredentials: true,
-          }
+        const res = await axiosApi.get(
+          `/dataset/${selectedDatasetId}`,
         );
         const data = await res.data;
         setSelectedDatasetData(data);
@@ -118,7 +115,9 @@ const AddDatabaseModal = ({ open, onClose, datasets, refetch, databases }) => {
           </div>
           <div className="w-full bg-secondary mb-9 ps-6 py-3 flex items-center gap-8">
             <div
-              className={`w-11 ${currentAddStep === 1 && "bg-white"} p-[10px] rounded-xl`}
+              className={`w-11 ${
+                currentAddStep === 1 && "bg-white"
+              } p-[10px] rounded-xl`}
             >
               <p className="w-6 h-6 bg-black rounded-full grid place-content-center text-sm text-white">
                 1
@@ -128,7 +127,9 @@ const AddDatabaseModal = ({ open, onClose, datasets, refetch, databases }) => {
               <IoIosArrowForward size={20} />
             </div>
             <div
-              className={`w-11 ${currentAddStep === 2 && "bg-white"} p-[10px] rounded-xl`}
+              className={`w-11 ${
+                currentAddStep === 2 && "bg-white"
+              } p-[10px] rounded-xl`}
             >
               <p className="w-6 h-6 bg-black rounded-full grid place-content-center text-sm text-white">
                 2
@@ -149,16 +150,18 @@ const AddDatabaseModal = ({ open, onClose, datasets, refetch, databases }) => {
               ></ChooseDatasetComponent>
             )}
           </div>
-          {currentAddStep === 2 && selectedDatasetId !== null && selectedDatasetData !== null && (
-            <div>
-              <AddDatabase
-                dataset={selectedDatasetData}
-                cancelFunction={handleCloseModal}
-                successFunction={successFunctionsForDatabase}
-                databases={databases}
-              />
-            </div>
-          )}
+          {currentAddStep === 2 &&
+            selectedDatasetId !== null &&
+            selectedDatasetData !== null && (
+              <div>
+                <AddDatabase
+                  dataset={selectedDatasetData}
+                  cancelFunction={handleCloseModal}
+                  successFunction={successFunctionsForDatabase}
+                  databases={databases}
+                />
+              </div>
+            )}
         </div>
       </div>
     </div>

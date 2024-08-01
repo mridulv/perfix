@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Loading from "../../../components/Common/Loading";
-import { MdClose } from "react-icons/md";
 import useDatabases from "../../../api/useDatabases";
 import useDatasets from "../../../api/useDatasets";
 import CustomSelect from "../../../components/CustomSelect/CustomSelect";
@@ -8,6 +7,7 @@ import AddButton from "../../../components/Common/AddButton";
 import AddDatabaseModal from "../../../components/Modals/AddDatabaseModal";
 import CommonTable from "../../../components/Common/CommonTable";
 import { Filters } from "../../../hooks/filters";
+import { useSearchParams } from "react-router-dom";
 
 const columnHeads = [
   "Database Name",
@@ -18,7 +18,6 @@ const columnHeads = [
 
 const DBConfiguration = () => {
   const [open, setOpen] = useState(false);
-  const [searchText, setSearchText] = useState("");
   const [values, setValues] = useState([]);
 
   const {
@@ -29,13 +28,27 @@ const DBConfiguration = () => {
     setSelectedDatasetName,
   } = Filters();
 
+  const [searchParam] = useSearchParams();
+  const initialSearchParam = searchParam.get("text") || "";
+  const [searchText, setSearchText] = useState(initialSearchParam);
+
   const handleSearchText = (e) => {
     setSearchText(e.target.value);
   };
 
-  // if (searchText) {
-  //   values = [...values, { text: searchText, type: "TextFilter" }];
-  // }
+  // Clear filter function
+  const handleClearFilters = () => {
+    setSearchText("");
+    setSelectedDatabaseType({
+      option: "Databases",
+      value: "choose",
+    });
+    setSelectedDatasetName({
+      option: "Datasets",
+      value: "choose",
+    });
+  };
+
   useEffect(() => {
     const newValues = [];
     if (searchText) {
@@ -68,40 +81,32 @@ const DBConfiguration = () => {
     value: dataset.name,
   }));
 
-  // for clearing the filter
-  const handleClearDatabaseFilter = () => {
-    setSelectedDatabaseType({
-      option: "Choose Database",
-      value: "choose",
-    });
-    setSelectedDatasetName({
-      option: "Choose Dataset",
-      value: "choose",
-    });
-  };
-  
+  const isFilterActive =
+    searchText ||
+    selectedDatabaseType.value !== "choose" ||
+    selectedDatasetName.value !== "choose";
+
   return (
     <div className="ps-7 pt-7">
       <div>
-        <h3 className="text-2xl font-semibold">Database</h3>
+        <h3 className="text-2xl font-semibold -tracking-tighter">Database</h3>
       </div>
       <div className="w-[95%] h-[1px] bg-accent my-6"></div>
-      <div className="flex justify-between me-9 mt-6 mb-3">
+      <div className="flex justify-between me-9 mt-6 mb-5">
         <div className="flex gap-x-4">
           <input
-            className="w-[200px] px-1 py-[6px]  border-2 border-gray-200 rounded search-input"
+            className="search-input"
             type="text"
-            name=""
-            id=""
             placeholder="Search"
+            value={searchText}
             onChange={(e) => handleSearchText(e)}
           />
-          <div className="ms-3">
+          <div className="">
             <CustomSelect
               selected={selectedDatabaseType}
               setSelected={setSelectedDatabaseType}
               options={databaseTypesOptions}
-              width="w-[180px]"
+              width="w-[100px]"
             />
           </div>
           <div>
@@ -110,19 +115,18 @@ const DBConfiguration = () => {
                 selected={selectedDatasetName}
                 setSelected={setSelectedDatasetName}
                 options={datasetNamesOptions}
-                width="w-[180px]"
+                width="w-[90px]"
               />
             )}
           </div>
 
-          {(selectedDatabaseType.value !== "choose" ||
-            selectedDatasetName.value !== "choose") && (
+          {isFilterActive && (
             <div className="">
               <button
-                className="w-[40px] h-[40px] bg-secondary flex items-center justify-center rounded-md"
-                onClick={handleClearDatabaseFilter}
+                onClick={handleClearFilters}
+                className="text-sm font-semibold tracking-wider"
               >
-                <MdClose size={20} />
+                Clear
               </button>
             </div>
           )}

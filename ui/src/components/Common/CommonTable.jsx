@@ -1,104 +1,77 @@
-import React, { useEffect, useState } from "react";
+/* eslint-disable react/no-unescaped-entities */
+import { useEffect, useState } from "react";
 import DeleteModal from "../Modals/DeleteModal";
 import toast from "react-hot-toast";
 import CommonTableRows from "./CommonTableRows";
 
-const CommonTable = ({
-  data,
-  tableHead,
-  columnHeads,
-  refetch,
-  dataTestid=null
-}) => {
+const CommonTable = ({ data, tableHead, columnHeads, refetch }) => {
   const [showButtons, setShowButtons] = useState(null);
   const [selectedData, setSelectedData] = useState(null);
   const [openDeleteModal, setOpenDeleteModal] = useState(false);
 
-  //showing the action buttons
-  const handleShowOptions = (data) => {
-    setShowButtons(showButtons === data ? null : data);
-  };
-  //for the delete modal
+  const handleShowOptions = (data) => setShowButtons(prevData => prevData === data ? null : data);
   const handleSelectedData = (data) => {
     setOpenDeleteModal(true);
-    setSelectedData(selectedData === data ? null : data);
-  };
-
-  // for the actions buttons
-  const handleClickOutside = (event) => {
-    const optionsButton = event.target.closest(".btn-sm");
-    const actions = event.target.closest(".actions");
-
-    if (!optionsButton && !actions) {
-      setShowButtons(null);
-    }
+    setSelectedData(prevData => prevData === data ? null : data);
   };
 
   useEffect(() => {
-    document.addEventListener("click", handleClickOutside);
-    return () => {
-      document.removeEventListener("click", handleClickOutside);
+    const handleClickOutside = (event) => {
+      if (!event.target.closest(".btn-sm") && !event.target.closest(".actions")) {
+        setShowButtons(null);
+      }
     };
+    document.addEventListener("click", handleClickOutside);
+    return () => document.removeEventListener("click", handleClickOutside);
   }, []);
 
-  const deleteUrl =
-    columnHeads[0] === "Dataset Name"
-      ? `${process.env.REACT_APP_BASE_URL}/dataset`
-      : columnHeads[0] === "Database Name"
-      ? `${process.env.REACT_APP_BASE_URL}/config`
-      : `${process.env.REACT_APP_BASE_URL}/experiment`;
+  const getDeleteUrl = () => {
+    const baseUrl = `${import.meta.env.VITE_BASE_URL}`;
+    const endpoints = {
+      "Dataset Name": "dataset",
+      "Database Name": "config",
+      "Use Cases": "usecases",
+      "Experiment Name": "experiment"
+    };
+    return `${baseUrl}/${endpoints[columnHeads[0]] || "experiment"}`;
+  };
 
-  const handleDatasetDeleteSuccess = () => {
+  const handleDeleteSuccess = (entityType) => {
     refetch();
-    toast.success("Dataset Deleted Successfully!");
+    toast.success(`${entityType} Deleted Successfully!`);
     setSelectedData(null);
     setOpenDeleteModal(false);
   };
 
-  const handleDatabaseDeleteSuccess = () => {
-    // ... (handle database deletion success)
-    refetch();
-    toast.success("Database Deleted Successfully!");
-    setSelectedData(null);
-    setOpenDeleteModal(false);
+  const successFunctions = () => handleDeleteSuccess(tableHead);
+
+  const getDataId = (selectedData) => {
+    if (!selectedData) return undefined;
+
+    switch (columnHeads[0]) {
+      case "Dataset Name":
+        return selectedData.id?.id;
+      case "Database Name":
+        return selectedData.databaseConfigId?.id;
+      case "Use Cases":
+        return selectedData.useCaseId?.id;
+      case "Experiment Name":
+        return selectedData.experimentId?.id;
+      default:
+        return undefined;
+    }
   };
 
-  const handleExperimentDeleteSuccess = () => {
-    // ... (handle experiment deletion success)
-    refetch();
-    toast.success("Experiment Deleted Successfully!");
-    setSelectedData(null);
-    setOpenDeleteModal(false);
-  };
-
-  const successFunctions =
-    columnHeads[0] === "Dataset Name"
-      ? handleDatasetDeleteSuccess
-      : columnHeads[0] === "Database Name"
-      ? handleDatabaseDeleteSuccess
-      : handleExperimentDeleteSuccess;
-
-  const dataId =
-    columnHeads[0] === "Dataset Name"
-      ? selectedData?.id?.id
-      : columnHeads[0] === "Database Name"
-      ? selectedData?.databaseConfigId.id
-      : selectedData?.experimentId.id;
   return (
     <div>
       <div className="bg-accent py-2 ps-3 text-[14px] font-semibold border-b-2 border-gray-300 rounded-t-lg">
-        <p>
-          {data?.length || 0} {tableHead}
-        </p>
+        <p>{data?.length || 0} {tableHead}</p>
       </div>
-      <table className="w-full ">
-        <thead className="">
+      <table className="w-full">
+        <thead>
           <tr className="border-b border-gray-300">
-            <th className="text-start w-[45%] text-[12px] text-gray-300 py-4 ps-2">
-              {columnHeads[0]}
-            </th>
-            {columnHeads?.slice(1, columnHeads.length).map((head, i) => (
-              <th key={i} className="text-start text-[12px] text-gray-300 ps-2">
+            {columnHeads.map((head, i) => (
+              <th key={i} className={`text-start text-[12px] text-gray-300 py-4 ps-2 ${i === 0 ? 'w-[45%]' : ''}`}>
                 {head}
               </th>
             ))}
@@ -106,18 +79,16 @@ const CommonTable = ({
           </tr>
         </thead>
         <tbody>
-          {data ? (
-            data.map((d, i) => (
-              <CommonTableRows
-                key={i}
-                data={d}
-                columnHeads={columnHeads}
-                showButtons={showButtons}
-                handleShowOptions={handleShowOptions}
-                handleSelectedData={handleSelectedData}
-              />
-            ))
-          ) : (
+          {data?.map((d, i) => (
+            <CommonTableRows
+              key={i}
+              data={d}
+              columnHeads={columnHeads}
+              showButtons={showButtons}
+              handleShowOptions={handleShowOptions}
+              handleSelectedData={handleSelectedData}
+            />
+          )) || (
             <tr className="text-start text-[13px] py-4 ps-2">
               <td>You haven't added any data</td>
             </tr>
@@ -127,10 +98,10 @@ const CommonTable = ({
       <DeleteModal
         open={openDeleteModal}
         onClose={() => setOpenDeleteModal(false)}
-        dataId={dataId}
+        dataId={getDataId(selectedData)}
         actionHead={`Delete ${tableHead}?`}
         actionText={`Once you delete the ${tableHead.toLowerCase()}, you cannot modify existing experiments with this dataset, however you can create new datasets. Are you sure you want to continue?`}
-        deleteUrl={deleteUrl}
+        deleteUrl={getDeleteUrl()}
         successFunctions={successFunctions}
       />
     </div>

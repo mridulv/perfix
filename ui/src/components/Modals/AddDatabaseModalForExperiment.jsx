@@ -1,4 +1,4 @@
-import React from "react";
+
 import toast from "react-hot-toast";
 import { MdClose } from "react-icons/md";
 import AddDatabase from "../AddDatabase/AddDatabase";
@@ -6,7 +6,7 @@ import AddDatabase from "../AddDatabase/AddDatabase";
 const AddDatabaseModalForExperiment = ({
   open,
   onClose,
-  seletedDataset,
+  selectedDataset,
   databases,
   refetch,
 }) => {
@@ -14,7 +14,7 @@ const AddDatabaseModalForExperiment = ({
   const handleClose = () => {
     onClose();
   }
-  const successFunctionForAddDatabase = (response) => {
+  const successFunctionForAddDatabase = () => {
     toast.success("New Database Added Successfully!");
     refetch();
     onClose();
@@ -47,7 +47,7 @@ const AddDatabaseModalForExperiment = ({
           </div>
           <div className="w-[95%] h-[1px] bg-accent my-6"></div>
           <AddDatabase 
-          dataset={seletedDataset}
+          dataset={selectedDataset}
           databases={databases}
           successFunction={successFunctionForAddDatabase}
           cancelFunction={handleClose}

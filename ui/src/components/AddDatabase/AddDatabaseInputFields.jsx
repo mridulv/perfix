@@ -103,7 +103,7 @@ const AddDatabaseInputFields = ({ input, handleInputChange, options }) => {
                     </label>
                   </div>
                   <input
-                    className="search-input border-2 border-gray-300 focus:border-gray-400 max-w-[250px] px-2 py-1 rounded"
+                    className=" search-input border-2 border-gray-300 focus:border-gray-400 max-w-[250px] px-2 py-1 rounded"
                     type="text"
                     name={`partitionKey${i}`}
                     id={`partitionKey${i}`}

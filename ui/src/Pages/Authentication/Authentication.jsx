@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from "react";
+import  { useContext, useEffect } from "react";
 import { AuthContext } from "../../contexts/AuthProvider";
 import { useNavigate } from "react-router-dom";
 import googleIcon from "../../assets/googleIcon.png";
@@ -15,7 +15,7 @@ const Authentication = () => {
   }, [user, navigate]);
 
   const handleUser = () => {
-    window.location.href = `${process.env.REACT_APP_BASE_URL}/login`;
+    window.location.href = `${import.meta.env.VITE_BASE_URL}/login`;
   };
 
   if (user && Object.keys(user).length > 0) {
