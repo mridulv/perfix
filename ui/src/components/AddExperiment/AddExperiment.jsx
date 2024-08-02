@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+/* eslint-disable no-unused-vars */
+import React, { useEffect, useState } from "react";
 import { FaPlus } from "react-icons/fa6";
 import { Link, useNavigate } from "react-router-dom";
 import { ImPencil } from "react-icons/im";
@@ -22,6 +23,7 @@ const AddExperiment = ({
   const [experimentTimeInSecond, setExperimentTimeInSecond] = useState("60");
   const [openAddDatabaseModal, setOpenAddDatabaseModal] = useState(false);
   const [sqlPlaceholder, setSqlPlaceholder] = useState("");
+  const [dbQuery, setDbQuery] = useState({});
 
   const navigate = useNavigate();
 
@@ -36,14 +38,13 @@ const AddExperiment = ({
 
     const form = event.target;
 
-    const dbQuery = {}
-
     await handleAddExperiment(
       form,
       writeBatchSizeValue,
       concurrentQueries,
       experimentTimeInSecond,
       selectedDatabases,
+      dbQuery,
       navigate
     );
   };
@@ -75,12 +76,15 @@ const AddExperiment = ({
   const paramsForInputFieldsComponent = {
     experimentTimeInSecond,
     setExperimentTimeInSecond,
+    dataset,
     concurrentQueries,
     setConcurrentQueries,
     writeBatchSizeValue,
     setWriteBatchSizeValue,
     selectedDatabaseCategory,
-    sqlPlaceholder
+    sqlPlaceholder,
+    dbQuery,
+    setDbQuery
   };
   return (
     <div>

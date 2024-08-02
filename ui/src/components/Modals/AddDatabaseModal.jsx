@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+/* eslint-disable no-unused-vars */
+import React, { useEffect, useState } from "react";
 import { MdClose } from "react-icons/md";
 import { IoIosArrowForward } from "react-icons/io";
 import toast from "react-hot-toast";

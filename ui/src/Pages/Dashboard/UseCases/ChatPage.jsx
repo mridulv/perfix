@@ -1,5 +1,6 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable react-hooks/rules-of-hooks */
-import { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { FaArrowUp, FaRegStopCircle } from "react-icons/fa";
 import { Navigate, useParams } from "react-router-dom";
 import axiosApi from "../../../api/axios";

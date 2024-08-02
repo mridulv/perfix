@@ -1,4 +1,5 @@
-import { useState } from "react";
+/* eslint-disable no-unused-vars */
+import React, { useState } from "react";
 import { BiMinus, BiPlus } from "react-icons/bi";
 
 import QueryComponentForRDBMS from "./QueryComponentForRDBMS";
@@ -14,12 +15,14 @@ const AddExperimentInputFields = ({ params }) => {
     setExperimentTimeInSecond,
     selectedDatabaseCategory,
     sqlPlaceholder,
+    setDbQuery,
+    dataset
   } = params;
 
   const [selectedRDBMSOption, setSelectedRDBMSOption] = useState("sql");
-  const [columns, setColumns] = useState([{ columnName: "", columnType: "" }]);
+  const [columns, setColumns] = useState([{ key: "", value: "" }]);
   const handleAddColumn = () => {
-    setColumns([...columns, { columnName: "", columnType: "" }]);
+    setColumns([...columns, { key: "", value: "" }]);
   };
 
   const fieldsData = [
@@ -52,6 +55,13 @@ const AddExperimentInputFields = ({ params }) => {
   const handleInputChange = (e, setValue) => {
     setValue(parseInt(e.target.value, 10));
   };
+
+  const datasetColumnsOptions = dataset && dataset?.columns?.map(col => ({
+    value: col.columnName,
+    label: col.columnName,
+  }));
+
+  console.log(datasetColumnsOptions);
 
   return (
     <div>
@@ -103,7 +113,7 @@ const AddExperimentInputFields = ({ params }) => {
       {selectedDatabaseCategory.value.includes("RDBMS") ? (
         <div>
           <label className="text-[12px] font-bold mb-1">Query</label>
-          <div className="mt-2 mb-4 max-w-[180px] px-auto bg-secondary py-1 ps-3 flex items-center gap-3 rounded tracking-tight">
+          <div className="mt-2 mb-4 max-w-[160px] px-auto bg-secondary py-1 ps-3 flex items-center gap-3 rounded tracking-tight">
             <button
               type="button"
               onClick={() => setSelectedRDBMSOption("sql")}
@@ -127,13 +137,19 @@ const AddExperimentInputFields = ({ params }) => {
             sqlPlaceholder={sqlPlaceholder}
             selectedOption={selectedRDBMSOption}
             columns={columns}
+            setColumns={setColumns}
             handleAddColumn={handleAddColumn}
+            setDbQuery={setDbQuery}
+            datasetColumnsOptions={datasetColumnsOptions}
           />
         </div>
       ) : (
         <QueryComponentForNoSQL
           columns={columns}
+          setColumns={setColumns}
           handleAddColumn={handleAddColumn}
+          datasetColumnsOptions={datasetColumnsOptions}
+          setDbQuery={setDbQuery}
         />
       )}
     </div>

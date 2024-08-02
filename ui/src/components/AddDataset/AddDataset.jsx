@@ -1,3 +1,5 @@
+/* eslint-disable no-unused-vars */
+import React from "react";
 import { FaPlus } from "react-icons/fa6";
 
 const AddDataset = ({ columns, handleAddColumn }) => {

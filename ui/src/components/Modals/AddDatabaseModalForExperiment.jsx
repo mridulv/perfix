@@ -1,4 +1,5 @@
-
+/* eslint-disable no-unused-vars */
+import React from "react";
 import toast from "react-hot-toast";
 import { MdClose } from "react-icons/md";
 import AddDatabase from "../AddDatabase/AddDatabase";

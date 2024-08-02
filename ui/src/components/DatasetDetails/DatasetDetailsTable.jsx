@@ -1,3 +1,6 @@
+/* eslint-disable no-unused-vars */
+import React from "react";
+
 const DatasetDetailsTable = ({ data }) => {
   console.log("Table data:", data);
   const limitedColumnDatas = data?.data.slice(0, 10);

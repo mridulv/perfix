@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React from "react";
 import { it, expect, describe } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";

@@ -1,4 +1,5 @@
-import { useEffect, useRef, useState } from "react";
+/* eslint-disable no-unused-vars */
+import React, { useEffect, useRef, useState } from "react";
 import { FaCaretDown, FaCaretUp } from "react-icons/fa6";
 import { MdOutlineCheckBoxOutlineBlank } from "react-icons/md";
 import { RiCheckboxFill } from "react-icons/ri";

@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react";
+/* eslint-disable no-unused-vars */
+import React, { useEffect, useState } from "react";
 import useExperiments from "../../../api/useExperiment";
 import Loading from "../../../components/Common/Loading";
 import { FaArrowLeft } from "react-icons/fa6";
