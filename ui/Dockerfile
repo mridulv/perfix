@@ -8,15 +8,15 @@ WORKDIR /usr/src/app
 COPY package*.json ./
 
 # Install npm dependencies
-RUN npm install
+RUN yarn install
 
 # Copy all project files to the working directory
 COPY . .
 
-RUN npm run build
+RUN yarn run build
 
 # Expose the port your app runs on
 EXPOSE 3000
 
 # Command to run your app (change this according to your project)
-CMD ["npm", "start"]
+CMD ["yarn", "dev"]
