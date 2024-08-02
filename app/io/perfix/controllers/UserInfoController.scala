@@ -10,7 +10,7 @@ import org.pac4j.play.PlayWebContext
 import org.pac4j.play.scala.{Security, SecurityComponents}
 import play.api.Configuration
 import play.api.libs.json.Json
-import play.api.mvc._
+import play.api.mvc.{Results, _}
 
 import scala.jdk.CollectionConverters._
 import scala.util.Try
@@ -41,7 +41,8 @@ class UserInfoController @Inject()(val controllerComponents: SecurityComponents,
       val userInfo = UserInfo(name.get, email.get)
       Ok(Json.toJson(userInfo))
     } else {
-      Ok(Json.parse("{}"))
+      println("Destroying session")
+      Ok(Json.parse("{}")).discardingCookies(DiscardingCookie("pac4jCsrfToken"), DiscardingCookie("PLAY_SESSION"))
     }
   }
 }

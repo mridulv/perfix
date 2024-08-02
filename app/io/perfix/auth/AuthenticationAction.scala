@@ -32,7 +32,8 @@ class AuthenticationAction @Inject() (parser: BodyParsers.Default,
       block(request)
     } else {
       Future.successful {
-        Results.Forbidden
+        println("Destroying session")
+        Results.Forbidden.discardingCookies(DiscardingCookie("pac4jCsrfToken"), DiscardingCookie("PLAY_SESSION"))
       }
     }
   }
