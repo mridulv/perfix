@@ -39,13 +39,13 @@ class ExperimentManager @Inject()(datasetManager: DatasetManager,
     experimentParams.toExperimentParamsWithDatabaseDetails(dataset, databaseConfigParams)
   }
 
-  def datasets(category: String): Seq[DatasetDetails] = {
+  def datasets(category: String): Set[DatasetDetails] = {
     val relevantDatabases = Database.allDatabases.filter(db => db.databaseCategory.map(_.toString).contains(category))
     databaseConfigManager
       .all(Seq.empty)
       .filter { dbConfig =>
         relevantDatabases.map(_.name).contains(dbConfig.dataStore)
-      }.map(_.datasetDetails)
+      }.map(_.datasetDetails).toSet
   }
 
   def sqlPlaceholderQueryString(databaseConfigIdOpt: Option[DatabaseConfigId]): String = {
