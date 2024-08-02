@@ -1,4 +1,5 @@
-/* eslint-disable testing-library/await-async-utils */
+/* eslint-disable no-unused-vars */
+
 import React from "react";
 import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
@@ -6,7 +7,7 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import Datasets from "../../src/Pages/Dashboard/Datasets/Datasets";
 import { MemoryRouter } from "react-router-dom";
 import axios from "axios";
-import { expect, it, vi } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 
 // Mock axios
 vi.mock("axios");

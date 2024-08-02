@@ -1,4 +1,5 @@
-import React from "react";
+/* eslint-disable no-unused-vars */
+import React, { useState } from "react";
 import ReactECharts from "echarts-for-react";
 import StatBlock from "./StatBlock";
 import { chartOptions } from "../../hooks/chartOptions";
@@ -54,7 +55,7 @@ const MultiDatabaseExperimentResult = ({
   const initialSelected = Object.fromEntries(
     databaseInfo.map((db) => [db, true])
   );
-  const [selected, setSelected] = React.useState(initialSelected);
+  const [selected, setSelected] = useState(initialSelected);
 
   const toggleSelected = (dataName) => {
     setSelected((prevSelected) => ({

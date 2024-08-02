@@ -1,4 +1,5 @@
-import  { useState } from "react";
+/* eslint-disable no-unused-vars */
+import  React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FaArrowLeft } from "react-icons/fa6";
 import SingleDatabaseExperimentResult from "../../../components/ExperimentResults/SingleDatabaseExperimentResult";

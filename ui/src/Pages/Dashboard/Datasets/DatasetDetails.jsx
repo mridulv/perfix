@@ -1,5 +1,6 @@
+/* eslint-disable no-unused-vars */
 // DatasetDetails.js
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaArrowLeft } from "react-icons/fa6";
 import { useNavigate, useParams } from "react-router-dom";
 import DatasetDetailsTable from "../../../components/DatasetDetails/DatasetDetailsTable";

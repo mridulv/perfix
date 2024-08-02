@@ -1,4 +1,5 @@
-import { useEffect } from "react";
+/* eslint-disable no-unused-vars */
+import React, { useEffect } from "react";
 import Select from "react-select";
 
 const QueryComponentForNoSQL = ({

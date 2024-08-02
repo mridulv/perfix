@@ -1,5 +1,6 @@
 /* eslint-disable react/no-unescaped-entities */
-import { useEffect, useState } from "react";
+/* eslint-disable no-unused-vars */
+import React, { useEffect, useState } from "react";
 import DeleteModal from "../Modals/DeleteModal";
 import toast from "react-hot-toast";
 import CommonTableRows from "./CommonTableRows";

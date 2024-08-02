@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import React from "react";
 import ReactECharts from "echarts-for-react";
 import TableForSingleDatabase from "./TableForSingleDatabase";

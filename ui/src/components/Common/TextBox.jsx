@@ -1,4 +1,5 @@
-import { useEffect, useRef } from 'react';
+/* eslint-disable no-unused-vars */
+import React, { useEffect, useRef } from 'react';
 import Editor from "@monaco-editor/react";
 
 const TextBox = ({ texts, onChange }) => {
