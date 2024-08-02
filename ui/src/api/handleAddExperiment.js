@@ -7,20 +7,18 @@ const handleAddExperiment = async (
   concurrentQueries,
   experimentTimeInSecond,
   selectedDatabases,
+  dbQuery,
   navigate,
 ) => {
   const name = form.name.value;
 
-  const limitOpt = Number(form.limitOpt.value);
 
   const values = {
     name,
     writeBatchSize: Number(writeBatchSizeValue),
     concurrentQueries: Number(concurrentQueries),
     experimentTimeInSeconds: Number(experimentTimeInSecond),
-    query: {
-      limitOpt,
-    },
+    dbQuery,
     databaseConfigs: selectedDatabases.map((database) => ({
       databaseConfigId: { id: database.value },
     })),

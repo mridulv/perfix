@@ -2,7 +2,7 @@
 @tailwind components;
 @tailwind utilities;
 
-*{
+* {
   margin: 0;
   padding: 0;
 }
@@ -16,12 +16,11 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-
 .search-input {
-  height: 35px;
+  height: 38px;
   width: 250px;
   font-size: 13px;
-  padding: 2px 4px;
+  padding: 6px 4px;
   border: 2px solid #E0E0E0;
   border-radius: 6px;
 }
@@ -30,14 +29,12 @@ body {
   outline-color: #E0E0E0; /* Changes the outline color when the input is focused */
 }
 
-
-
 .dropdown {
   user-select: none;
   position: relative;
 }
 .dropdown .dropdown-btn {
-  padding: 6px 4px;
+  padding: 8px 4px;
   background: #fff;
   font-size: 13px;
   color: #c0aeae;
@@ -70,7 +67,6 @@ body {
   z-index: 1000; /* Ensure the dropdown menu has a high z-index */
 }
 
-
 /* HTML: <div class="loader"></div> */
 .loader {
   width: 16px;
@@ -81,10 +77,10 @@ body {
   animation: l1 1s infinite;
 }
 @keyframes l1 {
-    100% {box-shadow: 0 0 0 20px #0000}
+  100% {
+    box-shadow: 0 0 0 20px #0000;
+  }
 }
-
-
 
 input::-webkit-outer-spin-button,
 input::-webkit-inner-spin-button {
@@ -97,5 +93,17 @@ input[type=number] {
   -moz-appearance: textfield;
 }
 
+/* Custom Scrollbar */
+*::-webkit-scrollbar {
+  width: 8px;
+  background: gainsboro;
+}
 
+*::-webkit-scrollbar-thumb {
+  background: #463fa6;
+  border-radius: 1ex;
+}
 
+*::-webkit-scrollbar-corner {
+  background: #463fa6;
+}

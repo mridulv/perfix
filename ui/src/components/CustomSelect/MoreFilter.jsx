@@ -37,7 +37,7 @@ const MoreDropdown = ({ onSelect, selectedOptions }) => {
     <div ref={dropdownRef} className="relative">
       <button
         onClick={toggleDropdown}
-        className="px-1 py-[6px] text-primary text-[13px] flex items-center gap-1 font-semibold border-2 border-primary rounded"
+        className="px-1 py-[8px] text-[#c0aeae] text-[13px] flex items-center gap-1 font-semibold border-2 border-[#E0E0E0] rounded"
       >
         More
         {isOpen ? <FaCaretUp/> : <FaCaretDown />}
