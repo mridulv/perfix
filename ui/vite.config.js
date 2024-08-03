@@ -7,5 +7,9 @@ export default defineConfig({
     rollupOptions: {
       external: ['echarts']
     }
+  },
+  server: {
+      host: '0.0.0.0',
+      port: 3000,
   }
 })
