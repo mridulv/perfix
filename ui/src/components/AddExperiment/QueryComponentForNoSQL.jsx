@@ -2,6 +2,9 @@
 import React, { useEffect } from "react";
 import Select from "react-select";
 
+// CustomPlayCookieSessionStore
+// PAC4J_SESSION_TIMEOUT_VALUE_IN_SECS
+
 const QueryComponentForNoSQL = ({
   columns,
   setColumns,
