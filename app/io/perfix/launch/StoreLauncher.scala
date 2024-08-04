@@ -4,6 +4,7 @@ import com.amazonaws.services.ec2.model.{AuthorizeSecurityGroupIngressRequest, D
 import com.amazonaws.services.ec2.{AmazonEC2, AmazonEC2ClientBuilder}
 import com.amazonaws.services.eks.AmazonEKSClientBuilder
 import com.amazonaws.services.eks.model.DescribeClusterRequest
+import io.perfix.common.CommonConfig.EKS_CLUSTER_NAME
 import io.perfix.model.api.DatabaseState.DatabaseState
 import io.perfix.model.store.DatabaseSetupParams
 
@@ -16,7 +17,7 @@ trait StoreLauncher {
   def launch(): (DatabaseSetupParams, DatabaseState)
 
   protected def addIngressRules(storeSGId: String): Unit = {
-    val eksClusterName = "new-test-cluster"
+    val eksClusterName = EKS_CLUSTER_NAME
     val request = new DescribeClusterRequest().withName(eksClusterName)
     val eksClient = AmazonEKSClientBuilder.defaultClient().describeCluster(request)
     val ec2Client: AmazonEC2 = AmazonEC2ClientBuilder.defaultClient()
