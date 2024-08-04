@@ -35,7 +35,6 @@ class UserInfoController @Inject()(val controllerComponents: SecurityComponents,
     val name = profiles.map(_.getAttribute("name").toString).headOption
     val email = profiles.map(_.getAttribute("email").toString).headOption
     val sessionTimeout = Try(sessionStore.get(webContext, PAC4J_SESSION_TIMEOUT).get().asInstanceOf[Long]).toOption.getOrElse(0L)
-    println("SessionTimeout is: " + sessionTimeout)
 
     if (profiles.nonEmpty && name.isDefined && email.isDefined && System.currentTimeMillis() < sessionTimeout) {
       val userInfo = UserInfo(name.get, email.get)
