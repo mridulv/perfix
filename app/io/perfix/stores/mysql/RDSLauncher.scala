@@ -23,6 +23,7 @@ class RDSLauncher(override val databaseSetupParams: RDSDatabaseSetupParams)
 
   override def launch(): (DatabaseSetupParams, DatabaseState) = {
     if (useLocalDB) {
+      println("Using Local DB")
       val connectUrl = "jdbc:mysql://localhost:3306/perfix"
       val username = "root"
       val password = "test12345"
