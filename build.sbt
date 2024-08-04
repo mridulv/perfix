@@ -1,4 +1,5 @@
 import Dependencies.*
+import com.typesafe.sbt.packager.docker.Cmd
 import sbt.Keys.{scalacOptions, *}
 
 ThisBuild / scalaVersion     := "2.13.12"
@@ -48,7 +49,16 @@ lazy val root = (project in file("."))
     libraryDependencies += "com.github.jsqlparser" % "jsqlparser" % "4.5",
     dockerBaseImage := "openjdk:11-jre-slim",
     semanticdbEnabled := true,
-    scalacOptions += "-Wunused:imports"
+    scalacOptions += "-Wunused:imports",
+    // Additional Docker settings
+    Docker / daemonUser := "root", // Run the container as root user
+    Docker / dockerCommands ++= Seq(
+      Cmd("USER", "root"),
+      Cmd("RUN", "apt-get update && apt-get install -y sudo"),
+      Cmd("RUN", "useradd -m myuser && echo 'myuser ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers"),
+      Cmd("USER", "myuser")
+    )
+
   )
 
 Universal / javaOptions ++= Seq(
