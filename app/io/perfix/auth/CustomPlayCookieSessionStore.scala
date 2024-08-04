@@ -29,6 +29,6 @@ class CustomPlayCookieSessionStore(dataEncrypter: DataEncrypter) extends PlayCoo
 object CustomPlayCookieSessionStore {
 
   val PAC4J_SESSION_TIMEOUT = "pac4jSessionTimeout"
-  val PAC4J_SESSION_TIMEOUT_VALUE_IN_SECS: Long = 60L
+  val PAC4J_SESSION_TIMEOUT_VALUE_IN_SECS: Long = 3600L
 
 }
