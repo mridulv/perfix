@@ -1,6 +1,6 @@
 package io.perfix.stores.mysql
 
-import com.amazonaws.auth.DefaultAWSCredentialsProviderChain
+import com.amazonaws.auth.{DefaultAWSCredentialsProviderChain, EnvironmentVariableCredentialsProvider}
 import com.amazonaws.regions.Regions
 import com.amazonaws.services.rds.model.{CreateDBInstanceRequest, DBInstance, DescribeDBInstancesRequest}
 import com.amazonaws.services.rds.{AmazonRDS, AmazonRDSClientBuilder}
@@ -36,6 +36,7 @@ class RDSLauncher(override val databaseSetupParams: RDSDatabaseSetupParams)
         )
       (updatedDatabaseSetupParams, DatabaseState.Created)
     } else {
+      println("Actually Launching DB")
       actualLaunch()
     }
   }
