@@ -12,7 +12,7 @@ case class DocumentDBConnectionParams(url: String, database: String)
 
 
 object DocumentDBDatabaseSetupParams {
-  implicit val documentDBStoreParamsFormatter: Format[DocumentDBDatabaseSetupParams] = Json.format[DocumentDBDatabaseSetupParams]
-
   implicit val DocumentDBConnectionParamsFormatter: Format[DocumentDBConnectionParams] = Json.format[DocumentDBConnectionParams]
+
+  implicit val documentDBStoreParamsFormatter: Format[DocumentDBDatabaseSetupParams] = Json.format[DocumentDBDatabaseSetupParams]
 }
