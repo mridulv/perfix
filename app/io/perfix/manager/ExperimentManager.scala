@@ -112,13 +112,13 @@ class ExperimentManager @Inject()(datasetManager: DatasetManager,
       val configParams = allDatabaseConfigParams
         .find(_.databaseConfigId.get == databaseConfigDetail.databaseConfigId)
         .getOrElse(throw InvalidStateException("Invalid ExperimentParams"))
-      databaseConfigManager.ensureDatabase(databaseConfigDetail.databaseConfigId)
+      val updatedConfigParams = databaseConfigManager.ensureDatabase(databaseConfigDetail.databaseConfigId)
       val datasetParams = allDatasetParams
-        .find(_.id.get == configParams.datasetDetails.datasetId)
+        .find(_.id.get == updatedConfigParams.datasetDetails.datasetId)
         .getOrElse(throw InvalidStateException("Invalid ExperimentParams"))
       val experimentExecutor = new ExperimentExecutor(
         experimentParams,
-        configParams,
+        updatedConfigParams,
         datasetParams
       )
       val result = experimentExecutor.runExperiment()
