@@ -40,6 +40,8 @@ spec:
               value: {{ .Values.backend.aws.secret }}
             - name: AWS_DEFAULT_REGION
               value: {{ .Values.backend.aws.region }}
+            - name: EKS_CLUSTER_NAME
+              value: "prod-cluster"
             - name: USE_LOCAL_DB
               value: "false"
           imagePullPolicy: {{ .Values.backend.image.pullPolicy }}
