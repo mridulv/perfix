@@ -2,7 +2,7 @@ package io.perfix.experiment
 
 import io.perfix.model.api.Dataset
 import io.perfix.model.experiment.{ExperimentParams, SingleExperimentResult}
-import io.perfix.query.{DBQuery, NoSqlDBQuery, SqlDBQuery}
+import io.perfix.query.{DBQuery, NoSqlDBQuery, SqlDBQuery, SqlDBQueryBuilder}
 import io.perfix.stores.DataStore
 import io.perfix.util.BenchmarkUtil
 
@@ -63,11 +63,13 @@ class SimplePerformanceExperiment(dataStore: DataStore,
       dbQuery match {
         case noSqlDBQuery: NoSqlDBQuery => noSqlDBQuery.resolve(columnNameToValueMapping)
         case sqlDBQuery: SqlDBQuery => sqlDBQuery.resolve(columnNameToValueMapping).toNoSqlDBQuery
+        case sqlDBQueryBuilder: SqlDBQueryBuilder => sqlDBQueryBuilder.convert.resolve(columnNameToValueMapping).toNoSqlDBQuery
       }
     } else if (dataStore.kindOfQuery == DBQuery.Sql) {
       dbQuery match {
         case noSqlDBQuery: NoSqlDBQuery => throw new RuntimeException(s"Invalid Query: $noSqlDBQuery")
-        case sqlDBQuery: NoSqlDBQuery => sqlDBQuery.resolve(columnNameToValueMapping)
+        case sqlDBQuery: SqlDBQuery => sqlDBQuery.resolve(columnNameToValueMapping)
+        case sqlDBQueryBuilder: SqlDBQueryBuilder => sqlDBQueryBuilder.convert.resolve(columnNameToValueMapping)
       }
     } else {
       throw new RuntimeException(s"Invalid Query: $dbQuery")
