@@ -11,7 +11,7 @@ case class RedisDatabaseSetupParams(cacheNodeType: Option[String],
 case class RedisConnectionParams(url: String, port: Int)
 
 object RedisDatabaseSetupParams {
-  implicit val RedisStoreParamsFormatter: Format[RedisDatabaseSetupParams] = Json.format[RedisDatabaseSetupParams]
-
   implicit val redisConnectionParamsFormatter: Format[RedisConnectionParams] = Json.format[RedisConnectionParams]
+
+  implicit val RedisStoreParamsFormatter: Format[RedisDatabaseSetupParams] = Json.format[RedisDatabaseSetupParams]
 }
