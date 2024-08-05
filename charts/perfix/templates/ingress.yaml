@@ -9,34 +9,42 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  name: perfix-ing
   annotations:
     kubernetes.io/ingress.class: "nginx"
-    nginx.ingress.kubernetes.io/ssl-redirect: "false"
     nginx.ingress.kubernetes.io/configuration-snippet: |
       rewrite /api(/|$)(.*) /$2 break;
     nginx.ingress.kubernetes.io/use-regex: "true"
+  name: perfix-be-ing
 spec:
   ingressClassName: nginx
-  tls:
-    - hosts:
-        - {{ .Values.nginx.hostname }}
-      secretName: trials-perfix-tls
   rules:
     - host: {{ .Values.nginx.hostname }}
       http:
         paths:
-          - path: /
-            backend:
-              service:
-                name: perfix-ui-service
-                port:
-                  number: {{ .Values.frontend.service.port }}
-            pathType: Prefix
-          - path: /api(/|$)(.*)
-            backend:
+          - backend:
               service:
                 name: perfix-service
                 port:
                   number: {{ .Values.backend.service.port }}
+            path: /api(/|$)(.*)
+            pathType: Prefix
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+  name: perfix-ui-ing
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: trials.perfix.in
+      http:
+        paths:
+          - backend:
+              service:
+                name: perfix-ui-service
+                port:
+                  number: {{ .Values.frontend.service.port }}
+            path: /
             pathType: Prefix
