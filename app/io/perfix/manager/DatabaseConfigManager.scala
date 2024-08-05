@@ -49,17 +49,19 @@ class DatabaseConfigManager @Inject()(databaseConfigStore: DatabaseConfigStore,
     updatedParams.toDatabaseConfigDisplayParams(dataset)
   }
 
-  def ensureDatabase(databaseConfigId: DatabaseConfigId): Unit = {
-    val databaseConfigParams = databaseConfigStore
+  def ensureDatabase(databaseConfigId: DatabaseConfigId): DatabaseConfigParams = {
+    var databaseConfigParams = databaseConfigStore
       .get(databaseConfigId)
       .getOrElse(throw InvalidStateException("Invalid DatabaseConfigId"))
     if (Seq(DatabaseState.NotStarted, DatabaseState.Failed).contains(databaseConfigParams.databaseState)) {
       val (setupParams, databaseState) = Database.launch(databaseConfigParams.databaseSetupParams)
-      val updatedDatabaseConfigParams = databaseConfigParams.copy(databaseSetupParams = setupParams, databaseState = databaseState)
-      databaseConfigStore.update(databaseConfigId, updatedDatabaseConfigParams)
+      databaseConfigParams = databaseConfigParams.copy(databaseSetupParams = setupParams, databaseState = databaseState)
+      databaseConfigStore.update(databaseConfigId, databaseConfigParams)
     } else {
       var timeout = 30
       while (databaseConfigParams.databaseState == DatabaseState.InProgress && timeout > 0) {
+        databaseConfigParams = databaseConfigStore.get(databaseConfigId)
+          .getOrElse(throw InvalidStateException("Invalid DatabaseConfigId"))
         Thread.sleep(1000)
         timeout -= 1
       }
@@ -67,6 +69,7 @@ class DatabaseConfigManager @Inject()(databaseConfigStore: DatabaseConfigStore,
         throw new RuntimeException("Database Setup Failed")
       }
     }
+    databaseConfigParams
   }
 
   def all(entityFilters: Seq[EntityFilter]): Seq[DatabaseConfigParams] = {
