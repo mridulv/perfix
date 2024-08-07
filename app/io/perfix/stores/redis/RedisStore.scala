@@ -1,8 +1,6 @@
 package io.perfix.stores.redis
 
 import io.perfix.exceptions.{InvalidStateException, WrongQueryException}
-import io.perfix.model.{AddressType, ColumnDescription, NameType}
-import io.perfix.model.api.{Dataset, DatasetParams}
 import io.perfix.query.{DBQuery, NoSqlDBQuery, SqlDBQuery, SqlDBQueryBuilder}
 import io.perfix.stores.DataStore
 import redis.clients.jedis.JedisPool
