@@ -25,8 +25,8 @@ class DynamoDBStore(datasetParams: DatasetParams,
   override val kindOfQuery: String = DBQuery.NoSql
 
   def connectAndInitialize(): Unit = {
-    tableParams = databaseConfigParams.dynamoDBTableParams.getOrElse(throw InvalidStateException("Table Params should have been defined"))
-    val capacityParams = databaseConfigParams.dynamoDBCapacityParams.getOrElse(throw InvalidStateException("Capacity Params should have been defined"))
+    tableParams = databaseConfigParams.dynamoDBTableParams
+    val capacityParams = databaseConfigParams.dynamoDBCapacityParams
 
     val keySchemaElements = getKeySchemaElements(
       tableParams.partitionKey,
@@ -61,16 +61,12 @@ class DynamoDBStore(datasetParams: DatasetParams,
     client.createTable(createTableRequest)
     waitForMainTable()
 
-    databaseConfigParams.dynamoDBGSIMetadataParams match {
-      case Some(gsi) =>
-        val updateTableRequest = new UpdateTableRequest()
-          .withTableName(tableParams.tableName)
-          .withAttributeDefinitions(attributeDefinitions: _*)
-          .withGlobalSecondaryIndexUpdates(createGSIs(gsi): _*)
-        client.updateTable(updateTableRequest)
-        waitForGSI()
-      case None =>
-    }
+    val updateTableRequest = new UpdateTableRequest()
+      .withTableName(tableParams.tableName)
+      .withAttributeDefinitions(attributeDefinitions: _*)
+      .withGlobalSecondaryIndexUpdates(createGSIs(databaseConfigParams.dynamoDBGSIMetadataParams): _*)
+    client.updateTable(updateTableRequest)
+    waitForGSI()
 
     Thread.sleep(5000)
   }

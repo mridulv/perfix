@@ -11,18 +11,15 @@ case class DynamoDBDatabaseSetupParams(tableName: String,
                                        sortKey: String,
                                        gsiParams: Seq[DynamoDBGSIParam]) extends DatabaseSetupParams {
 
-  var dynamoDBTableParams: Option[DynamoDBTableParams] = None
-  var dynamoDBCapacityParams: Option[DynamoDBCapacityParams] = None
-  var dynamoDBGSIMetadataParams: Option[DynamoDBGSIMetadataParams] = None
+  val dynamoDBTableParams: DynamoDBTableParams = DynamoDBTableParams(None, tableName, partitionKey, sortKey)
+  val dynamoDBCapacityParams: DynamoDBCapacityParams = DynamoDBCapacityParams(Some(rcu), Some(wcu))
+  val dynamoDBGSIMetadataParams: DynamoDBGSIMetadataParams = DynamoDBGSIMetadataParams(gsiParams)
 
   def indexes(): Seq[DynamoDBIndex] = {
-    val primaryIndex = dynamoDBTableParams.map(p => DynamoDBIndex(p.tableName, p.partitionKey, p.sortKey))
-    val secondaryIndexes = dynamoDBGSIMetadataParams
-      .map(_.gsiParams)
-      .getOrElse(Seq.empty)
+    val primaryIndex = DynamoDBIndex(tableName, partitionKey, sortKey)
+    val secondaryIndexes = dynamoDBGSIMetadataParams.gsiParams
       .map(p => DynamoDBIndex(p.tableName, p.partitionKey, p.sortKey))
-
-    Seq(primaryIndex).flatten ++ secondaryIndexes
+    Seq(primaryIndex) ++ secondaryIndexes
   }
 
 }
