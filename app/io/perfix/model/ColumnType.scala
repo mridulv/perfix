@@ -58,6 +58,16 @@ case class BooleanValueType(override val isUnique: Boolean = false) extends Colu
 }
 
 object ColumnType {
+  val NumericType = "NumericType"
+  val EpochType = "EpochType"
+  val NameType = "NameType"
+  val AddressType = "AddressType"
+  val EmailType = "EmailType"
+  val PhoneNumberType = "PhoneNumberType"
+  val URLType = "URLType"
+  val TextType = "TextType"
+  val BooleanValueType = "BooleanValueType"
+
   implicit val epochRangeConstraintFormat: OFormat[EpochRangeConstraint] = Json.format[EpochRangeConstraint]
   implicit val numericRangeConstantFormat: OFormat[NumericRangeConstraint] = Json.format[NumericRangeConstraint]
   implicit val numericTypeFormat: Format[NumericType] = Json.format[NumericType]
@@ -74,30 +84,30 @@ object ColumnType {
   implicit val columnTypeFormat: Format[ColumnType] = new Format[ColumnType] {
     override def writes(o: ColumnType): JsValue = {
       val (typeField, jsonValue) = o match {
-        case numericType: NumericType => ("NumericType", Json.toJson(numericType))
-        case epochType: EpochType => ("EpochType", Json.toJson(epochType))
-        case nameType: NameType => ("NameType", Json.toJson(nameType))
-        case addressType: AddressType => ("AddressType", Json.toJson(addressType))
-        case emailType: EmailType => ("EmailType", Json.toJson(emailType))
-        case phoneNumberType: PhoneNumberType => ("PhoneNumberType", Json.toJson(phoneNumberType))
-        case urlType: URLType => ("URLType", Json.toJson(urlType))
-        case textType: TextType => ("TextType", Json.toJson(textType))
-        case booleanValueType: BooleanValueType => ("BooleanValueType", Json.toJson(booleanValueType))
+        case numericType: NumericType => (NumericType, Json.toJson(numericType))
+        case epochType: EpochType => (EpochType, Json.toJson(epochType))
+        case nameType: NameType => (NameType, Json.toJson(nameType))
+        case addressType: AddressType => (AddressType, Json.toJson(addressType))
+        case emailType: EmailType => (EmailType, Json.toJson(emailType))
+        case phoneNumberType: PhoneNumberType => (PhoneNumberType, Json.toJson(phoneNumberType))
+        case urlType: URLType => (URLType, Json.toJson(urlType))
+        case textType: TextType => (TextType, Json.toJson(textType))
+        case booleanValueType: BooleanValueType => (BooleanValueType, Json.toJson(booleanValueType))
       }
       Json.obj("type" -> typeField) ++ jsonValue.asInstanceOf[JsObject]
     }
 
     override def reads(json: JsValue): JsResult[ColumnType] = {
       (json \ "type").validate[String] flatMap {
-        case "NumericType" => json.validate[NumericType]
-        case "EpochType" => json.validate[EpochType]
-        case "NameType" => json.validate[NameType]
-        case "AddressType" => json.validate[AddressType]
-        case "EmailType" => json.validate[EmailType]
-        case "PhoneNumberType" => json.validate[PhoneNumberType]
-        case "URLType" => json.validate[URLType]
-        case "TextType" => json.validate[TextType]
-        case "BooleanValueType" => json.validate[BooleanValueType]
+        case NumericType => json.validate[NumericType]
+        case EpochType => json.validate[EpochType]
+        case NameType => json.validate[NameType]
+        case AddressType => json.validate[AddressType]
+        case EmailType => json.validate[EmailType]
+        case PhoneNumberType => json.validate[PhoneNumberType]
+        case URLType => json.validate[URLType]
+        case TextType => json.validate[TextType]
+        case BooleanValueType => json.validate[BooleanValueType]
         case otherType => JsError(s"Unknown ColumnType subtype: $otherType")
       }
     }
@@ -126,4 +136,16 @@ object ColumnType {
     case _: TextType => ScalarAttributeType.S.toString
     case _: BooleanValueType => ScalarAttributeType.B.toString
   }
+
+  val ColumnTypes = Seq(
+    NumericType,
+    EpochType,
+    NameType,
+    AddressType,
+    EmailType,
+    PhoneNumberType,
+    URLType,
+    TextType,
+    BooleanValueType
+  )
 }

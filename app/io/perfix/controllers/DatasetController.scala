@@ -3,6 +3,7 @@ package io.perfix.controllers
 import com.google.inject.Inject
 import io.perfix.auth.AuthenticationAction
 import io.perfix.manager.DatasetManager
+import io.perfix.model.ColumnType.ColumnTypes
 import io.perfix.model.api.{DatasetId, DatasetParams}
 import io.perfix.model.EntityFilter
 import org.pac4j.core.profile.UserProfile
@@ -25,6 +26,10 @@ class DatasetController @Inject()(val controllerComponents: SecurityComponents,
 
   def columns(datasetId: Int) = authenticationAction { request =>
     Results.Ok(Json.toJson(datasetManager.columns(DatasetId(datasetId))))
+  }
+
+  def columnTypes = authenticationAction { request =>
+    Results.Ok(Json.toJson(ColumnTypes))
   }
   
   def data(datasetId: Int) = authenticationAction { request =>
