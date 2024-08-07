@@ -34,6 +34,7 @@ class RedisStore(override val databaseConfigParams: RedisDatabaseSetupParams)
       keyValues.append(value)
     }
     jedis.mset(keyValues.toList: _*)
+    jedisPool.returnResource(jedis)
   }
 
   override def readData(dbQuery: DBQuery): Seq[Map[String, Any]] = {
