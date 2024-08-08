@@ -78,6 +78,7 @@ class DocumentDBStore(override val databaseConfigParams: DocumentDBDatabaseSetup
       results += map
     }
 
+    cursor.close()
     results.toSeq
   }
 
