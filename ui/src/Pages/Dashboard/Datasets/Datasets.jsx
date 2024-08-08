@@ -3,10 +3,10 @@ import React, { useEffect, useState } from "react";
 import Loading from "../../../components/Common/Loading";
 import AddButton from "../../../components/Common/AddButton";
 import useDatasets from "../../../api/useDatasets";
-import CommonTable from "../../../components/Common/CommonTable";
 import AddDatasetModal from "../../../components/Modals/AddDatasetModal";
 import CustomSelect from "../../../components/CustomSelect/CustomSelect";
 import { useSearchParams } from "react-router-dom";
+import CommonTable from "../../../components/CommonTable/CommonTable";
 
 const columnHeads = ["Dataset Name", "Number of Columns", "Created At", "Rows"];
 

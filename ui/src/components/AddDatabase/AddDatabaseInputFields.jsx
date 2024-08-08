@@ -48,6 +48,15 @@ const AddDatabaseInputFields = ({ input, handleInputChange, options }) => {
     handleInputChange(inputName, updatedColumns);
   };
 
+  //preventing to add space and special characters
+  const handleKeyDown = (e) => {
+    const invalidChars = /[^a-zA-Z0-9]/;
+
+    if (e.key === " " || invalidChars.test(e.key)) {
+      e.preventDefault();
+    }
+  };
+
   return (
     <div className="flex flex-col mb-4">
       <label className="text-[12px] font-bold mb-[2px]">
@@ -60,6 +69,7 @@ const AddDatabaseInputFields = ({ input, handleInputChange, options }) => {
             className="search-input border-2 border-gray-300 focus:border-gray-400 w-[250px] px-2 py-1 rounded"
             name={inputName}
             onChange={handleChange}
+            onKeyDown={handleKeyDown}
           />
         )}
         {dataType === "IntType" && (

@@ -1,8 +1,9 @@
 /* eslint-disable no-unused-vars */
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import AddDataset from "../AddDataset/AddDataset";
 import CustomSelect from "../CustomSelect/CustomSelect";
+import fetchDatasetColumnTypes from "../../api/fetchDatasetColumnTypes";
 
 const ChooseDatasetComponent = ({
   activeDataset,
@@ -13,16 +14,27 @@ const ChooseDatasetComponent = ({
   datasets,
   selectedDataset,
   setSelectedDataset,
-  reduceHeight,
 }) => {
+  const [columnTypes, setColumnTypes] = useState([]);
   let options = [];
 
   datasets?.forEach((dataset) =>
     options.push({ option: dataset.name, value: dataset.id.id })
   );
 
+  useEffect(() => {
+    fetchDatasetColumnTypes(setColumnTypes);
+  }, []);
+
+  const columnTypesOptions =
+    columnTypes &&
+    columnTypes.map((col) => ({
+      value: col,
+      label: col,
+    }));
+
   return (
-    <div className="mt-7 ms-7 max-w-[300px] flex flex-col" style={{ minHeight: `calc(100vh - ${reduceHeight})` }}>
+    <div className="mt-7 ms-7 max-w-[300px] min-h-full flex flex-col">
       <div className="bg-secondary py-1 ps-3 flex items-center gap-3 rounded tracking-tight">
         <button
           onClick={() => setActiveDataset("existing")}
@@ -45,7 +57,11 @@ const ChooseDatasetComponent = ({
       <form onSubmit={handleSubmit} className="flex flex-col flex-grow">
         <div className="mt-6 flex-grow">
           {activeDataset === "new" ? (
-            <AddDataset columns={columns} handleAddColumn={handleAddColumn} />
+            <AddDataset
+              columns={columns}
+              handleAddColumn={handleAddColumn}
+              columnTypesOptions={columnTypesOptions}
+            />
           ) : (
             <label className="form-control max-w-[200px]">
               <div className="label">
@@ -61,7 +77,7 @@ const ChooseDatasetComponent = ({
           )}
         </div>
 
-        <div className="mt-auto pt-4 flex gap-3">
+        <div className="mt-[200px] pt-4 flex gap-3">
           <button
             className="btn bg-primary btn-sm border border-primary rounded text-white hover:bg-[#57B1FF]"
             type="submit"

@@ -20,23 +20,13 @@ export const handleAddDatasetApi = async (
     toast.error(`A dataset with the name "${datasetName}" already exists.`);
     return;
   }
-
-  const formData = new FormData(event.target);
-  const columnValues = [];
-
-  columns.forEach((column, index) => {
-    const columnName = formData.get(`columnName${index}`);
-    const columnType = formData.get(`columnType${index}`);
-
-    columnValues.push({ columnName, columnType });
-  });
-
+  
   try {
     const columnData = {
       rows: 10000,
       name: datasetName,
       description,
-      columns: columnValues.map((columnValue) => ({
+      columns: columns.map((columnValue) => ({
         columnName: columnValue.columnName,
         columnType: {
           type: columnValue.columnType,

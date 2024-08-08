@@ -4,9 +4,9 @@ import { useNavigate } from "react-router-dom";
 import axiosApi from "../../../api/axios";
 import Loading from "../../../components/Common/Loading";
 import toast from "react-hot-toast";
-import CommonTable from "../../../components/Common/CommonTable";
 import { useEffect, useState } from "react";
 import useUseCases from "../../../api/useUseCases";
+import CommonTable from "../../../components/CommonTable/CommonTable";
 
 const columnHeads = ["Use Cases", "Created At", "Status"];
 const UseCases = () => {
