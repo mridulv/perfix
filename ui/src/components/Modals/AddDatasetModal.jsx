@@ -46,8 +46,6 @@ const AddDatasetModal = ({ open, onClose, datasets, refetch }) => {
     fetchDatasetColumnTypes(setColumnTypes);
   }, []);
 
-  console.log(columnTypes);
-
   const columnTypesOptions =
     columnTypes &&
     columnTypes.map((col) => ({

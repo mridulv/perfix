@@ -2,8 +2,8 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import AddDataset from "../AddDataset/AddDataset";
-import CustomSelect from "../CustomSelect/CustomSelect";
 import fetchDatasetColumnTypes from "../../api/fetchDatasetColumnTypes";
+import Select from "react-select";
 
 const ChooseDatasetComponent = ({
   activeDataset,
@@ -19,7 +19,7 @@ const ChooseDatasetComponent = ({
   let options = [];
 
   datasets?.forEach((dataset) =>
-    options.push({ option: dataset.name, value: dataset.id.id })
+    options.push({ value: dataset.id.id, label: dataset.name })
   );
 
   useEffect(() => {
@@ -34,8 +34,8 @@ const ChooseDatasetComponent = ({
     }));
 
   return (
-    <div className="mt-7 ms-7 max-w-[300px] min-h-full flex flex-col">
-      <div className="bg-secondary py-1 ps-3 flex items-center gap-3 rounded tracking-tight">
+    <div className="mt-7 ms-7 flex flex-col min-h-[380px]">
+      <div className="bg-secondary max-w-[300px] py-1 ps-3 flex items-center gap-3 rounded tracking-tight">
         <button
           onClick={() => setActiveDataset("existing")}
           className={`py-2 px-2 text-[12px] ${
@@ -67,17 +67,31 @@ const ChooseDatasetComponent = ({
               <div className="label">
                 <span className="label-text">Select Dataset</span>
               </div>
-              <CustomSelect
-                selected={selectedDataset}
-                setSelected={setSelectedDataset}
+              <Select
+                value={selectedDataset}
+                onChange={setSelectedDataset}
                 options={options}
-                width="w-[200px]"
-              ></CustomSelect>
+                styles={{
+                  container: (provided) => ({
+                    ...provided,
+                    width: "250px",
+                    marginTop: "4px",
+                  }),
+                  control: (base) => ({
+                    ...base,
+                    fontSize: "14px",
+                  }),
+                  menu: (base) => ({
+                    ...base,
+                    fontSize: "14px",
+                  }),
+                }}
+              />
             </label>
           )}
         </div>
 
-        <div className="mt-[200px] pt-4 flex gap-3">
+        <div className="mt-auto pt-4 flex gap-3">
           <button
             className="btn bg-primary btn-sm border border-primary rounded text-white hover:bg-[#57B1FF]"
             type="submit"

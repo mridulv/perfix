@@ -79,11 +79,11 @@ const QueryComponentForRDBMS = ({
                 }),
                 control: (base) => ({
                   ...base,
-                  fontSize: "14px",
+                  fontSize: "13px",
                 }),
                 menu: (base) => ({
                   ...base,
-                  fontSize: "14px",
+                  fontSize: "13px",
                 }),
               }}
             />
@@ -116,11 +116,11 @@ const QueryComponentForRDBMS = ({
                       }),
                       control: (base) => ({
                         ...base,
-                        fontSize: "14px",
+                        fontSize: "13px",
                       }),
                       menu: (base) => ({
                         ...base,
-                        fontSize: "14px",
+                        fontSize: "13px",
                       }),
                     }}
                   />
