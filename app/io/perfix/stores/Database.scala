@@ -120,7 +120,7 @@ object Database {
           Seq(
             FormInput("partitionKey", "Partition Key", api.FormInputType(SingleColumnSelectorType)),
             FormInput("sortKey", "Sort Key", api.FormInputType(SingleColumnSelectorType)),
-            FormInput("gsiParams", "List of GSIs", api.FormInputType(GSIType))
+            FormInput("gsiParams", "List of GSIs", api.FormInputType(GSIType, isRequired = false))
           )
         )
       )
