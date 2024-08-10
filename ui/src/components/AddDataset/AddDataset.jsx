@@ -1,8 +1,19 @@
 /* eslint-disable no-unused-vars */
 import React from "react";
 import { FaPlus } from "react-icons/fa6";
+import Select from "react-select";
 
-const AddDataset = ({ columns, handleAddColumn }) => {
+
+
+const AddDataset = ({ columns, setColumns, handleAddColumn, columnTypesOptions }) => {
+
+  //preventing to add space
+  const handleKeyDown = (e) => {
+    if (e.key === ' ') {
+      e.preventDefault();
+    }
+  };
+
   return (
     <>
       <div className="flex flex-col mb-6">
@@ -41,25 +52,43 @@ const AddDataset = ({ columns, handleAddColumn }) => {
                   type="text"
                   name={`columnName${i}`}
                   id={`columnName${i}`}
+                  value={column.columnName}
+                  onChange={(e) => {
+                    const newColumns = [...columns];
+                    newColumns[i].columnName = e.target.value;
+                    setColumns(newColumns);
+                  }}
+                  onKeyDown={handleKeyDown}
                   required
                 />
               </div>
               <div className="flex flex-col mb-3">
                 <label className="text-[12px] font-bold">Column Type:</label>
-
-                <select
-                  name={`columnType${i}`}
-                  id={`columnType${i}`}
-                  className="block w-[250px] px-2 py-2 border-2 border-gray-300 rounded-md  focus:outline-none focus:border-gray-500"
-                  style={{
-                    fontSize: "14px",
-                    color: "#8E8E8E",
+                <Select
+                  styles={{
+                    container: (provided) => ({
+                      ...provided,
+                      width: "250px", // Set your desired width here
+                    }),
+                    control: (base) => ({
+                      ...base,
+                      fontSize: "14px",
+                    }),
+                    menu: (base) => ({
+                      ...base,
+                      fontSize: "14px",
+                    }),
                   }}
-                  required
-                >
-                  <option value="NameType">NameType</option>
-                  <option value="AddressType">AddressType</option>
-                </select>
+                  options={columnTypesOptions}
+                  value={columnTypesOptions.find(
+                    (option) => option.value === column.columnType
+                  )}
+                  onChange={(selectedOption) => {
+                    const newColumns = [...columns];
+                    newColumns[i].columnType = selectedOption.value;
+                    setColumns(newColumns);
+                  }}
+                />
               </div>
             </div>
           ))}

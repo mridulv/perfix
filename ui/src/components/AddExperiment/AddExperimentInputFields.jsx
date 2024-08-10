@@ -1,9 +1,9 @@
 /* eslint-disable no-unused-vars */
 import React, { useState } from "react";
 import { BiMinus, BiPlus } from "react-icons/bi";
-
 import QueryComponentForRDBMS from "./QueryComponentForRDBMS";
 import QueryComponentForNoSQL from "./QueryComponentForNoSQL";
+import toast from "react-hot-toast";
 
 const AddExperimentInputFields = ({ params }) => {
   const {
@@ -35,6 +35,7 @@ const AddExperimentInputFields = ({ params }) => {
       label: "Concurrent Queries",
       value: concurrentQueries,
       setValue: setConcurrentQueries,
+      max: 100,
     },
     {
       label: "Experiment Time In Seconds",
@@ -43,17 +44,26 @@ const AddExperimentInputFields = ({ params }) => {
     },
   ];
 
-  const handleIncrease = (value, setValue) => {
+  const handleIncrease = (value, setValue, max) => {
     const numberValue = Number(value);
-    setValue(numberValue + 1);
+    if (max !== undefined && numberValue >= max) {
+      toast.error(`Value cannot be greater than ${max}`);
+    } else {
+      setValue(numberValue + 1);
+    }
   };
 
   const handleDecrease = (value, setValue) => {
     setValue(value > 0 ? value - 1 : 0);
   };
 
-  const handleInputChange = (e, setValue) => {
-    setValue(parseInt(e.target.value, 10));
+  const handleInputChange = (e, setValue, max) => {
+    const newValue = parseInt(e.target.value, 10);
+    if (max !== undefined && newValue > max) {
+      toast.error(`Value cannot be greater than ${max}`);
+    } else {
+      setValue(newValue);
+    }
   };
 
   const datasetColumnsOptions = dataset && dataset?.columns?.map(col => ({
@@ -77,7 +87,7 @@ const AddExperimentInputFields = ({ params }) => {
       </div>
 
       <div className="w-full md:w-[70%] grid grid-cols-1 md:grid-cols-3 gap-8">
-        {fieldsData?.map(({ label, value, setValue }) => (
+        {fieldsData?.map(({ label, value, setValue, max }) => (
           <div key={label} className="mb-4">
             <div className="mb-2">
               <label className="block text-xs font-semibold text-gray-700">
@@ -96,11 +106,11 @@ const AddExperimentInputFields = ({ params }) => {
                 type="number"
                 className="mx-3 w-full text-center text-sm font-medium bg-transparent focus:outline-none"
                 value={value}
-                onChange={(e) => handleInputChange(e, setValue)}
+                onChange={(e) => handleInputChange(e, setValue, max)}
               />
               <button
                 type="button"
-                onClick={() => handleIncrease(value, setValue)}
+                onClick={() => handleIncrease(value, setValue, max)}
                 className="text-green-500 hover:text-green-600 focus:outline-none"
               >
                 <BiPlus size={25} />

@@ -11,25 +11,17 @@ const DeleteModal = ({
   actionHead,
   actionText,
   deleteUrl,
-  successFunctions
+  successFunctions,
 }) => {
-
   const handleDelete = async () => {
     try {
-      const res = await axios.delete(
-        `${deleteUrl}/${dataId}`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-          withCredentials: true,
-        }
-      );
-      console.log(res);
+      const res = await axios.delete(`${deleteUrl}/${dataId}`, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+        withCredentials: true,
+      });
       if (res.status === 200) {
-        // setDatasets(data.filter((d) => d.id.id !== id));
-        // toast.success(message);
-        // setOpenDeleteModal(false);
         successFunctions();
       }
     } catch (error) {

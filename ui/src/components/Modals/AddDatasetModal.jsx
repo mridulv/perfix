@@ -1,12 +1,14 @@
 /* eslint-disable no-unused-vars */
-import  React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { MdClose } from "react-icons/md";
 import AddDataset from "../AddDataset/AddDataset";
 import toast from "react-hot-toast";
 import { handleAddDatasetApi } from "../../api/handleAddDatasetApi";
+import fetchDatasetColumnTypes from "../../api/fetchDatasetColumnTypes";
 
 const AddDatasetModal = ({ open, onClose, datasets, refetch }) => {
   const [columns, setColumns] = useState([{ columnName: "", columnType: "" }]);
+  const [columnTypes, setColumnTypes] = useState([]);
 
   const handleAddColumn = () => {
     setColumns([...columns, { columnName: "", columnType: "" }]);
@@ -40,6 +42,17 @@ const AddDatasetModal = ({ open, onClose, datasets, refetch }) => {
     }
   };
 
+  useEffect(() => {
+    fetchDatasetColumnTypes(setColumnTypes);
+  }, []);
+
+  const columnTypesOptions =
+    columnTypes &&
+    columnTypes.map((col) => ({
+      value: col,
+      label: col,
+    }));
+
   return (
     <div
       onClick={onClose}
@@ -59,7 +72,7 @@ const AddDatasetModal = ({ open, onClose, datasets, refetch }) => {
         <button
           onClick={handleCloseModal}
           className="absolute top-5 right-2 p-1 rounded-lg text-gray-400 bg-white hover:bg-gray-50 hover:text-gray-600"
-          aria-label='closeModal'
+          aria-label="closeModal"
         >
           <MdClose size={25} />
         </button>
@@ -67,7 +80,12 @@ const AddDatasetModal = ({ open, onClose, datasets, refetch }) => {
           <h2 className="ms-2 text-[20px] font-bold">Create new dataset</h2>
           <div className="w-[95%] h-[1px] bg-accent mb-3 mt-5"></div>
           <form onSubmit={handleAddDataset} className=" ps-3 pe-8 py-2 ">
-            <AddDataset columns={columns} handleAddColumn={handleAddColumn} />
+            <AddDataset
+              columns={columns}
+              setColumns={setColumns}
+              handleAddColumn={handleAddColumn}
+              columnTypesOptions={columnTypesOptions}
+            />
             <div className="mt-[50px] flex gap-3">
               <button
                 className="btn bg-primary btn-sm border border-primary rounded text-white hover:bg-[#57B1FF]"

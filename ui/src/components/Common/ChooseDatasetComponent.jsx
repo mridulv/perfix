@@ -1,8 +1,9 @@
 /* eslint-disable no-unused-vars */
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import AddDataset from "../AddDataset/AddDataset";
-import CustomSelect from "../CustomSelect/CustomSelect";
+import fetchDatasetColumnTypes from "../../api/fetchDatasetColumnTypes";
+import Select from "react-select";
 
 const ChooseDatasetComponent = ({
   activeDataset,
@@ -13,17 +14,28 @@ const ChooseDatasetComponent = ({
   datasets,
   selectedDataset,
   setSelectedDataset,
-  reduceHeight,
 }) => {
+  const [columnTypes, setColumnTypes] = useState([]);
   let options = [];
 
   datasets?.forEach((dataset) =>
-    options.push({ option: dataset.name, value: dataset.id.id })
+    options.push({ value: dataset.id.id, label: dataset.name })
   );
 
+  useEffect(() => {
+    fetchDatasetColumnTypes(setColumnTypes);
+  }, []);
+
+  const columnTypesOptions =
+    columnTypes &&
+    columnTypes.map((col) => ({
+      value: col,
+      label: col,
+    }));
+
   return (
-    <div className="mt-7 ms-7 max-w-[300px] flex flex-col" style={{ minHeight: `calc(100vh - ${reduceHeight})` }}>
-      <div className="bg-secondary py-1 ps-3 flex items-center gap-3 rounded tracking-tight">
+    <div className="mt-7 ms-7 flex flex-col min-h-[380px]">
+      <div className="bg-secondary max-w-[300px] py-1 ps-3 flex items-center gap-3 rounded tracking-tight">
         <button
           onClick={() => setActiveDataset("existing")}
           className={`py-2 px-2 text-[12px] ${
@@ -45,18 +57,36 @@ const ChooseDatasetComponent = ({
       <form onSubmit={handleSubmit} className="flex flex-col flex-grow">
         <div className="mt-6 flex-grow">
           {activeDataset === "new" ? (
-            <AddDataset columns={columns} handleAddColumn={handleAddColumn} />
+            <AddDataset
+              columns={columns}
+              handleAddColumn={handleAddColumn}
+              columnTypesOptions={columnTypesOptions}
+            />
           ) : (
             <label className="form-control max-w-[200px]">
               <div className="label">
                 <span className="label-text">Select Dataset</span>
               </div>
-              <CustomSelect
-                selected={selectedDataset}
-                setSelected={setSelectedDataset}
+              <Select
+                value={selectedDataset}
+                onChange={setSelectedDataset}
                 options={options}
-                width="w-[200px]"
-              ></CustomSelect>
+                styles={{
+                  container: (provided) => ({
+                    ...provided,
+                    width: "250px",
+                    marginTop: "4px",
+                  }),
+                  control: (base) => ({
+                    ...base,
+                    fontSize: "14px",
+                  }),
+                  menu: (base) => ({
+                    ...base,
+                    fontSize: "14px",
+                  }),
+                }}
+              />
             </label>
           )}
         </div>

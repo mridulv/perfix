@@ -1,6 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { useState } from "react";
-import ReactECharts from "echarts-for-react";
+import React, { useState, lazy, Suspense } from "react";
 import StatBlock from "./StatBlock";
 import { chartOptions } from "../../hooks/chartOptions";
 import {
@@ -8,6 +7,8 @@ import {
   generateStatBlockData,
 } from "../../hooks/dataHelpers";
 import TableForMultiDatabase from "./TableForMultiDatabase";
+
+const ReactECharts = lazy(() => import("echarts-for-react"));
 
 const MultiDatabaseExperimentResult = ({
   experimentData,
@@ -98,27 +99,28 @@ const MultiDatabaseExperimentResult = ({
   );
   const errorsData = [{ name: "Errors", maxValue: 20, values: [10, 8, 3] }];
 
-
   return (
     <div className="px-7">
-      <div className="flex justify-between items-center mb-8">
-        <div className="flex gap-x-4">
-          {databaseInfo.map((info, i) => (
-            <button
-              key={info}
-              className={`p-3 ${
-                selected[info] ? "bg-white" : "bg-gray-300"
-              } text-sm font-semibold shadow-lg rounded flex items-center gap-x-2`}
-              onClick={() => toggleSelected(info)}
-            >
-              <span
-                className="w-3 h-3 rounded-full inline-block"
-                style={{ backgroundColor: colors[i] }}
-              ></span>
-              {info}
-            </button>
-          ))}
-        </div>
+      <div className={`flex ${view === "graph" ? "justify-between" : "justify-end"}  items-center mb-8`}>
+        {view === "graph" && (
+          <div className="flex gap-x-4">
+            {databaseInfo.map((info, i) => (
+              <button
+                key={info}
+                className={`p-3 ${
+                  selected[info] ? "bg-white" : "bg-gray-300"
+                } text-sm font-semibold shadow-lg rounded flex items-center gap-x-2`}
+                onClick={() => toggleSelected(info)}
+              >
+                <span
+                  className="w-3 h-3 rounded-full inline-block"
+                  style={{ backgroundColor: colors[i] }}
+                ></span>
+                {info}
+              </button>
+            ))}
+          </div>
+        )}
         <div className="bg-accent p-1 flex rounded-md cursor-pointer">
           <p
             onClick={() => handleView("table")}
@@ -155,8 +157,10 @@ const MultiDatabaseExperimentResult = ({
           <StatBlock data={errorsData} colors={colors} selected={selected} />
         </div>
         <div className="flex flex-col gap-y-5">
-          <ReactECharts option={optionsForRead} />
-          <ReactECharts option={optionsForWrite} />
+          <Suspense fallback={<div>Loading charts...</div>}>
+            <ReactECharts option={optionsForRead} />
+            <ReactECharts option={optionsForWrite} />
+          </Suspense>
         </div>
       </div>
 
@@ -165,7 +169,7 @@ const MultiDatabaseExperimentResult = ({
           view === "table" ? "opacity-100" : "opacity-0 h-0 overflow-hidden"
         }`}
       >
-        <TableForMultiDatabase experimentData={experimentData}/>
+        <TableForMultiDatabase experimentData={experimentData} />
       </div>
     </div>
   );

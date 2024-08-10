@@ -38,7 +38,7 @@ const AddDatabaseModal = ({ open, onClose, datasets, refetch, databases }) => {
 
     if (
       activeDataset === "existing" &&
-      selectedDatasetOption.value === "choose"
+      selectedDatasetOption.value === ""
     ) {
       return toast.error("Please select a dataset.");
     }
@@ -47,7 +47,7 @@ const AddDatabaseModal = ({ open, onClose, datasets, refetch, databases }) => {
     if (
       activeDataset === "existing" &&
       currentAddStep === 1 &&
-      selectedDatasetOption.value !== "choose"
+      selectedDatasetOption.value !== "" 
     ) {
       setSelectedDatasetId(selectedDatasetOption.value);
       toast.success("Dataset Selected!");
@@ -99,7 +99,7 @@ const AddDatabaseModal = ({ open, onClose, datasets, refetch, databases }) => {
       <div
         onClick={(e) => e.stopPropagation()}
         className={`
-          w-[35%] bg-white rounded-lg shadow py-6 transition-all
+          w-[80%] lg:w-[35%] bg-white rounded-lg shadow py-6 transition-all
           ${open ? "scale-100 opacity-100" : "scale-125 opacity-0"}
         `}
         style={{ maxHeight: "80vh", overflow: "auto" }}

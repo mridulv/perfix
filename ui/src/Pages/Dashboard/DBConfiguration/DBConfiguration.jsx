@@ -6,7 +6,7 @@ import useDatasets from "../../../api/useDatasets";
 import CustomSelect from "../../../components/CustomSelect/CustomSelect";
 import AddButton from "../../../components/Common/AddButton";
 import AddDatabaseModal from "../../../components/Modals/AddDatabaseModal";
-import CommonTable from "../../../components/Common/CommonTable";
+import CommonTable from "../../../components/CommonTable/CommonTable";
 import { Filters } from "../../../hooks/filters";
 import { useSearchParams } from "react-router-dom";
 
@@ -93,7 +93,7 @@ const DBConfiguration = () => {
         <h3 className="text-2xl font-semibold -tracking-tighter">Database</h3>
       </div>
       <div className="w-[95%] h-[1px] bg-accent my-6"></div>
-      <div className="flex justify-between me-9 mt-6 mb-5">
+      <div className="flex items-center justify-between me-9 mt-6 mb-5">
         <div className="flex gap-x-4">
           <input
             className="search-input"
@@ -122,14 +122,12 @@ const DBConfiguration = () => {
           </div>
 
           {isFilterActive && (
-            <div className="">
-              <button
-                onClick={handleClearFilters}
-                className="text-sm font-semibold tracking-wider"
-              >
-                Clear
-              </button>
-            </div>
+            <button
+              onClick={handleClearFilters}
+              className="text-sm font-semibold tracking-wider"
+            >
+              Clear
+            </button>
           )}
         </div>
         <div>

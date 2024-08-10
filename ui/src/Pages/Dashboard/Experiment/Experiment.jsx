@@ -6,7 +6,7 @@ import useDatasets from "../../../api/useDatasets";
 import useDatabases from "../../../api/useDatabases";
 import AddExperimentModal from "../../../components/Modals/AddExperimentModal";
 import CustomSelect from "../../../components/CustomSelect/CustomSelect";
-import CommonTable from "../../../components/Common/CommonTable";
+import CommonTable from "../../../components/CommonTable/CommonTable";
 import { Filters } from "../../../hooks/filters";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import MoreFilter from "../../../components/CustomSelect/MoreFilter";

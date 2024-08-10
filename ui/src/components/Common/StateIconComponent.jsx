@@ -6,7 +6,7 @@ import { stateConstants } from "../../utils/stateConstants";
 
 const StateIconComponent = ({state}) => {
   return (
-      <div className="ms-2">
+      <div className="">
         {(() => {
           switch (state) {
             case stateConstants.Created:

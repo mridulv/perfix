@@ -61,7 +61,7 @@ export const router = createBrowserRouter([
         ),
       },
       {
-        path: "/experiment-result/:id",
+        path: "/experiment/:id",
         element: (
           <Suspense fallback={<Loading/>}>
             <ExperimentResultPage />

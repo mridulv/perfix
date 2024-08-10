@@ -3,10 +3,7 @@ import { useState } from "react";
 
 export const useStatesForAddModals = (initialState) => {
   const [columns, setColumns] = useState([{ columnName: "", columnType: "" }]);
-  const [selectedDatasetOption, setSelectedDatasetOption] = useState({
-    option: "Choose Dataset",
-    value: "choose",
-  });
+  const [selectedDatasetOption, setSelectedDatasetOption] = useState({value: "", label: "Select a Dataset"});
   const [selectedDatasetId, setSelectedDatasetId] = useState(null);
   const [selectedDatasetData, setSelectedDatasetData] = useState(null);
   const [activeDataset, setActiveDataset] = useState(initialState);
@@ -17,7 +14,7 @@ export const useStatesForAddModals = (initialState) => {
 
   const resetState = () => {
     setColumns([{ columnName: "", columnType: "" }]);
-    setSelectedDatasetOption({ option: "Choose Dataset", value: "choose" });
+    setSelectedDatasetOption({value: "", label: "Select a Dataset"});
     setSelectedDatasetId(null);
     setSelectedDatasetData(null);
     setActiveDataset(initialState); // Reset activeDataset to the initial state
