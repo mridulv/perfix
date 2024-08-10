@@ -71,21 +71,23 @@ class DynamoDBStore(datasetParams: DatasetParams,
     Thread.sleep(5000)
   }
 
-  override def putData(rows: Seq[Map[String, Any]]): Unit = {
-    val requests = rows.map { row =>
-      val item = new java.util.HashMap[String, AttributeValue]()
-      row.foreach { case (key, value) =>
-        item.put(key, new AttributeValue(value.toString)) // Conversion to AttributeValue
-      }
+  override def putData(data: Seq[Map[String, Any]]): Unit = {
+    data.grouped(25).foreach { rows =>
+      val requests = rows.map { row =>
+        val item = new java.util.HashMap[String, AttributeValue]()
+        row.foreach { case (key, value) =>
+          item.put(key, new AttributeValue(value.toString)) // Conversion to AttributeValue
+        }
 
-      val putItemRequest = new PutRequest()
-        .withItem(item)
-      val writeRequest = new WriteRequest()
-      writeRequest.withPutRequest(putItemRequest)
-      writeRequest
+        val putItemRequest = new PutRequest()
+          .withItem(item)
+        val writeRequest = new WriteRequest()
+        writeRequest.withPutRequest(putItemRequest)
+        writeRequest
+      }
+      val batchWriteItemRequest = new BatchWriteItemRequest().withRequestItems(Map(tableParams.tableName -> requests.asJava).asJava)
+      client.batchWriteItem(batchWriteItemRequest)
     }
-    val batchWriteItemRequest = new BatchWriteItemRequest().withRequestItems(Map(tableParams.tableName -> requests.asJava).asJava)
-    client.batchWriteItem(batchWriteItemRequest)
   }
 
   override def readData(dbQuery: DBQuery): Seq[Map[String, Any]] = {
