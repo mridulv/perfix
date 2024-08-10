@@ -156,7 +156,7 @@ class UseCaseConversationParser(response: String) {
           wcu = 10,
           partitionKey = topColumn,
           sortKey = topColumn,
-          gsiParams = Seq.empty
+          gsiParams = None
         )
       }
       case StoreType.Redis => {
