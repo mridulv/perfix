@@ -13,10 +13,12 @@ class SimplePerformanceExperiment(dataStore: DataStore,
                                   dataset: Dataset) extends Experiment {
 
   def init(): Unit = {
+    println(s"Initializing experiment")
     dataStore.connectAndInitialize()
   }
 
   def run(): SingleExperimentResult = {
+    println(s"Running experiment")
     var rowsCount = 0
     val writeTimes = ListBuffer[Long]()
     dataset.data.grouped(experimentParams.writeBatchSize).foreach { rows =>
