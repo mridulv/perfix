@@ -28,7 +28,10 @@ class AuthenticationAction @Inject() (parser: BodyParsers.Default,
     if (profiles.nonEmpty && name.isDefined && email.isDefined && System.currentTimeMillis() < sessionTimeout) {
       val userInfo = UserInfo(name.get, email.get)
       UserContext.setUser(userInfo)
-      block(request)
+      block(request).recoverWith {
+        case ex: Exception =>
+          Future.successful(Results.InternalServerError("An error occurred: " + ex.getMessage))
+      }
     } else {
       Future.successful {
         println("Destroying session")

@@ -34,6 +34,7 @@ class MySQLStore(datasetParams: DatasetParams,
     }
 
     val sql = createTableStatement(db + "." + databaseConfigParams.tableName, datasetParams.getColumns)
+    println("Adding table: " + sql)
     statement.executeUpdate(sql)
 
     val indexSql = createTableIndexesStatement(db, databaseConfigParams.primaryIndexColumn, databaseConfigParams.secondaryIndexesColumn)
