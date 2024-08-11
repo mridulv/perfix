@@ -35,7 +35,7 @@ class PostgreSQLStore(datasetParams: DatasetParams,
     }
 
     val sql = createTableStatement(databaseConfigParams.tableName, datasetParams.getColumns)
-    println(sql)
+    println("Adding table: " + sql)
     statement.executeUpdate(sql)
 
     val indexSql = createTableIndexesStatement(databaseConfigParams.primaryIndexColumn, databaseConfigParams.secondaryIndexesColumn)
