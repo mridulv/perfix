@@ -47,7 +47,7 @@ class SimplePerformanceExperiment(dataStore: DataStore,
     }
     results.copy(
       overallWriteTimeTaken = writeTimes.sum,
-      writeLatencies = BenchmarkUtil.printPercentiles(writeTimes.toSeq)
+      writeLatencies = BenchmarkUtil.printPercentiles(writeTimes.sorted.toSeq)
     )
   }
 
