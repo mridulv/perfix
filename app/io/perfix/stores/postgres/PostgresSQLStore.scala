@@ -4,7 +4,6 @@ import io.perfix.exceptions.{InvalidStateException, WrongQueryException}
 import io.perfix.model.ColumnType.toSqlType
 import io.perfix.model.{AddressType, ColumnDescription, NameType}
 import io.perfix.model.api.{DatabaseConfigParams, DatasetParams}
-import io.perfix.model.store.DatabaseSetupParams
 import io.perfix.query.{DBQuery, NoSqlDBQuery, SqlDBQuery, SqlDBQueryBuilder}
 import io.perfix.stores.DataStore
 import io.perfix.stores.mysql.RDSDatabaseSetupParams
@@ -86,7 +85,7 @@ class PostgreSQLStore(datasetParams: DatasetParams,
     }
 
     import databaseConfigParams._
-    val query = sqlDBQuery.sql
+    val query = sqlDBQuery.sql.replace("\"", "\'")
     val statement = connection.createStatement()
     val result = resultSetToSeqMap(statement.executeQuery(query))
     statement.close()
