@@ -38,10 +38,12 @@ class MariaDBStore(datasetParams: DatasetParams,
     println("Adding table: " + sql)
     statement.executeUpdate(sql)
 
-    val indexSql = createTableIndexesStatement(databaseConfigParams.primaryIndexColumn, databaseConfigParams.secondaryIndexesColumn)
-    if (indexSql.nonEmpty) {
-      println(indexSql)
-      statement.executeUpdate(indexSql)
+    val sqls = createTableIndexesStatement(databaseConfigParams.primaryIndexColumn, databaseConfigParams.secondaryIndexesColumn)
+    if (sqls.nonEmpty) {
+      sqls.map { sql =>
+        println(sql)
+        statement.execute(sql)
+      }
     }
 
     statement.close()
@@ -95,25 +97,19 @@ class MariaDBStore(datasetParams: DatasetParams,
   }
 
   private def createTableIndexesStatement(primaryIndexColumnName: Option[String],
-                                          secondaryIndexesColumnNames: Option[Seq[String]]): String = {
+                                          secondaryIndexesColumnNames: Option[Seq[String]]): Seq[String] = {
     val tableName = databaseConfigParams.tableName
 
-    val primaryIndexSQL = primaryIndexColumnName.map(primaryColumn => s"ADD PRIMARY KEY ($primaryColumn)").getOrElse("")
+    val primaryIndexSQL = primaryIndexColumnName.map(primaryColumn => s"ALTER TABLE $tableName ADD PRIMARY KEY IF NOT EXISTS ($primaryColumn)").getOrElse("")
     val secondaryIndexSQL = secondaryIndexesColumnNames.map { secondaryColumns =>
       if (secondaryColumns.nonEmpty) {
-        secondaryColumns.map(columnName => s"CREATE INDEX idx_$columnName ON $tableName ($columnName)").mkString(", ")
+        secondaryColumns.map(columnName => s"CREATE INDEX IF NOT EXISTS idx_$columnName ON $tableName ($columnName)")
       } else {
-        ""
+        Seq.empty
       }
-    }.getOrElse("")
+    }.getOrElse(Seq.empty)
 
-    val indexStatements = Seq(primaryIndexSQL, secondaryIndexSQL).filter(_.nonEmpty).mkString(", ")
-
-    if (indexStatements.nonEmpty) {
-      s"ALTER TABLE $tableName $indexStatements;"
-    } else {
-      ""
-    }
+    Seq(primaryIndexSQL) ++ secondaryIndexSQL
   }
 
   override def cleanup(): Unit = {
