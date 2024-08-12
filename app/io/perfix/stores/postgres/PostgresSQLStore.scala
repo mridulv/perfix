@@ -2,11 +2,13 @@ package io.perfix.stores.postgres
 
 import io.perfix.exceptions.{InvalidStateException, WrongQueryException}
 import io.perfix.model.ColumnType.toSqlType
-import io.perfix.model.ColumnDescription
-import io.perfix.model.api.DatasetParams
+import io.perfix.model.{AddressType, ColumnDescription, NameType}
+import io.perfix.model.api.{DatabaseConfigParams, DatasetParams}
+import io.perfix.model.store.DatabaseSetupParams
 import io.perfix.query.{DBQuery, NoSqlDBQuery, SqlDBQuery, SqlDBQueryBuilder}
 import io.perfix.stores.DataStore
 import io.perfix.stores.mysql.RDSDatabaseSetupParams
+import play.api.libs.json.Json
 
 import java.sql.{Connection, DriverManager, ResultSet}
 
@@ -38,10 +40,12 @@ class PostgreSQLStore(datasetParams: DatasetParams,
     println("Adding table: " + sql)
     statement.executeUpdate(sql)
 
-    val indexSql = createTableIndexesStatement(databaseConfigParams.primaryIndexColumn, databaseConfigParams.secondaryIndexesColumn)
-    if (indexSql.nonEmpty) {
-      println(indexSql)
-      statement.executeUpdate(indexSql)
+    val sqls = createTableIndexesStatement(databaseConfigParams.primaryIndexColumn, databaseConfigParams.secondaryIndexesColumn).tail
+    if (sqls.nonEmpty) {
+      sqls.map { sql =>
+        println(sql)
+        statement.execute(sql)
+      }
     }
 
     statement.close()
@@ -58,7 +62,7 @@ class PostgreSQLStore(datasetParams: DatasetParams,
     val columnNames = allKeys.mkString(", ")
     val valuePlaceholders = allKeys.map(_ => "?").mkString(", ")
 
-    val sql = s"INSERT INTO ${tableName} ($columnNames) VALUES ($valuePlaceholders);"
+    val sql = s"INSERT INTO ${databaseConfigParams.tableName} ($columnNames) VALUES ($valuePlaceholders);"
     val preparedStatement = connection.prepareStatement(sql)
 
     try {
@@ -82,7 +86,7 @@ class PostgreSQLStore(datasetParams: DatasetParams,
     }
 
     import databaseConfigParams._
-    val query = sqlDBQuery.convert(Seq(tableName), dbName.get)
+    val query = sqlDBQuery.sql
     val statement = connection.createStatement()
     val result = resultSetToSeqMap(statement.executeQuery(query))
     statement.close()
@@ -91,29 +95,23 @@ class PostgreSQLStore(datasetParams: DatasetParams,
 
   private def createTableStatement(tableName: String, columns: Seq[ColumnDescription]): String = {
     val columnDefs = columns.map(col => s"${col.columnName} ${toSqlType(col.columnType)}").mkString(", ")
-    s"CREATE TABLE $tableName ($columnDefs);"
+    s"CREATE TABLE IF NOT EXISTS $tableName ($columnDefs);"
   }
 
   private def createTableIndexesStatement(primaryIndexColumnName: Option[String],
-                                          secondaryIndexesColumnNames: Option[Seq[String]]): String = {
+                                          secondaryIndexesColumnNames: Option[Seq[String]]): Seq[String] = {
     val tableName = databaseConfigParams.tableName
 
-    val primaryIndexSQL = primaryIndexColumnName.map(primaryColumn => s"ADD PRIMARY KEY ($primaryColumn)").getOrElse("")
+    val primaryIndexSQL = primaryIndexColumnName.map(primaryColumn => s"ALTER TABLE $tableName ADD PRIMARY KEY ($primaryColumn)").getOrElse("")
     val secondaryIndexSQL = secondaryIndexesColumnNames.map { secondaryColumns =>
       if (secondaryColumns.nonEmpty) {
-        secondaryColumns.map(columnName => s"CREATE INDEX idx_$columnName ON $tableName ($columnName)").mkString(", ")
+        secondaryColumns.map(columnName => s"CREATE INDEX IF NOT EXISTS idx_$columnName ON $tableName ($columnName)")
       } else {
-        ""
+        Seq.empty
       }
-    }.getOrElse("")
+    }.getOrElse(Seq.empty)
 
-    val indexStatements = Seq(primaryIndexSQL, secondaryIndexSQL).filter(_.nonEmpty).mkString(", ")
-
-    if (indexStatements.nonEmpty) {
-      s"ALTER TABLE $tableName $indexStatements;"
-    } else {
-      ""
-    }
+    Seq(primaryIndexSQL) ++ secondaryIndexSQL
   }
 
   override def cleanup(): Unit = {
