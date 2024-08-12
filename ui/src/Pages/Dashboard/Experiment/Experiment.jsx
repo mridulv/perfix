@@ -4,7 +4,6 @@ import Loading from "../../../components/Common/Loading";
 import useExperiments from "../../../api/useExperiment";
 import useDatasets from "../../../api/useDatasets";
 import useDatabases from "../../../api/useDatabases";
-import AddExperimentModal from "../../../components/Modals/AddExperimentModal";
 import CustomSelect from "../../../components/CustomSelect/CustomSelect";
 import CommonTable from "../../../components/CommonTable/CommonTable";
 import { Filters } from "../../../hooks/filters";
@@ -138,14 +137,6 @@ const Experiment = () => {
           New Experiment
         </button>
       </div>
-      <AddExperimentModal
-        open={open}
-        onClose={() => setOpen(false)}
-        experiments={experiments}
-        datasets={datasets}
-        databases={databases}
-        databaseRefetch={databaseRefetch}
-      />
       {experimentsLoading || databasesLoading || datasetsLoading ? (
         <Loading />
       ) : (

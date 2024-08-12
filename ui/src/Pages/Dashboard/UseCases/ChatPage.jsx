@@ -7,8 +7,6 @@ import axiosApi from "../../../api/axios";
 import { useQuery } from "react-query";
 import Loading from "../../../components/Common/Loading";
 import ReactMarkdown from "react-markdown";
-import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
-import { materialDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import ChatBoxLoader from "../../../components/ChatPage/ChatBoxLoader";
 import remarkGfm from "remark-gfm";
 
@@ -42,7 +40,7 @@ const ChatPage = () => {
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
-    const sanitizedInputValue = inputValue.replace(/\u200B/g, ''); // Replace zero-width spaces
+    const sanitizedInputValue = inputValue.replace(/\u200B/g, ""); // Replace zero-width spaces
     if (!sanitizedInputValue.trim() || isSending) return;
 
     const tempMessage = { user: "user", message: sanitizedInputValue };
@@ -69,7 +67,9 @@ const ChatPage = () => {
     const previousRows = event.target.rows;
     event.target.rows = 1; // Reset the number of rows to 1
 
-    const currentRows = Math.floor(event.target.scrollHeight / textareaLineHeight);
+    const currentRows = Math.floor(
+      event.target.scrollHeight / textareaLineHeight
+    );
 
     if (currentRows === previousRows) {
       event.target.rows = currentRows;
@@ -114,29 +114,7 @@ const ChatPage = () => {
                   : "bg-gray-200 text-gray-800"
               }`}
             >
-              <ReactMarkdown
-                remarkPlugins={[remarkGfm]}
-                components={{
-                  code(props) {
-                    const { children, className, ...rest } = props;
-                    const match = /language-(\w+)/.exec(className || "");
-                    return match ? (
-                      <SyntaxHighlighter
-                        {...rest}
-                        PreTag="div"
-                        language={match[1]}
-                        style={materialDark}
-                      >
-                        {String(children).replace(/\n$/, "")}
-                      </SyntaxHighlighter>
-                    ) : (
-                      <code {...rest} className={className}>
-                        {children}
-                      </code>
-                    );
-                  },
-                }}
-              >
+              <ReactMarkdown remarkPlugins={[remarkGfm]}>
                 {message.message}
               </ReactMarkdown>
             </div>
@@ -154,7 +132,7 @@ const ChatPage = () => {
         className="w-full md:w-[65%] mx-auto p-4 bg-secondary border-t border-gray-200 sticky bottom-0"
       >
         <div className="flex items-end">
-         <textarea
+          <textarea
             value={inputValue}
             onChange={handleInputChange}
             placeholder="Type a message"

@@ -1,38 +1,47 @@
 /* eslint-disable no-unused-vars */
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import useInputFields from "../../api/fetchInputFieldsForAddDatabase";
-import handleAddDatabase from "../../api/handleAddDatabase";
 import DatabaseInfoStep from "./DatabaseInfoStep";
 import ConfigurationStep from "./ConfigurationStep";
 import NavigationStep from "./NavigationStep";
 import StepCounter from "./StepCounter";
 import useDatabaseCategories from "../../hooks/useDatabaseCategories";
+import {
+  validateGSIFields,
+  validateStepInputs,
+} from "../../utils/databaseUtils";
+import { handleDatabase } from "../../api/handleDatabase";
 
-const AddDatabase = ({
+const DatabaseForm = ({
   databases,
   dataset,
   cancelFunction,
   successFunction,
   creationFor,
+  isUpdate = false,
+  existingDatabase = null,
 }) => {
+  console.log(dataset);
   const [currentStep, setCurrentStep] = useState(1);
-  const [databaseName, setDatabaseName] = useState("");
-  const [selectedCategory, setSelectedCategory] = useState({
-    value: "",
-    label: "Select a Category",
-  });
-  const [selectedDatabaseType, setSelectedDatabaseType] = useState({
-    value: "",
-    label: "Select a Database Type",
-  });
+  const [databaseName, setDatabaseName] = useState(existingDatabase?.name || "");
+  const [selectedCategory, setSelectedCategory] = useState(
+    existingDatabase
+      ? { value: existingDatabase.databaseCategory, label: existingDatabase.databaseCategory }
+      : { value: "", label: "Select a Category" }
+  );
+  const [selectedDatabaseType, setSelectedDatabaseType] = useState(
+    existingDatabase
+      ? { value: existingDatabase.dataStore, label: existingDatabase.dataStore }
+      : { value: "", label: "Select a Database Type" }
+  );
   const [inputValues, setInputValues] = useState({});
+  const [columns, setColumns] = useState([]);
+  const [showGSIFields, setShowGSIFields] = useState(false);
   const delayTimer = useRef(null);
 
-  const {
-    databaseCategoriesOptions,
-    databaseTypesOptions,
-  } = useDatabaseCategories(selectedCategory);
+  const { databaseCategoriesOptions, databaseTypesOptions } =
+    useDatabaseCategories(selectedCategory);
   const { data: inputFields, isLoading: inputFieldsLoading } = useInputFields(
     selectedDatabaseType.value
   );
@@ -44,57 +53,53 @@ const AddDatabase = ({
     label: column.columnName,
   }));
 
-  const validateStepInputs = () => {
-    if (currentStep === 1) {
-      // Validation for step 1 (Initial inputs)
-      if (
-        !databaseName ||
-        !selectedCategory.value ||
-        !selectedDatabaseType.value
-      ) {
-        toast.error("Please fill in all required fields before proceeding.");
-        return false;
+  useEffect(() => {
+    if (isUpdate && existingDatabase) {
+      setDatabaseName(existingDatabase.name);
+      setSelectedCategory({ value: existingDatabase.databaseCategory, label: existingDatabase.databaseCategory });
+      setSelectedDatabaseType({ value: existingDatabase.dataStore, label: existingDatabase.dataStore });
+      
+      const gsiParams = existingDatabase.databaseSetupParams.gsiParams;
+      if (gsiParams && gsiParams.length > 0) {
+        setColumns(gsiParams.map(gsi => ({
+          partitionKey: gsi.partitionKey || "",
+          sortKey: gsi.sortKey || ""
+        })));
+        setShowGSIFields(true);
+      } else {
+        setColumns([{ partitionKey: "", sortKey: "" }]);
+        setShowGSIFields(false);
       }
-    } else if (currentStep > 1 && inputFields?.forms[currentStep - 2]?.inputs) {
-      // Validation for subsequent steps
-      const stepInputs = inputFields.forms[currentStep - 2].inputs;
 
-      for (const input of stepInputs) {
-        const inputValue = inputValues[input.inputName];
-
-        // Skip validation if it's GSI and the user hasn't added it
-        if (input.formInputType.dataType === "GSIType" && !inputValue) {
-          continue;
-        }
-
-        if (
-          input.formInputType.isRequired &&
-          (!inputValue ||
-            (Array.isArray(inputValue) && inputValue.length === 0))
-        ) {
-          toast.error(
-            `Please fill in the required field: ${input.inputDisplayName}`
-          );
-          return false;
-        }
-      }
+      setInputValues({
+        ...existingDatabase.databaseSetupParams,
+        gsiParams: gsiParams || []
+      });
     }
-    return true;
-  };
+  }, [isUpdate, existingDatabase]);
 
   const handleNextStep = (e = null) => {
     if (e) {
       e.preventDefault();
     }
 
-    if (!validateStepInputs()) {
+    if (
+      !validateStepInputs(
+        currentStep,
+        databaseName,
+        selectedCategory,
+        selectedDatabaseType,
+        inputFields,
+        inputValues
+      )
+    ) {
       return;
     }
 
     const isDuplicateName = databases?.some(
       (database) => database.name === databaseName
     );
-    if (isDuplicateName) {
+    if (isDuplicateName && !isUpdate) {
       return toast.error(
         `A Database exists with the same ${databaseName} name`
       );
@@ -107,7 +112,16 @@ const AddDatabase = ({
 
   const handleInputChange = (inputName, value) => {
     clearTimeout(delayTimer.current);
-    setInputValues((prev) => ({ ...prev, [inputName]: value }));
+    setInputValues((prev) => {
+      if (inputName === 'gsiParams') {
+        setColumns(value.map(gsi => ({
+          partitionKey: gsi.partitionKey || "",
+          sortKey: gsi.sortKey || ""
+        })));
+        setShowGSIFields(value.length > 0);
+      }
+      return { ...prev, [inputName]: value };
+    });
 
     delayTimer.current = setTimeout(() => {
       const stepInputs = inputFields?.forms[currentStep - 2]?.inputs || [];
@@ -132,14 +146,24 @@ const AddDatabase = ({
       return;
     }
 
-    if (!validateStepInputs()) {
+    if (
+      !validateStepInputs(
+        currentStep,
+        databaseName,
+        selectedCategory,
+        selectedDatabaseType,
+        inputFields,
+        inputValues
+      ) ||
+      !validateGSIFields(showGSIFields, columns)
+    ) {
       return;
     }
 
-    // Construct the formData object
     const formData = {
       name: databaseName,
       dataStore: selectedDatabaseType.value,
+      DatabaseCategory: selectedCategory.value,
       datasetDetails: { datasetId: { id: dataset.id.id } },
       databaseSetupParams: {
         ...inputValues,
@@ -148,15 +172,20 @@ const AddDatabase = ({
       databaseState: "NotStarted",
     };
 
-    // Submit the form data
-    console.log("Form data submitted:", formData);
-    await handleAddDatabase(formData, creationFor, successFunction);
+    if (isUpdate) {
+      console.log(formData);
+      await handleDatabase.handleUpdateDatabase(existingDatabase.databaseConfigId.id, formData, successFunction);
+    } else {
+      await handleDatabase.handleAddDatabase(formData, creationFor, successFunction);
+    }
 
-    // Reset the form state
+    //reset after submit
     setDatabaseName("");
     setSelectedCategory({ value: "", label: "Select a Category" });
     setSelectedDatabaseType({ value: "", label: "Select a Database Type" });
     setInputValues({});
+    setColumns([{ partitionKey: "", sortKey: "" }]);
+    setShowGSIFields(false);
     setCurrentStep(1);
   };
 
@@ -173,6 +202,7 @@ const AddDatabase = ({
             setSelectedDatabaseType={setSelectedDatabaseType}
             databaseCategoriesOptions={databaseCategoriesOptions}
             databaseTypesOptions={databaseTypesOptions}
+            isUpdate={isUpdate}
           />
         ) : (
           <ConfigurationStep
@@ -181,6 +211,11 @@ const AddDatabase = ({
             handleInputChange={handleInputChange}
             datasetColumnsOptions={datasetColumnsOptions}
             inputFieldsLoading={inputFieldsLoading}
+            columns={columns}
+            setColumns={setColumns}
+            showGSIFields={showGSIFields}
+            setShowGSIFields={setShowGSIFields}
+            inputValues={inputValues}
           />
         )}
         <StepCounter currentStep={currentStep} totalSteps={totalSteps} />
@@ -189,10 +224,11 @@ const AddDatabase = ({
           handleNextStep={handleNextStep}
           inputFields={inputFields}
           currentStep={currentStep}
+          isUpdate={isUpdate}
         />
       </form>
     </div>
   );
 };
 
-export default AddDatabase;
+export default DatabaseForm;

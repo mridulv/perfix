@@ -3,7 +3,13 @@ import React from "react";
 import { SlOptionsVertical } from "react-icons/sl";
 import { Link } from "react-router-dom";
 
-const DatabaseTableRows = ({ data, showButtons, handleShowOptions, handleSelectedData }) => {
+const DatabaseTableRows = ({
+  data,
+  showButtons,
+  handleShowOptions,
+  handleSelectedData,
+  handleUpdateDatabase, // Receive the handler as a prop
+}) => {
   return (
     <tr className="border-b border-gray-300 ps-2 hover:bg-accent">
       <td className="text-start text-[13px] py-4 ps-2">{data.name}</td>
@@ -27,7 +33,10 @@ const DatabaseTableRows = ({ data, showButtons, handleShowOptions, handleSelecte
         </button>
         {showButtons === data && (
           <div className="flex flex-col justify-center gap-1 absolute z-10 bottom-[-70px] left-[-15px] bg-white shadow-md rounded p-2 actions">
-            <button className="px-2 py-1 text-[13px] hover:bg-accent">
+            <button
+              onClick={() => handleUpdateDatabase(data)} // Use the handler for opening the modal
+              className="px-2 py-1 text-[13px] hover:bg-accent"
+            >
               Edit
             </button>
             <button

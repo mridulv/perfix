@@ -11,6 +11,8 @@ const CommonTableRows = ({
   showButtons,
   handleShowOptions,
   handleSelectedData,
+  handleUpdateDatabase,
+  refetch,
 }) => {
   switch (columnHeads[0]) {
     case "Dataset Name":
@@ -29,6 +31,7 @@ const CommonTableRows = ({
           showButtons={showButtons}
           handleShowOptions={handleShowOptions}
           handleSelectedData={handleSelectedData}
+          handleUpdateDatabase={handleUpdateDatabase}
         />
       );
     case "Experiment Name":
@@ -38,6 +41,7 @@ const CommonTableRows = ({
           showButtons={showButtons}
           handleShowOptions={handleShowOptions}
           handleSelectedData={handleSelectedData}
+          refetch={refetch}
         />
       );
     case "Use Cases":

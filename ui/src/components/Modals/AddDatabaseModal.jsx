@@ -3,11 +3,11 @@ import React, { useEffect, useState } from "react";
 import { MdClose } from "react-icons/md";
 import { IoIosArrowForward } from "react-icons/io";
 import toast from "react-hot-toast";
-import AddDatabase from "../AddDatabase/AddDatabase";
 import ChooseDatasetComponent from "../Common/ChooseDatasetComponent";
 import { handleAddDatasetApi } from "../../api/handleAddDatasetApi";
 import { useStatesForAddModals } from "../../hooks/useStatesForAddModals";
 import axiosApi from "../../api/axios";
+import DatabaseForm from "../AddDatabase/DatabaseForm";
 
 const AddDatabaseModal = ({ open, onClose, datasets, refetch, databases }) => {
   const [currentAddStep, setCurrentAddStep] = useState(1);
@@ -155,11 +155,12 @@ const AddDatabaseModal = ({ open, onClose, datasets, refetch, databases }) => {
             selectedDatasetId !== null &&
             selectedDatasetData !== null && (
               <div>
-                <AddDatabase
+                <DatabaseForm
                   dataset={selectedDatasetData}
                   cancelFunction={handleCloseModal}
                   successFunction={successFunctionsForDatabase}
                   databases={databases}
+                  creationFor="newDatabase"
                 />
               </div>
             )}

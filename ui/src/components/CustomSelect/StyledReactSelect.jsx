@@ -2,7 +2,7 @@
 import React from 'react';
 import Select from 'react-select';
 
-const StyledReactSelect = ({ value, onChange, options }) => {
+const StyledReactSelect = ({ value, onChange, options, isDisabled=false }) => {
   const customStyles = {
     container: (provided) => ({
       ...provided,
@@ -25,6 +25,7 @@ const StyledReactSelect = ({ value, onChange, options }) => {
       onChange={onChange}
       options={options}
       styles={customStyles}
+      isDisabled={isDisabled}
     />
   );
 };
