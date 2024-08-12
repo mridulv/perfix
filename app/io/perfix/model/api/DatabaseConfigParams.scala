@@ -11,6 +11,7 @@ case class DatabaseConfigParams(databaseConfigId: Option[DatabaseConfigId] = Non
                                 name: String,
                                 databaseSetupParams: DatabaseSetupParams,
                                 dataStore: StoreType,
+                                databaseCategory: Option[DatabaseCategory] = None,
                                 createdAt: Option[Long] = None,
                                 datasetDetails: DatasetDetails,
                                 databaseState: DatabaseState = DatabaseState.NotStarted) {
