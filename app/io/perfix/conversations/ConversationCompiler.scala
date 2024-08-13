@@ -32,7 +32,7 @@ object ConversationCompiler {
       val json = Json.parse(response)
       Seq(
         checkCompilationForSchema(json),
-        //checkCompilationForDatabaseType(json),
+        checkCompilationForDatabaseType(json),
         checkCompilationForExperimentParamsFields(json),
         checkCompilationForQuery(json)
       ).flatten
