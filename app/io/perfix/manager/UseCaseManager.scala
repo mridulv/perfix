@@ -10,6 +10,7 @@ import io.perfix.conversations.{CompilationError, ConversationCompiler, UseCaseC
 import io.perfix.db.UseCaseStore
 import io.perfix.model.{EntityFilter, UseCaseFilter}
 import io.perfix.model.api.{ConversationMessage, UseCaseId, UseCaseParams, UseCaseState}
+import io.perfix.stores.Database
 import io.perfix.util.ConversationSystemPrompt
 import io.perfix.util.ConversationSystemPrompt.SystemConversationMessage
 import play.api.Configuration
@@ -129,8 +130,8 @@ class UseCaseManager @Inject()(useCaseStore: UseCaseStore,
       """Given the user inputs before this, can you create a json object of the response in this format: {"schema": [{"fieldName" : "$fieldName", "fieldType": "$fieldType"}], "databaseType": [$database1, $database2],  "query": $query, "filteredRows": $filteredRows, "experiment_time_in_seconds": $experiment_time_in_seconds, "total_rows": $total_rows, "concurrent_reads_rate": $concurrent_reads_rate, "concurrent_writes_rate": $concurrent_writes_rate }. Note if there is no corresponding value defined by the user till now, leave the field as null and do not assign any default values. Also the response should be a valid json object
         | Make sure of the following things
         | - $fieldType should always be among (long, bool, int, string, double)
-        | - $query should be in SQL format. Also make sure the variable names start with {{ and ends with }}.
-        | - Variable names in the SQL should have the same name as the fieldNames.
+        | - $query should be in SQL format. Also make sure the variable names start with {{ and ends with }}. Variable names in the SQL should have the same name as the fieldNames.
+        | - $database1 / $database2 and so on - Databases should be among (""" + Database.allDatabases.map(_.name.toString).mkString(",") + """)
         | - $filteredRows should be in Int
         | - $experiment_time_in_seconds should be in Int
         | - $total_rows should be in Int
