@@ -143,6 +143,7 @@ const AddDatabaseModal = ({ open, onClose, datasets, refetch, databases }) => {
                 activeDataset={activeDataset}
                 setActiveDataset={setActiveDataset}
                 columns={columns}
+                setColumns={setColumns}
                 handleAddColumn={handleAddColumn}
                 handleSubmit={handleSubmitDataset}
                 datasets={datasets}

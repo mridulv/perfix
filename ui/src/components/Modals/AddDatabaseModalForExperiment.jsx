@@ -25,7 +25,7 @@ const AddDatabaseModalForExperiment = ({
       onClick={onClose}
       className={`
         fixed inset-0 flex justify-center items-center transition-colors
-        ${open ? "visible bg-black/20" : "invisible"} z-50 
+        ${open ? "visible bg-black/20" : "hidden"} z-50 
       `}
     >
       <div

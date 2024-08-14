@@ -2,9 +2,6 @@
 import React, { useEffect } from "react";
 import Select from "react-select";
 
-// CustomPlayCookieSessionStore
-// PAC4J_SESSION_TIMEOUT_VALUE_IN_SECS
-
 const QueryComponentForNoSQL = ({
   columns,
   setColumns,
@@ -39,6 +36,7 @@ const QueryComponentForNoSQL = ({
       type: "nosql",
     });
   }, [columns, setDbQuery]);
+
   return (
     <div className="">
       <label className="text-[12px] font-bold mb-1">Query</label>
@@ -58,6 +56,9 @@ const QueryComponentForNoSQL = ({
               <label className="text-[12px] font-bold">Key</label>
               <Select
                 options={datasetColumnsOptions}
+                value={datasetColumnsOptions.find(
+                  (option) => option.value === column.key
+                )} // Setting the default value
                 onChange={(selectedOption) =>
                   handleFilterKeyChange(selectedOption, i)
                 }

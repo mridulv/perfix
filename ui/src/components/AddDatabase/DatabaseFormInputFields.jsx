@@ -5,7 +5,7 @@ import StyledReactSelect from "../CustomSelect/StyledReactSelect";
 import Select from "react-select"
 import { FaPlus } from "react-icons/fa";
 
-const AddDatabaseInputFields = ({
+const DatabaseFormInputFields = ({
   input,
   handleInputChange,
   options,
@@ -215,4 +215,4 @@ const AddDatabaseInputFields = ({
   );
 };
 
-export default AddDatabaseInputFields;
+export default DatabaseFormInputFields;

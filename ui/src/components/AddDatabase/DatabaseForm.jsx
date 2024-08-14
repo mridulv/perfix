@@ -22,7 +22,6 @@ const DatabaseForm = ({
   isUpdate = false,
   existingDatabase = null,
 }) => {
-  console.log(dataset);
   const [currentStep, setCurrentStep] = useState(1);
   const [databaseName, setDatabaseName] = useState(existingDatabase?.name || "");
   const [selectedCategory, setSelectedCategory] = useState(

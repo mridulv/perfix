@@ -91,7 +91,6 @@ const ExperimentTableRows = ({
         >
           Run
         </button>
-        
       </td>
 
       <td className="relative w-[50px]">
@@ -103,15 +102,15 @@ const ExperimentTableRows = ({
         </button>
         {showButtons === data && (
           <div className="flex flex-col justify-center gap-1 absolute z-10 bottom-[-70px] left-[-15px] bg-white shadow-md rounded p-2 actions">
-            <button className="px-2 py-1 text-[13px] hover:bg-accent">
+            <button onClick={() => navigate(`/update-experiment/${data.experimentId.id}`)} className="px-2 py-1 text-[13px] hover:bg-accent">
               Edit
             </button>
             <button
-          onClick={() => handleSelectedData(data)}
-          className="py-1 px-2 bg-red-500 text-[13px] text-white rounded-md"
-        >
-          Delete
-        </button>
+              onClick={() => handleSelectedData(data)}
+              className="px-2 py-1 text-[13px] hover:bg-accent"
+            >
+              Delete
+            </button>
           </div>
         )}
       </td>

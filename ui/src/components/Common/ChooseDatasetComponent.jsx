@@ -10,6 +10,7 @@ const ChooseDatasetComponent = ({
   setActiveDataset,
   handleSubmit,
   columns,
+  setColumns,
   handleAddColumn,
   datasets,
   selectedDataset,
@@ -59,6 +60,7 @@ const ChooseDatasetComponent = ({
           {activeDataset === "new" ? (
             <AddDataset
               columns={columns}
+              setColumns={setColumns}
               handleAddColumn={handleAddColumn}
               columnTypesOptions={columnTypesOptions}
             />

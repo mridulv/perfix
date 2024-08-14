@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-/* eslint-disable react-hooks/rules-of-hooks */
+
 import React, { useEffect, useRef, useState } from "react";
 import { FaArrowUp, FaRegStopCircle } from "react-icons/fa";
 import { Navigate, useParams } from "react-router-dom";
@@ -19,9 +19,6 @@ const ChatPage = () => {
   const loadingRef = useRef(null);
 
   const { id } = useParams();
-  if (!id) {
-    return <Navigate to="/usecases" replace={true} />;
-  }
 
   const {
     data: useCase,
@@ -61,6 +58,16 @@ const ChatPage = () => {
       setIsSending(false);
     }
   };
+  useEffect(() => {
+    if (!isSending) {
+      setLocalMessages([]);
+    }
+    if (isSending) {
+      loadingRef.current?.scrollIntoView({ behavior: "smooth" });
+    } else {
+      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [useCase, isSending]);
 
   const handleInputChange = (event) => {
     const textareaLineHeight = 24; // Adjust this value based on your styling
@@ -84,80 +91,78 @@ const ChatPage = () => {
     setInputValue(event.target.value);
   };
 
-  useEffect(() => {
-    if (!isSending) {
-      setLocalMessages([]);
-    }
-    if (isSending) {
-      loadingRef.current?.scrollIntoView({ behavior: "smooth" });
-    } else {
-      messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-    }
-  }, [useCase, isSending]);
+  if (!id) {
+    return <Navigate to="/usecases" replace={true} />;
+  }
 
   if (isLoading) return <Loading />;
 
   return (
-    <div className="min-h-screen flex flex-col bg-white">
-      <div className="w-full md:w-[65%] bg-accent mx-auto flex-grow p-4 overflow-y-auto">
-        {combinedMessages.map((message, index) => (
-          <div
-            key={index}
-            className={`chat ${
-              message.user === "user" ? "chat-end" : "chat-start"
-            } my-4`}
-          >
+    <div className="">
+      <div className="min-h-screen flex flex-col bg-white">
+        <div className="w-full md:w-[740px] bg-accent mx-auto flex-grow p-4 overflow-y-auto">
+          {combinedMessages.map((message, index) => (
             <div
-              className={`chat-bubble text-sm ${
-                message.user === "user"
-                  ? "bg-primary text-white"
-                  : "bg-gray-200 text-gray-800"
-              }`}
+              key={index}
+              className={`chat ${
+                message.user === "user" ? "chat-end" : "chat-start"
+              } my-4`}
             >
-              <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                {message.message}
-              </ReactMarkdown>
+              <div
+                className={`chat-bubble text-sm ${
+                  message.user === "user"
+                    ? "bg-primary text-white"
+                    : "bg-gray-200 text-gray-800"
+                }`}
+              >
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                  {message.message}
+                </ReactMarkdown>
+              </div>
             </div>
-          </div>
-        ))}
-        {isSending && (
-          <div className="chat chat-start my-2" ref={loadingRef}>
-            <ChatBoxLoader />
-          </div>
-        )}
-        <div ref={messagesEndRef} />
-      </div>
-      <form
-        onSubmit={handleSendMessage}
-        className="w-full md:w-[65%] mx-auto p-4 bg-secondary border-t border-gray-200 sticky bottom-0"
-      >
-        <div className="flex items-end">
-          <textarea
-            value={inputValue}
-            onChange={handleInputChange}
-            placeholder="Type a message"
-            className="w-full bg-gray-100 p-2 rounded-md outline-none focus:ring-2 focus:ring-primary resize-none"
-            rows={rows}
-            disabled={isSending}
-            style={{ lineHeight: "24px" }} // Adjust this value based on your styling
-          />
-          <button
-            type="submit"
-            className={`w-10 h-10 flex items-center justify-center ml-2 p-2 rounded-full ${
-              !inputValue || isSending
-                ? "bg-gray-300 cursor-not-allowed"
-                : "bg-primary hover:bg-primary-dark"
-            }`}
-            disabled={!inputValue || isSending}
-          >
-            {isSending ? (
-              <FaRegStopCircle className="text-primary" />
-            ) : (
-              <FaArrowUp color="white" />
-            )}
-          </button>
+          ))}
+          {isSending && (
+            <div className="chat chat-start my-2" ref={loadingRef}>
+              <ChatBoxLoader />
+            </div>
+          )}
+          <div ref={messagesEndRef} />
         </div>
-      </form>
+      </div>
+      <div className="w-full md:w-[740px] mx-auto">
+        <form
+          onSubmit={handleSendMessage}
+          className=" fixed bottom-0  mx-auto p-4 bg-secondary border-t border-gray-200"
+          style={{width: "inherit"}}
+        >
+          <div className="flex items-end">
+            <textarea
+              value={inputValue}
+              onChange={handleInputChange}
+              placeholder="Type a message"
+              className="w-full bg-gray-100 p-2 rounded-md outline-none focus:ring-2 focus:ring-primary resize-none"
+              rows={rows}
+              disabled={isSending}
+              style={{ lineHeight: "24px" }} // Adjust this value based on your styling
+            />
+            <button
+              type="submit"
+              className={`w-10 h-10 flex items-center justify-center ml-2 p-2 rounded-full ${
+                !inputValue || isSending
+                  ? "bg-gray-300 cursor-not-allowed"
+                  : "bg-primary hover:bg-primary-dark"
+              }`}
+              disabled={!inputValue || isSending}
+            >
+              {isSending ? (
+                <FaRegStopCircle className="text-primary" />
+              ) : (
+                <FaArrowUp color="white" />
+              )}
+            </button>
+          </div>
+        </form>
+      </div>
     </div>
   );
 };

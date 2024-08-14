@@ -1,6 +1,6 @@
 /* eslint-disable no-unused-vars */
 import React from "react";
-import AddDatabaseInputFields from "./AddDatabaseInputFields";
+import DatabaseFormInputFields from "./DatabaseFormInputFields";
 
 const ConfigurationStep = ({
   currentStep,
@@ -12,13 +12,13 @@ const ConfigurationStep = ({
   setColumns,
   showGSIFields,
   setShowGSIFields,
-  inputValues, // New prop for pre-filled values
+  inputValues,
 }) => {
   console.log(inputFields);
   return (
     <div className="min-h-[350px]">
       {inputFields?.forms[currentStep - 2]?.inputs.map((input, index) => (
-        <AddDatabaseInputFields
+        <DatabaseFormInputFields
           key={index}
           input={input}
           handleInputChange={handleInputChange}
