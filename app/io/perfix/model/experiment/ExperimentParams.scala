@@ -1,10 +1,12 @@
 package io.perfix.model.experiment
 
 import io.perfix.model.api.{DatabaseConfigDetails, DatabaseConfigId, DatabaseConfigParams, DatasetParams}
-import io.perfix.model.UserInfo
+import io.perfix.model.{DatabaseCategory, UserInfo}
 import io.perfix.query.{DBQuery, SqlDBQueryBuilder}
 import io.perfix.db.tables.ExperimentRow
 import io.perfix.model.experiment.ExperimentState.ExperimentState
+import io.perfix.model.store.StoreType
+import io.perfix.model.store.StoreType.StoreType
 import io.perfix.stores.Database
 import play.api.libs.json.{Format, JsResult, JsValue, Json}
 import play.api.libs.json._
@@ -21,7 +23,8 @@ case class ExperimentParams(experimentId: Option[ExperimentId],
                             databaseConfigs: Seq[DatabaseConfigDetails],
                             experimentState: Option[ExperimentState] = None,
                             experimentResults: Option[Seq[ExperimentResultWithDatabaseConfigDetails]] = None,
-                            createdAt: Option[Long] = None) {
+                            createdAt: Option[Long] = None,
+                            databaseCategory: Option[DatabaseCategory] = None) {
 
   def toExperimentRow(userInfo: UserInfo): ExperimentRow = {
     experimentId match {
@@ -69,7 +72,10 @@ case class ExperimentParams(experimentId: Option[ExperimentId],
         case (_, _) => databaseConfigDetail
       }
     }
-    this.copy(databaseConfigs = databaseConfigDetails)
+    this.copy(
+      databaseConfigs = databaseConfigDetails,
+      databaseCategory = databaseConfigDetails.flatMap(_.storeType).headOption.flatMap(StoreType.databaseCategory)
+    )
   }
 
   def validateExperimentParams: Boolean = {
