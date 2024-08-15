@@ -11,6 +11,7 @@ const DatabaseInfoStep = ({
   setSelectedDatabaseType,
   databaseCategoriesOptions,
   databaseTypesOptions,
+  isUpdate,
 }) => (
   <div className="min-h-[350px]">
     <div className="mb-2 flex flex-col">
@@ -32,6 +33,7 @@ const DatabaseInfoStep = ({
           setSelectedDatabaseType({ value: "", label: "Select a Database Type" });
         }}
         options={databaseCategoriesOptions}
+        isDisabled={isUpdate}
       />
     </div>
 
@@ -42,6 +44,7 @@ const DatabaseInfoStep = ({
           value={selectedDatabaseType}
           onChange={setSelectedDatabaseType}
           options={databaseTypesOptions}
+          isDisabled={isUpdate}
         />
       </div>
     )}

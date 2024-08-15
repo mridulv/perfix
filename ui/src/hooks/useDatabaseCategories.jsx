@@ -9,22 +9,28 @@ const useDatabaseCategories = (selectedCategory) => {
     fetchDatabaseCategory(setDatabaseCategories);
   }, []);
 
-  const databaseCategoriesOptions =
-    databaseCategories &&
-    Object.keys(databaseCategories).map((category) => ({
-      value: category,
-      label: category,
-    }));
+  const databaseCategoriesOptions = 
+    databaseCategories
+      ? Object.keys(databaseCategories).map((category) => ({
+          value: category,
+          label: category,
+        }))
+      : [];
 
-    const databaseTypesOptions =
-    selectedCategory.value !== "" && databaseCategories[selectedCategory.value]
-      ? databaseCategories[selectedCategory.value].map((type) => ({
+  const databaseTypesOptions = 
+    databaseCategories && 
+    selectedCategory && 
+    selectedCategory.value && 
+    databaseCategories[selectedCategory.value]
+      ? (Array.isArray(databaseCategories[selectedCategory.value])
+          ? databaseCategories[selectedCategory.value]
+          : Object.keys(databaseCategories[selectedCategory.value])
+        ).map((type) => ({
           value: type,
           label: type,
         }))
       : [];
-    
-      console.log(databaseTypesOptions);
+
   return {
     databaseCategories,
     databaseCategoriesOptions,

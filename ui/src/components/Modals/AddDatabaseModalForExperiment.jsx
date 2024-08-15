@@ -2,7 +2,7 @@
 import React from "react";
 import toast from "react-hot-toast";
 import { MdClose } from "react-icons/md";
-import AddDatabase from "../AddDatabase/AddDatabase";
+import DatabaseForm from "../AddDatabase/DatabaseForm";
 
 const AddDatabaseModalForExperiment = ({
   open,
@@ -25,7 +25,7 @@ const AddDatabaseModalForExperiment = ({
       onClick={onClose}
       className={`
         fixed inset-0 flex justify-center items-center transition-colors
-        ${open ? "visible bg-black/20" : "invisible"} z-50 
+        ${open ? "visible bg-black/20" : "hidden"} z-50 
       `}
     >
       <div
@@ -47,12 +47,14 @@ const AddDatabaseModalForExperiment = ({
             <h3 className="text-[20px] font-bold">Create new database</h3>
           </div>
           <div className="w-[95%] h-[1px] bg-accent my-6"></div>
-          <AddDatabase 
-          dataset={selectedDataset}
-          databases={databases}
-          successFunction={successFunctionForAddDatabase}
-          cancelFunction={handleClose}
-          />
+          
+          <DatabaseForm
+                dataset={selectedDataset}
+                cancelFunction={handleClose}
+                successFunction={successFunctionForAddDatabase}
+                databases={databases}
+                creationFor="newDatabase"
+              />
         </div>
       </div>
     </div>

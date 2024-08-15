@@ -8,7 +8,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import axios from "axios";
 import Loading from "../../../components/Common/Loading";
 import DatasetDetailsTabs from "../../../components/DatasetDetails/DatasetDetailsTabs";
-import fetchDatabaseData from "../../../api/fetchDatabaseData";
+import fetchDatasetData from "../../../api/fetchDatasetData";
 
 
 
@@ -38,7 +38,7 @@ const DatasetDetails = () => {
   };
 
   useEffect(() => {
-    fetchDatabaseData(id, setDatasetData, setLoading)
+    fetchDatasetData(id, setDatasetData, setLoading)
   }, [id])
 
   useEffect(() => {

@@ -6,25 +6,25 @@ import { FaArrowLeft } from "react-icons/fa6";
 import { Link, useNavigate } from "react-router-dom";
 import { useStatesForAddModals } from "../../../hooks/useStatesForAddModals";
 import toast from "react-hot-toast";
-import AddExperiment from "../../../components/AddExperiment/AddExperiment";
 import axios from "axios";
 import fetchDatabaseCategory from "../../../api/fetchDatabaseCategory";
-import CustomSelect from "../../../components/CustomSelect/CustomSelect";
 import fetchRelevantDatasets from "../../../api/fetchRelevantDatasets";
 import StepHeader from "../../../components/AddExperiment/StepHeader";
 import useRelevantDatabases from "../../../api/fetchRelevantDatabases";
+import StyledReactSelect from "../../../components/CustomSelect/StyledReactSelect";
+import ExperimentForm from "../../../components/AddExperiment/ExperimentForm";
 
 const AddExperimentPage = () => {
   const [creatingStep, setCreatingStep] = useState("category");
   const [databaseCategories, setDatabaseCategories] = useState([]);
   const [selectedDatabaseCategory, setSelectedDatabaseCategory] = useState({
-    option: "Choose Category",
-    value: "Choose",
+    value: "",
+    label: "Select Database Category",
   });
   const [relevantDatasets, setRelevantDatasets] = useState(null);
   const [selectedDataset, setSelectedDataset] = useState({
-    option: "Choose Dataset",
-    value: "Choose",
+    value: "",
+    label: "Select Dataset",
   });
 
   const {
@@ -40,7 +40,7 @@ const AddExperimentPage = () => {
 
   // handle the select database category
   const handleSelectCategory = () => {
-    if (selectedDatabaseCategory.value === "Choose") {
+    if (selectedDatabaseCategory.value === "") {
       return toast.error("Please select a database category");
     }
 
@@ -54,8 +54,8 @@ const AddExperimentPage = () => {
   const databaseCategoriesOptions =
     databaseCategories &&
     Object.keys(databaseCategories)?.map((category) => ({
-      option: category,
       value: category,
+      label: category,
     }));
 
   //fetching the relevant databases
@@ -66,7 +66,10 @@ const AddExperimentPage = () => {
   } = useRelevantDatabases(
     { category: selectedDatabaseCategory.value, datasetId: selectedDatasetId },
     {
-      enabled: creatingStep === "database" && selectedDatasetId !== null && selectedDatabaseCategory.value !== "Choose"
+      enabled:
+        creatingStep === "database" &&
+        selectedDatasetId !== null &&
+        selectedDatabaseCategory.value !== "Choose",
     }
   );
   //making the options for selecting relevant databases
@@ -79,7 +82,7 @@ const AddExperimentPage = () => {
 
   //fetching the relevant datasets
   useEffect(() => {
-    if (selectedDatabaseCategory.value !== "Choose") {
+    if (selectedDatabaseCategory.value !== "") {
       fetchRelevantDatasets(
         selectedDatabaseCategory.value,
         setRelevantDatasets
@@ -91,10 +94,10 @@ const AddExperimentPage = () => {
   const datasetsOptions =
     relevantDatasets &&
     relevantDatasets?.map((dataset) => ({
-      option: dataset.datasetName,
       value: dataset?.datasetId?.id,
+      label: dataset.datasetName,
     }));
-
+  
   const handleSelectDataset = () => {
     if (selectedDataset.value === "Choose") {
       return toast.error("Please select a dataset.");
@@ -147,11 +150,10 @@ const AddExperimentPage = () => {
             Choose Database Category
           </p>
           <div>
-            <CustomSelect
-              selected={selectedDatabaseCategory}
-              setSelected={setSelectedDatabaseCategory}
+            <StyledReactSelect
+              value={selectedDatabaseCategory}
+              onChange={setSelectedDatabaseCategory}
               options={databaseCategoriesOptions}
-              width="w-[250px]"
             />
           </div>
           <div className="mt-auto pt-4 pb-6 flex gap-3 absolute bottom-0 left-0">
@@ -176,11 +178,10 @@ const AddExperimentPage = () => {
         <div className="mt-7 ms-7 flex-grow relative">
           <p className="text-[12px] font-bold mb-1 block">Choose Dataset</p>
           <div>
-            <CustomSelect
-              selected={selectedDataset}
-              setSelected={setSelectedDataset}
+            <StyledReactSelect
+              value={selectedDataset}
+              onChange={setSelectedDataset}
               options={datasetsOptions}
-              width="w-[250px]"
             />
           </div>
           <div className="mt-auto pt-4 pb-6 flex gap-3 absolute bottom-0 left-0">
@@ -203,7 +204,7 @@ const AddExperimentPage = () => {
       {/* final step */}
       {creatingStep === "database" && selectedDatasetId && (
         <div>
-          <AddExperiment
+          <ExperimentForm
             databases={relevantDatabases}
             dataset={selectedDatasetData}
             databaseRefetch={databaseRefetch}

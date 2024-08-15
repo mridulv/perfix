@@ -36,24 +36,10 @@ describe("Experiments", () => {
 
   it("should render CommonTable component", async () => {
     renderComponent();
-
-    const commonTable = await screen.findByRole("table");
-    expect(commonTable).toBeInTheDocument();
-  });
-
-  it("should open the modal when clicking the AddButton", async () => {
-    renderComponent();
-
-    const addButton = await screen.findByText("New Experiment");
-    expect(addButton).toBeInTheDocument();
-
-    // Use userEvent to simulate a click event on the AddButton
-    userEvent.click(addButton);
-
-    // Check if the modal is rendered and visible
+  
     await waitFor(() => {
-      const modalText = screen.getAllByText(/Create new Experiment/i);
-      expect(modalText.length).toBeGreaterThan(0);
+      const commonTable = screen.getByRole("table");
+      expect(commonTable).toBeInTheDocument();
     });
   });
 

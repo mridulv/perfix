@@ -1,32 +1,53 @@
 /* eslint-disable no-unused-vars */
-import React, { useState } from "react";
-import { FaPlus } from "react-icons/fa6";
-import Select from "react-select";
-import Loading from "../Common/Loading";
+import React, { useState, useEffect } from "react";
+import Loading from "../Common/Loading"
 import StyledReactSelect from "../CustomSelect/StyledReactSelect";
+import Select from "react-select"
+import { FaPlus } from "react-icons/fa";
 
-const AddDatabaseInputFields = ({
+const DatabaseFormInputFields = ({
   input,
   handleInputChange,
   options,
   isLoading,
+  columns,
+  setColumns,
+  showGSIFields,
+  setShowGSIFields,
+  value // New prop for pre-filled value
 }) => {
   const [selectOption, setSelectOption] = useState(null);
   const [selectedMultipleOptions, setSelectedMultipleOptions] = useState([]);
-  const [columns, setColumns] = useState([{ partitionKey: "", sortKey: "" }]);
-  const [showGSIFields, setShowGSIFields] = useState(false); // State to track if GSI fields are shown
+  const [inputValue, setInputValue] = useState(value || '');
 
   const { inputName, inputDisplayName, formInputType } = input;
   const { dataType } = formInputType;
 
+  useEffect(() => {
+    if (value !== undefined) {
+      if (dataType === 'SingleColumnSelectorType') {
+        setSelectOption({ value, label: value });
+      } else if (dataType === 'MultiColumnSelectorType') {
+        setSelectedMultipleOptions(Array.isArray(value) ? value.map(v => ({ value: v, label: v })) : []);
+      } else if (dataType === 'GSIType') {
+        setColumns(value || [{ partitionKey: "", sortKey: "" }]);
+        setShowGSIFields(value && value.length > 0);
+      } else {
+        setInputValue(value);
+      }
+    }
+  }, [value, dataType, setColumns, setShowGSIFields]);
+
   const handleChange = (e) => {
-    const value =
-      dataType === "IntType" ? Number(e.target.value) : e.target.value;
-    handleInputChange(inputName, value);
+    const newValue = dataType === "IntType" ? Number(e.target.value) : e.target.value;
+    setInputValue(newValue);
+    handleInputChange(inputName, newValue);
   };
 
   const handleAddColumn = () => {
-    setColumns([...columns, { partitionKey: "", sortKey: "" }]);
+    const newColumns = [...columns, { partitionKey: "", sortKey: "" }];
+    setColumns(newColumns);
+    handleInputChange(inputName, newColumns);
   };
 
   const handleSelectChange = (selectedOption) => {
@@ -55,15 +76,15 @@ const AddDatabaseInputFields = ({
     }
   };
 
+  const handleAddGSI = () => {
+    setShowGSIFields(true);
+  }
+
   if (isLoading) return <Loading />;
 
   return (
     <div className="flex flex-col mb-4">
-      <label
-        className={`${
-          dataType === "GSIType" ? "hidden" : "block"
-        } text-[12px] font-bold mb-[2px]`}
-      >
+      <label className={`${dataType === "GSIType" ? "hidden" : "block"} text-[12px] font-bold mb-[2px]`}>
         {inputDisplayName}
       </label>
       <div>
@@ -72,6 +93,7 @@ const AddDatabaseInputFields = ({
             type="text"
             className="search-input border-2 border-gray-300 focus:border-gray-400 w-[250px] px-2 py-1 rounded"
             name={inputName}
+            value={inputValue}
             onChange={handleChange}
             onKeyDown={handleKeyDown}
           />
@@ -82,6 +104,7 @@ const AddDatabaseInputFields = ({
             placeholder={inputDisplayName}
             type="number"
             name={inputName}
+            value={inputValue}
             onChange={handleChange}
           />
         )}
@@ -101,7 +124,7 @@ const AddDatabaseInputFields = ({
             styles={{
               container: (provided) => ({
                 ...provided,
-                width: "250px", // Set your desired width here
+                width: "250px",
               }),
               control: (base) => ({
                 ...base,
@@ -118,7 +141,7 @@ const AddDatabaseInputFields = ({
           <div>
             {!showGSIFields ? (
               <button
-                onClick={() => setShowGSIFields(true)}
+                onClick={handleAddGSI}
                 className="text-primary text-[12px] font-semibold flex items-center gap-3"
                 type="button"
               >
@@ -127,7 +150,7 @@ const AddDatabaseInputFields = ({
               </button>
             ) : (
               <div>
-                <label className={` text-[12px] font-bold mb-[2px]`}>
+                <label className={`text-[12px] font-bold mb-[2px]`}>
                   {inputDisplayName}
                 </label>
                 {columns.map((column, i) => (
@@ -143,6 +166,7 @@ const AddDatabaseInputFields = ({
                       </div>
                       <StyledReactSelect
                         placeholder="Select"
+                        value={options.find(opt => opt.value === column.partitionKey) || null}
                         onChange={(selectedOption) =>
                           handleColumnChange(
                             i,
@@ -158,8 +182,13 @@ const AddDatabaseInputFields = ({
                       <label className="text-[12px] font-bold">Sort Key</label>
                       <StyledReactSelect
                         placeholder="Select"
+                        value={options.find(opt => opt.value === column.sortKey) || null}
                         onChange={(selectedOption) =>
-                          handleColumnChange(i, "sortKey", selectedOption.value)
+                          handleColumnChange(
+                            i,
+                            "sortKey",
+                            selectedOption.value
+                          )
                         }
                         options={options}
                         className="max-w-[250px]"
@@ -186,4 +215,4 @@ const AddDatabaseInputFields = ({
   );
 };
 
-export default AddDatabaseInputFields;
+export default DatabaseFormInputFields;

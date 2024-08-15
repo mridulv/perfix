@@ -4,6 +4,7 @@ import ProtectedRoute from "./ProtectedRoute";
 import DashboardLayout from "../Layout/DashboardLayout/DashboardLayout";
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 import Loading from '../components/Common/Loading';
+import UpdateExperimentPage from '../Pages/Dashboard/Experiment/UpdateExperimentPage';
 
 // Lazy-loaded components
 const ChatPage = lazy(() => import("../Pages/Dashboard/UseCases/ChatPage"));
@@ -57,6 +58,14 @@ export const router = createBrowserRouter([
         element: (
           <Suspense fallback={<Loading/>}>
             <AddExperimentPage />
+          </Suspense>
+        ),
+      },
+      {
+        path: "/update-experiment/:id",
+        element: (
+          <Suspense fallback={<Loading/>}>
+            <UpdateExperimentPage />
           </Suspense>
         ),
       },

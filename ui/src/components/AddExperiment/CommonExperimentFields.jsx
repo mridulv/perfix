@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { BiMinus, BiPlus } from "react-icons/bi";
 import QueryComponentForRDBMS from "./QueryComponentForRDBMS";
 import QueryComponentForNoSQL from "./QueryComponentForNoSQL";
@@ -7,6 +7,8 @@ import toast from "react-hot-toast";
 
 const AddExperimentInputFields = ({ params }) => {
   const {
+    experimentName,
+    setExperimentName,
     writeBatchSizeValue,
     setWriteBatchSizeValue,
     concurrentQueries,
@@ -16,14 +18,32 @@ const AddExperimentInputFields = ({ params }) => {
     selectedDatabaseCategory,
     sqlPlaceholder,
     setDbQuery,
-    dataset
+    dataset,
+    initialDbQuery,
   } = params;
 
-  const [selectedRDBMSOption, setSelectedRDBMSOption] = useState("sql");
-  const [columns, setColumns] = useState([{ key: "", value: "" }]);
-  const handleAddColumn = () => {
-    setColumns([...columns, { key: "", value: "" }]);
-  };
+  const [selectedRDBMSOption, setSelectedRDBMSOption] = useState(
+    initialDbQuery?.type === "sql-builder" ? "non-sql" : "sql"
+  );
+  console.log(initialDbQuery?.filters);
+  const [columns, setColumns] = useState(
+    initialDbQuery?.filtersOpt
+      ? initialDbQuery.filtersOpt.map((filter) => ({
+          key: filter.field,
+          value: filter.fieldValue,
+        }))
+      : initialDbQuery?.filters
+      ? initialDbQuery.filters.map((d) => ({
+        
+          key: d.field,
+          value: d.fieldValue,
+        }))
+      : [{ key: "", value: "" }]
+  );
+
+  const handleAddColumn = useCallback(() => {
+    setColumns((prevColumns) => [...prevColumns, { key: "", value: "" }]);
+  }, []);
 
   const fieldsData = [
     {
@@ -44,34 +64,44 @@ const AddExperimentInputFields = ({ params }) => {
     },
   ];
 
-  const handleIncrease = (value, setValue, max) => {
+  const handleIncrease = useCallback((value, setValue, max) => {
     const numberValue = Number(value);
     if (max !== undefined && numberValue >= max) {
       toast.error(`Value cannot be greater than ${max}`);
     } else {
       setValue(numberValue + 1);
     }
-  };
+  }, []);
 
-  const handleDecrease = (value, setValue) => {
-    setValue(value > 0 ? value - 1 : 0);
-  };
+  const handleDecrease = useCallback((value, setValue) => {
+    setValue((prevValue) => (prevValue > 0 ? prevValue - 1 : 0));
+  }, []);
 
-  const handleInputChange = (e, setValue, max) => {
+  const handleInputChange = useCallback((e, setValue, max) => {
     const newValue = parseInt(e.target.value, 10);
     if (max !== undefined && newValue > max) {
       toast.error(`Value cannot be greater than ${max}`);
     } else {
       setValue(newValue);
     }
-  };
+  }, []);
 
-  const datasetColumnsOptions = dataset && dataset?.columns?.map(col => ({
-    value: col.columnName,
-    label: col.columnName,
-  }));
+  const datasetColumnsOptions =
+    dataset &&
+    dataset?.columns?.map((col) => ({
+      value: col.columnName,
+      label: col.columnName,
+    }));
 
-  console.log(datasetColumnsOptions);
+  const memoizedSetDbQuery = useCallback(
+    (newQuery) => {
+      setDbQuery((prevQuery) => ({
+        ...prevQuery,
+        ...newQuery,
+      }));
+    },
+    [setDbQuery]
+  );
 
   return (
     <div>
@@ -82,6 +112,8 @@ const AddExperimentInputFields = ({ params }) => {
           type="text"
           name="name"
           placeholder="Enter Experiment Name"
+          value={experimentName}
+          onChange={(e) => setExperimentName(e.target.value)}
           required
         />
       </div>
@@ -120,7 +152,10 @@ const AddExperimentInputFields = ({ params }) => {
         ))}
       </div>
 
-      {selectedDatabaseCategory.value.includes("RDBMS") ? (
+      {(typeof selectedDatabaseCategory === "string"
+        ? selectedDatabaseCategory
+        : selectedDatabaseCategory.value
+      ).includes("RDBMS") ? (
         <div>
           <label className="text-[12px] font-bold mb-1">Query</label>
           <div className="mt-2 mb-4 max-w-[160px] px-auto bg-secondary py-1 ps-3 flex items-center gap-3 rounded tracking-tight">
@@ -149,8 +184,9 @@ const AddExperimentInputFields = ({ params }) => {
             columns={columns}
             setColumns={setColumns}
             handleAddColumn={handleAddColumn}
-            setDbQuery={setDbQuery}
+            setDbQuery={memoizedSetDbQuery}
             datasetColumnsOptions={datasetColumnsOptions}
+            initialDbQuery={initialDbQuery}
           />
         </div>
       ) : (
@@ -159,7 +195,8 @@ const AddExperimentInputFields = ({ params }) => {
           setColumns={setColumns}
           handleAddColumn={handleAddColumn}
           datasetColumnsOptions={datasetColumnsOptions}
-          setDbQuery={setDbQuery}
+          setDbQuery={memoizedSetDbQuery}
+          initialDbQuery={initialDbQuery}
         />
       )}
     </div>
