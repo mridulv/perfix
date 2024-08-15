@@ -122,9 +122,6 @@ class ExperimentManager @Inject()(datasetManager: DatasetManager,
     val allDatabaseConfigParams = databaseConfigManager.all(Seq.empty)
     val allDatasetParams = datasetManager.all(Seq.empty)
     val results = experimentParams.databaseConfigs.map { databaseConfigDetail =>
-      val configParams = allDatabaseConfigParams
-        .find(_.databaseConfigId.get == databaseConfigDetail.databaseConfigId)
-        .getOrElse(throw InvalidStateException("Invalid ExperimentParams"))
       val updatedConfigParams = databaseConfigManager.ensureDatabase(databaseConfigDetail.databaseConfigId)
       println(s"Database is up $updatedConfigParams")
       val datasetParams = allDatasetParams
