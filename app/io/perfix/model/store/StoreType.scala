@@ -1,5 +1,7 @@
 package io.perfix.model.store
 
+import io.perfix.model.DatabaseCategory
+import io.perfix.stores.Database
 import play.api.libs.json._
 
 object StoreType extends Enumeration {
@@ -18,6 +20,10 @@ object StoreType extends Enumeration {
 
   def fromString(input: String): Option[StoreType] = {
     values.find(storeType => input.toLowerCase.contains(storeType.toString.toLowerCase))
+  }
+
+  def databaseCategory(storeType: String): Option[DatabaseCategory] = {
+    Database.allDatabases.find(_.name.toString == storeType).flatMap(_.databaseCategory.headOption)
   }
 
 
