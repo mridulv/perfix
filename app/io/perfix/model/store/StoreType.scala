@@ -23,7 +23,7 @@ object StoreType extends Enumeration {
   }
 
   def databaseCategory(storeType: String): Option[DatabaseCategory] = {
-    Database.allDatabases.find(_.name.toString == storeType).flatMap(_.databaseCategory).headOption
+    Database.allDatabases.find(_.name.toString == storeType).flatMap(_.databaseCategory.headOption)
   }
 
 
