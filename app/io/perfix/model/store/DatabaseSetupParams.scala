@@ -8,7 +8,13 @@ import io.perfix.stores.dynamodb.DynamoDBDatabaseSetupParams
 import io.perfix.stores.redis.RedisDatabaseSetupParams
 import play.api.libs.json._
 
-trait DatabaseSetupParams
+trait DatabaseSetupParams {
+
+  def databaseLaunchParams: DatabaseLaunchParams
+
+}
+
+trait DatabaseLaunchParams
 
 object DatabaseSetupParams {
   import io.perfix.stores.documentdb.DocumentDBDatabaseSetupParams._

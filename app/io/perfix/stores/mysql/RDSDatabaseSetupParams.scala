@@ -1,6 +1,6 @@
 package io.perfix.stores.mysql
 
-import io.perfix.model.store.DatabaseSetupParams
+import io.perfix.model.store.{DatabaseLaunchParams, DatabaseSetupParams}
 import io.perfix.model.store.StoreType.{MySQL, StoreType}
 import play.api.libs.json.{Format, Json}
 import RDSDatabaseSetupParams._
@@ -11,7 +11,13 @@ case class RDSDatabaseSetupParams(instanceType: String = "db.t3.medium",
                                   secondaryIndexesColumn: Option[Seq[String]],
                                   dbName: Option[String] = None,
                                   dbDetails: Option[MySQLConnectionParams] = None,
-                                  databaseType: Option[StoreType] = Some(MySQL)) extends DatabaseSetupParams
+                                  databaseType: Option[StoreType] = Some(MySQL)) extends DatabaseSetupParams {
+
+  override def databaseLaunchParams: DatabaseLaunchParams = RDSDatabaseLaunchParams(instanceType)
+
+}
+
+case class RDSDatabaseLaunchParams(instanceType: String = "db.t3.medium") extends DatabaseLaunchParams
 
 object RDSDatabaseSetupParams {
   implicit val RDSDatabaseSetupParamsFormatter: Format[RDSDatabaseSetupParams] = Json.format[RDSDatabaseSetupParams]
