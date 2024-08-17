@@ -20,4 +20,4 @@ RUN yarn build
 EXPOSE 3000
 
 # Command to run your app (change this according to your project)
-CMD ["yarn", "start"]
+CMD ["yarn", "dev"]
