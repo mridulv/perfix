@@ -1,12 +1,18 @@
 package io.perfix.stores.redis
 
-import io.perfix.model.store.DatabaseSetupParams
+import io.perfix.model.store.{DatabaseLaunchParams, DatabaseSetupParams}
 import play.api.libs.json.{Format, Json}
+
+case class RedisLaunchParams(cacheNodeType: Option[String],
+                             numCacheNodes: Option[Int]) extends DatabaseLaunchParams
 
 case class RedisDatabaseSetupParams(cacheNodeType: Option[String],
                                     numCacheNodes: Option[Int],
                                     keyColumn: String,
-                                    dbDetails: Option[RedisConnectionParams] = None) extends DatabaseSetupParams
+                                    dbDetails: Option[RedisConnectionParams] = None) extends DatabaseSetupParams {
+
+  override def databaseLaunchParams: DatabaseLaunchParams = RedisLaunchParams(cacheNodeType, numCacheNodes)
+}
 
 case class RedisConnectionParams(url: String, port: Int)
 

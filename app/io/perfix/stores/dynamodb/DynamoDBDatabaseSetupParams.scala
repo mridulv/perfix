@@ -1,7 +1,6 @@
 package io.perfix.stores.dynamodb
 
-import io.perfix.model.store.DatabaseSetupParams
-import io.perfix.query.SqlDBQueryBuilder
+import io.perfix.model.store.{DatabaseLaunchParams, DatabaseSetupParams}
 import play.api.libs.json.{Format, Json}
 
 case class DynamoDBDatabaseSetupParams(tableName: String,
@@ -22,7 +21,10 @@ case class DynamoDBDatabaseSetupParams(tableName: String,
     Seq(primaryIndex) ++ secondaryIndexes
   }
 
+  override def databaseLaunchParams: DatabaseLaunchParams = DynamoDBLaunchParams()
 }
+
+case class DynamoDBLaunchParams() extends DatabaseLaunchParams
 
 case class DynamoDBGSIMetadataParams(gsiParams: Seq[DynamoDBGSIParam])
 case class DynamoDBGSIParam(partitionKey: String, sortKey: String) {
