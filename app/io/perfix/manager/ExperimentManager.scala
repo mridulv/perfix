@@ -6,7 +6,7 @@ import io.perfix.exceptions.InvalidStateException
 import io.perfix.model.experiment.{ExperimentId, ExperimentParams, ExperimentResultWithDatabaseConfigDetails}
 import io.perfix.model.{DatabaseCategory, EntityFilter, ExperimentFilter}
 import io.perfix.db.ExperimentStore
-import io.perfix.model.api.{DatabaseConfigDetails, DatabaseConfigId, DatasetDetails, DatasetId}
+import io.perfix.model.api.{DatabaseConfigDetails, DatabaseConfigId, DatabaseState, DatasetDetails, DatasetId}
 import io.perfix.stores.Database
 import io.perfix.stores.mysql.RDSDatabaseSetupParams
 
@@ -122,7 +122,14 @@ class ExperimentManager @Inject()(datasetManager: DatasetManager,
     val allDatabaseConfigParams = databaseConfigManager.all(Seq.empty)
     val allDatasetParams = datasetManager.all(Seq.empty)
     val results = experimentParams.databaseConfigs.map { databaseConfigDetail =>
-      val updatedConfigParams = databaseConfigManager.ensureDatabase(databaseConfigDetail.databaseConfigId)
+      val databaseConfigParams = allDatabaseConfigParams
+        .find(_.databaseConfigId.get == databaseConfigDetail.databaseConfigId)
+        .getOrElse(throw InvalidStateException("Invalid DatabaseConfigId"))
+      val matchedDatabaseConfigParamsOpt = allDatabaseConfigParams.find(_.databaseSetupParams.databaseLaunchParams == databaseConfigParams.databaseSetupParams.databaseLaunchParams)
+      val updatedConfigParams = matchedDatabaseConfigParamsOpt match {
+        case Some(matchedDatabaseConfigParams) => databaseConfigParams.copy(databaseSetupParams = matchedDatabaseConfigParams.databaseSetupParams)
+        case None => databaseConfigManager.ensureDatabase(databaseConfigDetail.databaseConfigId)
+      }
       println(s"Database is up $updatedConfigParams")
       val datasetParams = allDatasetParams
         .find(_.id.get == updatedConfigParams.datasetDetails.datasetId)
