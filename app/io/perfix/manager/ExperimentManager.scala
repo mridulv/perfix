@@ -3,7 +3,7 @@ package io.perfix.manager
 import com.google.inject.Inject
 import io.perfix.common.ExperimentExecutor
 import io.perfix.exceptions.InvalidStateException
-import io.perfix.model.experiment.{ExperimentId, ExperimentParams, ExperimentResultWithDatabaseConfigDetails}
+import io.perfix.model.experiment.{ExperimentId, ExperimentParams, ExperimentResultWithDatabaseConfigDetails, ExperimentState}
 import io.perfix.model.{DatabaseCategory, EntityFilter, ExperimentFilter}
 import io.perfix.db.ExperimentStore
 import io.perfix.model.api.{DatabaseConfigDetails, DatabaseConfigId, DatabaseState, DatasetDetails, DatasetId}
@@ -121,32 +121,52 @@ class ExperimentManager @Inject()(datasetManager: DatasetManager,
     val experimentParams = get(experimentId)
     val allDatabaseConfigParams = databaseConfigManager.all(Seq.empty)
     val allDatasetParams = datasetManager.all(Seq.empty)
-    val results = experimentParams.databaseConfigs.map { databaseConfigDetail =>
-      val databaseConfigParams = allDatabaseConfigParams
-        .find(_.databaseConfigId.get == databaseConfigDetail.databaseConfigId)
-        .getOrElse(throw InvalidStateException("Invalid DatabaseConfigId"))
-      val matchedDatabaseConfigParamsOpt = allDatabaseConfigParams.find(_.databaseSetupParams.databaseLaunchParams == databaseConfigParams.databaseSetupParams.databaseLaunchParams)
-      val updatedConfigParams = matchedDatabaseConfigParamsOpt match {
-        case Some(matchedDatabaseConfigParams) => databaseConfigParams.copy(databaseSetupParams = matchedDatabaseConfigParams.databaseSetupParams)
-        case None => databaseConfigManager.ensureDatabase(databaseConfigDetail.databaseConfigId)
+    val updatedExperimentParams = try {
+      val results = experimentParams.databaseConfigs.map { databaseConfigDetail =>
+        val databaseConfigParams = allDatabaseConfigParams
+          .find(_.databaseConfigId.get == databaseConfigDetail.databaseConfigId)
+          .getOrElse(throw InvalidStateException("Invalid DatabaseConfigId"))
+        val matchedDatabaseConfigParamsOpt = allDatabaseConfigParams.find(_.databaseSetupParams.databaseLaunchParams == databaseConfigParams.databaseSetupParams.databaseLaunchParams)
+        val updatedConfigParams = matchedDatabaseConfigParamsOpt match {
+          case Some(matchedDatabaseConfigParams) => databaseConfigParams.copy(databaseSetupParams = matchedDatabaseConfigParams.databaseSetupParams)
+          case None => databaseConfigManager.ensureDatabase(databaseConfigDetail.databaseConfigId)
+        }
+        println(s"Database is up $updatedConfigParams")
+        val datasetParams = allDatasetParams
+          .find(_.id.get == updatedConfigParams.datasetDetails.datasetId)
+          .getOrElse(throw InvalidStateException("Invalid ExperimentParams"))
+        val experimentExecutor = new ExperimentExecutor(
+          experimentParams,
+          updatedConfigParams,
+          datasetParams
+        )
+        println(s"Running experiment")
+        val result = try {
+          val res = experimentExecutor.runExperiment()
+          println(s"Experiment is completed")
+          res
+        } catch {
+          case e: Exception =>
+            print(s"Error while running the experiment: ${e.getMessage}")
+            throw e
+        } finally {
+          experimentExecutor.cleanUp()
+          println(s"Experiment Cleanup is done")
+        }
+        ExperimentResultWithDatabaseConfigDetails(databaseConfigDetail, result)
       }
-      println(s"Database is up $updatedConfigParams")
-      val datasetParams = allDatasetParams
-        .find(_.id.get == updatedConfigParams.datasetDetails.datasetId)
-        .getOrElse(throw InvalidStateException("Invalid ExperimentParams"))
-      val experimentExecutor = new ExperimentExecutor(
-        experimentParams,
-        updatedConfigParams,
-        datasetParams
+      experimentParams.copy(
+        experimentResults = Some(results),
+        experimentState = Some(ExperimentState.Completed)
       )
-      println(s"Running experiment")
-      val result = experimentExecutor.runExperiment()
-      println(s"Experiment is completed")
-      experimentExecutor.cleanUp()
-      println(s"Experiment Cleanup is done")
-      ExperimentResultWithDatabaseConfigDetails(databaseConfigDetail, result)
+    } catch {
+      case e: Exception =>
+        print("Error while running experiment " + e.getMessage)
+        experimentParams.copy(
+          experimentResults = None,
+          experimentState = Some(ExperimentState.Failed)
+        )
     }
-    val updatedExperimentParams = experimentParams.copy(experimentResults = Some(results))
     experimentStore.update(experimentId, updatedExperimentParams)
     updatedExperimentParams.toExperimentParamsWithDatabaseDetails(allDatasetParams, allDatabaseConfigParams)
   }
