@@ -27,7 +27,7 @@ export const router = createBrowserRouter([
     children: [
       {
         path: "/",
-        element: <Navigate to="/dataset" replace />,
+        element: <Navigate to="/usecases" replace />,
       },
       {
         path: "/dataset",
