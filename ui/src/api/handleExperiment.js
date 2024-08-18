@@ -3,9 +3,9 @@ import axiosApi from "./axios";
 
 const handleAddExperiment = async (
   experimentName,
+  DatabaseCategory,
   writeBatchSizeValue,
   concurrentQueries,
-  experimentTimeInSecond,
   selectedDatabases,
   dbQuery,
   navigate,
@@ -14,9 +14,9 @@ const handleAddExperiment = async (
 
   const values = {
     name: experimentName,
+    DatabaseCategory,
     writeBatchSize: Number(writeBatchSizeValue),
     concurrentQueries: Number(concurrentQueries),
-    experimentTimeInSeconds: Number(experimentTimeInSecond),
     dbQuery,
     databaseConfigs: selectedDatabases.map((database) => ({
       databaseConfigId: { id: database.value },
@@ -35,9 +35,9 @@ const handleAddExperiment = async (
 const handleUpdateExperiment = async (
   experimentId,
   experimentName,
+  DatabaseCategory,
   writeBatchSizeValue,
   concurrentQueries,
-  experimentTimeInSecond,
   selectedDatabases,
   dbQuery,
   navigate,
@@ -46,9 +46,9 @@ const handleUpdateExperiment = async (
 
   const values = {
     name: experimentName,
+    DatabaseCategory,
     writeBatchSize: Number(writeBatchSizeValue),
     concurrentQueries: Number(concurrentQueries),
-    experimentTimeInSeconds: Number(experimentTimeInSecond),
     dbQuery,
     databaseConfigs: selectedDatabases.map((database) => ({
       databaseConfigId: { id: database.value },

@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { MdClose } from "react-icons/md";
 import toast from "react-hot-toast";
-import DatabaseForm from "../AddDatabase/DatabaseForm";
+import DatabaseForm from "../Database/DatabaseForm";
 import axiosApi from "../../api/axios";
 import useDatabases from "../../api/useDatabases";
 import Loading from "../Common/Loading";

@@ -20,7 +20,6 @@ const QueryComponentForNoSQL = ({
     const newFilters = [...columns];
     newFilters[index] = { ...newFilters[index], value: event.target.value };
     setColumns(newFilters);
-    console.log("Updated Filters: ", newFilters);
   };
 
   useEffect(() => {
@@ -56,7 +55,7 @@ const QueryComponentForNoSQL = ({
               <label className="text-[12px] font-bold">Key</label>
               <Select
                 options={datasetColumnsOptions}
-                value={datasetColumnsOptions.find(
+                value={datasetColumnsOptions?.find(
                   (option) => option.value === column.key
                 )} // Setting the default value
                 onChange={(selectedOption) =>

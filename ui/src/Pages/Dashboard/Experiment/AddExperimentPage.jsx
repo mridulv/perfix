@@ -9,10 +9,10 @@ import toast from "react-hot-toast";
 import axios from "axios";
 import fetchDatabaseCategory from "../../../api/fetchDatabaseCategory";
 import fetchRelevantDatasets from "../../../api/fetchRelevantDatasets";
-import StepHeader from "../../../components/AddExperiment/StepHeader";
+import StepHeader from "../../../components/Experiment/StepHeader";
 import useRelevantDatabases from "../../../api/fetchRelevantDatabases";
 import StyledReactSelect from "../../../components/CustomSelect/StyledReactSelect";
-import ExperimentForm from "../../../components/AddExperiment/ExperimentForm";
+import ExperimentForm from "../../../components/Experiment/ExperimentForm";
 
 const AddExperimentPage = () => {
   const [creatingStep, setCreatingStep] = useState("category");

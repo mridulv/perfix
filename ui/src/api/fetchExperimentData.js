@@ -5,7 +5,6 @@ const fetchExperimentData = async (id, setExperimentData, setLoading) => {
   try {
     const res = await axiosApi.get(`/experiment/${id}`);
     const data = await res.data;
-    console.log(res,data);
 
     if (res.status === 200) {
       setExperimentData(data);
