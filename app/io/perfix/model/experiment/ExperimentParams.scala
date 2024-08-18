@@ -17,7 +17,7 @@ import scala.collection.mutable.ListBuffer
 case class ExperimentParams(experimentId: Option[ExperimentId],
                             name: String,
                             writeBatchSize: Int = 100,
-                            experimentTimeInSeconds: Int = 30,
+                            experimentTimeInSeconds: Int = 120,
                             concurrentQueries: Int = 1,
                             dbQuery: DBQuery,
                             databaseConfigs: Seq[DatabaseConfigDetails],
