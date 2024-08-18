@@ -10,7 +10,6 @@ object Field {
 }
 
 case class ExperimentConfig(rows: Int,
-                            experiment_time_in_seconds: Int,
                             num_writes_per_minute: Int,
                             reads_per_minute: Int)
 

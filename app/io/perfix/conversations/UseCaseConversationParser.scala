@@ -60,7 +60,7 @@ class UseCaseConversationParser(response: String) {
     val experimentParams: ExperimentParams = ExperimentParams(
       experimentId = None,
       name = tableName.concat("-").concat("exp"),
-      experimentTimeInSeconds = experimentConfig.experiment_time_in_seconds,
+      experimentTimeInSeconds = None,
       concurrentQueries = experimentConfig.reads_per_minute,
       dbQuery = sqlQuery,
       databaseConfigs = Seq(DatabaseConfigDetails(databaseConfigId))
@@ -86,7 +86,6 @@ class UseCaseConversationParser(response: String) {
   private def getExperimentConfig(experimentRun: ExperimentRun): ExperimentConfig = {
     ExperimentConfig(
       experimentRun.total_rows,
-      experimentRun.experiment_time_in_seconds,
       experimentRun.concurrent_writes_rate,
       experimentRun.concurrent_reads_rate
     )

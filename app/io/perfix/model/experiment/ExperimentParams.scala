@@ -17,7 +17,7 @@ import scala.collection.mutable.ListBuffer
 case class ExperimentParams(experimentId: Option[ExperimentId],
                             name: String,
                             writeBatchSize: Int = 100,
-                            experimentTimeInSeconds: Int = 120,
+                            experimentTimeInSeconds: Option[Int] = Some(120),
                             concurrentQueries: Int = 1,
                             dbQuery: DBQuery,
                             databaseConfigs: Seq[DatabaseConfigDetails],
@@ -38,7 +38,7 @@ case class ExperimentParams(experimentId: Option[ExperimentId],
   def validate(): Seq[String] = {
     val checkForWriteBatchSize: Boolean = writeBatchSize > 10000
     val checkForConcurrentQueries: Boolean = concurrentQueries > 100
-    val checkForExperimentTimeInSeconds: Boolean = experimentTimeInSeconds > 5 * 60
+    val checkForExperimentTimeInSeconds: Boolean = experimentTimeInSeconds.getOrElse(120) > 5 * 60
     val errors = ListBuffer[String]()
 
     if (checkForConcurrentQueries) {
