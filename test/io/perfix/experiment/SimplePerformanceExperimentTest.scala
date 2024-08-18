@@ -28,7 +28,7 @@ class SimplePerformanceExperimentTest extends AnyFlatSpec with Matchers {
       None,
       name = s"exp-${Random.nextInt()}",
       concurrentQueries = 10,
-      experimentTimeInSeconds = 5,
+      experimentTimeInSeconds = Some(5),
       dbQuery = SqlDBQueryBuilder(tableName = "table"),
       databaseConfigs = Seq(DatabaseConfigDetails(DatabaseConfigId(-1))),
       experimentResults = None,
