@@ -15,7 +15,7 @@ const Sidebar = ({ user, userProfile }) => {
         <h1 className={`mt-6 ms-4 font-medium text-[24px]`}>PerFix</h1>
 
         <div className="mt-8 ms-4 flex">
-          <SideBarAddButton value="Experiment" url="/add-experiment" />
+          <SideBarAddButton  />
         </div>
         <div className="mt-5 ms-1">
           {menus.map((menu) => (

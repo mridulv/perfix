@@ -40,7 +40,7 @@ const UseCases = () => {
       const id = res.data.useCaseId.id;
       navigate(`/usecases/${id}`);
     } else {
-      toast.success("Couldn't create a conversation");
+      toast.error("Couldn't create a conversation");
     }
   };
 

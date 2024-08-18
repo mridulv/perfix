@@ -127,7 +127,6 @@ const ExperimentForm = ({
     initialDbQuery: dbQuery,
   };
 
-  console.log(dbQuery);
   return (
     <div>
       <div className="ps-7 mt-6">
