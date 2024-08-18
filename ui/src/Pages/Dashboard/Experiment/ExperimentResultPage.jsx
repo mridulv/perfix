@@ -33,7 +33,7 @@ const ExperimentResultPage = () => {
           size={20}
         />
         <h2 className="text-[#8e8e8e] text-xl font-semibold">Experiments /</h2>
-        <h2 className="text-xl font-semibold">{experimentData.name}</h2>
+        <h2 className="text-xl font-semibold">{experimentData?.name}</h2>
       </div>
       <div className="w-[95%] h-[1px] bg-accent my-6"></div>
 
