@@ -17,7 +17,7 @@ const ExperimentTableRows = ({
 
   const handleRunExperiment = async (id) => {
     try {
-      const res = await axiosApi.post(`/experiment/${id}/execute`);
+      const res = await axiosApi.post(`/experiment/${id}/execute`, {});
       console.log(res);
     } catch (err) {
       console.log(err);

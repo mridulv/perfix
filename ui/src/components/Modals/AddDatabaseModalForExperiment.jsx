@@ -2,7 +2,7 @@
 import React from "react";
 import toast from "react-hot-toast";
 import { MdClose } from "react-icons/md";
-import DatabaseForm from "../AddDatabase/DatabaseForm";
+import DatabaseForm from "../Database/DatabaseForm";
 
 const AddDatabaseModalForExperiment = ({
   open,

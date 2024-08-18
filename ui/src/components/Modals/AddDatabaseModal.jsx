@@ -7,7 +7,7 @@ import ChooseDatasetComponent from "../Common/ChooseDatasetComponent";
 import { handleAddDatasetApi } from "../../api/handleAddDatasetApi";
 import { useStatesForAddModals } from "../../hooks/useStatesForAddModals";
 import axiosApi from "../../api/axios";
-import DatabaseForm from "../AddDatabase/DatabaseForm";
+import DatabaseForm from "../Database/DatabaseForm";
 
 const AddDatabaseModal = ({ open, onClose, datasets, refetch, databases }) => {
   const [currentAddStep, setCurrentAddStep] = useState(1);

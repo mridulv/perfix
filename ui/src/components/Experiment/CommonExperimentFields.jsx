@@ -1,11 +1,11 @@
 /* eslint-disable no-unused-vars */
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { BiMinus, BiPlus } from "react-icons/bi";
 import QueryComponentForRDBMS from "./QueryComponentForRDBMS";
 import QueryComponentForNoSQL from "./QueryComponentForNoSQL";
 import toast from "react-hot-toast";
 
-const AddExperimentInputFields = ({ params }) => {
+const CommonExperimentFields = ({ params }) => {
   const {
     experimentName,
     setExperimentName,
@@ -13,8 +13,6 @@ const AddExperimentInputFields = ({ params }) => {
     setWriteBatchSizeValue,
     concurrentQueries,
     setConcurrentQueries,
-    experimentTimeInSecond,
-    setExperimentTimeInSecond,
     selectedDatabaseCategory,
     sqlPlaceholder,
     setDbQuery,
@@ -25,7 +23,7 @@ const AddExperimentInputFields = ({ params }) => {
   const [selectedRDBMSOption, setSelectedRDBMSOption] = useState(
     initialDbQuery?.type === "sql-builder" ? "non-sql" : "sql"
   );
-  console.log(initialDbQuery?.filters);
+
   const [columns, setColumns] = useState(
     initialDbQuery?.filtersOpt
       ? initialDbQuery.filtersOpt.map((filter) => ({
@@ -34,7 +32,6 @@ const AddExperimentInputFields = ({ params }) => {
         }))
       : initialDbQuery?.filters
       ? initialDbQuery.filters.map((d) => ({
-        
           key: d.field,
           value: d.fieldValue,
         }))
@@ -56,11 +53,6 @@ const AddExperimentInputFields = ({ params }) => {
       value: concurrentQueries,
       setValue: setConcurrentQueries,
       max: 100,
-    },
-    {
-      label: "Experiment Time In Seconds",
-      value: experimentTimeInSecond,
-      setValue: setExperimentTimeInSecond,
     },
   ];
 
@@ -93,16 +85,9 @@ const AddExperimentInputFields = ({ params }) => {
       label: col.columnName,
     }));
 
-  const memoizedSetDbQuery = useCallback(
-    (newQuery) => {
-      setDbQuery((prevQuery) => ({
-        ...prevQuery,
-        ...newQuery,
-      }));
-    },
-    [setDbQuery]
-  );
+  
 
+ 
   return (
     <div>
       <div className="flex flex-col mb-7">
@@ -184,7 +169,7 @@ const AddExperimentInputFields = ({ params }) => {
             columns={columns}
             setColumns={setColumns}
             handleAddColumn={handleAddColumn}
-            setDbQuery={memoizedSetDbQuery}
+            setDbQuery={setDbQuery}
             datasetColumnsOptions={datasetColumnsOptions}
             initialDbQuery={initialDbQuery}
           />
@@ -195,7 +180,7 @@ const AddExperimentInputFields = ({ params }) => {
           setColumns={setColumns}
           handleAddColumn={handleAddColumn}
           datasetColumnsOptions={datasetColumnsOptions}
-          setDbQuery={memoizedSetDbQuery}
+          setDbQuery={setDbQuery}
           initialDbQuery={initialDbQuery}
         />
       )}
@@ -203,4 +188,4 @@ const AddExperimentInputFields = ({ params }) => {
   );
 };
 
-export default AddExperimentInputFields;
+export default CommonExperimentFields;

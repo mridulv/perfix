@@ -7,6 +7,11 @@ import useCasesIcon from "../assets/conversationIcon.png";
 
 export const menus = [
   {
+    name: "Use Cases",
+    link: "/usecases",
+    icon: useCasesIcon
+  },
+  {
     name: "Datasets",
     link: "/dataset",
     icon: datasetIcon,
@@ -20,11 +25,6 @@ export const menus = [
     name: "Experiment",
     link: "/experiment",
     icon: experimentIcon,
-  },
-  {
-    name: "Use Cases",
-    link: "/usecases",
-    icon: useCasesIcon
   },
 ];
 

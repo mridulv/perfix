@@ -1,13 +1,15 @@
+/* eslint-disable no-unused-vars */
 import React, { useEffect, useState } from "react";
 import { FaPlus } from "react-icons/fa6";
 import { Link, useNavigate } from "react-router-dom";
 import { ImPencil } from "react-icons/im";
 import { IoMdClose } from "react-icons/io";
 import CustomSelectMultipleOptions from "../CustomSelect/CustomSelectMultipleOptions";
-import AddExperimentInputFields from "./CommonExperimentFields";
+import CommonExperimentFields from "./CommonExperimentFields";
 import AddDatabaseModalForExperiment from "../Modals/AddDatabaseModalForExperiment";
 import axiosApi from "../../api/axios";
 import { handleExperiment } from "../../api/handleExperiment";
+import Loading from "../Common/Loading";
 
 const ExperimentForm = ({
   databases = null,
@@ -35,9 +37,6 @@ const ExperimentForm = ({
   const [concurrentQueries, setConcurrentQueries] = useState(
     experimentData ? experimentData.concurrentQueries.toString() : "100"
   );
-  const [experimentTimeInSecond, setExperimentTimeInSecond] = useState(
-    experimentData ? experimentData.experimentTimeInSeconds.toString() : "60"
-  );
   const [openAddDatabaseModal, setOpenAddDatabaseModal] = useState(false);
   const [sqlPlaceholder, setSqlPlaceholder] = useState(
     experimentData?.dbQuery?.sql ? experimentData?.dbQuery?.sql : ""
@@ -63,9 +62,9 @@ const ExperimentForm = ({
       await handleExperiment.handleUpdateExperiment(
         experimentData.experimentId.id,
         experimentName,
+        selectedDatabaseCategory.value,
         writeBatchSizeValue,
         concurrentQueries,
-        experimentTimeInSecond,
         selectedDatabases,
         dbQuery,
         navigate
@@ -73,9 +72,9 @@ const ExperimentForm = ({
     } else {
       await handleExperiment.handleAddExperiment(
         experimentName,
+        selectedDatabaseCategory.value,
         writeBatchSizeValue,
         concurrentQueries,
-        experimentTimeInSecond,
         selectedDatabases,
         dbQuery,
         navigate
@@ -84,7 +83,10 @@ const ExperimentForm = ({
   };
 
   useEffect(() => {
-    if (!experimentData?.dbQuery?.sql) {
+    if (
+      !experimentData?.dbQuery?.sql &&
+      selectedDatabaseCategory.value !== "AWS Cloud - NoSQL Databases"
+    ) {
       const fetchSQLPlaceholder = async () => {
         const payload =
           selectedDatabases.length > 0
@@ -93,7 +95,6 @@ const ExperimentForm = ({
                 return acc;
               }, {})
             : {};
-
         try {
           const res = await axiosApi.post(
             "/experiment/sql/placeholder",
@@ -109,13 +110,11 @@ const ExperimentForm = ({
 
       fetchSQLPlaceholder();
     }
-  }, [selectedDatabases, experimentData]);
+  }, [selectedDatabases, experimentData, selectedDatabaseCategory]);
 
   const paramsForInputFieldsComponent = {
     experimentName,
     setExperimentName,
-    experimentTimeInSecond,
-    setExperimentTimeInSecond,
     dataset,
     concurrentQueries,
     setConcurrentQueries,
@@ -125,9 +124,10 @@ const ExperimentForm = ({
     sqlPlaceholder,
     dbQuery,
     setDbQuery,
-    initialDbQuery: dbQuery
+    initialDbQuery: dbQuery,
   };
 
+  console.log(dbQuery);
   return (
     <div>
       <div className="ps-7 mt-6">
@@ -188,9 +188,9 @@ const ExperimentForm = ({
 
       <div className="ps-7 mt-7">
         <form onSubmit={handleSubmit}>
-          {sqlPlaceholder && (
-            <AddExperimentInputFields params={paramsForInputFieldsComponent} />
-          )}
+           
+            <CommonExperimentFields params={paramsForInputFieldsComponent} />
+          
 
           <div className="mt-[150px] pb-3 flex gap-2">
             <button

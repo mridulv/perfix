@@ -10,13 +10,13 @@ const StateIconComponent = ({state}) => {
         {(() => {
           switch (state) {
             case stateConstants.Created:
-              return  <FaRegCheckCircle  size={21} color="#91b951"/>;
+              return <LuCircleEllipsis size={22} color="#1160aa" fontWeight={700}/>;
             case stateConstants.InProgress:
               return <FaRegPauseCircle size={21} color="#f49e04"/>;
             case stateConstants.Failed:
               return <FaRegTimesCircle size={21} color="#f54946"/>;
             case stateConstants.Completed:
-              return <LuCircleEllipsis size={22} color="#1160aa" fontWeight={700}/>;
+              return  <FaRegCheckCircle  size={21} color="#91b951"/>;
             default:
               return null;
           }
