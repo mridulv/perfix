@@ -38,6 +38,7 @@ object ConversationSystemPrompt {
       |        6) Number of Rows in the experiment to begin with
       |        7) "Number of Rows" returned by the filter query
       |
+      |        ALSO ASK ONE QUESTION AT A TIME.
       |        DO NOT STOP THE EXPERIMENT, TILL USER HAS COMMUNICATED THESE above things""".stripMargin
   )
 }
