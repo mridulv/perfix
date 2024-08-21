@@ -100,7 +100,7 @@ const ChatPage = () => {
   return (
     <div className="">
       <div className="min-h-screen flex flex-col bg-white">
-        <div className="w-full md:w-[740px] bg-accent mx-auto flex-grow p-4 overflow-y-auto">
+        <div className="w-full md:w-[740px] bg-accent mx-auto mb-10 flex-grow p-4 overflow-y-auto">
           {combinedMessages.map((message, index) => (
             <div
               key={index}

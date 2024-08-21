@@ -2,9 +2,11 @@
 @tailwind components;
 @tailwind utilities;
 
+
 * {
   margin: 0;
   padding: 0;
+  scrollbar-width: thin;
 }
 
 body {
@@ -93,37 +95,6 @@ input[type=number] {
   -moz-appearance: textfield;
 }
 
-/* Scroll bar stylings */
-::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
-}
+
 
 /* Track */
-::-webkit-scrollbar-track {
-  background: var(--lightestgrey); 
-}
-
-/* Handle */
-::-webkit-scrollbar-thumb {
-  background: #888; 
-  border-radius: 5px;
-}
-
-/* Handle on hover */
-::-webkit-scrollbar-thumb:hover {
-  background: #555; 
-}
-
-body::-webkit-scrollbar {
-  width: 1em;
-}
- 
-body::-webkit-scrollbar-track {
-  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-}
- 
-body::-webkit-scrollbar-thumb {
-  background-color: darkgrey;
-  outline: 1px solid slategrey;
-}
