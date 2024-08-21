@@ -21,7 +21,6 @@ object ConversationCompiler {
     "databaseType",
     "queries",
     "filteredRows",
-    "experiment_time_in_seconds",
     "total_rows",
     "concurrent_reads_rate",
     "concurrent_writes_rate"
@@ -74,7 +73,6 @@ object ConversationCompiler {
 
     Seq(
       "filteredRows",
-      "experiment_time_in_seconds",
       "total_rows",
       "concurrent_reads_rate",
       "concurrent_writes_rate"
