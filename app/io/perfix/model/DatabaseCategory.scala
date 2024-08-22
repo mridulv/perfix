@@ -35,19 +35,17 @@ object DatabaseCategory {
   }
 
   implicit val reads: Reads[DatabaseCategory] = Reads[DatabaseCategory] {
-    case JsString(str) => str match {
-      case "AWS_RDBMS" => JsSuccess(AWS_RDBMS)
-      case "AWS_NOSQL" => JsSuccess(AWS_NOSQL)
-      case "RDBMS" => JsSuccess(RDBMS)
-      case "NoSQL" => JsSuccess(NoSQL)
-      case "VectorDB" => JsSuccess(VectorDB)
-      case "GraphDB" => JsSuccess(GraphDB)
-      case _ => JsError("Invalid value for DatabaseCategory")
-    }
+    case JsString(str) =>
+      AllDatabaseCategories
+        .find(_.toString == str)
+        .map(category => JsSuccess(category))
+        .getOrElse(JsError("Invalid value for DatabaseCategory"))
     case _ => JsError("Invalid value for DatabaseCategory")
   }
 
   implicit val StoreTypeFormat: Format[DatabaseCategory] = Format(reads, writes)
+
+  val AllDatabaseCategories = Seq(AWS_RDBMS, AWS_NOSQL, RDBMS, NoSQL, VectorDB, GraphDB)
 
 }
 
