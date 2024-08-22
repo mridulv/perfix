@@ -8,7 +8,10 @@ import io.perfix.model.{DatabaseCategory, EntityFilter, ExperimentFilter}
 import io.perfix.db.ExperimentStore
 import io.perfix.model.api.{DatabaseConfigDetails, DatabaseConfigId, DatabaseState, DatasetDetails, DatasetId}
 import io.perfix.stores.Database
+import io.perfix.stores.documentdb.DocumentDBDatabaseSetupParams
+import io.perfix.stores.dynamodb.DynamoDBDatabaseSetupParams
 import io.perfix.stores.mysql.RDSDatabaseSetupParams
+import io.perfix.stores.redis.RedisDatabaseSetupParams
 
 import javax.inject.Singleton
 
@@ -128,7 +131,9 @@ class ExperimentManager @Inject()(datasetManager: DatasetManager,
           .getOrElse(throw InvalidStateException("Invalid DatabaseConfigId"))
         val matchedDatabaseConfigParamsOpt = allDatabaseConfigParams.find(_.databaseSetupParams.databaseLaunchParams == databaseConfigParams.databaseSetupParams.databaseLaunchParams)
         val updatedConfigParams = matchedDatabaseConfigParamsOpt match {
-          case Some(matchedDatabaseConfigParams) => databaseConfigParams.copy(databaseSetupParams = matchedDatabaseConfigParams.databaseSetupParams)
+          case Some(matchedDatabaseConfigParams) => databaseConfigParams.copy(
+            databaseSetupParams = databaseConfigParams.databaseSetupParams.update(matchedDatabaseConfigParams.databaseSetupParams.dbDetails)
+          )
           case None => databaseConfigManager.ensureDatabase(databaseConfigDetail.databaseConfigId)
         }
         println(s"Database is up $updatedConfigParams")
