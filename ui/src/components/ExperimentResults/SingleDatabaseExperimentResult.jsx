@@ -163,6 +163,7 @@ const SingleDatabaseExperimentResult = ({ view, handleView, data }) => {
           readLatencies={readLatenciesValues}
           writeLatencies={writeLatenciesValues}
           resultValues={resultValues}
+          databaseConfigs={databaseConfigs}
         />
       </div>
     </div>
