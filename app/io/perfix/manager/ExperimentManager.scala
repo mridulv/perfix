@@ -129,7 +129,10 @@ class ExperimentManager @Inject()(datasetManager: DatasetManager,
         val databaseConfigParams = allDatabaseConfigParams
           .find(_.databaseConfigId.get == databaseConfigDetail.databaseConfigId)
           .getOrElse(throw InvalidStateException("Invalid DatabaseConfigId"))
-        val matchedDatabaseConfigParamsOpt = allDatabaseConfigParams.find(_.databaseSetupParams.databaseLaunchParams == databaseConfigParams.databaseSetupParams.databaseLaunchParams)
+        val matchedDatabaseConfigParamsOpt = allDatabaseConfigParams
+          .find(_.databaseSetupParams.databaseLaunchParams == databaseConfigParams.databaseSetupParams.databaseLaunchParams)
+          .find(_.databaseState == DatabaseState.Created)
+          .find(_.databaseConfigId != databaseConfigParams.databaseConfigId)
         val updatedConfigParams = matchedDatabaseConfigParamsOpt match {
           case Some(matchedDatabaseConfigParams) => databaseConfigParams.copy(
             databaseSetupParams = databaseConfigParams.databaseSetupParams.update(matchedDatabaseConfigParams.databaseSetupParams.dbDetails)
