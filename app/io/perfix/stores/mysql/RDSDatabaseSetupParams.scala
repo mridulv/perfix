@@ -1,9 +1,11 @@
 package io.perfix.stores.mysql
 
-import io.perfix.model.store.{DatabaseLaunchParams, DatabaseSetupParams}
+import io.perfix.model.store.{DatabaseConnectionParams, DatabaseLaunchParams, DatabaseSetupParams}
 import io.perfix.model.store.StoreType.{MySQL, StoreType}
 import play.api.libs.json.{Format, Json}
 import RDSDatabaseSetupParams._
+import io.perfix.stores.documentdb.DocumentDBConnectionParams
+import io.perfix.stores.redis.RedisConnectionParams
 
 case class RDSDatabaseSetupParams(instanceType: String = "db.t3.medium",
                                   tableName: String,
@@ -15,6 +17,13 @@ case class RDSDatabaseSetupParams(instanceType: String = "db.t3.medium",
 
   override def databaseLaunchParams: DatabaseLaunchParams = RDSDatabaseLaunchParams(instanceType)
 
+  override def update(databaseConfigDetails: Option[DatabaseConnectionParams]): DatabaseSetupParams = {
+    databaseConfigDetails.map {
+      case documentDBConnectionParams: DocumentDBConnectionParams => this
+      case mysqlDBConnectionParams: MySQLConnectionParams => this.copy(dbDetails = Some(mysqlDBConnectionParams))
+      case redisConnectionParams: RedisConnectionParams => this
+    }.getOrElse(this)
+  }
 }
 
 case class RDSDatabaseLaunchParams(instanceType: String = "db.t3.medium") extends DatabaseLaunchParams
@@ -32,7 +41,7 @@ object RDSDatabaseSetupParams {
   }
 }
 
-case class MySQLConnectionParams(url: String, username: String, password: String)
+case class MySQLConnectionParams(url: String, username: String, password: String) extends DatabaseConnectionParams
 
 object MySQLConnectionParams {
   implicit val MySQLConnectionParamsFormatter: Format[MySQLConnectionParams] = Json.format[MySQLConnectionParams]

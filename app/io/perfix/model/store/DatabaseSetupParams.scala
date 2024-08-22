@@ -8,9 +8,15 @@ import io.perfix.stores.dynamodb.DynamoDBDatabaseSetupParams
 import io.perfix.stores.redis.RedisDatabaseSetupParams
 import play.api.libs.json._
 
+trait DatabaseConnectionParams
+
 trait DatabaseSetupParams {
 
+  val dbDetails: Option[DatabaseConnectionParams]
+
   def databaseLaunchParams: DatabaseLaunchParams
+
+  def update(databaseConfigDetails: Option[DatabaseConnectionParams]): DatabaseSetupParams
 
 }
 

@@ -1,6 +1,6 @@
 package io.perfix.stores.dynamodb
 
-import io.perfix.model.store.{DatabaseLaunchParams, DatabaseSetupParams}
+import io.perfix.model.store.{DatabaseConnectionParams, DatabaseLaunchParams, DatabaseSetupParams}
 import play.api.libs.json.{Format, Json}
 
 case class DynamoDBDatabaseSetupParams(tableName: String,
@@ -9,6 +9,8 @@ case class DynamoDBDatabaseSetupParams(tableName: String,
                                        partitionKey: String,
                                        sortKey: String,
                                        gsiParams: Option[Seq[DynamoDBGSIParam]]) extends DatabaseSetupParams {
+
+  val dbDetails: Option[DatabaseConnectionParams] = None
 
   val dynamoDBTableParams: DynamoDBTableParams = DynamoDBTableParams(None, tableName, partitionKey, sortKey)
   val dynamoDBCapacityParams: DynamoDBCapacityParams = DynamoDBCapacityParams(Some(rcu), Some(wcu))
@@ -22,6 +24,10 @@ case class DynamoDBDatabaseSetupParams(tableName: String,
   }
 
   override def databaseLaunchParams: DatabaseLaunchParams = DynamoDBLaunchParams()
+
+  override def update(databaseConfigDetails: Option[DatabaseConnectionParams]): DatabaseSetupParams = {
+    this
+  }
 }
 
 case class DynamoDBLaunchParams() extends DatabaseLaunchParams
