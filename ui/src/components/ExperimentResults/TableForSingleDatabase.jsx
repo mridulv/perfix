@@ -6,6 +6,7 @@ const TableForSingleDatabase = ({
   readLatencies,
   writeLatencies,
   resultValues,
+  databaseConfigs
 }) => {
   return (
     <div className="p-6">
@@ -18,7 +19,8 @@ const TableForSingleDatabase = ({
               </th>
               <th className="text-sm py-3 ps-3 border-r text-start">
                 {" "}
-                MongoDB: Database Name
+                {databaseConfigs[0].storeType}:{" "}
+                {databaseConfigs[0].databaseConfigName}
               </th>
             </tr>
           </thead>
