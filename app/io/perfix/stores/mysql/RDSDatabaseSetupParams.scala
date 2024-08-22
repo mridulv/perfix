@@ -6,6 +6,7 @@ import play.api.libs.json.{Format, Json}
 import RDSDatabaseSetupParams._
 import io.perfix.stores.documentdb.DocumentDBConnectionParams
 import io.perfix.stores.redis.RedisConnectionParams
+import net.sf.jsqlparser.util.validation.feature.DatabaseType
 
 case class RDSDatabaseSetupParams(instanceType: String = "db.t3.medium",
                                   tableName: String,
@@ -15,7 +16,7 @@ case class RDSDatabaseSetupParams(instanceType: String = "db.t3.medium",
                                   dbDetails: Option[MySQLConnectionParams] = None,
                                   databaseType: Option[StoreType] = Some(MySQL)) extends DatabaseSetupParams {
 
-  override def databaseLaunchParams: DatabaseLaunchParams = RDSDatabaseLaunchParams(instanceType)
+  override def databaseLaunchParams: DatabaseLaunchParams = RDSDatabaseLaunchParams(instanceType, databaseType)
 
   override def update(databaseConfigDetails: Option[DatabaseConnectionParams]): DatabaseSetupParams = {
     databaseConfigDetails.map {
@@ -26,7 +27,7 @@ case class RDSDatabaseSetupParams(instanceType: String = "db.t3.medium",
   }
 }
 
-case class RDSDatabaseLaunchParams(instanceType: String = "db.t3.medium") extends DatabaseLaunchParams
+case class RDSDatabaseLaunchParams(instanceType: String = "db.t3.medium", databaseType: Option[StoreType] = Some(MySQL)) extends DatabaseLaunchParams
 
 object RDSDatabaseSetupParams {
   implicit val RDSDatabaseSetupParamsFormatter: Format[RDSDatabaseSetupParams] = Json.format[RDSDatabaseSetupParams]
