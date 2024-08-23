@@ -43,7 +43,6 @@ object BenchmarkUtil {
     val allExecutionTimes = futures.flatMap(_.get()).sorted
     val totalCalls = allExecutionTimes.length
     println(s"Total tasks executed: $totalCalls")
-    println(s"Results Sizes are: ${numResults.mkString(",")}")
     val percentiles = printPercentiles(allExecutionTimes.toSeq)
     SingleExperimentResult(
       overallQueryTime = benchmarkTimeSeconds,
