@@ -121,11 +121,13 @@ class ExperimentManager @Inject()(datasetManager: DatasetManager,
   }
 
   def executeExperiment(experimentId: ExperimentId): ExperimentParams = {
+    println(s"Starting execution of experiment: $experimentId")
     val experimentParams = get(experimentId)
     val allDatabaseConfigParams = databaseConfigManager.all(Seq.empty)
     val allDatasetParams = datasetManager.all(Seq.empty)
     val updatedExperimentParams = try {
       val results = experimentParams.databaseConfigs.map { databaseConfigDetail =>
+        println(s"Starting with the experiment config: ${databaseConfigDetail}")
         val databaseConfigParams = allDatabaseConfigParams
           .find(_.databaseConfigId.get == databaseConfigDetail.databaseConfigId)
           .getOrElse(throw InvalidStateException("Invalid DatabaseConfigId"))
@@ -139,6 +141,7 @@ class ExperimentManager @Inject()(datasetManager: DatasetManager,
           )
           case None => databaseConfigManager.ensureDatabase(databaseConfigDetail.databaseConfigId)
         }
+        println(s"database config params: $databaseConfigParams and matching params: $matchedDatabaseConfigParamsOpt and updatedConfig are: $updatedConfigParams")
         println(s"Database is up $updatedConfigParams")
         val datasetParams = allDatasetParams
           .find(_.id.get == updatedConfigParams.datasetDetails.datasetId)
@@ -155,7 +158,7 @@ class ExperimentManager @Inject()(datasetManager: DatasetManager,
           res
         } catch {
           case e: Exception =>
-            print(s"Error while running the experiment: ${e.getMessage}")
+            println(s"Error while running the experiment: ${e.getMessage}")
             throw e
         } finally {
           experimentExecutor.cleanUp()
