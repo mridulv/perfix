@@ -30,12 +30,12 @@ class UseCaseConversationParser(response: String) {
 
   def init(datasetManager: DatasetManager,
            databaseConfigManager: DatabaseConfigManager,
-           experimentManager: ExperimentManager): (DatasetId, DatabaseConfigId, ExperimentId) = {
+           experimentManager: ExperimentManager): (DatasetId, Seq[DatabaseConfigId], ExperimentId) = {
 
     val experimentRun = Json.parse(response).as[ExperimentRun]
 
     val experimentConfig = getExperimentConfig(experimentRun)
-    val databaseType = getDatabaseType(experimentRun)
+    val databaseTypes = getDatabaseType(experimentRun)
     val columnsDescriptions = getDatasetDetails(experimentRun)
     val sqlQuery = getQuery(columnsDescriptions, experimentRun)
     val tableName = sqlQuery.tableName(columnsDescriptions)
@@ -49,13 +49,16 @@ class UseCaseConversationParser(response: String) {
     )
     val datasetId = datasetManager.create(datasetParams)
 
-    val databaseConfigParams: DatabaseConfigParams = DatabaseConfigParams(
-      name = tableName.concat("-").concat("db"),
-      databaseSetupParams = getDatabaseSetupParams(tableName, databaseType, columnsDescriptions),
-      dataStore = databaseType,
-      datasetDetails = DatasetDetails(datasetId, None)
-    )
-    val databaseConfigId = databaseConfigManager.create(databaseConfigParams)
+
+    val databaseConfigIds: Seq[DatabaseConfigId] = databaseTypes.map { databaseType =>
+      val databaseConfigParams = DatabaseConfigParams(
+        name = tableName.concat("-").concat("db").concat("-").concat(databaseType.toString),
+        databaseSetupParams = getDatabaseSetupParams(tableName, databaseType, columnsDescriptions),
+        dataStore = databaseType,
+        datasetDetails = DatasetDetails(datasetId, None)
+      )
+      databaseConfigManager.create(databaseConfigParams)
+    }
 
     val experimentParams: ExperimentParams = ExperimentParams(
       experimentId = None,
@@ -63,10 +66,10 @@ class UseCaseConversationParser(response: String) {
       experimentTimeInSeconds = None,
       concurrentQueries = experimentConfig.reads_per_minute,
       dbQuery = sqlQuery,
-      databaseConfigs = Seq(DatabaseConfigDetails(databaseConfigId))
+      databaseConfigs = databaseConfigIds.map(DatabaseConfigDetails(_))
     )
     val experimentId = experimentManager.create(experimentParams)
-    (datasetId, databaseConfigId, experimentId)
+    (datasetId, databaseConfigIds, experimentId)
   }
 
 
@@ -121,7 +124,7 @@ class UseCaseConversationParser(response: String) {
     sqlQuery
   }
 
-  private def getDatabaseType(experimentRun: ExperimentRun): StoreType = {
+  private def getDatabaseType(experimentRun: ExperimentRun): Seq[StoreType] = {
     implicit val ec = ExecutionContext.global
     implicit val materializer = Materializer(ActorSystem())
     val service = OpenAIServiceFactory()
@@ -137,12 +140,12 @@ class UseCaseConversationParser(response: String) {
       println(prompt)
       println(response)
       StoreType.fromString(response)
-    }.headOption.getOrElse(MySQL)
+    }
   }
 
   private def getDatabaseSetupParams(tableName: TableName,
-                             storeType: StoreType,
-                             columnDescriptions: Seq[ColumnDescription]): DatabaseSetupParams = {
+                                     storeType: StoreType,
+                                     columnDescriptions: Seq[ColumnDescription]): DatabaseSetupParams = {
     storeType match {
       case StoreType.MySQL => RDSDatabaseSetupParams.defaultRDSDatabaseSetupParams(tableName, storeType)
       case StoreType.Postgres => RDSDatabaseSetupParams.defaultRDSDatabaseSetupParams(tableName, storeType)
