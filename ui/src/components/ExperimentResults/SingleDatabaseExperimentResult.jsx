@@ -107,8 +107,8 @@ const SingleDatabaseExperimentResult = ({ view, handleView, data }) => {
     <div className="px-7">
       <div className="flex items-center justify-between mb-7">
         <p className="text-xl font-semibold">
-          {databaseConfigs[0].storeType}:{" "}
-          {databaseConfigs[0].databaseConfigName}
+          {databaseConfigs[0]?.storeType}:{" "}
+          {databaseConfigs[0]?.databaseConfigName}
         </p>
         <div className="bg-accent p-1 flex rounded-md cursor-pointer">
           <p

@@ -41,11 +41,6 @@ const DatasetDetails = () => {
     fetchDatasetData(id, setDatasetData, setLoading)
   }, [id])
 
-  useEffect(() => {
-    if (datasetData) {
-      console.log("Active dataset:", datasetData[activeTab]);
-    }
-  }, [datasetData,activeTab]);
 
   const tabsProps = {
     datasetData,

@@ -33,7 +33,6 @@ export const handleLogout = async (setUser) => {
     const res = await axios.get(`${import.meta.env.VITE_BASE_URL}/logout`, {
       withCredentials: true,
     });
-    console.log(res);
     if (res.status === 200) {
       toast.success("Logged out successfully!");
       setUser({});

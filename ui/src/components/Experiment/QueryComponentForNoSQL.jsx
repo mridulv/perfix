@@ -13,7 +13,6 @@ const QueryComponentForNoSQL = ({
     const newColumns = [...columns];
     newColumns[index] = { ...newColumns[index], key: selectedOption.value };
     setColumns(newColumns);
-    console.log("Updated Columns: ", newColumns);
   };
 
   const handleFilterValueChange = (event, index) => {
