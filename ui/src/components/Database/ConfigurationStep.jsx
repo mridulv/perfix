@@ -14,7 +14,6 @@ const ConfigurationStep = ({
   setShowGSIFields,
   inputValues,
 }) => {
-  console.log(inputFields);
   return (
     <div className="min-h-[350px]">
       {inputFields?.forms[currentStep - 2]?.inputs.map((input, index) => (

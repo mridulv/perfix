@@ -87,7 +87,6 @@ const ExperimentTableRows = ({
         <button
           onClick={() => handleRunExperiment(data?.experimentId.id)}
           className="py-1 px-2 bg-primary text-[13px] text-white rounded-md"
-          disabled={data.experimentState === "Completed"}
         >
           Run
         </button>

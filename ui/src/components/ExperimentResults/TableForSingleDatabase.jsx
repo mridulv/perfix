@@ -6,7 +6,7 @@ const TableForSingleDatabase = ({
   readLatencies,
   writeLatencies,
   resultValues,
-  databaseConfigs
+  databaseConfigs,
 }) => {
   return (
     <div className="p-6">
@@ -19,19 +19,22 @@ const TableForSingleDatabase = ({
               </th>
               <th className="text-sm py-3 ps-3 border-r text-start">
                 {" "}
-                {databaseConfigs[0].storeType}:{" "}
-                {databaseConfigs[0].databaseConfigName}
+                {databaseConfigs[0]?.storeType}:{" "}
+                {databaseConfigs[0]?.databaseConfigName}
               </th>
             </tr>
           </thead>
           <tbody>
-              {resultValues.map((value, i) => (
-                <tr key={i}>
-                  <td className="py-2 px-4 text-xs font-semibold border-b border-r">{value.text}</td>
-                  <td className="py-2 px-4 text-sm border-b border-r">{value.value}</td>
-                </tr>
-              ))}
-            
+            {resultValues.map((value, i) => (
+              <tr key={i}>
+                <td className="py-2 px-4 text-xs font-semibold border-b border-r">
+                  {value.text}
+                </td>
+                <td className="py-2 px-4 text-sm border-b border-r">
+                  {value.value}
+                </td>
+              </tr>
+            ))}
           </tbody>
         </table>
       </div>
@@ -44,7 +47,9 @@ const TableForSingleDatabase = ({
                 PerFormance Percentile
               </th>
               {percentileHeaders.map((head, i) => (
-                <th key={i} className="px-2 text-xs border-r">{head}</th>
+                <th key={i} className="px-2 text-xs border-r">
+                  {head}
+                </th>
               ))}
             </tr>
           </thead>

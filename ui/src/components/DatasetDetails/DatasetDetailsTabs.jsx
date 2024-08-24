@@ -12,7 +12,6 @@ const DatasetDetailsTabs = ({ props }) => {
     handleNameChange,
     setEditableTableName,
   } = props;
-  console.log(datasetData);
   return (
     <div className="flex justify-center mb-4">
       <div className="w-full border-b border-gray-200 relative">

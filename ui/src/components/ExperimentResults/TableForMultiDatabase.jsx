@@ -11,7 +11,6 @@ const TableForMultiDatabase = ({ experimentData }) => {
     resultMap[result.databaseConfigDetails.databaseConfigName] = result.experimentResult;
   });
 
-  console.log(resultMap);
 
   const percentileHeaders = [
     "5th Percentile",
@@ -35,7 +34,6 @@ const TableForMultiDatabase = ({ experimentData }) => {
       write: result ? result.experimentResult.writeLatencies.map((lat) => lat.latency) : [],
     };
   });
-  console.log(latencyData);
 
   return (
     <div>

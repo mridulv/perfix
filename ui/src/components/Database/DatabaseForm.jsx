@@ -172,7 +172,6 @@ const DatabaseForm = ({
     };
 
     if (isUpdate) {
-      console.log(formData);
       await handleDatabase.handleUpdateDatabase(existingDatabase.databaseConfigId.id, formData, successFunction);
     } else {
       await handleDatabase.handleAddDatabase(formData, creationFor, successFunction);
